@@ -1,0 +1,513 @@
+{
+  "project": "OpenTrip Lansia (OTL)",
+  "last_updated": "2026-07-23",
+  "summary": {
+    "total_features": 48,
+    "in_review": 24,
+    "completed": 9,
+    "to_do": 15,
+    "not_started": 0
+  },
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Architecture & Foundation",
+      "prd_epic": "OTL-1",
+      "features": [
+        {
+          "id": "feat-001",
+          "title": "Confirm baseline builds and lints",
+          "description": "Run init.sh, confirm npm run lint passes on the current codebase",
+          "status": "completed",
+          "priority": 1,
+          "verification": ["./init.sh"],
+          "evidence": "init.sh passes, 280 tests pass, lint configured"
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Trip CRUD (Admin)",
+      "prd_epic": "OTL-7",
+      "features": [
+        {
+          "id": "feat-010",
+          "title": "Trip CRUD admin pages + API",
+          "description": "Admin can create/edit/archive trips with title, slug, description, duration, status, thumbnail, itinerary items, and destinations. UI: List page with modal + dedicated create/edit pages. API: GET/POST/PUT/DELETE /api/trips with nested itinerary and destinations.",
+          "status": "in_review",
+          "priority": 10,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "List page (/admin/trips), create/edit pages with itinerary & destination sections, API endpoints, service/repository layer for nested data"
+        },
+        {
+          "id": "feat-011",
+          "title": "Trip departure management",
+          "description": "Admin can add/edit departures with start_date, end_date, max/min participants, status. Schema & repository exist. UI pending.",
+          "status": "to_do",
+          "priority": 11,
+          "depends_on": ["feat-010"],
+          "verification": ["npm run lint"],
+          "evidence": "Schema tripDepartures exists in module, admin UI belum ada"
+        },
+        {
+          "id": "feat-012",
+          "title": "Trip pricing (multi-tier) & quota",
+          "description": "Admin can set tiered pricing (Dewasa/Anak/Early Bird) with atomic quota_booked updates. Schema & repository exist. UI pending.",
+          "status": "to_do",
+          "priority": 12,
+          "depends_on": ["feat-011"],
+          "verification": ["npm run lint"],
+          "evidence": "Schema tripPrices + updateQuota repository exist, admin UI belum ada"
+        },
+        {
+          "id": "feat-013",
+          "title": "Itinerary management",
+          "description": "CRUD itinerary items per trip: day, time, activity, description, location, linked destination. Integrated into trip form.",
+          "status": "in_review",
+          "priority": 13,
+          "depends_on": ["feat-010"],
+          "verification": ["npm run lint"],
+          "evidence": "itineraryItems table, repository methods (findItineraryByTripId/saveItinerary), trip form with per-day itinerary sections, linked destinations from master data"
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "User Pages & Public Trip",
+      "prd_epic": "OTL-2/3",
+      "features": [
+        {
+          "id": "feat-020",
+          "title": "Trip listing & detail public pages",
+          "description": "Public trip listing with search, and detail page with itinerary, pricing, departures. Fully implemented.",
+          "status": "in_review",
+          "priority": 20,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "Halaman /trips, /trips/[slug], tripService.getPublishedTrips/getTripBySlug"
+        },
+        {
+          "id": "feat-021",
+          "title": "Auth pages (login/register) + Navbar + Footer",
+          "description": "Login, register, profile pages using Better Auth integration. Navbar with auth state, Footer with 5 columns.",
+          "status": "in_review",
+          "priority": 21,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "Auth pages, auth module, auth-client, Navbar, Footer"
+        },
+        {
+          "id": "feat-022",
+          "title": "Landing page (Hero, Destinations, Steps, Testimonials)",
+          "description": "Hero with search, popular destinations grid, 5-step booking, testimonials, newsletter, private trip CTA.",
+          "status": "in_review",
+          "priority": 22,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "src/app/page.tsx — full landing page"
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "Booking & Payment",
+      "prd_epic": "OTL-4",
+      "features": [
+        {
+          "id": "feat-030",
+          "title": "Booking flow & form",
+          "description": "User can book trip via /booking page, booking form with participant quantity per price tier, name & phone input, submission.",
+          "status": "in_review",
+          "priority": 30,
+          "depends_on": ["feat-012", "feat-021"],
+          "verification": ["npm run lint"],
+          "evidence": "/booking page, BookingForm component, booking module with createBooking service"
+        },
+        {
+          "id": "feat-031",
+          "title": "Payment flow (manual transfer + confirmation)",
+          "description": "Payment page with booking code, total amount, payment method selection (manual/Midtrans), confirmation. Schema for gateway webhook ready.",
+          "status": "in_review",
+          "priority": 31,
+          "depends_on": ["feat-030"],
+          "verification": ["npm run lint"],
+          "evidence": "/booking/[id]/payment page, PaymentForm, payment module with idempotency"
+        },
+        {
+          "id": "feat-032",
+          "title": "Payment gateway integration (Midtrans/Xendit)",
+          "description": "Integrasi payment gateway sungguhan dengan webhook dan atomic status updates. Schema paymentWebhookEvents sudah siap.",
+          "status": "to_do",
+          "priority": 32,
+          "depends_on": ["feat-031"],
+          "verification": ["npm run lint"],
+          "evidence": "payment.schema.ts with paymentWebhookEvents table, refunds table"
+        },
+        {
+          "id": "feat-033",
+          "title": "Promo code integration in booking",
+          "description": "Apply promo code with validation, discount calculation (percentage/fixed), usage limit, max discount. Service exists, UI + API endpoint needed.",
+          "status": "to_do",
+          "priority": 33,
+          "depends_on": ["feat-030"],
+          "verification": ["npm run lint"],
+          "evidence": "promotion.service.ts with full applyPromo logic"
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "Admin Dashboard & CRUD",
+      "prd_epic": "OTL-7/8/9",
+      "features": [
+        {
+          "id": "feat-040",
+          "title": "Admin dashboard layout & sidebar",
+          "description": "Admin sidebar with 10 nav items, KPI cards, quick actions, recent bookings table.",
+          "status": "in_review",
+          "priority": 40,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin layout with sidebar, dashboard page with KPI cards"
+        },
+        {
+          "id": "feat-041",
+          "title": "Admin CRUD: Destinations",
+          "description": "CRUD for destinations with categories, difficulty level, accessibility, accessibility minutes. Both client modal and server pages.",
+          "status": "in_review",
+          "priority": 41,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Client page + server new/edit pages, API routes. Lat/lng inputs + Leaflet map picker added to both modal and dedicated form pages."
+        },
+        {
+          "id": "feat-042",
+          "title": "Admin CRUD: HORECA",
+          "description": "CRUD for HORECA with type, star rating, accessibility, phone, address.",
+          "status": "in_review",
+          "priority": 42,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin horeca page with modal form, API routes"
+        },
+        {
+          "id": "feat-043",
+          "title": "Admin CRUD: Vendors",
+          "description": "CRUD for vendors with type, contact person, service area, verified status.",
+          "status": "in_review",
+          "priority": 43,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin vendors page with modal form, API routes"
+        },
+        {
+          "id": "feat-044",
+          "title": "Admin CRUD: Promotions",
+          "description": "CRUD for promo codes with discount type (percentage/nominal), max usage, min purchase.",
+          "status": "in_review",
+          "priority": 44,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin promotions page, promotion module"
+        },
+        {
+          "id": "feat-045",
+          "title": "Admin CRUD: Galleries",
+          "description": "CRUD for trip galleries with public/private status.",
+          "status": "in_review",
+          "priority": 45,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin galleries page, API routes"
+        },
+        {
+          "id": "feat-046",
+          "title": "Admin CRUD: Reviews",
+          "description": "Review list with status management (pending/approved/rejected) and featured flag.",
+          "status": "in_review",
+          "priority": 46,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin reviews page, review module"
+        },
+        {
+          "id": "feat-047",
+          "title": "Admin CRUD: Commissions",
+          "description": "CRUD for agent commissions with status lifecycle (pending/approved/paid/rejected).",
+          "status": "in_review",
+          "priority": 47,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin commissions page, referral module"
+        },
+        {
+          "id": "feat-048",
+          "title": "Admin CRUD: Blogs",
+          "description": "CRUD for blog posts with draft/published status, slug, excerpt.",
+          "status": "in_review",
+          "priority": 48,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "Admin blogs page, blog module, public blog pages"
+        }
+      ]
+    },
+    {
+      "id": "phase-6",
+      "name": "Private Trip (Complete)",
+      "prd_epic": "OTL-50",
+      "features": [
+        {
+          "id": "feat-050",
+          "title": "Private Trip Request Form",
+          "description": "Public form page where logged-in users can submit private trip requests with destination preferences, duration, participants, budget, and special requirements. Complete with validation and Rupiah formatting.",
+          "status": "completed",
+          "priority": 50,
+          "depends_on": ["feat-021"],
+          "verification": ["npm run lint", "npm test"],
+          "evidence": "src/app/private-trip/page.tsx with full form, validation, and API integration"
+        },
+        {
+          "id": "feat-051",
+          "title": "Private Trip API (submit & list)",
+          "description": "Secure API endpoints for creating, listing, and viewing private trip requests with Better Auth session validation and input validation.",
+          "status": "completed",
+          "priority": 51,
+          "depends_on": ["feat-021"],
+          "verification": ["npm run lint", "npm test"],
+          "evidence": "CRUD endpoints at /api/private-trip with auth and admin routes"
+        },
+        {
+          "id": "feat-052",
+          "title": "Landing Page CTA",
+          "description": "Private Trip CTA section on landing page with benefits and link to request form.",
+          "status": "completed",
+          "priority": 52,
+          "depends_on": [],
+          "verification": ["npm run lint"],
+          "evidence": "CTA section on src/app/page.tsx with 'Rencanakan Private Trip' button"
+        },
+        {
+          "id": "feat-053",
+          "title": "Admin Private Trip Management",
+          "description": "Admin list and detail pages for reviewing private trip requests, creating proposals, and managing status transitions.",
+          "status": "completed",
+          "priority": 53,
+          "depends_on": ["feat-040", "feat-051"],
+          "verification": ["npm run lint", "npm test"],
+          "evidence": "Admin pages at /admin/private-trips with status workflow"
+        },
+        {
+          "id": "feat-054",
+          "title": "Private Trip Proposal & User Response",
+          "description": "Admin can submit proposals (price, inclusions, exclusions) and users can accept, reject, or request revision with state transition validation.",
+          "status": "completed",
+          "priority": 54,
+          "depends_on": ["feat-053"],
+          "verification": ["npm run lint", "npm test"],
+          "evidence": "Proposal API, service layer with state machine, user dashboard actions"
+        },
+        {
+          "id": "feat-055",
+          "title": "User Private Trip Dashboard",
+          "description": "User profile tab showing private trip requests, proposals, and ability to respond to proposals.",
+          "status": "completed",
+          "priority": 55,
+          "depends_on": ["feat-021", "feat-054"],
+          "verification": ["npm run lint", "npm test"],
+          "evidence": "Private Trip tab on profile page with proposal actions"
+        }
+      ]
+    },
+    {
+      "id": "phase-7",
+      "name": "Blog & Content",
+      "prd_epic": "OTL-12",
+      "features": [
+        {
+          "id": "feat-060",
+          "title": "Public blog listing & detail",
+          "description": "Public blog pages with published article listing (grid cards) and detail view.",
+          "status": "in_review",
+          "priority": 60,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "src/app/blog/page.tsx, src/app/blog/[slug]/page.tsx"
+        },
+        {
+          "id": "feat-061",
+          "title": "Blog categories management",
+          "description": "Schema blogCategories exists. Management UI and API needed.",
+          "status": "to_do",
+          "priority": 61,
+          "depends_on": ["feat-048"],
+          "verification": ["npm run lint"],
+          "evidence": "blog.schema.ts with blogCategories table"
+        }
+      ]
+    },
+    {
+      "id": "phase-8",
+      "name": "Referral & Agent System",
+      "prd_epic": "OTL-22",
+      "features": [
+        {
+          "id": "feat-070",
+          "title": "Agent dashboard with referral & commissions",
+          "description": "Agent dashboard with referral stats, copyable link, commissions history table.",
+          "status": "in_review",
+          "priority": 70,
+          "depends_on": ["feat-021"],
+          "verification": ["npm run lint"],
+          "evidence": "src/app/agent/page.tsx, referral module (6 tables)"
+        },
+        {
+          "id": "feat-071",
+          "title": "Commission payout system",
+          "description": "Commission payout workflow. Schema exists (commissionPayouts, payoutCommissions). API endpoints needed.",
+          "status": "to_do",
+          "priority": 71,
+          "depends_on": ["feat-070"],
+          "verification": ["npm run lint"],
+          "evidence": "referral.schema.ts with commissionPayouts + payoutCommissions tables"
+        },
+        {
+          "id": "feat-072",
+          "title": "Loyalty points system",
+          "description": "Loyalty transactions tracking and redeem. Schema exists. Implementation needed.",
+          "status": "to_do",
+          "priority": 72,
+          "depends_on": ["feat-070"],
+          "verification": ["npm run lint"],
+          "evidence": "referral.schema.ts with loyaltyTransactions table"
+        }
+      ]
+    },
+    {
+      "id": "phase-9",
+      "name": "Security & Infrastructure",
+      "prd_epic": "OTL-SEC",
+      "features": [
+        {
+          "id": "feat-080",
+          "title": "API auth middleware & RBAC",
+          "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL — saat ini 57 endpoint 100% public.",
+          "status": "to_do",
+          "priority": 2,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "Semua route handler tanpa auth middleware — perlu segera diperbaiki",
+          "critical": true
+        },
+        {
+          "id": "feat-081",
+          "title": "File upload (media/gallery)",
+          "description": "Image upload system for trip media, gallery, review media, blog covers. Schema media exists.",
+          "status": "to_do",
+          "priority": 80,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "master.schema.ts with media table"
+        },
+        {
+          "id": "feat-082",
+          "title": "Audit log system",
+          "description": "Tabel auditLogs sudah ada. Integrasi ke modul-modul lain untuk mencatat perubahan status.",
+          "status": "to_do",
+          "priority": 81,
+          "depends_on": ["feat-080"],
+          "verification": ["npm run lint"],
+          "evidence": "contact.schema.ts with auditLogs table"
+        },
+        {
+          "id": "feat-083",
+          "title": "Email/WhatsApp notifications",
+          "description": "Notification system for booking confirmation, payment reminders, private trip status changes.",
+          "status": "to_do",
+          "priority": 82,
+          "depends_on": ["feat-080"],
+          "verification": ["npm run lint"],
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "phase-10",
+      "name": "UX & Missing Pages",
+      "prd_epic": "OTL-UX",
+      "features": [
+        {
+          "id": "feat-090",
+          "title": "Shared UI component library",
+          "description": "Reusable Button, Input, Card, Modal, Loading/Spinner, Badge components. Saat ini semua inline.",
+          "status": "to_do",
+          "priority": 90,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "Hanya 4 komponen shared (Navbar, Footer, ConditionalFooter, CopyButton)"
+        },
+        {
+          "id": "feat-091",
+          "title": "FAQ page",
+          "description": "FAQ page with accordion/toggle answers. Link exists in Navbar but page is missing.",
+          "status": "to_do",
+          "priority": 91,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "Link FAQ di Navbar → route /faq belum ada"
+        },
+        {
+          "id": "feat-092",
+          "title": "About/Tentang Kami page",
+          "description": "About page with company info, team, values. Link exists in Navbar but page is missing.",
+          "status": "to_do",
+          "priority": 92,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "Link Tentang di Navbar → route /about belum ada"
+        },
+        {
+          "id": "feat-093",
+          "title": "Loading & empty states",
+          "description": "Skeleton screens, loading states, empty state illustrations for all list pages.",
+          "status": "to_do",
+          "priority": 93,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": ""
+        },
+        {
+          "id": "feat-094",
+          "title": "Mobile responsiveness audit",
+          "description": "Full audit and improvement for mobile layout across all pages.",
+          "status": "to_do",
+          "priority": 94,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": ""
+        },
+        {
+          "id": "feat-095",
+          "title": "Contact form page",
+          "description": "Contact form page for public submissions. API endpoint exists (POST /api/contact), contact module complete.",
+          "status": "in_review",
+          "priority": 95,
+          "depends_on": ["feat-001"],
+          "verification": ["npm run lint"],
+          "evidence": "contact module (full 4-layer), API endpoint, tapi halaman frontend perlu dicek"
+        },
+        {
+          "id": "feat-096",
+          "title": "Lupa Password & Reset Password flow",
+          "description": "UI for forgot password and reset password. Better Auth sudah support.",
+          "status": "to_do",
+          "priority": 96,
+          "depends_on": ["feat-021"],
+          "verification": ["npm run lint"],
+          "evidence": "Better Auth configured but no UI for password reset"
+        }
+      ]
+    }
+  ]
+}

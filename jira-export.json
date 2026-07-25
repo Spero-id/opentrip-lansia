@@ -1,0 +1,944 @@
+{
+  "project": "OpenTrip Lansia (OTL)",
+  "exported_at": "2026-07-23",
+  "source": "Full codebase analysis — 29 pages, 11 modules, 57 API endpoints, 52 tables, 4 components",
+  "epics": [
+    {
+      "id": "OTL-1",
+      "name": "Core Platform Foundation",
+      "priority": "Highest",
+      "description": "Project scaffolding, toolchain, database setup, deployment infrastructure",
+      "issues": [
+        {
+          "id": "OTL-1.1",
+          "summary": "Proyek scaffolding + build pipeline",
+          "description": "Next.js 16 + TypeScript + Drizzle ORM + Neon PostgreSQL. init.sh, lint, test runner.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["infrastructure", "core"],
+          "files": ["init.sh", "package.json", "tsconfig.json", "next.config.ts", "drizzle.config.ts"],
+          "evidence": "280 tests passing, 65 test suites, lint configured"
+        },
+        {
+          "id": "OTL-1.2",
+          "summary": "Database schema foundation (52 tables)",
+          "description": "Semua tabel di src/db/schema/ terdefinisi: trips (10), bookings (5), payments (3), private_trip (3), master (7), promotions (2), reviews (2), referral (6), blog (2), auth (4), contact (2), utility (multiple).",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["database", "core", "schema"],
+          "files": ["src/db/schema/*.ts"],
+          "evidence": "11 schema files mencakup 52 tabel"
+        },
+        {
+          "id": "OTL-1.3",
+          "summary": "Shared types & utilities",
+          "description": "Type definitions (UUID, Currency, BookingStatus, PaymentStatus, TripStatus, UserRole, dll), helpers (slugify, generateCode, formatCurrency, parseAmount), error classes (AppError, NotFoundError, ConflictError, ValidationError, UnauthorizedError).",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["core", "utilities"],
+          "files": ["src/shared/types/index.ts", "src/shared/utils/helpers.ts", "src/shared/errors/app-error.ts"]
+        },
+        {
+          "id": "OTL-1.4",
+          "summary": "Better Auth integrasi & konfigurasi",
+          "description": "Better Auth terkonfigurasi dengan email/password, SHA256 hash, session management. Auth client di src/lib/auth-client.ts. Auth handler di src/modules/auth/.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["auth", "core", "security"],
+          "files": ["src/lib/auth-client.ts", "src/modules/auth/", "src/app/api/auth/[...all]/route.ts"],
+          "evidence": "Login/register pages functional, useSession hook available"
+        }
+      ]
+    },
+    {
+      "id": "OTL-2",
+      "name": "Authentication & User Management",
+      "priority": "Critical",
+      "description": "Login, register, profile, user session management",
+      "issues": [
+        {
+          "id": "OTL-2.1",
+          "summary": "Halaman Login",
+          "description": "Split layout: travel photo + form email/password, show/hide password toggle, 'Ingat saya' checkbox, link lupa password, Google Sign In button (visual only), redirect parameter, link ke register.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["auth", "page", "frontend"],
+          "files": ["src/app/auth/login/page.tsx"],
+          "buttons": [
+            "Input email", "Input password", "Button show/hide password",
+            "Checkbox Ingat Saya", "Link Lupa Password", "Button Login",
+            "Button Masuk dengan Google (visual only)", "Link Daftar di sini",
+            "Link Kembali ke Website"
+          ]
+        },
+        {
+          "id": "OTL-2.2",
+          "summary": "Halaman Register",
+          "description": "Split layout: travel photo + form Nama Lengkap, Email, Password (show/hide), redirect ke /trips setelah sukses.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["auth", "page", "frontend"],
+          "files": ["src/app/auth/register/page.tsx"],
+          "buttons": ["Input nama", "Input email", "Input password", "Button show/hide password", "Button Daftar Sekarang", "Link Masuk di sini", "Link Kembali ke Website"]
+        },
+        {
+          "id": "OTL-2.3",
+          "summary": "Halaman Profile Pengguna",
+          "description": "Profile page dengan tabs: data user, booking history, private trip requests & proposal actions. Terintegrasi dengan Better Auth session.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["auth", "page", "frontend", "profile"],
+          "files": ["src/app/profile/page.tsx", "src/app/profile/profile-client.tsx"],
+          "buttons": ["Tab navigasi", "Private Trip proposal accept/reject/revise actions"]
+        },
+        {
+          "id": "OTL-2.4",
+          "summary": "Fitur Lupa Password & Reset Password",
+          "description": "Better Auth sudah support forgot-password. Belum ada halaman UI-nya.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["auth", "missing", "frontend"],
+          "files": [],
+          "buttons": []
+        },
+        {
+          "id": "OTL-2.5",
+          "summary": "Verifikasi Email",
+          "description": "Better Auth sudah support email verification. Belum ada alur UI-nya.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["auth", "missing", "frontend"],
+          "files": []
+        },
+        {
+          "id": "OTL-2.6",
+          "summary": "Navbar (Navigasi Atas)",
+          "description": "Sticky top navbar dengan brand logo, link navigasi (Beranda, Destinasi, Tentang, Kontak, Promo, FAQ), auth buttons (Masuk/Daftar), admin/agent panel conditional, auto-hide di route /admin.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["component", "frontend", "navigation"],
+          "files": ["src/components/navbar.tsx"],
+          "buttons": ["Link Beranda", "Link Destinasi", "Link Tentang", "Link Kontak", "Link Promo", "Link FAQ", "Button Masuk", "Button Daftar", "Admin Panel link", "Logout button"]
+        },
+        {
+          "id": "OTL-2.7",
+          "summary": "Footer",
+          "description": "5 kolom footer: Brand + sosial media, Navigasi, Destinasi Populer, Kontak (alamat/telepon/email), copyright bar.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["component", "frontend"],
+          "files": ["src/components/footer.tsx", "src/components/conditional-footer.tsx"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-3",
+      "name": "Trip Management (Public & Admin)",
+      "priority": "Highest",
+      "description": "CRUD trip, departure, pricing, Itinerary, public listing & detail",
+      "issues": [
+        {
+          "id": "OTL-3.1",
+          "summary": "Landing Page / Beranda",
+          "description": "Hero section dengan search bar (destinasi + tanggal), 3 nilai jual, 'Destinasi Paling Diminati' (grid 4 trip cards dari DB), '5 Langkah Booking' stepper, testimonial section, Private Trip CTA, newsletter subscribe.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["page", "frontend", "public"],
+          "files": ["src/app/page.tsx"],
+          "buttons": [
+            "Input search destinasi", "Input tanggal", "Link Cari → /trips",
+            "Carousel ChevronLeft/ChevronRight (visual only)",
+            "Link card trip → /trips/{slug}", "Link Jelajahi → /trips",
+            "Link Mulai Cari Destinasi → /trips",
+            "Link Rencanakan Private Trip → /private-trip",
+            "Button Subscribe newsletter (no handler)", "Input email newsletter"
+          ]
+        },
+        {
+          "id": "OTL-3.2",
+          "summary": "Trip Listing / Katalog Publik",
+          "description": "Header dengan search input + filter query param, grid katalog trip cards dari DB dengan image, rating, title, durasi, harga, type.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["page", "frontend", "public", "trip"],
+          "files": ["src/app/trips/page.tsx"],
+          "buttons": ["Form search input name='q'", "Button Cari", "Card links → /trips/{slug}"]
+        },
+        {
+          "id": "OTL-3.3",
+          "summary": "Trip Detail Publik",
+          "description": "Hero image cover dengan overlay title + durasi, 'Tentang Paket Trip' deskripsi + facilities (CheckCircle, ShieldCheck), jadwal keberangkatan + harga per departure, sticky sidebar ringkasan paket.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["page", "frontend", "public", "trip"],
+          "files": ["src/app/trips/[slug]/page.tsx"],
+          "buttons": [
+            "Link Kembali ke Semua Trip → /trips",
+            "Link Pesan Sekarang per departure → /booking?departure={id}",
+            "Link Pilih Tanggal & Booking (sticky sidebar)"
+          ]
+        },
+        {
+          "id": "OTL-3.4",
+          "summary": "Trip Module (Schema + Repository + Service + Controller)",
+          "description": "10 tabel (trips, tripDepartures, tripPrices, tripDestinations, tripHoreca, tripVendors, itineraryItems, tripMedia, tripGalleries, galleryMedia). Repository: findAllPublished (left join + dedup), CRUD, findDeparturesByTripId, findPricesByDepartureId, updateQuota atomic. Service: getPublishedTrips, getTripBySlug, reserveQuota. Controller: list, create.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["module", "backend", "trip"],
+          "files": ["src/modules/trip/"]
+        },
+        {
+          "id": "OTL-3.5",
+          "summary": "Admin Trip List Page",
+          "description": "Table list trip dengan modal tambah trip (TripForm), edit link, delete dengan confirm dialog.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "trip"],
+          "files": ["src/app/admin/trips/page.tsx"],
+          "buttons": ["Button Tambah Trip Baru", "Link Edit per row", "Button Delete per row", "Modal Simpan/Batal"]
+        },
+        {
+          "id": "OTL-3.6",
+          "summary": "Admin Trip Create & Edit Pages",
+          "description": "Halaman dedicated form tambah/edit trip dengan TripForm component, pre-populated data untuk edit.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "trip"],
+          "files": ["src/app/admin/trips/new/page.tsx", "src/app/admin/trips/[id]/edit/page.tsx"]
+        },
+        {
+          "id": "OTL-3.7",
+          "summary": "Trip Departure Management (Admin)",
+          "description": "Admin dapat add/edit departure: start_date, end_date, max/min participants, status. Schema & repository sudah ada. Belum ada UI di admin panel.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["feature", "admin", "trip", "missing"],
+          "files": ["src/modules/trip/trip.schema.ts (schema exists)"],
+          "depends_on": ["OTL-3.5"]
+        },
+        {
+          "id": "OTL-3.8",
+          "summary": "Trip Pricing Multi-Tier (Admin)",
+          "description": "Admin dapat set tiered pricing (Dewasa/Anak/Early Bird) dengan quota dan atomic quota_booked updates. Schema & repository sudah ada. Belum ada UI.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["feature", "admin", "trip", "missing"],
+          "files": ["src/modules/trip/trip.schema.ts (schema exists)", "src/modules/trip/trip.repository.ts (updateQuota exists)"],
+          "depends_on": ["OTL-3.7"]
+        },
+        {
+          "id": "OTL-3.9",
+          "summary": "Itinerary Management (Admin)",
+          "description": "CRUD itinerary items per trip: day, time, activity, description, location. Schema exists. Belum ada UI atau API endpoint.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "admin", "trip", "missing"],
+          "files": ["src/modules/trip/trip.schema.ts (itineraryItems table exists)"],
+          "depends_on": ["OTL-3.5"]
+        },
+        {
+          "id": "OTL-3.10",
+          "summary": "Trip Destination & HORECA & Vendor Assignment (Admin)",
+          "description": "Assign multiple destinations/HORECA/vendors ke trip. Schema exists (tripDestinations, tripHoreca, tripVendors). Belum ada UI.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "admin", "trip", "missing"],
+          "files": ["src/modules/trip/trip.schema.ts"],
+          "depends_on": ["OTL-3.5"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-4",
+      "name": "Master Data Management (Admin)",
+      "priority": "High",
+      "description": "CRUD destinations, HORECA, vendors, dan master data lainnya via admin panel",
+      "issues": [
+        {
+          "id": "OTL-4.1",
+          "summary": "Admin Destinations CRUD",
+          "description": "Table list + modal create/edit (nama, slug auto-generate, deskripsi, lokasi, kategori, tingkat kesulitan, estimasi menit, aksesibilitas, active). Juga server-rendered create/edit pages.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "master-data"],
+          "files": [
+            "src/app/admin/destinations/page.tsx",
+            "src/app/admin/destinations/new/page.tsx",
+            "src/app/admin/destinations/[id]/edit/page.tsx"
+          ],
+          "buttons": ["Tambah Destinasi", "Edit icon per row", "Delete icon per row", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-4.2",
+          "summary": "Admin HORECA CRUD",
+          "description": "CRUD HORECA (nama, bintang, akses lansia, status). Modal form: tipe, nama, kategori bintang 1-5, telepon, alamat, checkbox aksesibel lansia & aktif.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "master-data"],
+          "files": ["src/app/admin/horeca/page.tsx"],
+          "buttons": ["Tambah HORECA", "Edit icon", "Delete icon", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-4.3",
+          "summary": "Admin Vendors CRUD",
+          "description": "CRUD vendor (nama, kontak person, telepon, verified). Modal form: tipe vendor, nama, kontak person, telepon, email, area layanan, verified, active.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "master-data"],
+          "files": ["src/app/admin/vendors/page.tsx"],
+          "buttons": ["Tambah Vendor", "Edit icon", "Delete icon", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-4.4",
+          "summary": "Master Module (Repository Layer Only)",
+          "description": "7 tabel master (destinationCategories, destinations, horecaTypes, horeca, vendorTypes, vendors, media). Full CRUD repository. Belum ada service atau controller layer.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["module", "backend", "master-data"],
+          "files": ["src/modules/master/"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-5",
+      "name": "Booking & Payment",
+      "priority": "Highest",
+      "description": "Booking flow multi-participant, payment gateway, promo code integration",
+      "issues": [
+        {
+          "id": "OTL-5.1",
+          "summary": "Halaman Booking Form",
+          "description": "Header card (trip title, tanggal, type), BookingForm client component untuk pilih jumlah tiket per price tier, input nama + telepon, submit booking.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["page", "frontend", "booking"],
+          "files": ["src/app/booking/page.tsx"],
+          "buttons": ["Link Kembali ke Destinasi → /trips", "+/- quantity per tiket", "Input nama", "Input telepon", "Button Submit booking"]
+        },
+        {
+          "id": "OTL-5.2",
+          "summary": "Halaman Payment",
+          "description": "Menampilkan kode booking, status, total amount, list item booking. PaymentForm client component dengan pilihan metode pembayaran (transfer_manual / midtrans).",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["page", "frontend", "payment"],
+          "files": ["src/app/booking/[id]/payment/page.tsx"],
+          "buttons": ["Select metode pembayaran", "Input detail transfer manual", "Button Konfirmasi Pembayaran"]
+        },
+        {
+          "id": "OTL-5.3",
+          "summary": "Halaman Booking Sukses",
+          "description": "Halaman konfirmasi sukses booking dengan link jelajahi trip lain.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "frontend", "booking"],
+          "files": ["src/app/booking/[id]/success/page.tsx"],
+          "buttons": ["Link Jelajahi Trip Lain → /trips"]
+        },
+        {
+          "id": "OTL-5.4",
+          "summary": "Booking Module (Schema + Repository + Service + Controller)",
+          "description": "5 tabel (bookings, bookingItems, bookingParticipants, healthDeclarations, termsAcceptances). Repository: findById, findByUserId, create, update, createItems. Service: createBooking dengan validasi quota, generate kode OTL-XXXXXX, kalkulasi total. Controller: create endpoint (masih pake x-user-id legacy pattern).",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["module", "backend", "booking"],
+          "files": ["src/modules/booking/"]
+        },
+        {
+          "id": "OTL-5.5",
+          "summary": "Payment Module (Schema + Repository + Service + Controller)",
+          "description": "3 tabel (payments dengan idempotencyKey unique, paymentWebhookEvents, refunds). Service: createPayment with idempotency key, confirmPayment atomic update. Controller minimal.",
+          "status": "In Review",
+          "priority": "Highest",
+          "assignee": "System",
+          "labels": ["module", "backend", "payment"],
+          "files": ["src/modules/payment/"]
+        },
+        {
+          "id": "OTL-5.6",
+          "summary": "Integrasi Midtrans/Xendit Payment Gateway",
+          "description": "Integrasi payment gateway sungguhan dengan webhook idempotency, atomic status updates. Schema sudah siap (paymentWebhookEvents, refunds).",
+          "status": "To Do",
+          "priority": "Highest",
+          "assignee": "Unassigned",
+          "labels": ["feature", "payment", "integration", "missing"],
+          "files": ["src/modules/payment/"],
+          "depends_on": ["OTL-5.5"]
+        },
+        {
+          "id": "OTL-5.7",
+          "summary": "Payment Webhook Endpoint",
+          "description": "POST /api/payments/webhook untuk menerima callback dari payment gateway. Tabel paymentWebhookEvents sudah siap.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["api", "payment", "missing"],
+          "depends_on": ["OTL-5.6"]
+        },
+        {
+          "id": "OTL-5.8",
+          "summary": "Refund System",
+          "description": "Refund management dengan status tracking. Schema refunds sudah ada.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "payment", "missing"],
+          "files": ["src/modules/payment/payment.schema.ts (refunds table exists)"],
+          "depends_on": ["OTL-5.6"]
+        },
+        {
+          "id": "OTL-5.9",
+          "summary": "Promo Code Integration di Booking",
+          "description": "Integrasi applyPromo service ke booking flow. Service promotion sudah lengkap (validasi kode, hitung diskon, usage limit, max discount). Belum ada endpoint API atau UI.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["feature", "booking", "promotion", "missing"],
+          "files": ["src/modules/promotion/"],
+          "depends_on": ["OTL-5.1"]
+        },
+        {
+          "id": "OTL-5.10",
+          "summary": "Booking Participants & Health Declaration",
+          "description": "Manajemen peserta booking multi-participant dengan health declaration dan terms acceptance. Schema sudah lengkap (bookingParticipants, healthDeclarations, termsAcceptances).",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["feature", "booking", "missing"],
+          "files": ["src/modules/booking/booking.schema.ts"],
+          "depends_on": ["OTL-5.1"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-6",
+      "name": "Promotion Module",
+      "priority": "High",
+      "description": "Promo codes, diskon, usage tracking",
+      "issues": [
+        {
+          "id": "OTL-6.1",
+          "summary": "Admin Promotions CRUD",
+          "description": "CRUD promo (kode, tipe diskon persentase/nominal, nilai diskon, judul, min purchase, maks diskon, batas pemakaian, active).",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "promotion"],
+          "files": ["src/app/admin/promotions/page.tsx"],
+          "buttons": ["Tambah Promo", "Edit icon", "Delete icon", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-6.2",
+          "summary": "Promotion Module (Schema + Repository + Service)",
+          "description": "Schema: promotions, promotionUsages. Repository: CRUD, findByCode, incrementUsage atomic, recordUsage. Service: applyPromo dengan validasi lengkap. Controller belum ada — perlu endpoint POST /api/promotions/validate.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["module", "backend", "promotion"],
+          "files": ["src/modules/promotion/"]
+        },
+        {
+          "id": "OTL-6.3",
+          "summary": "Promotion Validation API Endpoint",
+          "description": "Service applyPromo sudah lengkap. Perlu endpoint POST /api/promotions/validate untuk validasi kode dari frontend booking.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["api", "promotion", "missing"],
+          "files": ["src/modules/promotion/promotion.service.ts (exists)"],
+          "depends_on": ["OTL-6.2"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-7",
+      "name": "Referral & Agent System",
+      "priority": "Medium",
+      "description": "Agent referral program, commissions, loyalty points",
+      "issues": [
+        {
+          "id": "OTL-7.1",
+          "summary": "Agent Dashboard",
+          "description": "Stat cards: jumlah referral, komisi tertunda, komisi dibayar. Referral link + copy button. Riwayat komisi table.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["page", "frontend", "agent"],
+          "files": ["src/app/agent/page.tsx"],
+          "buttons": ["CopyButton untuk referral link"]
+        },
+        {
+          "id": "OTL-7.2",
+          "summary": "Referral Module (Schema + Repository + Service)",
+          "description": "6 tabel (commissionRules, referrals, commissions, commissionPayouts, payoutCommissions, loyaltyTransactions). Repository: CRUD referrals & commissions, findByReferrer, getCommissionsByAgent. Service: getAgentCommissions minimal. Controller belum ada.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["module", "backend", "referral"],
+          "files": ["src/modules/referral/"]
+        },
+        {
+          "id": "OTL-7.3",
+          "summary": "Commission Payout System (API)",
+          "description": "Endpoint untuk payout komisi agent. Schema commissionPayouts + payoutCommissions sudah ada.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "referral", "missing"],
+          "files": ["src/modules/referral/referral.schema.ts"],
+          "depends_on": ["OTL-7.2"]
+        },
+        {
+          "id": "OTL-7.4",
+          "summary": "Admin Commissions CRUD",
+          "description": "CRUD komisi (agen ID, booking ID, jumlah, status pending/approved/paid/rejected).",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["page", "admin", "commission"],
+          "files": ["src/app/admin/commissions/page.tsx"],
+          "buttons": ["Tambah Komisi", "Edit icon", "Delete icon", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-7.5",
+          "summary": "Loyalty Points System",
+          "description": "Loyalty transactions tracking + redeem. Schema loyaltyTransactions sudah ada. Service & controller belum.",
+          "status": "To Do",
+          "priority": "Low",
+          "assignee": "Unassigned",
+          "labels": ["feature", "referral", "missing"],
+          "files": ["src/modules/referral/referral.schema.ts (loyaltyTransactions exists)"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-8",
+      "name": "Blog System",
+      "priority": "Medium",
+      "description": "Blog CRUD, categories, public listing",
+      "issues": [
+        {
+          "id": "OTL-8.1",
+          "summary": "Blog Publik — Listing & Detail",
+          "description": "List artikel blog (published, order by publishedAt desc, limit 20). Grid card: title, excerpt, tanggal. Detail: judul, tanggal publish, konten.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["page", "frontend", "blog", "public"],
+          "files": ["src/app/blog/page.tsx", "src/app/blog/[slug]/page.tsx"],
+          "buttons": ["Link card per blog → /blog/{slug}"]
+        },
+        {
+          "id": "OTL-8.2",
+          "summary": "Admin Blog CRUD",
+          "description": "CRUD blog (judul, slug, ringkasan, konten, status draft/published).",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["page", "admin", "blog"],
+          "files": ["src/app/admin/blogs/page.tsx"],
+          "buttons": ["Tambah Blog", "Edit icon", "Delete icon", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-8.3",
+          "summary": "Blog Module (Schema + Repository + Service)",
+          "description": "Schema: blogs (9 kolom), blogCategories. Repository: CRUD, findAllPublished, findBySlug. Service: getPublishedBlogs, getBlogBySlug (read-only). Controller belum ada.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["module", "backend", "blog"],
+          "files": ["src/modules/blog/"]
+        },
+        {
+          "id": "OTL-8.4",
+          "summary": "Blog Categories Management",
+          "description": "Schema blogCategories sudah ada. Belum ada repository methods, service, atau UI untuk manage kategori blog.",
+          "status": "To Do",
+          "priority": "Low",
+          "assignee": "Unassigned",
+          "labels": ["feature", "blog", "missing"],
+          "files": ["src/modules/blog/blog.schema.ts (blogCategories exists)"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-9",
+      "name": "Review & Rating",
+      "priority": "Medium",
+      "description": "Reviews, ratings, media, moderation",
+      "issues": [
+        {
+          "id": "OTL-9.1",
+          "summary": "Admin Reviews CRUD",
+          "description": "Table ulasan (rating, konten, status, featured). Modal edit status (pending/approved/rejected) + featured flag.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["page", "admin", "review"],
+          "files": ["src/app/admin/reviews/page.tsx"],
+          "buttons": ["Edit icon per row", "Delete icon", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-9.2",
+          "summary": "Review Module (Schema + Repository + Service + Controller)",
+          "description": "Schema: reviews, reviewMedia. Repository: CRUD, findByTripId. Service: createReview. Controller: create endpoint.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["module", "backend", "review"],
+          "files": ["src/modules/review/"]
+        },
+        {
+          "id": "OTL-9.3",
+          "summary": "Review Display on Trip Detail (Public)",
+          "description": "Menampilkan review & rating di halaman detail trip publik.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "frontend", "review", "missing"],
+          "depends_on": ["OTL-3.3"]
+        },
+        {
+          "id": "OTL-9.4",
+          "summary": "Review Submission Form (User)",
+          "description": "Form untuk user submit review setelah booking completed.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "frontend", "review", "missing"]
+        },
+        {
+          "id": "OTL-9.5",
+          "summary": "Review Moderation API",
+          "description": "Endpoint PATCH /api/reviews/[id]/moderate untuk approve/reject review.",
+          "status": "To Do",
+          "priority": "Low",
+          "assignee": "Unassigned",
+          "labels": ["api", "review", "missing"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-10",
+      "name": "Private Trip (Lengkap — Semua In Review)",
+      "priority": "High",
+      "description": "Private trip request, admin review, proposals, user response — full state machine implementation",
+      "issues": [
+        {
+          "id": "OTL-10.1",
+          "summary": "Private Trip Request Form (Public)",
+          "description": "Form multi-field: Judul, Durasi, Peserta, Destinasi, Budget, Kebutuhan Khusus. Validasi client-side, redirect ke login jika belum login, success screen.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "frontend", "private-trip"],
+          "files": ["src/app/private-trip/page.tsx"],
+          "buttons": [
+            "Input judul", "Input durasi (number)", "Input peserta (number)",
+            "Textarea destinasi", "Input budget (formatted rupiah)",
+            "Textarea kebutuhan khusus", "Button Ajukan Private Trip"
+          ]
+        },
+        {
+          "id": "OTL-10.2",
+          "summary": "Private Trip API Endpoints",
+          "description": "POST /api/private-trip, GET /api/private-trip, GET /api/private-trip/[id], PATCH /api/private-trip/[id]/proposal. Auth via Better Auth session.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["api", "backend", "private-trip"],
+          "files": ["src/app/api/private-trip/"]
+        },
+        {
+          "id": "OTL-10.3",
+          "summary": "Admin Private Trip Management",
+          "description": "List page dengan status filter + search. Detail page dengan action buttons: Tandai Sudah Ditinjau, Buat Proposal, Tolak.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "private-trip"],
+          "files": ["src/app/admin/private-trips/page.tsx", "src/app/admin/private-trips/[id]/page.tsx"],
+          "buttons": [
+            "Select filter status", "Input search", "Link Lihat Detail per row",
+            "Button Tandai Sudah Ditinjau", "Button Buat Proposal",
+            "Button Kirim/Perbarui Proposal", "Button Tolak",
+            "Modal: textareas, input number, Kirim Proposal, Batal"
+          ]
+        },
+        {
+          "id": "OTL-10.4",
+          "summary": "Private Trip Proposal & State Machine",
+          "description": "State machine: submitted→reviewed/rejected, reviewed→approved/rejected/revision, revision→reviewed/rejected. Admin create proposal auto-advances submitted→reviewed. User can accept/reject/revise proposal.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["service", "backend", "private-trip"],
+          "files": ["src/modules/private-trip/private-trip.service.ts"]
+        },
+        {
+          "id": "OTL-10.5",
+          "summary": "Private Trip Module (Full 4-layer)",
+          "description": "Schema (3 tabel + indexes + FKs), Repository (CRUD + pagination + search), Service (state machine), Controller (7 methods with Better Auth). Modul paling lengkap di codebase.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["module", "backend", "private-trip"],
+          "files": ["src/modules/private-trip/"]
+        },
+        {
+          "id": "OTL-10.6",
+          "summary": "User Private Trip Dashboard (Profile Tab)",
+          "description": "Profile tab 'Private Trip Saya' dengan request list, status badges, detail view, proposal accept/reject/revise actions.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["feature", "frontend", "private-trip", "profile"],
+          "files": ["src/app/profile/profile-client.tsx"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-11",
+      "name": "Contact & Communication",
+      "priority": "Medium",
+      "description": "Contact form, audit logs, notifications",
+      "issues": [
+        {
+          "id": "OTL-11.1",
+          "summary": "Contact Form (Public + API)",
+          "description": "Form kontak publik + API endpoint POST /api/contact. Schema: contactMessages. Full 4-layer module (schema, repository, service, controller).",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["feature", "backend", "contact"],
+          "files": ["src/modules/contact/", "src/app/api/contact/route.ts"]
+        },
+        {
+          "id": "OTL-11.2",
+          "summary": "Audit Log System",
+          "description": "Tabel auditLogs sudah ada di schema. Belum ada repository, service, atau integration di modul lain.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "infrastructure", "missing"],
+          "files": ["src/modules/contact/contact.schema.ts (auditLogs table exists)"]
+        },
+        {
+          "id": "OTL-11.3",
+          "summary": "Email/WhatsApp Notifications",
+          "description": "Notifikasi untuk booking confirmation, payment reminder, private trip updates. Belum ada implementasi.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "notification", "missing"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-12",
+      "name": "Admin Dashboard & Infrastructure",
+      "priority": "High",
+      "description": "Admin layout, dashboard KPI, CRUD pages, navigation",
+      "issues": [
+        {
+          "id": "OTL-12.1",
+          "summary": "Admin Layout & Sidebar Navigation",
+          "description": "Sidebar 10 menu: Dashboard, Paket Trip, Destinasi, HORECA, Vendor, Promo, Komisi, Ulasan, Blog, Private Trip. Topbar: search admin, notifikasi bell, profile dropdown. Auto-hide Navbar.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["component", "admin", "frontend"],
+          "files": ["src/app/admin/layout.tsx"],
+          "buttons": ["Sidebar nav links (10 items)", "Search input admin", "Notification bell", "Profile dropdown", "Kembali ke Website Utama"]
+        },
+        {
+          "id": "OTL-12.2",
+          "summary": "Admin Dashboard Page",
+          "description": "Welcome header, 4 KPI cards (Total Paket Trip: 24, Pemesanan Bln Ini: 148, Total Pendapatan: Rp128.5M, Promo Aktif: 6), recent bookings table (3 rows), quick actions.",
+          "status": "In Review",
+          "priority": "High",
+          "assignee": "System",
+          "labels": ["page", "admin", "dashboard"],
+          "files": ["src/app/admin/page.tsx"],
+          "buttons": [
+            "Link Buat Trip Baru → /admin/trips/new",
+            "Link Lihat Semua → /admin/trips",
+            "Link Kelola Paket Trip → /admin/trips",
+            "Link Tambah Destinasi Baru → /admin/destinations",
+            "Link Buat Kode Kupon/Promo → /admin/promotions"
+          ]
+        },
+        {
+          "id": "OTL-12.3",
+          "summary": "Admin Galleries CRUD",
+          "description": "CRUD galeri trip (judul, trip ID, status public/private, tanggal). Modal form: trip ID, judul, deskripsi, private/public.",
+          "status": "In Review",
+          "priority": "Medium",
+          "assignee": "System",
+          "labels": ["page", "admin", "gallery"],
+          "files": ["src/app/admin/galleries/page.tsx"],
+          "buttons": ["Tambah Galeri", "Edit icon", "Delete icon", "Simpan", "Batal"]
+        },
+        {
+          "id": "OTL-12.4",
+          "summary": "RBAC — Role-Based Access Control",
+          "description": "Schema users sudah punya field role (user/agent/admin). Semua API route saat ini 100% tanpa auth middleware. Perlu implementasi RBAC.",
+          "status": "To Do",
+          "priority": "Highest",
+          "assignee": "Unassigned",
+          "labels": ["security", "infrastructure", "missing", "critical"],
+          "evidence": "57 endpoint — 0 dengan auth middleware"
+        },
+        {
+          "id": "OTL-12.5",
+          "summary": "API Auth Middleware (CRITICAL)",
+          "description": "Semua 57 API endpoint saat ini public tanpa autentikasi. Perlu middleware untuk protect admin & user endpoints dengan Better Auth session. Prioritas tertinggi untuk security.",
+          "status": "To Do",
+          "priority": "Highest",
+          "assignee": "Unassigned",
+          "labels": ["security", "infrastructure", "missing", "critical"],
+          "files": [],
+          "evidence": "100% route tanpa auth — zero protection"
+        },
+        {
+          "id": "OTL-12.6",
+          "summary": "File Upload System (Media/Gallery)",
+          "description": "Upload image untuk trip gallery, review media, blog cover. Schema media sudah ada. Belum ada endpoint upload.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["feature", "infrastructure", "missing"],
+          "files": ["src/modules/master/master.schema.ts (media table exists)"]
+        }
+      ]
+    },
+    {
+      "id": "OTL-13",
+      "name": "Missing UI Components & UX Improvements",
+      "priority": "Medium",
+      "description": "Shared component library, states, responsiveness",
+      "issues": [
+        {
+          "id": "OTL-13.1",
+          "summary": "Shared UI Component Library",
+          "description": "Belum ada komponen reusable seperti Button, Input, Card, Modal (digunakan inline di setiap halaman), Loading/Spinner, Badge. Perlu dibuat shared components.",
+          "status": "To Do",
+          "priority": "High",
+          "assignee": "Unassigned",
+          "labels": ["component", "frontend", "missing"],
+          "evidence": "Saat ini hanya ada 4 komponen: Navbar, Footer, ConditionalFooter, CopyButton"
+        },
+        {
+          "id": "OTL-13.2",
+          "summary": "Loading States & Skeleton Screens",
+          "description": "Belum ada loading states, skeleton, atau spinner di halaman publik (kecuali private-trip form).",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["ux", "frontend", "missing"]
+        },
+        {
+          "id": "OTL-13.3",
+          "summary": "Empty States & Error Boundaries",
+          "description": "Belum ada empty states untuk list kosong (trips, blog, booking history) atau error boundaries untuk error handling.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["ux", "frontend", "missing"]
+        },
+        {
+          "id": "OTL-13.4",
+          "summary": "Pencarian & Filter Lanjutan (FTS)",
+          "description": "Search full-text untuk trips dan blog. Saat ini hanya search sederhana via query params.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["feature", "frontend", "search", "missing"]
+        },
+        {
+          "id": "OTL-13.5",
+          "summary": "Mobile Responsiveness",
+          "description": "Perlu audit & improvement untuk tampilan mobile di semua halaman.",
+          "status": "To Do",
+          "priority": "Medium",
+          "assignee": "Unassigned",
+          "labels": ["ux", "frontend", "responsive", "missing"]
+        },
+        {
+          "id": "OTL-13.6",
+          "summary": "FAQ Page",
+          "description": "Link FAQ di Navbar tapi belum ada halaman FAQ.",
+          "status": "To Do",
+          "priority": "Low",
+          "assignee": "Unassigned",
+          "labels": ["page", "frontend", "missing"],
+          "evidence": "Link FAQ ada di Navbar tapi route /faq belum ada"
+        },
+        {
+          "id": "OTL-13.7",
+          "summary": "Tentang Kami Page",
+          "description": "Link Tentang di Navbar tapi belum ada halaman About.",
+          "status": "To Do",
+          "priority": "Low",
+          "assignee": "Unassigned",
+          "labels": ["page", "frontend", "missing"],
+          "evidence": "Link Tentang ada di Navbar tapi route /about belum ada"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_epics": 13,
+    "total_issues": 72,
+    "by_status": {
+      "In Review": 41,
+      "To Do": 27,
+      "In Progress": 0,
+      "Blocked": 0
+    },
+    "by_priority": {
+      "Highest": 16,
+      "High": 21,
+      "Medium": 19,
+      "Low": 4
+    },
+    "codebase_stats": {
+      "pages": 29,
+      "api_endpoints": 57,
+      "database_tables": 52,
+      "modules": 11,
+      "components": 4,
+      "test_suites": 65,
+      "tests_passing": 280
+    }
+  }
+}

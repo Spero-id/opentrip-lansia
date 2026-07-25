@@ -1,0 +1,684 @@
+erDiagram
+    %% ====================================================================
+    %% ERD REVISI v2 - Trip Booking Platform
+    %% Perubahan utama vs v1:
+    %%   1. trips dipecah: trips (produk) + trip_departures (keberangkatan)
+    %%   2. booking_items: 1 booking bisa campur beberapa tarif (dewasa/anak)
+    %%   3. itinerary_items: 2 FK nullable + CHECK, bukan polymorphic
+    %%   4. Junction tables punya composite PK
+    %%   5. health_declarations 1:1 dengan participant (UNIQUE)
+    %%   6. Tabel baru: refunds, payment_webhook_events, commission_rules,
+    %%      auth_tokens, review_media
+    %%   7. Lookup tables menggantikan enum untuk data bisnis yang bertumbuh
+    %%   8. Semua PK uuid = UUIDv7 (time-ordered), kolom uang NUMERIC(14,2)
+    %% ====================================================================
+
+    %% ====================================================================
+    %% MASTER DATA
+    %% ====================================================================
+
+    users {
+        uuid id PK "UUIDv7"
+        varchar email UK
+        varchar password_hash
+        varchar full_name
+        varchar phone
+        text avatar_url
+        enum role "admin|agent|user - state stabil, enum OK"
+        varchar referral_code UK
+        uuid referred_by FK "self-reference ke users.id"
+        int loyalty_points "CACHE - direkonsiliasi dari loyalty_transactions"
+        boolean is_verified
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    profiles {
+        uuid id PK
+        uuid user_id FK "UNIQUE - 1:1 dengan users"
+        date date_of_birth
+        enum gender "L|P"
+        text address
+        text emergency_contact
+        text medical_notes "ENKRIPSI column-level - data pribadi spesifik UU PDP"
+        jsonb preferences
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    auth_tokens {
+        uuid id PK
+        uuid user_id FK
+        varchar token_hash UK "simpan HASH, bukan token mentah"
+        enum type "password_reset|email_verification"
+        timestamp expires_at
+        timestamp used_at "NULL = belum dipakai"
+        timestamp created_at
+    }
+
+    user_sessions {
+        uuid id PK
+        uuid user_id FK
+        varchar token_hash UK "simpan HASH, bukan token mentah"
+        timestamp expires_at "INDEX - untuk job pembersihan harian"
+        timestamp created_at
+    }
+
+    destination_categories {
+        uuid id PK
+        varchar name "alam, budaya, religi, kuliner, sejarah, hiburan, ..."
+        varchar slug UK
+        boolean is_active
+    }
+
+    destinations {
+        uuid id PK
+        varchar name
+        varchar slug UK
+        text description
+        text location
+        geography geo_point "PostGIS Point + GiST index, ganti lat/lng decimal"
+        uuid category_id FK "lookup table, bukan enum"
+        enum difficulty_level "mudah|sedang|berat"
+        text accessibility_info
+        boolean is_active
+        int visit_estimate_minutes
+        tsvector search_vector "GENERATED - GIN index untuk full-text search"
+        timestamp created_at
+    }
+
+    horeca_types {
+        uuid id PK
+        varchar name "hotel, restaurant, cafe, rumah_makan, ..."
+        varchar slug UK
+        boolean is_active
+    }
+
+    horeca {
+        uuid id PK
+        uuid type_id FK "lookup table, bukan enum"
+        varchar name
+        enum star_category "bintang_1..bintang_5|non_bintang"
+        text address
+        varchar phone
+        geography geo_point "PostGIS Point + GiST index"
+        decimal rating "CACHE - direkonsiliasi dari reviews"
+        jsonb facilities "GIN index jika perlu difilter"
+        varchar price_range
+        boolean is_accessible_for_elderly
+        boolean is_active
+        timestamp created_at
+    }
+
+    vendor_types {
+        uuid id PK
+        varchar name "transportasi, tour_guide, catering, dokter, fotografer, ..."
+        varchar slug UK
+        boolean is_active
+    }
+
+    vendors {
+        uuid id PK
+        uuid type_id FK "lookup table, bukan enum"
+        varchar name
+        varchar contact_person
+        varchar phone
+        varchar email
+        text service_area
+        boolean is_verified
+        decimal rating "CACHE - direkonsiliasi dari penilaian"
+        numeric price_per_day "NUMERIC(14,2)"
+        char currency "default IDR"
+        boolean is_active
+        timestamp created_at
+    }
+
+    media {
+        uuid id PK
+        varchar filename
+        varchar url
+        enum type "image|video"
+        int width
+        int height
+        int file_size
+        timestamp created_at
+    }
+
+    %% ====================================================================
+    %% TRIP: PRODUK vs KEBERANGKATAN (perubahan paling penting)
+    %% trips = katalog/paket (tanpa tanggal)
+    %% trip_departures = jadwal keberangkatan spesifik (dengan tanggal & kuota)
+    %% ====================================================================
+
+    trips {
+        uuid id PK
+        enum type "open_trip|private_trip"
+        varchar title
+        varchar slug UK
+        text description
+        int duration_days
+        enum status "draft|published|archived"
+        uuid thumbnail_id FK "ke media.id"
+        uuid source_request_id FK "NULLABLE - jejak asal dari private_trip_requests"
+        boolean is_featured "partial index WHERE is_featured = true"
+        tsvector search_vector "GENERATED - GIN index"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    trip_departures {
+        uuid id PK "UUIDv7"
+        uuid trip_id FK
+        date start_date "INDEX (trip_id, start_date)"
+        date end_date
+        int max_participants
+        int min_participants
+        enum status "scheduled|confirmed|ongoing|completed|cancelled"
+        text notes
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    trip_prices {
+        uuid id PK
+        uuid departure_id FK "harga melekat ke KEBERANGKATAN, bukan trip"
+        varchar name "Dewasa / Anak / Early Bird"
+        numeric price "NUMERIC(14,2)"
+        char currency "default IDR"
+        int quota
+        int quota_booked "UPDATE ATOMIK - lihat panduan race condition"
+        date valid_from
+        date valid_until
+        boolean is_active
+    }
+
+    trip_destinations {
+        uuid trip_id PK,FK "composite PK (trip_id, destination_id, day_order)"
+        uuid destination_id PK,FK
+        int day_order PK
+        int duration_hours
+        text notes
+    }
+
+    trip_horeca {
+        uuid trip_id PK,FK "composite PK (trip_id, horeca_id, night_number, meal_type)"
+        uuid horeca_id PK,FK
+        int night_number PK
+        enum meal_type PK "breakfast|lunch|dinner|stay"
+    }
+
+    trip_vendors {
+        uuid trip_id PK,FK "composite PK (trip_id, vendor_id, service_type)"
+        uuid vendor_id PK,FK
+        enum service_type PK "transport|guide|catering|medical|photo"
+        numeric cost "NUMERIC(14,2)"
+    }
+
+    itinerary_items {
+        uuid id PK
+        uuid trip_id FK
+        int day_number
+        time start_time
+        time end_time
+        varchar title
+        text description
+        uuid destination_id FK "NULLABLE"
+        uuid horeca_id FK "NULLABLE - CHECK: tepat satu dari kedua FK terisi (atau keduanya NULL utk free time)"
+    }
+
+    trip_media {
+        uuid trip_id PK,FK "composite PK (trip_id, media_id)"
+        uuid media_id PK,FK
+        int sort_order
+        boolean is_cover
+    }
+
+    trip_galleries {
+        uuid id PK
+        uuid trip_id FK
+        uuid departure_id FK "NULLABLE - galeri bisa spesifik per keberangkatan"
+        varchar title
+        text description
+        boolean is_private
+        timestamp created_at
+    }
+
+    gallery_media {
+        uuid id PK
+        uuid gallery_id FK
+        uuid media_id FK
+        uuid uploaded_by FK
+        int sort_order
+        timestamp created_at
+    }
+
+    %% ====================================================================
+    %% BOOKING & PAYMENT
+    %% booking_items memungkinkan 1 booking berisi campuran tarif
+    %% ====================================================================
+
+    bookings {
+        uuid id PK "UUIDv7 - tabel insert-heavy"
+        varchar booking_code UK
+        uuid user_id FK "INDEX (user_id, status)"
+        uuid departure_id FK "INDEX (departure_id, status) - booking ke KEBERANGKATAN"
+        enum status "pending|confirmed|cancelled|completed|refunded"
+        int total_participants
+        numeric subtotal "NUMERIC(14,2)"
+        numeric discount_amount
+        numeric total_amount
+        char currency "default IDR"
+        uuid promo_id FK "NULLABLE"
+        text notes
+        timestamp booking_date
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    booking_items {
+        uuid id PK
+        uuid booking_id FK
+        uuid trip_price_id FK
+        int quantity
+        numeric unit_price "SNAPSHOT harga saat booking - jangan join ke trip_prices utk nominal historis"
+        numeric subtotal
+    }
+
+    booking_participants {
+        uuid id PK
+        uuid booking_id FK
+        uuid booking_item_id FK "NULLABLE - tarif mana yang dipakai peserta ini"
+        varchar full_name
+        varchar phone
+        date date_of_birth
+        enum gender "L|P"
+        text address
+        boolean is_primary
+        timestamp created_at
+    }
+
+    health_declarations {
+        uuid id PK
+        uuid participant_id FK "UNIQUE - 1:1 dengan participant. ENKRIPSI at-rest"
+        boolean has_heart_disease
+        boolean has_hypertension
+        boolean has_diabetes
+        boolean has_asthma
+        boolean has_allergies
+        text other_conditions
+        boolean needs_wheelchair
+        boolean needs_walking_stick
+        text medications
+        boolean is_declared_true
+        timestamp signed_at
+    }
+
+    terms_acceptances {
+        uuid id PK
+        uuid booking_id FK
+        uuid participant_id FK
+        varchar terms_version
+        boolean is_accepted
+        timestamp accepted_at
+    }
+
+    payments {
+        uuid id PK "UUIDv7 - partisi per bulan by created_at saat besar"
+        uuid booking_id FK
+        varchar transaction_id UK
+        varchar idempotency_key UK "cegah webhook ganda dari gateway"
+        enum method "transfer_manual|midtrans|xendit|doku"
+        numeric amount "NUMERIC(14,2)"
+        char currency "default IDR"
+        enum status "pending|success|failed|expired - partial index WHERE status='pending'"
+        jsonb gateway_response
+        timestamp expired_at "batas waktu pembayaran"
+        timestamp paid_at
+        timestamp created_at
+    }
+
+    payment_webhook_events {
+        uuid id PK "UUIDv7 - simpan payload mentah agar bisa replay"
+        uuid payment_id FK "NULLABLE - bisa datang sebelum ter-mapping"
+        varchar gateway "midtrans|xendit|doku"
+        varchar external_id
+        jsonb raw_payload
+        enum process_status "received|processed|failed|ignored"
+        timestamp received_at
+        timestamp processed_at
+    }
+
+    refunds {
+        uuid id PK
+        uuid booking_id FK
+        uuid payment_id FK
+        numeric amount "NUMERIC(14,2)"
+        char currency "default IDR"
+        text reason
+        enum status "requested|approved|rejected|processed"
+        uuid requested_by FK "users.id"
+        uuid approved_by FK "NULLABLE - admin users.id"
+        varchar refund_reference "no. referensi transfer/gateway"
+        timestamp approved_at
+        timestamp processed_at
+        timestamp created_at
+    }
+
+    %% ====================================================================
+    %% REVIEWS
+    %% ====================================================================
+
+    reviews {
+        uuid id PK
+        uuid booking_id FK "UNIQUE - 1 review per booking"
+        uuid user_id FK
+        uuid trip_id FK "INDEX (trip_id, status) - agregat rating di level PRODUK"
+        uuid departure_id FK "NULLABLE - konteks keberangkatan mana"
+        int rating "CHECK rating BETWEEN 1 AND 5"
+        text content
+        boolean is_verified_purchase
+        boolean is_featured
+        enum status "pending|approved|rejected"
+        timestamp created_at
+    }
+
+    review_media {
+        uuid review_id PK,FK "composite PK - ganti jsonb media_urls"
+        uuid media_id PK,FK
+        int sort_order
+    }
+
+    %% ====================================================================
+    %% REFERRAL, COMMISSION & LOYALTY
+    %% commission_amount DIHAPUS dari referrals - single source of truth
+    %% ada di tabel commissions, dihitung dari commission_rules
+    %% ====================================================================
+
+    commission_rules {
+        uuid id PK
+        uuid agent_id FK "NULLABLE - NULL berarti rule default global"
+        uuid trip_id FK "NULLABLE - NULL berarti berlaku semua trip"
+        enum type "percentage|nominal"
+        numeric value
+        date valid_from
+        date valid_until
+        boolean is_active
+        timestamp created_at
+    }
+
+    referrals {
+        uuid id PK
+        uuid referrer_id FK
+        uuid referred_user_id FK
+        uuid booking_id FK "NULLABLE"
+        enum status "pending|converted|paid"
+        timestamp created_at
+    }
+
+    commissions {
+        uuid id PK
+        uuid agent_id FK "INDEX (agent_id, status)"
+        uuid referral_id FK "NULLABLE"
+        uuid booking_id FK
+        uuid rule_id FK "rule yang dipakai saat hitung - auditable"
+        numeric amount "NUMERIC(14,2) - SNAPSHOT hasil perhitungan"
+        enum status "pending|approved|paid|cancelled"
+        timestamp approved_at
+        timestamp paid_at
+        timestamp created_at
+    }
+
+    commission_payouts {
+        uuid id PK
+        uuid agent_id FK
+        numeric amount_requested "NUMERIC(14,2)"
+        enum status "pending|approved|paid|rejected"
+        text admin_notes
+        uuid approved_by FK "admin users.id"
+        timestamp paid_at
+        timestamp created_at
+    }
+
+    payout_commissions {
+        uuid payout_id PK,FK "composite PK - komisi mana masuk payout mana"
+        uuid commission_id PK,FK
+    }
+
+    loyalty_transactions {
+        uuid id PK "UUIDv7 - INDEX (user_id, created_at DESC), partisi saat besar"
+        uuid user_id FK
+        int points "positif=earn, negatif=redeem/expire"
+        enum type "earn|redeem|expire|adjustment"
+        varchar reference_type "booking|review|manual - polymorphic OK utk log"
+        uuid reference_id
+        text description
+        timestamp expires_at "NULLABLE - untuk kebijakan poin kedaluwarsa"
+        timestamp created_at
+    }
+
+    %% ====================================================================
+    %% PROMOTIONS
+    %% ====================================================================
+
+    promotions {
+        uuid id PK
+        varchar code UK
+        varchar title
+        enum type "percentage|nominal"
+        numeric value
+        numeric min_purchase
+        numeric max_discount
+        int usage_limit
+        int usage_count "UPDATE ATOMIK - sama seperti kuota"
+        int usage_limit_per_user "batas pemakaian per user"
+        date valid_from
+        date valid_until
+        boolean is_active
+        timestamp created_at
+    }
+
+    promotion_usages {
+        uuid id PK
+        uuid promotion_id FK
+        uuid user_id FK
+        uuid booking_id FK "UNIQUE - 1 promo per booking"
+        timestamp used_at
+    }
+
+    %% ====================================================================
+    %% BLOG & SEO
+    %% ====================================================================
+
+    blog_categories {
+        uuid id PK
+        varchar name
+        varchar slug UK
+        text description
+        timestamp created_at
+    }
+
+    blogs {
+        uuid id PK
+        varchar title
+        varchar slug UK
+        text content
+        text excerpt
+        uuid author_id FK
+        uuid category_id FK
+        uuid cover_image_id FK "ke media.id"
+        jsonb tags
+        enum status "draft|published|archived"
+        tsvector search_vector "GENERATED - GIN index"
+        timestamp published_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ====================================================================
+    %% PRIVATE TRIP
+    %% Proposal accepted -> dibuatkan record trips (source_request_id)
+    %% ====================================================================
+
+    private_trip_requests {
+        uuid id PK
+        uuid user_id FK
+        varchar title
+        int duration_days
+        int participants_count
+        text destination_preferences
+        text special_requirements
+        numeric budget_estimate "NUMERIC(14,2)"
+        enum status "draft|submitted|reviewed|approved|rejected|revision"
+        timestamp submitted_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    private_trip_destinations_requested {
+        uuid id PK
+        uuid request_id FK
+        uuid destination_id FK "NULLABLE"
+        varchar custom_destination "NULLABLE - CHECK: salah satu terisi"
+        int day_order
+        text notes
+    }
+
+    private_trip_proposals {
+        uuid id PK
+        uuid request_id FK
+        uuid admin_id FK
+        text proposal_content
+        numeric estimated_price "NUMERIC(14,2)"
+        text inclusions
+        text exclusions
+        enum status "pending|accepted|rejected|revised"
+        timestamp created_at
+    }
+
+    %% ====================================================================
+    %% LANDING PAGE & CONTACT
+    %% ====================================================================
+
+    contact_messages {
+        uuid id PK
+        varchar name
+        varchar email
+        varchar phone
+        varchar subject
+        text message
+        boolean is_read
+        timestamp created_at
+    }
+
+    %% ====================================================================
+    %% AUDIT
+    %% Partisi range per bulan by created_at. Retensi 2 tahun.
+    %% JANGAN simpan kolom medis/PII sensitif plaintext di old/new_values.
+    %% ====================================================================
+
+    audit_logs {
+        uuid id PK "UUIDv7"
+        uuid admin_id FK
+        enum action "create|update|delete|approve|reject"
+        varchar entity_type "polymorphic OK untuk log"
+        uuid entity_id
+        jsonb old_values "REDAKSI field sensitif sebelum simpan"
+        jsonb new_values "REDAKSI field sensitif sebelum simpan"
+        text description
+        timestamp created_at
+    }
+
+    %% ====================================================================
+    %% RELATIONSHIPS
+    %% ====================================================================
+
+    %% --- Users & auth ---
+    users ||--|| profiles : has
+    users ||--o{ users : "refers (referred_by)"
+    users ||--o{ auth_tokens : owns
+    users ||--o{ user_sessions : has
+    users ||--o{ bookings : makes
+    users ||--o{ reviews : writes
+    users ||--o{ blogs : authors
+    users ||--o{ referrals : "as referrer"
+    users ||--o{ commissions : "as agent"
+    users ||--o{ commission_rules : "as agent"
+    users ||--o{ commission_payouts : requests
+    users ||--o{ loyalty_transactions : owns
+    users ||--o{ private_trip_requests : submits
+    users ||--o{ gallery_media : uploads
+    users ||--o{ refunds : requests
+    users ||--o{ promotion_usages : uses
+
+    %% --- Lookup tables ---
+    destination_categories ||--o{ destinations : categorizes
+    horeca_types ||--o{ horeca : classifies
+    vendor_types ||--o{ vendors : classifies
+
+    %% --- Trip (produk) ---
+    trips ||--o{ trip_departures : schedules
+    trips ||--o{ trip_destinations : includes
+    trips ||--o{ trip_horeca : accommodates
+    trips ||--o{ trip_vendors : employs
+    trips ||--o{ itinerary_items : has
+    trips ||--o{ trip_media : has_media
+    trips ||--o{ trip_galleries : has_gallery
+    trips ||--o{ reviews : rated_in
+    trips ||--o{ commission_rules : scoped_by
+    media ||--o{ trips : thumbnails
+    private_trip_requests ||--o| trips : "converts_to (source_request_id)"
+
+    %% --- Departure (keberangkatan) ---
+    trip_departures ||--o{ trip_prices : priced_with
+    trip_departures ||--o{ bookings : receives
+    trip_departures ||--o{ trip_galleries : documented_in
+    trip_departures ||--o{ reviews : contextualizes
+
+    %% --- Master relations ---
+    destinations ||--o{ trip_destinations : included_in
+    destinations ||--o{ private_trip_destinations_requested : requested_in
+    destinations ||--o{ itinerary_items : located_at
+    horeca ||--o{ trip_horeca : booked_for
+    horeca ||--o{ itinerary_items : referenced_as
+    vendors ||--o{ trip_vendors : hired_for
+
+    %% --- Booking ---
+    bookings ||--o{ booking_items : contains
+    bookings ||--o{ booking_participants : includes
+    bookings ||--o{ payments : has
+    bookings ||--o{ terms_acceptances : requires
+    bookings ||--o| reviews : may_have
+    bookings ||--o{ referrals : may_come_from
+    bookings ||--o{ refunds : may_have
+    bookings ||--o| promotion_usages : applies
+    trip_prices ||--o{ booking_items : referenced_by
+    booking_items ||--o{ booking_participants : assigns
+    booking_participants ||--o| health_declarations : "declares (1:1)"
+
+    %% --- Payment ---
+    payments ||--o{ payment_webhook_events : receives
+    payments ||--o{ refunds : refunded_via
+
+    %% --- Media & gallery ---
+    trip_galleries ||--o{ gallery_media : contains
+    media ||--o{ trip_media : used_in
+    media ||--o{ gallery_media : in_gallery
+    media ||--o{ review_media : attached_to
+    media ||--o{ blogs : covers
+    reviews ||--o{ review_media : has
+
+    %% --- Referral & commission ---
+    referrals ||--o{ commissions : generates
+    commission_rules ||--o{ commissions : calculated_by
+    bookings ||--o{ commissions : commissioned_from
+    commission_payouts ||--o{ payout_commissions : bundles
+    commissions ||--o| payout_commissions : paid_in
+
+    %% --- Promo & blog ---
+    promotions ||--o{ promotion_usages : tracked_by
+    promotions ||--o{ bookings : applied_to
+    blog_categories ||--o{ blogs : categorizes
+
+    %% --- Private trip ---
+    private_trip_requests ||--o{ private_trip_destinations_requested : proposes
+    private_trip_requests ||--o{ private_trip_proposals : gets
