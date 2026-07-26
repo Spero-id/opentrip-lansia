@@ -9,8 +9,14 @@ export interface BookingItemInput {
   price: string;
 }
 
+export interface BookingParticipantInput {
+  fullName: string;
+  phone: string;
+  isChild: boolean;
+}
+
 export const bookingService = {
-  async createBooking(userId: UUID, departureId: UUID, items: BookingItemInput[]) {
+  async createBooking(userId: UUID, departureId: UUID, items: BookingItemInput[], participants?: BookingParticipantInput[]) {
     const totalAmount = items.reduce((s, i) => s + parseInt(i.price) * i.qty, 0);
     const totalPax = items.reduce((s, i) => s + i.qty, 0);
 
@@ -39,6 +45,17 @@ export const bookingService = {
         subtotal: String(parseInt(item.price) * item.qty),
       }))
     );
+
+    if (participants && participants.length > 0) {
+      await bookingRepository.createParticipants(
+        participants.map((p, idx) => ({
+          bookingId: booking.id,
+          fullName: p.fullName,
+          phone: p.isChild ? "" : p.phone,
+          isPrimary: idx === 0,
+        }))
+      );
+    }
 
     return booking;
   },

@@ -10,6 +10,7 @@ export interface IBookingRepository {
   update(id: UUID, data: Partial<typeof bookings.$inferInsert>): Promise<void>;
   createItems(items: (typeof bookingItems.$inferInsert)[]): Promise<void>;
   findItemsByBookingId(bookingId: UUID): Promise<(typeof bookingItems.$inferSelect)[]>;
+  createParticipants(participants: (typeof bookingParticipants.$inferInsert)[]): Promise<void>;
 }
 
 export const bookingRepository: IBookingRepository = {
@@ -37,5 +38,10 @@ export const bookingRepository: IBookingRepository = {
 
   async findItemsByBookingId(bookingId) {
     return db.select().from(bookingItems).where(eq(bookingItems.bookingId, bookingId));
+  },
+
+  async createParticipants(participants) {
+    if (participants.length === 0) return;
+    await db.insert(bookingParticipants).values(participants);
   },
 };
