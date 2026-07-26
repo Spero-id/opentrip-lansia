@@ -25,6 +25,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Beranda", href: "/" },
     { name: "Destinasi", href: "/trips" },
+    { name: "Private Trip", href: "/private-trip" },
     { name: "Tentang Kami", href: "/#tentang" },
     { name: "Kontak", href: "/#kontak" },
     { name: "Promo", href: "/#promo" },
