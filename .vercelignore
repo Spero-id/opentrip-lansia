@@ -1,0 +1,17 @@
+.git
+.github
+.claude
+.next
+node_modules
+src/__tests__
+coverage
+drizzle
+*.md
+AGENTS.md
+feature_list.json
+progress.md
+session-handoff.md
+todo.md
+design.md
+jira-export.json
+jira-skills-code
