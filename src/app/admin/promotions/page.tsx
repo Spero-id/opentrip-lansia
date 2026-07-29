@@ -105,10 +105,10 @@ export default function AdminPromotions() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Kode Promo</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola kupon diskon dan potongan harga untuk pengguna OpenTrip.</p>
+          <p className="text-sm text-slate-500 mt-1">Kelola kupon diskon dan potongan harga untuk pengguna Jelajah Memoria.</p>
         </div>
         <button
           onClick={openCreate}
@@ -175,7 +175,7 @@ export default function AdminPromotions() {
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Promo" : "Tambah Promo"} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Kode Kupon</label>
               <input name="code" value={form.code} onChange={handleChange} required
@@ -190,7 +190,7 @@ export default function AdminPromotions() {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Nilai Diskon</label>
               <input name="value" value={form.value} onChange={handleChange} required
@@ -202,7 +202,7 @@ export default function AdminPromotions() {
                 className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Min. Pembelian</label>
               <input name="minPurchase" value={form.minPurchase} onChange={handleChange}
@@ -214,7 +214,7 @@ export default function AdminPromotions() {
                 className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Batas Pemakaian</label>
               <input name="usageLimit" type="number" value={form.usageLimit ?? ""} onChange={e => setForm(prev => ({ ...prev, usageLimit: e.target.value ? Number(e.target.value) : null }))}

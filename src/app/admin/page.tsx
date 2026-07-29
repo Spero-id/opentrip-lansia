@@ -12,11 +12,11 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Dashboard Welcome Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard Overview</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Selamat datang di panel admin OpenTrip. Pantau performa bisnis dan pengelolaan destinasi secara real-time.
+            Selamat datang di panel admin Jelajah Memoria. Pantau performa bisnis dan pengelolaan destinasi secara real-time.
           </p>
         </div>
         <Link
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Table Recent Bookings */}
-        <div className="lg:col-span-8 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+        <div className="lg:col-span-8 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Pemesanan Terbaru</h2>
             <Link href="/admin/trips" className="text-xs font-semibold text-[#e06d26] hover:underline flex items-center gap-1">
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Shortcuts */}
-        <div className="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+        <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <h2 className="text-lg font-bold text-slate-900">Aksi Cepat</h2>
           
           <div className="space-y-3 text-xs">

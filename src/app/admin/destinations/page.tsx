@@ -173,10 +173,10 @@ export default function AdminDestinations() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Destinasi</h1>
-          <p className="text-sm text-slate-500 mt-1">Daftar lokasi wisata & fisik lansia yang tersedia di OpenTrip.</p>
+          <p className="text-sm text-slate-500 mt-1">Daftar lokasi wisata & fisik lansia yang tersedia di Jelajah Memoria.</p>
         </div>
         <button
           onClick={openCreate}
@@ -258,7 +258,7 @@ export default function AdminDestinations() {
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Lokasi</label>
               <input name="location" value={form.location} onChange={handleChange}
@@ -273,7 +273,7 @@ export default function AdminDestinations() {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Latitude</label>
               <input type="number" step="any"
@@ -290,7 +290,7 @@ export default function AdminDestinations() {
             </div>
           </div>
           <MapPicker latitude={latitude} longitude={longitude} onChange={handleMapChange} />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Tingkat Kesulitan</label>
               <select name="difficultyLevel" value={form.difficultyLevel} onChange={handleChange}

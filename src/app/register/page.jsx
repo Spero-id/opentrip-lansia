@@ -23,7 +23,7 @@ export default function RegisterPage() {
                         href="/"
                         className="relative z-10 flex items-center gap-2 text-[#df7224] font-bold text-lg"
                     >
-                        OpenTrip
+                        <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-10 w-auto" />
                     </Link>
 
                     <div className="relative z-10">

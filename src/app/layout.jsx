@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "OpenTrip Lansia",
+  title: "Jelajah Memoria",
   description: "Platform open trip terpercaya untuk perjalanan wisata impian Anda.",
 };
 

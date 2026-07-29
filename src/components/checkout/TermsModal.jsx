@@ -10,32 +10,32 @@ const TERMS_CONTENT = {
       {
         title: "1. Ketentuan Umum",
         content:
-          "Dengan melakukan pemesanan pada OpenTrip Lansia, Anda menyatakan telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan yang berlaku. OpenTrip Lansia adalah platform penyelenggara perjalanan wisata khusus lansia yang berkomitmen memberikan pengalaman perjalanan yang aman, nyaman, dan menyenangkan.",
+          "Dengan melakukan pemesanan pada Jelajah Memoria, Anda menyatakan telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan yang berlaku. Jelajah Memoria adalah platform penyelenggara perjalanan wisata khusus lansia yang berkomitmen memberikan pengalaman perjalanan yang aman, nyaman, dan menyenangkan.",
       },
       {
         title: "2. Prosedur Pemesanan",
         content:
-          "Pemesanan dianggap sah setelah peserta mengisi data diri dengan lengkap dan benar serta melakukan pembayaran sesuai dengan total harga yang tercantum. OpenTrip Lansia berhak membatalkan pemesanan jika data yang diberikan tidak lengkap atau tidak valid. Peserta wajib memberikan data diri yang sesuai dengan identitas resmi (KTP/Paspor) untuk keperluan tiket dan asuransi perjalanan.",
+          "Pemesanan dianggap sah setelah peserta mengisi data diri dengan lengkap dan benar serta melakukan pembayaran sesuai dengan total harga yang tercantum. Jelajah Memoria berhak membatalkan pemesanan jika data yang diberikan tidak lengkap atau tidak valid. Peserta wajib memberikan data diri yang sesuai dengan identitas resmi (KTP/Paspor) untuk keperluan tiket dan asuransi perjalanan.",
       },
       {
         title: "3. Harga & Pembayaran",
         content:
-          "Harga yang tercantum sudah termasuk biaya layanan dan belum termasuk biaya meeting point tambahan apabila ada. Pembayaran dilakukan melalui metode pembayaran yang tersedia (Virtual Account, e-Wallet, QRIS). Pembayaran harus dilakukan sebelum batas waktu yang ditentukan. OpenTrip Lansia berhak mengubah harga sewaktu-waktu dengan pemberitahuan terlebih dahulu.",
+          "Harga yang tercantum sudah termasuk biaya layanan dan belum termasuk biaya meeting point tambahan apabila ada. Pembayaran dilakukan melalui metode pembayaran yang tersedia (Virtual Account, e-Wallet, QRIS). Pembayaran harus dilakukan sebelum batas waktu yang ditentukan. Jelajah Memoria berhak mengubah harga sewaktu-waktu dengan pemberitahuan terlebih dahulu.",
       },
       {
         title: "4. Pembatalan & Refund",
         content:
-          "Pembatalan oleh peserta harus dilakukan minimal 7 hari sebelum hari keberangkatan untuk mendapatkan refund penuh. Pembatalan kurang dari 7 hari sebelum keberangkatan dikenakan biaya pembatalan sebesar 50% dari total harga. Pembatalan pada hari keberangkatan atau tidak hadir (no-show) tidak dapat dikembalikan. OpenTrip Lansia berhak membatalkan perjalanan apabila jumlah peserta tidak mencapai kuota minimum dengan memberikan refund penuh atau opsi penggantian jadwal.",
+          "Pembatalan oleh peserta harus dilakukan minimal 7 hari sebelum hari keberangkatan untuk mendapatkan refund penuh. Pembatalan kurang dari 7 hari sebelum keberangkatan dikenakan biaya pembatalan sebesar 50% dari total harga. Pembatalan pada hari keberangkatan atau tidak hadir (no-show) tidak dapat dikembalikan. Jelajah Memoria berhak membatalkan perjalanan apabila jumlah peserta tidak mencapai kuota minimum dengan memberikan refund penuh atau opsi penggantian jadwal.",
       },
       {
         title: "5. Kesehatan & Keselamatan",
         content:
-          "Peserta wajib menyampaikan kondisi kesehatan secara jujur dan lengkap. Peserta dengan kondisi kesehatan tertentu mungkin diwajibkan membawa pendamping. OpenTrip Lansia menyediakan asuransi perjalanan dasar untuk setiap peserta. Peserta disarankan memiliki asuransi kesehatan pribadi tambahan. OpenTrip Lansia tidak bertanggung jawab atas biaya pengobatan di luar cakupan asuransi yang disediakan.",
+          "Peserta wajib menyampaikan kondisi kesehatan secara jujur dan lengkap. Peserta dengan kondisi kesehatan tertentu mungkin diwajibkan membawa pendamping. Jelajah Memoria menyediakan asuransi perjalanan dasar untuk setiap peserta. Peserta disarankan memiliki asuransi kesehatan pribadi tambahan. Jelajah Memoria tidak bertanggung jawab atas biaya pengobatan di luar cakupan asuransi yang disediakan.",
       },
       {
         title: "6. Perubahan Jadwal & Rute",
         content:
-          "OpenTrip Lansia berhak melakukan perubahan jadwal, rute, atau fasilitas perjalanan apabila terjadi kondisi force majeure seperti bencana alam, cuaca buruk, kerusuhan, atau kebijakan pemerintah. Perubahan akan dikomunikasikan kepada peserta secepat mungkin. Peserta berhak membatalkan perjalanan dengan refund penuh apabila perubahan signifikan terjadi.",
+          "Jelajah Memoria berhak melakukan perubahan jadwal, rute, atau fasilitas perjalanan apabila terjadi kondisi force majeure seperti bencana alam, cuaca buruk, kerusuhan, atau kebijakan pemerintah. Perubahan akan dikomunikasikan kepada peserta secepat mungkin. Peserta berhak membatalkan perjalanan dengan refund penuh apabila perubahan signifikan terjadi.",
       },
       {
         title: "7. Tanggung Jawab Peserta",
@@ -45,7 +45,7 @@ const TERMS_CONTENT = {
       {
         title: "8. Ketentuan Lainnya",
         content:
-          "OpenTrip Lansia berhak memperbarui syarat dan ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan melalui website. Dengan melanjutkan pemesanan, Anda dianggap menyetujui versi terbaru dari syarat dan ketentuan yang berlaku.",
+          "Jelajah Memoria berhak memperbarui syarat dan ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan melalui website. Dengan melanjutkan pemesanan, Anda dianggap menyetujui versi terbaru dari syarat dan ketentuan yang berlaku.",
       },
     ],
   },

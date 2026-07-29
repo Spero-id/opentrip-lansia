@@ -22,7 +22,7 @@ export default function MarketingSection() {
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug mb-6 max-w-md">
               Kenapa Harus Pilih{" "}
-              <span className="text-[#df7224]">OpenTrip Ini</span>?
+              <span className="text-[#df7224]">Jelajah Memoria Ini</span>?
             </h2>
             <p className="text-gray-500 mb-8 max-w-md leading-relaxed">
               Kami bantu setiap perjalanan mu jadi lebih mudah, aman, dan

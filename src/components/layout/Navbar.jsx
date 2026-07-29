@@ -39,7 +39,7 @@ export default function Navbar() {
               className={`flex items-center gap-2 text-xl font-bold transition-colors ${isScrolled ? "text-gray-900" : "text-black"
                 }`}
             >
-              <span className="text-[#df7224]">Open</span>Trip
+              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-10 w-auto" />
             </Link>
           </div>
 

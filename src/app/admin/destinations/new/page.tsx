@@ -6,9 +6,9 @@ export default async function NewDestinationPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Tambah Destinasi Baru</h1>
-        <p className="text-sm text-slate-500 mt-1 mb-6">Buat lokasi wisata baru untuk OpenTrip Lansia.</p>
+        <p className="text-sm text-slate-500 mt-1 mb-6">Buat lokasi wisata baru untuk Jelajah Memoria.</p>
         <DestinationForm categories={categories} />
       </div>
     </div>

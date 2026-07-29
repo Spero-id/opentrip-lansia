@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr] gap-10">
           <div>
             <Link href="/" className="flex items-center gap-2 text-2xl font-bold mb-4">
-              <span className="text-[#df7224]">Open</span>Trip
+              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-12 w-auto" />
             </Link>
             <p className="text-white/60 text-sm leading-relaxed mb-6 max-w-xs">
               Platform open trip terpercaya buat kamu yang mau explore
@@ -153,7 +153,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/40 text-center sm:text-left">
-            &copy; {new Date().getFullYear()} OpenTrip. All rights reserved.
+            &copy; {new Date().getFullYear()} Jelajah Memoria. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-xs text-white/40">
             <a href="#" className="hover:text-white transition-colors">

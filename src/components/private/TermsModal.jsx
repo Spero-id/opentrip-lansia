@@ -8,7 +8,7 @@ const A = "#df7224";
 const TERMS_CONTENT = [
   {
     title: "1. Definisi",
-    body: `Dalam syarat dan ketentuan ini, "Kami" merujuk pada tim OpenTrip selaku penyelenggara layanan Private Trip. "Kamu" merujuk pada pemohon atau pemesan yang mengajukan request Custom Trip melalui platform ini.`,
+    body: `Dalam syarat dan ketentuan ini, "Kami" merujuk pada tim Jelajah Memoria selaku penyelenggara layanan Private Trip. "Kamu" merujuk pada pemohon atau pemesan yang mengajukan request Custom Trip melalui platform ini.`,
   },
   {
     title: "2. Ketentuan Pemesanan",
@@ -99,7 +99,7 @@ export default function TermsModal({ onAgree, onClose }) {
             </span>
             <div>
               <p className="text-sm font-semibold text-gray-900">Syarat &amp; Ketentuan</p>
-              <p className="text-[10px] text-gray-400 font-normal">Private Trip · OpenTrip</p>
+              <p className="text-[10px] text-gray-400 font-normal">Private Trip · Jelajah Memoria</p>
             </div>
           </div>
           <button

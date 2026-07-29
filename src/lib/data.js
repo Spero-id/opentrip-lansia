@@ -168,7 +168,7 @@ export const features = [
 
 export const faqs = [
   {
-    question: "Bagaimana cara booking trip di OpenTrip?",
+    question: "Bagaimana cara booking trip di Jelajah Memoria?",
     answer:
       "Pilih destinasi yang kamu mau, klik tombol Booking, isi data diri dan tanggal keberangkatan, lalu lakukan pembayaran. E-voucher akan dikirim otomatis ke email kamu.",
   },
