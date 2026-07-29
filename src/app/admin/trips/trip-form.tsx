@@ -28,16 +28,21 @@ interface TripDestination {
 
 export default function TripForm({ initial, onSuccess }: { initial?: any; onSuccess?: () => void }) {
   const router = useRouter();
-  const [form, setForm] = useState(initial || { title: "", type: "open_trip", durationDays: 1, description: "", status: "draft" });
+  const [form, setForm] = useState(initial || { title: "", type: "open_trip", durationDays: 1, maxParticipants: null, meetingPointId: "", description: "", status: "draft" });
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(initial?.itinerary ?? []);
   const [tripDestinations, setTripDestinations] = useState<TripDestination[]>(initial?.tripDestinations ?? []);
   const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [meetingPoints, setMeetingPoints] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/destinations")
       .then((r) => r.json())
       .then(setDestinations)
+      .catch(() => {});
+    fetch("/api/meeting-points")
+      .then((r) => r.json())
+      .then(setMeetingPoints)
       .catch(() => {});
   }, []);
 
@@ -138,6 +143,28 @@ export default function TripForm({ initial, onSuccess }: { initial?: any; onSucc
             <option value="draft">Draft</option>
             <option value="published">Published</option>
           </select>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium">Maksimal Peserta</label>
+            <input
+              type="number"
+              className="mt-1 w-full rounded-lg border px-3 py-2"
+              value={form.maxParticipants ?? ""}
+              onChange={(e) => updateForm({ maxParticipants: e.target.value ? +e.target.value : null })}
+              min={1}
+              placeholder="cth: 20"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Meeting Point</label>
+            <select className="mt-1 w-full rounded-lg border px-3 py-2" value={form.meetingPointId} onChange={(e) => updateForm({ meetingPointId: e.target.value })}>
+              <option value="">-- Pilih Meeting Point --</option>
+              {meetingPoints.map((mp) => (
+                <option key={mp.id} value={mp.id}>{mp.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </section>
 

@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Edit, Trash2 } from "lucide-react";
-import Modal from "../components/modal";
-import TripForm from "./trip-form";
 import ConfirmDelete from "../components/confirm-delete";
 
 interface Trip {
@@ -12,6 +10,7 @@ interface Trip {
   title: string;
   type: string;
   durationDays: number;
+  maxParticipants: number | null;
   status: string;
 }
 
@@ -19,7 +18,6 @@ export default function AdminTrips() {
   const [rows, setRows] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [createOpen, setCreateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -54,13 +52,13 @@ export default function AdminTrips() {
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Paket Trip</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola daftar paket trip, jadwal keberangkatan, dan kuota peserta.</p>
         </div>
-        <button
-          onClick={() => setCreateOpen(true)}
+        <Link
+          href="/admin/trips/new"
           className="rounded-2xl bg-[#e06d26] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Trip Baru</span>
-        </button>
+        </Link>
       </div>
 
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
@@ -71,6 +69,7 @@ export default function AdminTrips() {
                 <th className="px-6 py-4">Judul Paket</th>
                 <th className="px-6 py-4">Tipe Trip</th>
                 <th className="px-6 py-4">Durasi</th>
+                <th className="px-6 py-4">Maks Peserta</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
@@ -86,6 +85,7 @@ export default function AdminTrips() {
                     <td className="px-6 py-4 font-bold text-slate-900">{t.title}</td>
                     <td className="px-6 py-4 text-slate-500 font-medium capitalize">{t.type?.replace("_", " ")}</td>
                     <td className="px-6 py-4 text-slate-500">{t.durationDays} hari</td>
+                    <td className="px-6 py-4 text-slate-500">{t.maxParticipants ?? "-"}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[t.status] || "bg-slate-100 text-slate-600"}`}>{t.status}</span>
                     </td>
@@ -106,15 +106,10 @@ export default function AdminTrips() {
                   </tr>
                 ))
               )}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Tambah Trip Baru" size="lg">
-        <TripForm onSuccess={() => { setCreateOpen(false); fetchData(); }} />
-      </Modal>
-
       <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
     </div>
   );

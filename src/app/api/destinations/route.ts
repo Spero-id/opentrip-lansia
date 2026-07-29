@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { masterRepository } from "@/modules/master/master.repository";
-import { slugify } from "@/shared/utils/helpers";
+import { masterRepository } from "@/modules/master";
 
 export async function GET() {
-  const list = await masterRepository.getDestinations();
-  return NextResponse.json(list);
+  try {
+    const data = await masterRepository.getDestinations();
+    return NextResponse.json(data);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const slug = body.slug || slugify(body.name) + "-" + Date.now();
-  const dest = await masterRepository.createDestination({ ...body, slug });
-  return NextResponse.json(dest, { status: 201 });
+  try {
+    const body = await req.json();
+    const data = await masterRepository.createDestination(body);
+    return NextResponse.json(data, { status: 201 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }

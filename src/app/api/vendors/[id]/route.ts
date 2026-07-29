@@ -1,23 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
-import { masterRepository } from "@/modules/master/master.repository";
+import { masterRepository } from "@/modules/master";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const item = await masterRepository.getVendorById(id);
-  if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(item);
+  try {
+    const { id } = await params;
+    const data = await masterRepository.getVendorById(id);
+    if (!data) return NextResponse.json({ error: "Vendor tidak ditemukan" }, { status: 404 });
+    return NextResponse.json(data);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const body = await req.json();
-  const item = await masterRepository.updateVendor(id, body);
-  if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(item);
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const data = await masterRepository.updateVendor(id, body);
+    if (!data) return NextResponse.json({ error: "Vendor tidak ditemukan" }, { status: 404 });
+    return NextResponse.json(data);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  await masterRepository.deleteVendor(id);
-  return NextResponse.json({ message: "deleted" });
+  try {
+    const { id } = await params;
+    await masterRepository.deleteVendor(id);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }

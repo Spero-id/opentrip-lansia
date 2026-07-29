@@ -67,6 +67,10 @@ export const bookingService = {
     return { booking, items };
   },
 
+  async getAllBookings() {
+    return bookingRepository.findAll();
+  },
+
   async getUserBookings(userId: UUID) {
     return bookingRepository.findByUserId(userId);
   },

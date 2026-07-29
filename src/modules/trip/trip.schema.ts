@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar, text, integer, boolean, timestamp, date, time } from "drizzle-orm/pg-core";
-import { destinations } from "../master/master.schema";
+import { destinations, meetingPoints } from "../master/master.schema";
 
 export const trips = pgTable("trips", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -11,6 +11,8 @@ export const trips = pgTable("trips", {
   status: varchar("status", { length: 20 }).notNull().default("draft"),
   thumbnailId: uuid("thumbnail_id"),
   sourceRequestId: uuid("source_request_id"),
+  maxParticipants: integer("max_participants"),
+  meetingPointId: uuid("meeting_point_id").references(() => meetingPoints.id),
   isFeatured: boolean("is_featured").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

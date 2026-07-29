@@ -129,15 +129,85 @@
 
 ### Session 6 — Destination Map Picker (Lat/Lng + Leaflet)
 - Installed `leaflet` and `@types/leaflet`
-- Created `src/app/admin/components/map-picker.tsx` — reusable Leaflet map component with draggable marker, click-to-set, OpenStreetMap tiles (no API key)
-- Updated `src/app/admin/destinations/destination-form.tsx` (used by /new and /[id]/edit):
-  - Replaced single `geoPoint` text input with separate Latitude/Longitude number inputs
-  - Added interactive map below lat/lng inputs
-  - Map marker syncs with lat/lng inputs and vice versa
-  - Click on map or drag marker updates lat/lng values
-  - On submit, lat/lng combined back to `geoPoint` string for API
-- Updated `src/app/admin/destinations/page.tsx` (admin list with modal CRUD):
-  - Added `geoPoint` to Destination interface and form state
-  - Same lat/lng inputs + MapPicker in modal form
-  - Parses existing `geoPoint` on edit
+- Created `src/app/admin/components/map-picker.tsx`
+- Updated destination forms with lat/lng + Leaflet map
 - Verified: `npm run lint` — no new errors
+
+### Session 7 — Replace All Pages from GitHub (RamliWane/lansia-opentrip)
+- Replaced all public pages with GitHub repo version
+- Renamed `trips` → `destinasi`
+- New pages: `/checkout`, `/contact`, `/destinasi`, `/destinasi/[id]`, `/login`, `/register`, `/private`
+- Landing page now uses modular components (HeroSection, MarketingSection, DestinationSection, TutorialSection, TestimonialsSection, FAQSection)
+- New components: destinasi (filter/grid/card), checkout (stepper/payment/confirmation), private trip form, layout (navbar/footer)
+- Static data replaces database for public pages (admin pages keep DB)
+- Admin pages preserved (self-contained with own layout)
+- Dependencies: added `@heroicons/react`
+- Build: 22 pages, all compiled successfully
+
+## Session 8 — Admin API Routes + Master Trip enhancement
+
+### Phase 1: Admin API Routes
+Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoints, tapi routes-nya tidak ada. Akibatnya semua tabel admin kosong meskipun database berisi data.
+
+### Created API route files (19 files):
+
+| Endpoint | Methods |
+|----------|---------|
+| `/api/destinations` | GET, POST |
+| `/api/destinations/[id]` | GET, PUT, DELETE |
+| `/api/destinations/categories` | GET |
+| `/api/horeca` | GET, POST |
+| `/api/horeca/[id]` | GET, PUT, DELETE |
+| `/api/horeca-types` | GET |
+| `/api/vendors` | GET, POST |
+| `/api/vendors/[id]` | GET, PUT, DELETE |
+| `/api/vendor-types` | GET |
+| `/api/promotions` | GET, POST |
+| `/api/promotions/[id]` | GET, PUT, DELETE |
+| `/api/reviews` | GET, POST |
+| `/api/reviews/[id]` | PUT, DELETE |
+| `/api/blogs` | GET, POST |
+| `/api/blogs/[id]` | GET, PUT, DELETE |
+| `/api/galleries` | GET, POST |
+| `/api/galleries/[id]` | GET, PUT, DELETE |
+| `/api/commissions` | GET, POST |
+| `/api/commissions/[id]` | GET, PUT, DELETE |
+
+### Added gallery repository methods:
+- `findAllGalleries`, `findGalleryById`, `createGallery`, `updateGallery`, `deleteGallery` di `trip.repository.ts`
+- Fixed stray duplicate `export const tripRepository` declaration
+
+### Phase 2: Master Trip — maxParticipants & Meeting Point
+
+#### Schema & Migration
+- Add `max_participants` (integer) and `meeting_point_id` (FK → meeting_points) to `trips` table
+- Create `meeting_points` table (id, name, address, geo_point, description, is_active, created_at)
+- Push migration via drizzle-kit
+
+#### Repository & API
+- Add CRUD meeting point methods to `master.repository.ts`
+- API routes: `/api/meeting-points`, `/api/meeting-points/[id]`
+
+#### Admin UI
+- `/admin/meeting-points/page.tsx` — meeting point master management (consistent with other master pages)
+- Add "Meeting Point" to sidebar navigation
+- Trip form: add "Maksimal Peserta" input and "Meeting Point" dropdown
+- Trip list: add "Maks Peserta" column
+
+### Verification
+- `npx next build` — all routes compile
+- `drizzle-kit push` — schema changes applied
+- `npm run lint` — no new errors (10 pre-existing any-type errors, 62 pre-existing warnings)
+
+## 2026-07-29: Synced trip/destinasi pages from ramliwane/lansia-opentrip
+
+- Updated all destinasi components to match GitHub versions:
+  - DestinationCard, DestinasiHeader, DestinationGrid, FilterPanel (redesigned with dropdowns/chips)
+  - Created new: SearchBar, Resultsbar, Emptystate
+  - Updated all 9 detail components (AboutSection, BookingCard, DestinationGallery, DestinationHeader, DestinationTabs, ItinerarySection, MeetingSection, UlasanSection, Lightbox)
+- Updated all private trip components to match GitHub versions:
+  - Created: ParticipantsSection
+  - Updated helpers (constants, helpers, initialState, validation)
+  - Updated: SectionCard, Field, BookingInformationSection, TripDetailSection, TripOptionSection, TripFromSection, SubmitBar, SuccessState, TermsModal, Radio, SelectedDestination, DestinationCard, PageHeader
+  - Updated private page to use Navbar/Footer
+- Cleaned up empty `{detail}` artifact directory

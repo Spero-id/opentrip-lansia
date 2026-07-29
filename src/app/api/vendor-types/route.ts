@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { masterRepository } from "@/modules/master/master.repository";
+import { masterRepository } from "@/modules/master";
 
 export async function GET() {
-  const list = await masterRepository.getVendorTypes();
-  return NextResponse.json(list);
+  try {
+    const data = await masterRepository.getVendorTypes();
+    return NextResponse.json(data);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

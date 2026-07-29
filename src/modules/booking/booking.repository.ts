@@ -4,6 +4,7 @@ import { eq, desc } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export interface IBookingRepository {
+  findAll(): Promise<(typeof bookings.$inferSelect)[]>;
   findById(id: UUID): Promise<typeof bookings.$inferSelect | null>;
   findByUserId(userId: UUID): Promise<(typeof bookings.$inferSelect)[]>;
   create(data: typeof bookings.$inferInsert): Promise<typeof bookings.$inferSelect>;
@@ -14,6 +15,10 @@ export interface IBookingRepository {
 }
 
 export const bookingRepository: IBookingRepository = {
+  async findAll() {
+    return db.select().from(bookings).orderBy(desc(bookings.createdAt));
+  },
+
   async findById(id) {
     const [booking] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
     return booking ?? null;

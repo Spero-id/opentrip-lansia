@@ -1,7 +1,7 @@
 import { db } from "@/shared/db";
 import {
   trips, tripDepartures, tripPrices, tripDestinations,
-  itineraryItems, tripHoreca, tripVendors, tripMedia,
+  itineraryItems, tripHoreca, tripVendors, tripMedia, tripGalleries,
 } from "./trip.schema";
 import { eq, and, asc, desc, sql } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
@@ -36,6 +36,13 @@ export interface ITripRepository {
   // Trip destinations
   findTripDestinations(tripId: UUID): Promise<(typeof tripDestinations.$inferSelect)[]>;
   saveTripDestinations(tripId: UUID, dests: DestinationInput[]): Promise<void>;
+
+  // Galleries
+  findAllGalleries(): Promise<(typeof tripGalleries.$inferSelect)[]>;
+  findGalleryById(id: UUID): Promise<typeof tripGalleries.$inferSelect | null>;
+  createGallery(data: typeof tripGalleries.$inferInsert): Promise<typeof tripGalleries.$inferSelect>;
+  updateGallery(id: UUID, data: Partial<typeof tripGalleries.$inferInsert>): Promise<void>;
+  deleteGallery(id: UUID): Promise<void>;
 }
 
 export interface ItineraryInput {
@@ -151,5 +158,28 @@ export const tripRepository: ITripRepository = {
     await db.delete(tripDestinations).where(eq(tripDestinations.tripId, tripId));
     if (dests.length === 0) return;
     await db.insert(tripDestinations).values(dests.map((d) => ({ ...d, tripId })));
+  },
+
+  // Galleries
+  async findAllGalleries() {
+    return db.select().from(tripGalleries).orderBy(desc(tripGalleries.createdAt));
+  },
+
+  async findGalleryById(id) {
+    const [g] = await db.select().from(tripGalleries).where(eq(tripGalleries.id, id)).limit(1);
+    return g ?? null;
+  },
+
+  async createGallery(data) {
+    const [g] = await db.insert(tripGalleries).values(data).returning();
+    return g;
+  },
+
+  async updateGallery(id, data) {
+    await db.update(tripGalleries).set(data).where(eq(tripGalleries.id, id));
+  },
+
+  async deleteGallery(id) {
+    await db.delete(tripGalleries).where(eq(tripGalleries.id, id));
   },
 };

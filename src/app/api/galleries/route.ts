@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db";
-import { tripGalleries } from "@/db/schema";
-import { desc } from "drizzle-orm";
+import { tripRepository } from "@/modules/trip";
 
 export async function GET() {
-  const list = await db.select().from(tripGalleries).orderBy(desc(tripGalleries.createdAt));
-  return NextResponse.json(list);
+  try {
+    const data = await tripRepository.findAllGalleries();
+    return NextResponse.json(data);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const [gallery] = await db.insert(tripGalleries).values(body).returning();
-  return NextResponse.json(gallery, { status: 201 });
+  try {
+    const body = await req.json();
+    const data = await tripRepository.createGallery(body);
+    return NextResponse.json(data, { status: 201 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }

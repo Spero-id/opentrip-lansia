@@ -17,6 +17,8 @@ import {
   Bell,
   User,
   Route,
+  ShoppingCart,
+  Map,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +33,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Promo", href: "/admin/promotions", icon: Tag },
     { name: "Komisi", href: "/admin/commissions", icon: Percent },
     { name: "Ulasan", href: "/admin/reviews", icon: Star },
+    { name: "Meeting Point", href: "/admin/meeting-points", icon: Map },
     { name: "Blog", href: "/admin/blogs", icon: FileText },
+    { name: "Pesanan", href: "/admin/pesanan", icon: ShoppingCart },
     { name: "Private Trip", href: "/admin/private-trips", icon: Route },
   ];
 

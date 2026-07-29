@@ -1,13 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { masterRepository } from "@/modules/master/master.repository";
+import { masterRepository } from "@/modules/master";
 
 export async function GET() {
-  const list = await masterRepository.getVendors();
-  return NextResponse.json(list);
+  try {
+    const data = await masterRepository.getVendors();
+    return NextResponse.json(data);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const item = await masterRepository.createVendor(body);
-  return NextResponse.json(item, { status: 201 });
+  try {
+    const body = await req.json();
+    const data = await masterRepository.createVendor(body);
+    return NextResponse.json(data, { status: 201 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }
