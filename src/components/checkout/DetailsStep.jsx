@@ -28,7 +28,7 @@ export default function DetailsStep({ checkout, onNext }) {
               <select
                 value={checkout.pax}
                 onChange={(e) => checkout.setPax(Number(e.target.value))}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
                   <option key={n} value={n}>{n} Orang</option>
@@ -41,7 +41,7 @@ export default function DetailsStep({ checkout, onNext }) {
                 type="date"
                 value={checkout.travelDate}
                 onChange={(e) => checkout.setTravelDate(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
               />
             </div>
           </div>

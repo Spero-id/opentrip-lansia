@@ -11,7 +11,7 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
             placeholder="Nama sesuai identitas"
             value={customer.fullName}
             onChange={(e) => setCustomer("fullName", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
           />
         </div>
         <div>
@@ -21,7 +21,7 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
             placeholder="nama@email.com"
             value={customer.email}
             onChange={(e) => setCustomer("email", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
           />
         </div>
       </div>
@@ -33,7 +33,7 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
             placeholder="08xx-xxxx-xxxx"
             value={customer.phone}
             onChange={(e) => setCustomer("phone", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
           />
         </div>
         <div>
@@ -43,14 +43,14 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
             placeholder="Misal: alergi, permintaan khusus"
             value={customer.specialRequest}
             onChange={(e) => setCustomer("specialRequest", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
           />
         </div>
       </div>
       <button
         type="button"
         onClick={onAutofill}
-        className="text-xs text-[#df7224] font-semibold hover:underline"
+        className="text-xs text-[#F49D1A] font-semibold hover:underline"
       >
         Isi data contoh (Autofill)
       </button>

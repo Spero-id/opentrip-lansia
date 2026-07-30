@@ -13,7 +13,7 @@ export default async function EditDestinationPage(props: { params: Promise<{ id:
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Edit Destinasi</h1>
         <p className="text-sm text-slate-500 mt-1 mb-6">Perbarui informasi destinasi wisata.</p>
         <DestinationForm initial={dest} categories={categories} />

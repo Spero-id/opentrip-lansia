@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatRupiah } from "@/lib/format";
 
-const A = "#df7224";
+const A = "#F49D1A";
 
 export default function BookingCard({ dest }) {
   return (
@@ -28,11 +28,11 @@ export default function BookingCard({ dest }) {
 
       <div className="mt-2 pt-4 border-t border-gray-100 grid grid-cols-2 gap-3 text-xs font-semibold text-gray-600">
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#df7224]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F49D1A]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Bebas Reschedule
         </div>
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#df7224]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F49D1A]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Pemandu Lokal
         </div>
       </div>

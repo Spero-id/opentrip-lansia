@@ -8,7 +8,7 @@ export default function BookingCard({ destination }) {
         <p className="text-xs text-gray-400">{destination.category}</p>
         <h3 className="font-bold text-gray-900 text-sm line-clamp-1">{destination.title}</h3>
         <p className="text-xs text-gray-500">{destination.location}</p>
-        <p className="text-sm font-bold text-[#df7224]">Rp {destination.priceMin.toLocaleString("id-ID")}/org</p>
+        <p className="text-sm font-bold text-[#F49D1A]">Rp {destination.priceMin.toLocaleString("id-ID")}/org</p>
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ export default function Navbar() {
               className={`flex items-center gap-2 text-xl font-bold transition-colors ${isScrolled ? "text-gray-900" : "text-black"
                 }`}
             >
-              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-10 w-auto" />
+              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-24 w-auto" />
             </Link>
           </div>
 
@@ -50,8 +50,8 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 className={`font-medium hidden md:flex transition-colors text-sm ${isScrolled
-                    ? "text-white hover:text-[#df7224]"
-                    : "text-black hover:text-[#df7224]"
+                    ? "text-white hover:text-[#F49D1A]"
+                    : "text-black hover:text-[#F49D1A]"
                   }`}
               >
                 {link.name}
@@ -60,15 +60,15 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 href="/register"
-                className="bg-[#df7224] hover:shadow-xl text-white px-5 py-2 rounded-[5px] text-sm font-poppins hover:bg-[#df7224]/80 transition-colors shadow-sm"
+                className="bg-[#F49D1A] hover:shadow-xl text-white px-5 py-2 rounded-[5px] text-sm font-poppins hover:bg-[#F49D1A]/80 transition-colors shadow-sm"
               >
                 Register
               </Link>
               <Link
                 href="/login"
                 className={`px-5 py-2 hover:shadow-xl rounded-[5px] text-sm font-poppins transition-colors shadow-sm ${isScrolled
-                    ? "bg-white border border-[#df7224] text-[#df7224] hover:bg-[#df7224] hover:text-white"
-                    : "bg-white/10 border border-[#df7224] text-[#df7224] backdrop-blur-sm hover:bg-white hover:text-[#df7224]"
+                    ? "bg-white border border-[#F49D1A] text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white"
+                    : "bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-white hover:text-[#F49D1A]"
                   }`}
               >
                 Login
@@ -100,7 +100,7 @@ export default function Navbar() {
               href={link.href}
               onClick={() => setIsOpen(false)}
               className={`block px-3 py-2 rounded-lg font-medium text-sm transition-colors ${isScrolled
-                  ? "text-gray-600 hover:bg-orange-50 hover:text-[#df7224]"
+                  ? "text-gray-600 hover:bg-[#F49D1A]/10 hover:text-[#F49D1A]"
                   : "text-white hover:bg-white/10"
                 }`}
             >
@@ -110,7 +110,7 @@ export default function Navbar() {
           <Link
             href="#hubungi"
             onClick={() => setIsOpen(false)}
-            className="block mt-2 text-center bg-[#df7224] text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#df7224]/80 transition-colors"
+            className="block mt-2 text-center bg-[#F49D1A] text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#F49D1A]/80 transition-colors"
           >
             Hubungi Kami
           </Link>

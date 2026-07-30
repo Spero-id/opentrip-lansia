@@ -4,10 +4,10 @@ export default function DestinationHeader({ dest }) {
   return (
     <div className="mb-4 sm:mb-6 mt-4">
       <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
-        <span className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-white bg-[#df7224]">
+        <span className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-white bg-[#F49D1A]">
           {dest.category}
         </span>
-        <span className="flex items-center gap-1 text-[#df7224] font-bold bg-orange-50 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
+        <span className="flex items-center gap-1 text-[#F49D1A] font-bold bg-[#FEF6E7] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
           ★ {dest.rating.toFixed(1)} <span className="text-gray-500 font-normal">({formatNumber(dest.reviewCount)} ulasan)</span>
         </span>
       </div>

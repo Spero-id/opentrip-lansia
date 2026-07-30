@@ -2,7 +2,7 @@
 
 import { Search, TrendingUp, X, ArrowRight } from "lucide-react";
 
-const A = "#df7224";
+const A = "#F49D1A";
 
 const quickTags = ["Bali", "Bromo", "Raja Ampat", "Borobudur", "Labuan Bajo"];
 
@@ -46,7 +46,7 @@ export default function SearchBar({ searchQuery, onSearchChange, onClear }) {
             type="button"
             className="hidden sm:flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-white font-semibold text-xs sm:text-sm transition-all shrink-0 active:scale-95"
             style={{ backgroundColor: A }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#c8631e")}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#c47d12")}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = A)}
           >
             <span>Cari</span>

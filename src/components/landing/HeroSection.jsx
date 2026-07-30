@@ -1,91 +1,124 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  MapPin,
-  Calendar,
-  Search,
-  SlidersHorizontal,
-  X,
-} from "lucide-react";
-import ModalsSlider from "./ModalsSlider";
+import { MapPin, Calendar, Search, ArrowRight, TrendingUp, Users, Award } from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
+const stats = [
+  { icon: MapPin, value: "500+", label: "Destinasi" },
+  { icon: Users, value: "10Rb+", label: "Traveler" },
+  { icon: Award, value: "100%", label: "Terpercaya" },
+];
 
 export default function HeroSection() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <section
       id="beranda"
-      className="relative overflow-hidden bg-cover bg-center min-h-screen flex items-center"
+      className="relative overflow-hidden bg-cover bg-center min-h-[90vh] flex items-center"
       style={{
         backgroundImage: "url('/hero-image-2.jpeg')",
       }}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
-        <ModalsSlider />
-        <div className="grid lg:grid-cols-2 gap-10 pt-10 items-center">
-          <div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Discover The <br />
-              Best Destinations <br />
-              In The World
+      {/* Animated gradient orbs */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-[#F49D1A]/20 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#1CA6B7]/10 rounded-full blur-[120px] animate-pulse delay-1000" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className={`space-y-8 transition-all duration-700 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm">
+              <TrendingUp size={14} className="text-[#F49D1A]" />
+              <span className="text-xs font-medium text-white/90">Platform Open Trip #1 di Indonesia</span>
+            </div>
+
+            {/* Heading */}
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
+              Jelajahi{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F49D1A] to-[#F7931A]">
+                Nusantara
+              </span>
+              <br />
+              Ciptakan{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1CA6B7] to-[#20B2AA]">
+                Memori
+              </span>
             </h1>
 
-            <p className="text-white/80 mb-8 max-w-md leading-relaxed">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
-              elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus
-              leo.
+            {/* Subtitle */}
+            <p className="text-white/70 text-lg max-w-lg leading-relaxed">
+              Temukan pengalaman perjalanan tak terlupakan dengan harga terbaik. Dari Sabang sampai Merauke, kami siap antar kamu.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 mb-10">
-              <div className="flex items-center gap-3 bg-white/10 px-4 w-auto py-1 rounded-2xl border cursor-pointer border-[#df7224]/20 shadow-lg hover:shadow-xl transition-shadow">
-                <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                  <MapPin size={18} className="text-[#df7224]" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">
-                    Location
-                  </p>
-                  <p className="text-xs text-white/70">
-                    Where do you want to go?
-                  </p>
-                </div>
+            {/* Search Bar */}
+            <div className="flex flex-col sm:flex-row gap-3 max-w-xl">
+              <div className="flex-1 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl px-5 py-3.5 border border-white/20">
+                <Search size={18} className="text-[#F49D1A] shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Cari destinasi impianmu..."
+                  className="bg-transparent text-sm text-white placeholder:text-white/50 w-full focus:outline-none"
+                />
               </div>
+              <Link
+                href="/trips"
+                className="inline-flex items-center justify-center gap-2 bg-[#F49D1A] hover:bg-[#c47d12] text-white px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-[#F49D1A]/25 whitespace-nowrap"
+              >
+                Jelajahi
+                <ArrowRight size={16} />
+              </Link>
+            </div>
 
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-1 cursor-pointer rounded-2xl border border-white/20 hover:bg-white/15 transition-colors">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                  <Calendar size={18} className="text-[#df7224]" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">
-                    Select Date
-                  </p>
-                  <p className="text-xs text-white/70">
-                    When are you traveling?
-                  </p>
-                </div>
+            {/* Quick Info Chips */}
+            <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <MapPin size={14} className="text-[#1CA6B7]" />
+                <span className="text-xs text-white/70">Semua Destinasi</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <Calendar size={14} className="text-[#1CA6B7]" />
+                <span className="text-xs text-white/70">Fleksibel Jadwal</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <Users size={14} className="text-[#1CA6B7]" />
+                <span className="text-xs text-white/70">Ramah Lansia</span>
               </div>
             </div>
 
+            {/* Stats */}
+            <div className="flex items-center gap-8 pt-4">
+              {stats.map((s, i) => (
+                <div key={i} className="text-center sm:text-left">
+                  <p className="text-2xl sm:text-3xl font-bold text-white">{s.value}</p>
+                  <p className="text-xs text-white/60">{s.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="relative hidden lg:block">
+          {/* Right - Image Collage */}
+          <div className={`relative hidden lg:block transition-all duration-700 delay-300 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4 pt-8">
                 <div className="rounded-3xl overflow-hidden shadow-2xl relative group">
                   <img
                     src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=500&fit=crop"
                     alt="Hot air balloon"
-                    className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="rounded-3xl overflow-hidden shadow-2xl group">
                   <img
                     src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=350&fit=crop"
                     alt="Tropical bridge"
-                    className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
               </div>
@@ -95,21 +128,31 @@ export default function HeroSection() {
                   <img
                     src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=350&fit=crop"
                     alt="Beach walk"
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
                 <div className="rounded-3xl overflow-hidden shadow-2xl group">
                   <img
                     src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400&h=500&fit=crop"
                     alt="Ocean view"
-                    className="w-full h-36 object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-36 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-[#df7224]/20 rounded-full blur-3xl -z-10" />
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/10 rounded-full blur-3xl -z-10" />
+            {/* Floating card */}
+            <div className="absolute -bottom-4 -left-8 bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#F49D1A]/20 flex items-center justify-center">
+                  <Users size={18} className="text-[#F49D1A]" />
+                </div>
+                <div>
+                  <p className="text-white text-sm font-semibold">10rb+ Traveler</p>
+                  <p className="text-white/60 text-xs">Sudah percaya kami</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const A = "#df7224";
+const A = "#F49D1A";
 
 export default function UlasanSection({ dest }) {
   const [ratingFilter, setRatingFilter] = useState(null);
@@ -26,8 +26,8 @@ export default function UlasanSection({ dest }) {
             onClick={() => setRatingFilter(null)}
             className={`px-3 py-1.5 rounded-full border transition-colors whitespace-nowrap ${
               ratingFilter === null
-                ? 'bg-[#df7224] text-white border-[#df7224]'
-                : 'bg-white text-gray-500 border-gray-200 hover:border-[#df7224]'
+                ? 'bg-[#F49D1A] text-white border-[#F49D1A]'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-[#F49D1A]'
             }`}
           >
             Semua
@@ -38,11 +38,11 @@ export default function UlasanSection({ dest }) {
               onClick={() => setRatingFilter(star)}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-full border transition-colors whitespace-nowrap ${
                 ratingFilter === star
-                  ? 'bg-[#df7224] text-white border-[#df7224]'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-[#df7224]'
+                  ? 'bg-[#F49D1A] text-white border-[#F49D1A]'
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-[#F49D1A]'
               }`}
             >
-              {star} <span className={ratingFilter === star ? "text-white" : "text-[#df7224]"}>★</span>
+              {star} <span className={ratingFilter === star ? "text-white" : "text-[#F49D1A]"}>★</span>
             </button>
           ))}
         </div>
@@ -61,8 +61,8 @@ export default function UlasanSection({ dest }) {
                   <div className="text-[11px] sm:text-xs text-gray-400">{review.date}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-1 bg-orange-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg">
-                <span className="text-[#df7224] font-bold text-xs sm:text-sm">★</span>
+              <div className="flex items-center gap-1 bg-[#FEF6E7] px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg">
+                <span className="text-[#F49D1A] font-bold text-xs sm:text-sm">★</span>
                 <span className="font-bold text-xs sm:text-sm text-gray-900">{review.rating.toFixed(1)}</span>
               </div>
             </div>

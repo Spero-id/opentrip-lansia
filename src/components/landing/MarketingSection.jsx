@@ -22,7 +22,7 @@ export default function MarketingSection() {
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug mb-6 max-w-md">
               Kenapa Harus Pilih{" "}
-              <span className="text-[#df7224]">Jelajah Memoria Ini</span>?
+              <span className="text-[#F49D1A]">Jelajah Memoria Ini</span>?
             </h2>
             <p className="text-gray-500 mb-8 max-w-md leading-relaxed">
               Kami bantu setiap perjalanan mu jadi lebih mudah, aman, dan
@@ -37,7 +37,7 @@ export default function MarketingSection() {
                   <div
                     key={i}
                     className={`rounded-xl border transition-colors duration-300 ${isOpen
-                        ? "border-[#df7224]/30 bg-[#df7224]/10 shadow-xs"
+                        ? "border-[#F49D1A]/30 bg-[#F49D1A]/10 shadow-xs"
                         : "border-gray-200 bg-white hover:border-gray-300"
                       }`}
                   >
@@ -46,7 +46,7 @@ export default function MarketingSection() {
                       className="w-full flex items-center gap-4 px-5 py-4 text-left"
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${isOpen ? "bg-[#df7224]" : "bg-gray-100"
+                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${isOpen ? "bg-[#F49D1A]" : "bg-gray-100"
                           }`}
                       >
                         <Icon
@@ -65,7 +65,7 @@ export default function MarketingSection() {
                       </div>
 
                       <span
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? "bg-[#df7224] text-white rotate-180" : "bg-gray-100 text-gray-600"
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? "bg-[#F49D1A] text-white rotate-180" : "bg-gray-100 text-gray-600"
                           }`}
                       >
                         <ChevronDown size={16} />

@@ -1,4 +1,4 @@
-const A = "#df7224";
+const A = "#F49D1A";
 
 export default function SectionCard({
   icon,

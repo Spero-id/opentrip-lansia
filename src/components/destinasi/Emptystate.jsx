@@ -9,7 +9,7 @@ export default function EmptyState({ onReset }) {
         className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
         style={{ backgroundColor: "rgba(223,114,36,0.08)" }}
       >
-        <SlidersHorizontal size={24} style={{ color: "#df7224" }} />
+        <SlidersHorizontal size={24} style={{ color: "#F49D1A" }} />
       </div>
       <p className="text-sm font-semibold text-gray-700 mb-1">
         Tidak ada destinasi cocok
@@ -20,7 +20,7 @@ export default function EmptyState({ onReset }) {
       <button
         onClick={onReset}
         className="px-5 py-2.5 rounded-xl text-white text-xs font-bold"
-        style={{ backgroundColor: "#df7224" }}
+        style={{ backgroundColor: "#F49D1A" }}
       >
         Reset Semua Filter
       </button>

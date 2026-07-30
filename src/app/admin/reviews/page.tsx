@@ -80,14 +80,14 @@ export default function AdminReviews() {
   }
 
   const statusStyles: Record<string, string> = {
-    approved: "bg-emerald-100 text-emerald-800",
+    approved: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
     rejected: "bg-red-100 text-red-700",
     pending: "bg-yellow-100 text-yellow-700",
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Ulasan</h1>
           <p className="text-sm text-slate-500 mt-1">Moderasi ulasan dan rating dari pengguna.</p>
@@ -130,7 +130,7 @@ export default function AdminReviews() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(r)} className="p-2 text-slate-500 hover:text-[#e06d26] hover:bg-orange-50 rounded-xl transition" title="Edit Ulasan">
+                        <button onClick={() => openEdit(r)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Ulasan">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => { setDeleting(r.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
@@ -151,7 +151,7 @@ export default function AdminReviews() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>
             <select name="status" value={form.status} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]">
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
@@ -159,12 +159,12 @@ export default function AdminReviews() {
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isFeatured" type="checkbox" checked={form.isFeatured} onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-300 text-[#e06d26] focus:ring-[#e06d26]/30" />
+              className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
             <span className="font-medium text-slate-700">Featured Review</span>
           </label>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#e06d26] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition disabled:opacity-50">
+              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}

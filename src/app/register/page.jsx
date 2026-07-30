@@ -21,9 +21,9 @@ export default function RegisterPage() {
 
                     <Link
                         href="/"
-                        className="relative z-10 flex items-center gap-2 text-[#df7224] font-bold text-lg"
+                        className="relative z-10 flex items-center gap-2 text-[#F49D1A] font-bold text-lg"
                     >
-                        <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-10 w-auto" />
+                        <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-14 w-auto" />
                     </Link>
 
                     <div className="relative z-10">
@@ -60,7 +60,7 @@ export default function RegisterPage() {
                             <input
                                 type="text"
                                 placeholder="Masukkan Username kamu"
-                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                             />
                         </div>
 
@@ -71,7 +71,7 @@ export default function RegisterPage() {
                             <input
                                 type="email"
                                 placeholder="Masukkan email kamu"
-                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                             />
                         </div>
 
@@ -83,7 +83,7 @@ export default function RegisterPage() {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Masukkan password kamu"
-                                    className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors"
+                                    className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                                 />
                                 <button
                                     type="button"
@@ -99,7 +99,7 @@ export default function RegisterPage() {
                             <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    className="w-4 h-4 rounded border-gray-300 text-[#df7224] focus:ring-[#df7224]/30"
+                                    className="w-4 h-4 rounded border-gray-300 text-[#F49D1A] focus:ring-[#F49D1A]/30"
                                 />
                                 Saya setuju dengan Syarat & Ketentuan
                             </label>
@@ -107,7 +107,7 @@ export default function RegisterPage() {
 
                         <button
                             type="submit"
-                            className="w-full bg-[#df7224] text-white py-3.5 rounded-xl font-semibold hover:bg-[#df7224]/80 transition-colors"
+                            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#F49D1A]/80 transition-colors"
                         >
                             Daftar
                         </button>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
 
                     <p className="text-center text-sm text-gray-500 mt-4 sm:mt-8">
                         Sudah Punya AKun?{" "}
-                        <a href="/login" className="italic text-gray-900 font-semibold hover:text-[#df7224]">
+                        <a href="/login" className="italic text-gray-900 font-semibold hover:text-[#F49D1A]">
                             Masuk disini
                         </a>
                     </p>

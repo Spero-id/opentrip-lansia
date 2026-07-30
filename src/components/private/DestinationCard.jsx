@@ -10,7 +10,7 @@ export default function DestinationCard({
     <button
       type="button"
       onClick={onSelect}
-      className="flex items-center gap-3 p-3 rounded-xl border text-left transition-all hover:border-[#df7224] hover:bg-[#df722408]"
+      className="flex items-center gap-3 p-3 rounded-xl border text-left transition-all hover:border-[#F49D1A] hover:bg-[#F49D1A08]"
       style={{
         borderColor: "#e5e7eb",
         backgroundColor: "#f9fafb",

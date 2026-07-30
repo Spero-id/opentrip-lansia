@@ -7,12 +7,12 @@ export default function VoucherCard({ voucherCode, setVoucherCode, appliedVouche
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
       <h2 className="text-base font-bold text-gray-900">Voucher / Kode Promo</h2>
       {appliedVoucher ? (
-        <div className="flex items-center justify-between p-3 rounded-xl bg-green-50 border border-green-200">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-[#1CA6B7]/10 border border-[#1CA6B7]/20">
           <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-600" />
-            <span className="text-sm font-semibold text-green-800">{appliedVoucher.label}</span>
+            <Check className="w-4 h-4 text-[#1CA6B7]" />
+            <span className="text-sm font-semibold text-[#1CA6B7]">{appliedVoucher.label}</span>
           </div>
-          <button onClick={onRemove} className="text-green-600 hover:text-green-800">
+          <button onClick={onRemove} className="text-[#1CA6B7] hover:text-[#1CA6B7]">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -23,7 +23,7 @@ export default function VoucherCard({ voucherCode, setVoucherCode, appliedVouche
             placeholder="Masukkan kode voucher"
             value={voucherCode}
             onChange={(e) => setVoucherCode(e.target.value)}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20"
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
           />
           <button
             onClick={onApply}

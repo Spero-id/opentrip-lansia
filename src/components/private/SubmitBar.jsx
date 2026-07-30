@@ -10,7 +10,7 @@ export default function SubmitBar() {
         type="submit"
         className="px-7 py-3 rounded-lg text-white font-bold text-sm tracking-wide transition-all active:scale-95 flex items-center gap-2"
         style={{ backgroundColor: A }}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c8631e")}
+        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c47d12")}
         onMouseLeave={e => (e.currentTarget.style.backgroundColor = A)}
       >
         Request Custom Trip

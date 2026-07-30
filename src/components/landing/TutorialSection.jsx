@@ -50,12 +50,12 @@ export default function TutorialSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-[0.85fr_1.15fr] md:gap-10 lg:gap-16">
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <p className="text-[#df7224] font-semibold text-sm tracking-wide mb-3">
+            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">
               CARA BOOKING
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug mb-4">
               Booking Trip Impian mu Cuma{" "}
-              <span className="text-[#df7224]">5 Langkah</span>
+              <span className="text-[#F49D1A]">5 Langkah</span>
             </h2>
             <p className="text-gray-500 mb-8 max-w-sm leading-relaxed">
               Gak perlu ribet, dari cari destinasi sampe siap berangkat, semua
@@ -70,7 +70,7 @@ export default function TutorialSection() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#df7224] flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[#F49D1A] flex items-center justify-center flex-shrink-0">
                   <Send size={16} className="text-white" />
                 </div>
                 <div>
@@ -99,7 +99,7 @@ export default function TutorialSection() {
 
                     <div className="flex-1 pt-1">
                       <div className="flex items-baseline gap-3 mb-1.5">
-                        <span className="text-xs font-bold text-[#df7224] tracking-widest">
+                        <span className="text-xs font-bold text-[#F49D1A] tracking-widest">
                           LANGKAH {step.number}
                         </span>
                       </div>
@@ -115,7 +115,7 @@ export default function TutorialSection() {
               })}
             </div>
 
-            <div className="mt-12 sm:ml-[72px] inline-flex items-center gap-2 bg-orange-50 text-[#df7224] px-5 py-3 rounded-full text-sm font-semibold">
+            <div className="mt-12 sm:ml-[72px] inline-flex items-center gap-2 bg-[#FEF6E7] text-[#F49D1A] px-5 py-3 rounded-full text-sm font-semibold">
               <ClipboardCheck size={16} />
               Sudah siap booking? Pilih paket trip favoritmu sekarang!
             </div>

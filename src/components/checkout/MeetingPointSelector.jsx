@@ -20,12 +20,12 @@ export default function MeetingPointSelector({ meetingPointId, onChange }) {
             onClick={() => onChange(p.id)}
             className={`w-full flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${
               meetingPointId === p.id
-                ? "border-[#df7224] bg-[#df7224]/5"
+                ? "border-[#F49D1A] bg-[#F49D1A]/5"
                 : "border-gray-100 hover:border-gray-200"
             }`}
           >
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-              meetingPointId === p.id ? "bg-[#df7224] text-white" : "bg-gray-100 text-gray-500"
+              meetingPointId === p.id ? "bg-[#F49D1A] text-white" : "bg-gray-100 text-gray-500"
             }`}>
               <MapPin className="w-4 h-4" />
             </div>
@@ -34,7 +34,7 @@ export default function MeetingPointSelector({ meetingPointId, onChange }) {
               <p className="text-xs text-gray-500">{p.desc}</p>
             </div>
             <span className={`text-xs font-semibold shrink-0 ${
-              p.cost === "Gratis" ? "text-green-600" : "text-gray-500"
+              p.cost === "Gratis" ? "text-[#1CA6B7]" : "text-gray-500"
             }`}>
               {p.cost}
             </span>

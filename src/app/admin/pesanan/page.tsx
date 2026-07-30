@@ -34,7 +34,7 @@ const statusBadge: Record<string, { label: string; className: string }> = {
   },
   confirmed: {
     label: "Dikonfirmasi",
-    className: "bg-emerald-100 text-emerald-800",
+    className: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
   },
   cancelled: {
     label: "Dibatalkan",
@@ -96,7 +96,7 @@ export default function AdminPesanan() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             Manajemen Pesanan
@@ -150,7 +150,7 @@ export default function AdminPesanan() {
                       key={b.id}
                       className="hover:bg-slate-50/60 transition"
                     >
-                      <td className="px-6 py-4 font-mono font-bold text-[#e06d26]">
+                      <td className="px-6 py-4 font-mono font-bold text-[#F49D1A]">
                         {b.bookingCode}
                       </td>
                       <td className="px-6 py-4">
@@ -174,7 +174,7 @@ export default function AdminPesanan() {
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => openDetail(b)}
-                          className="p-2 text-slate-500 hover:text-[#e06d26] hover:bg-orange-50 rounded-xl transition"
+                          className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
                           title="Lihat Detail"
                         >
                           <Eye className="w-4 h-4" />
@@ -199,10 +199,10 @@ export default function AdminPesanan() {
           const notesInfo = parseNotes(selected.notes);
           return (
           <div className="space-y-4 text-sm">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-slate-500 font-medium">Kode Booking</p>
-                <p className="font-mono font-bold text-[#e06d26] text-base">
+                <p className="font-mono font-bold text-[#F49D1A] text-base">
                   {selected.bookingCode}
                 </p>
               </div>

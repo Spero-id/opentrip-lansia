@@ -127,7 +127,7 @@ export default function DestinationForm({
         <label className="block text-sm font-medium text-slate-700">Nama Destinasi</label>
         <input
           name="name"
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
           value={form.name}
           onChange={handleChange}
           required
@@ -138,7 +138,7 @@ export default function DestinationForm({
         <label className="block text-sm font-medium text-slate-700">Slug</label>
         <input
           name="slug"
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
           value={form.slug}
           onChange={handleChange}
           placeholder="Auto-generated from name"
@@ -149,19 +149,19 @@ export default function DestinationForm({
         <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
         <textarea
           name="description"
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
           rows={4}
           value={form.description ?? ""}
           onChange={handleChange}
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-slate-700">Lokasi</label>
           <input
             name="location"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
             value={form.location ?? ""}
             onChange={handleChange}
           />
@@ -170,7 +170,7 @@ export default function DestinationForm({
           <label className="block text-sm font-medium text-slate-700">Kategori</label>
           <select
             name="categoryId"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
             value={form.categoryId ?? ""}
             onChange={handleChange}
           >
@@ -184,12 +184,12 @@ export default function DestinationForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-slate-700">Tingkat Kesulitan</label>
           <select
             name="difficultyLevel"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
             value={form.difficultyLevel ?? ""}
             onChange={handleChange}
           >
@@ -204,7 +204,7 @@ export default function DestinationForm({
           <input
             name="visitEstimateMinutes"
             type="number"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
             value={form.visitEstimateMinutes ?? ""}
             onChange={handleChange}
             min={0}
@@ -212,13 +212,13 @@ export default function DestinationForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-slate-700">Latitude</label>
           <input
             type="number"
             step="any"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
             value={latitude ?? ""}
             onChange={(e) => handleLatLngChange("lat", e.target.value)}
             placeholder="-8.12345"
@@ -229,7 +229,7 @@ export default function DestinationForm({
           <input
             type="number"
             step="any"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
             value={longitude ?? ""}
             onChange={(e) => handleLatLngChange("lng", e.target.value)}
             placeholder="114.12345"
@@ -246,7 +246,7 @@ export default function DestinationForm({
         <label className="block text-sm font-medium text-slate-700">Informasi Aksesibilitas</label>
         <textarea
           name="accessibilityInfo"
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
           rows={2}
           value={form.accessibilityInfo ?? ""}
           onChange={handleChange}
@@ -257,7 +257,7 @@ export default function DestinationForm({
         <input
           name="isActive"
           type="checkbox"
-          className="w-4 h-4 rounded border-slate-300 text-[#e06d26] focus:ring-[#e06d26]/30"
+          className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30"
           checked={form.isActive ?? false}
           onChange={handleChange}
         />
@@ -268,7 +268,7 @@ export default function DestinationForm({
         <button
           type="submit"
           disabled={loading}
-          className="rounded-xl bg-[#e06d26] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition disabled:opacity-50"
+          className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
         >
           {loading ? "Menyimpan..." : "Simpan"}
         </button>

@@ -35,13 +35,13 @@ const statusStyles: Record<string, string> = {
   submitted: "bg-amber-100 text-amber-800",
   reviewed: "bg-blue-100 text-blue-700",
   revision: "bg-purple-100 text-purple-700",
-  approved: "bg-emerald-100 text-emerald-800",
+  approved: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
   rejected: "bg-red-100 text-red-700",
 };
 
 const proposalStatusStyles: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800",
-  accepted: "bg-emerald-100 text-emerald-800",
+  accepted: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
   rejected: "bg-red-100 text-red-700",
   revised: "bg-purple-100 text-purple-700",
 };
@@ -125,19 +125,19 @@ export default function AdminPrivateTripDetail() {
   return (
     <div className="space-y-6 max-w-4xl">
       {/* Back button */}
-      <button onClick={() => router.push("/admin/private-trips")} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#e06d26] transition">
+      <button onClick={() => router.push("/admin/private-trips")} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#F49D1A] transition">
         <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar
       </button>
 
       {actionMsg && (
-        <div className={`flex items-start gap-3 rounded-2xl p-4 text-sm ${actionMsg.includes("gagal") || actionMsg.includes("Gagal") ? "bg-red-50 border border-red-200 text-red-700" : "bg-emerald-50 border border-emerald-200 text-emerald-700"}`}>
+        <div className={`flex items-start gap-3 rounded-2xl p-4 text-sm ${actionMsg.includes("gagal") || actionMsg.includes("Gagal") ? "bg-red-50 border border-red-200 text-red-700" : "bg-[#1CA6B7]/10 border border-[#1CA6B7]/20 text-[#1CA6B7]"}`}>
           {actionMsg.includes("gagal") || actionMsg.includes("Gagal") ? <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" /> : <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />}
           <span>{actionMsg}</span>
         </div>
       )}
 
       {/* Request Info */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-extrabold text-slate-900">{data.title}</h1>
           <span className={`px-3 py-1.5 rounded-full text-[11px] font-bold ${statusStyles[data.status] || "bg-slate-100 text-slate-600"}`}>{data.status}</span>
@@ -176,24 +176,24 @@ export default function AdminPrivateTripDetail() {
       </div>
 
       {/* Action Buttons */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Aksi</h2>
         <div className="flex flex-wrap gap-3">
           {data.status === "submitted" && (
             <>
               <button onClick={() => updateStatus("review")} className="rounded-xl bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-xs font-bold transition">Tandai Sudah Ditinjau</button>
-              <button onClick={() => setProposalOpen(true)} className="rounded-xl bg-[#e06d26] hover:bg-[#c85b18] text-white px-4 py-2 text-xs font-bold transition">Buat Proposal</button>
+              <button onClick={() => setProposalOpen(true)} className="rounded-xl bg-[#F49D1A] hover:bg-[#c47d12] text-white px-4 py-2 text-xs font-bold transition">Buat Proposal</button>
               <button onClick={() => updateStatus("reject")} className="rounded-xl border border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 text-xs font-bold transition">Tolak</button>
             </>
           )}
           {(data.status === "reviewed" || data.status === "revision") && (
             <>
-              <button onClick={() => setProposalOpen(true)} className="rounded-xl bg-[#e06d26] hover:bg-[#c85b18] text-white px-4 py-2 text-xs font-bold transition">Kirim / Perbarui Proposal</button>
+              <button onClick={() => setProposalOpen(true)} className="rounded-xl bg-[#F49D1A] hover:bg-[#c47d12] text-white px-4 py-2 text-xs font-bold transition">Kirim / Perbarui Proposal</button>
               <button onClick={() => updateStatus("reject")} className="rounded-xl border border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 text-xs font-bold transition">Tolak</button>
             </>
           )}
           {data.status === "approved" && (
-            <span className="text-xs font-bold text-emerald-600 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Request sudah disetujui</span>
+            <span className="text-xs font-bold text-[#1CA6B7] flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Request sudah disetujui</span>
           )}
           {data.status === "rejected" && (
             <span className="text-xs font-bold text-red-600 flex items-center gap-2"><XCircle className="w-4 h-4" /> Request ditolak</span>
@@ -202,7 +202,7 @@ export default function AdminPrivateTripDetail() {
       </div>
 
       {/* Proposals History */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Riwayat Proposal ({data.proposals?.length || 0})</h2>
         {(!data.proposals || data.proposals.length === 0) ? (
           <p className="text-sm text-slate-400">Belum ada proposal.</p>
@@ -218,7 +218,7 @@ export default function AdminPrivateTripDetail() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div>
                     <span className="block font-semibold text-slate-500">Estimasi Harga</span>
-                    <span className="font-bold text-[#e06d26]">{formatRupiah(prop.estimatedPrice)}</span>
+                    <span className="font-bold text-[#F49D1A]">{formatRupiah(prop.estimatedPrice)}</span>
                   </div>
                   <div>
                     <span className="block font-semibold text-slate-500">Termasuk</span>
@@ -247,7 +247,7 @@ export default function AdminPrivateTripDetail() {
                   value={proposalContent}
                   onChange={(e) => setProposalContent(e.target.value)}
                   rows={4}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26] resize-none"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] resize-none"
                   placeholder="Deskripsikan rencana perjalanan, akomodasi, dan layanan..."
                   required
                 />
@@ -258,19 +258,19 @@ export default function AdminPrivateTripDetail() {
                   type="number"
                   value={estimatedPrice}
                   onChange={(e) => setEstimatedPrice(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
                   placeholder="0"
                   min={0}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1">Fasilitas Termasuk</label>
                   <textarea
                     value={inclusions}
                     onChange={(e) => setInclusions(e.target.value)}
                     rows={3}
-                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26] resize-none"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] resize-none"
                     placeholder="Hotel, makan, transportasi..."
                   />
                 </div>
@@ -280,14 +280,14 @@ export default function AdminPrivateTripDetail() {
                     value={exclusions}
                     onChange={(e) => setExclusions(e.target.value)}
                     rows={3}
-                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26] resize-none"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] resize-none"
                     placeholder="Tiket pribadi, belanja..."
                   />
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-2">
                 <button type="submit" disabled={saving}
-                  className="rounded-xl bg-[#e06d26] hover:bg-[#c85b18] text-white px-6 py-2.5 text-sm font-bold shadow-md shadow-orange-500/20 transition disabled:opacity-50 flex items-center gap-2">
+                  className="rounded-xl bg-[#F49D1A] hover:bg-[#c47d12] text-white px-6 py-2.5 text-sm font-bold shadow-md shadow-[#F49D1A]/20 transition disabled:opacity-50 flex items-center gap-2">
                   {saving ? <><RefreshCw className="w-4 h-4 animate-spin" /> Menyimpan...</> : <><Send className="w-4 h-4" /> Kirim Proposal</>}
                 </button>
                 <button type="button" onClick={() => setProposalOpen(false)}

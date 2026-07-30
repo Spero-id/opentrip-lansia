@@ -20,7 +20,7 @@ const statusStyles: Record<string, string> = {
   submitted: "bg-amber-100 text-amber-800",
   reviewed: "bg-blue-100 text-blue-700",
   revision: "bg-purple-100 text-purple-700",
-  approved: "bg-emerald-100 text-emerald-800",
+  approved: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
   rejected: "bg-red-100 text-red-700",
 };
 
@@ -47,7 +47,7 @@ export default function AdminPrivateTripsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Private Trip Request</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola permintaan Private Trip dari pengguna.</p>
@@ -64,7 +64,7 @@ export default function AdminPrivateTripsList() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-300 bg-white px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+            className="appearance-none rounded-xl border border-slate-300 bg-white px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
           >
             <option value="">Semua Status</option>
             <option value="submitted">Submitted</option>
@@ -80,7 +80,7 @@ export default function AdminPrivateTripsList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari judul..."
-          className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26] w-full sm:w-48"
+          className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] w-full sm:w-48"
         />
         <span className="text-xs text-slate-400 ml-auto">{total} request</span>
       </div>
@@ -119,7 +119,7 @@ export default function AdminPrivateTripsList() {
                     <td className="px-6 py-4 text-right">
                       <Link
                         href={`/admin/private-trips/${r.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#e06d26]/10 text-[#e06d26] hover:bg-[#e06d26] hover:text-white px-3.5 py-2 text-[11px] font-bold transition"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#F49D1A]/10 text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white px-3.5 py-2 text-[11px] font-bold transition"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>Lihat Detail</span>

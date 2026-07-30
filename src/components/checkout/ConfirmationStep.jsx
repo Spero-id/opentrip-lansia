@@ -5,8 +5,8 @@ import { CheckCircle } from "lucide-react";
 export default function ConfirmationStep({ checkout, onReset }) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-16 px-4">
-      <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6">
-        <CheckCircle className="w-10 h-10 text-green-600" />
+      <div className="w-20 h-20 rounded-full bg-[#1CA6B7]/15 flex items-center justify-center mb-6">
+        <CheckCircle className="w-10 h-10 text-[#1CA6B7]" />
       </div>
       <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
         Pemesanan Berhasil!
@@ -30,17 +30,17 @@ export default function ConfirmationStep({ checkout, onReset }) {
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-500">Total Pembayaran</span>
-          <span className="font-bold text-[#df7224]">Rp {checkout.total.toLocaleString("id-ID")}</span>
+          <span className="font-bold text-[#F49D1A]">Rp {checkout.total.toLocaleString("id-ID")}</span>
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-500">Status</span>
-          <span className="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">Menunggu Pembayaran</span>
+          <span className="px-2.5 py-0.5 rounded-full bg-[#1CA6B7]/15 text-[#1CA6B7] text-xs font-bold">Menunggu Pembayaran</span>
         </div>
       </div>
 
       <button
         onClick={onReset}
-        className="bg-[#df7224] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#c3611c] transition-colors"
+        className="bg-[#F49D1A] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
       >
         Kembali ke Beranda
       </button>

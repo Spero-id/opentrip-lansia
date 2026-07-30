@@ -92,14 +92,14 @@ export default function AdminGalleries() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Galeri</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola galeri foto dan video per paket trip.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#e06d26] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Galeri</span>
@@ -129,14 +129,14 @@ export default function AdminGalleries() {
                     <td className="px-6 py-4 font-bold text-slate-900">{g.title || "(tanpa judul)"}</td>
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">{g.tripId.slice(0, 8)}...</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${g.isPrivate ? "bg-yellow-100 text-yellow-700" : "bg-emerald-100 text-emerald-800"}`}>
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${g.isPrivate ? "bg-yellow-100 text-yellow-700" : "bg-[#1CA6B7]/15 text-[#1CA6B7]"}`}>
                         {g.isPrivate ? "Private" : "Public"}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-slate-500">{g.createdAt ? new Date(g.createdAt).toLocaleDateString("id-ID") : "-"}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(g)} className="p-2 text-slate-500 hover:text-[#e06d26] hover:bg-orange-50 rounded-xl transition" title="Edit Galeri">
+                        <button onClick={() => openEdit(g)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Galeri">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => { setDeleting(g.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
@@ -157,26 +157,26 @@ export default function AdminGalleries() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Trip ID</label>
             <input name="tripId" value={form.tripId} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Judul</label>
             <input name="title" value={form.title} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isPrivate" type="checkbox" checked={form.isPrivate} onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-300 text-[#e06d26] focus:ring-[#e06d26]/30" />
+              className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
             <span className="font-medium text-slate-700">Galeri Private</span>
           </label>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#e06d26] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition disabled:opacity-50">
+              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}

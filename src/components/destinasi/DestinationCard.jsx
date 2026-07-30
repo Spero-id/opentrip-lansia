@@ -17,7 +17,7 @@ export default function DestinationCard({ dest }) {
           className="w-full h-full object-cover"
         />
         <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full">
-          <Star size={12} className="text-[#df7224] fill-[#df7224]" />
+          <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
           <span className="text-xs font-semibold text-gray-900">
             {dest.rating.toFixed(1)}
           </span>
@@ -42,7 +42,7 @@ export default function DestinationCard({ dest }) {
               {formatRupiah(dest.priceMin)}
             </p>
           </div>
-          <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#df7224] flex items-center justify-center transition-colors flex-shrink-0">
+          <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#F49D1A] flex items-center justify-center transition-colors flex-shrink-0">
             <ArrowRight
               size={16}
               className="text-gray-500 group-hover:text-white transition-colors"

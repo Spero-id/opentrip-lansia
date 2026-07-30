@@ -69,8 +69,8 @@ function CheckoutContent() {
         )}
         {checkout.step === "confirmation" && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 rounded-full bg-[#1CA6B7]/15 flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-[#1CA6B7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -78,13 +78,13 @@ function CheckoutContent() {
             <p className="text-sm text-gray-500 mb-1">Terima kasih, perjalanan Anda sudah terkonfirmasi</p>
             {checkout.orderId && (
               <p className="text-xs text-gray-400 mb-8">
-                Kode Booking: <span className="font-mono font-bold text-[#df7224]">{checkout.orderId}</span>
+                Kode Booking: <span className="font-mono font-bold text-[#F49D1A]">{checkout.orderId}</span>
               </p>
             )}
             {!checkout.orderId && <p className="text-xs text-gray-400 mb-8">&nbsp;</p>}
             <button
               onClick={() => router.push("/")}
-              className="bg-[#df7224] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#c3611c] transition-colors"
+              className="bg-[#F49D1A] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
             >
               Kembali ke Beranda
             </button>
@@ -103,7 +103,7 @@ export default function CheckoutPage() {
       fallback={
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 rounded-full border-4 border-orange-100 border-t-[#df7224] animate-spin" />
+            <div className="w-10 h-10 rounded-full border-4 border-[#F49D1A]/20 border-t-[#F49D1A] animate-spin" />
             <p className="text-sm font-semibold text-gray-500">Memuat halaman checkout...</p>
           </div>
         </div>

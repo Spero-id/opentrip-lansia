@@ -14,7 +14,7 @@ export function inputCls(error, extra = "") {
     "focus:outline-none focus:ring-2 transition-all",
     error
       ? "border-red-300 bg-white focus:border-red-400 focus:ring-red-100"
-      : "border-gray-200 bg-gray-50 focus:border-[#df7224] focus:ring-[#df7224]/10",
+      : "border-gray-200 bg-gray-50 focus:border-[#F49D1A] focus:ring-[#F49D1A]/10",
     extra,
   ]
     .filter(Boolean)

@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { Filter, MapPin, DollarSign, Star, X, ChevronDown, ChevronUp } from "lucide-react";
 
-const A = "#df7224";
+const A = "#F49D1A";
 
 export default function FilterPanel({
   destinations,
@@ -114,7 +114,7 @@ export default function FilterPanel({
               <button
                 type="button"
                 onClick={() => setIsLocationOpen(!isLocationOpen)}
-                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-800 text-left focus:outline-none focus:border-[#df7224] transition-colors"
+                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-800 text-left focus:outline-none focus:border-[#F49D1A] transition-colors"
               >
                 <span className={selectedLocation ? "text-gray-800" : "text-gray-400"}>
                   {selectedLocation || "Semua Lokasi"}
@@ -138,7 +138,7 @@ export default function FilterPanel({
                       className={`w-full text-left px-4 py-2 text-xs font-semibold transition-colors ${
                         selectedLocation === ""
                           ? "text-white"
-                          : "text-gray-700 hover:bg-orange-50"
+                          : "text-gray-700 hover:bg-[#F49D1A]/10"
                       }`}
                       style={selectedLocation === "" ? { backgroundColor: A } : {}}
                     >
@@ -152,7 +152,7 @@ export default function FilterPanel({
                         className={`w-full text-left px-4 py-2 text-xs font-semibold transition-colors ${
                           selectedLocation === loc
                             ? "text-white"
-                            : "text-gray-700 hover:bg-orange-50"
+                            : "text-gray-700 hover:bg-[#F49D1A]/10"
                         }`}
                         style={selectedLocation === loc ? { backgroundColor: A } : {}}
                       >
@@ -201,7 +201,7 @@ export default function FilterPanel({
                   placeholder="Contoh: 200000"
                   value={priceMin}
                   onChange={(e) => setPriceMin(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#df7224] focus:ring-2 focus:ring-[#df7224]/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMin !== "" ? formatRupiah(priceMin) : "Tanpa batas minimal"}
@@ -214,7 +214,7 @@ export default function FilterPanel({
                   placeholder="Contoh: 2000000"
                   value={priceMax}
                   onChange={(e) => setPriceMax(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#df7224] focus:ring-2 focus:ring-[#df7224]/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMax !== "" ? formatRupiah(priceMax) : "Tanpa batas maksimal"}
@@ -271,7 +271,7 @@ export default function FilterPanel({
             onClick={() => setIsMobileOpen(false)}
             className="lg:hidden w-full py-3 px-4 rounded-xl text-white text-xs font-bold transition-colors"
             style={{ backgroundColor: A }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c8631e")}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c47d12")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = A)}
           >
             Terapkan Filter

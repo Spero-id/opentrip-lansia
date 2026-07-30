@@ -34,7 +34,7 @@ export default function PriceBreakdown({ destination, pax, ticketSubtotal, meeti
           <span className="font-semibold text-gray-900">Rp {serviceFee.toLocaleString("id-ID")}</span>
         </div>
         {discount > 0 && (
-          <div className="flex justify-between text-green-600">
+          <div className="flex justify-between text-[#1CA6B7]">
             <span>Diskon {appliedVoucher?.label}</span>
             <span className="font-semibold">-Rp {discount.toLocaleString("id-ID")}</span>
           </div>
@@ -42,7 +42,7 @@ export default function PriceBreakdown({ destination, pax, ticketSubtotal, meeti
       </div>
       <div className="border-t border-gray-100 pt-3 flex justify-between">
         <span className="font-bold text-gray-900">Total</span>
-        <span className="font-extrabold text-[#df7224] text-lg">Rp {total.toLocaleString("id-ID")}</span>
+        <span className="font-extrabold text-[#F49D1A] text-lg">Rp {total.toLocaleString("id-ID")}</span>
       </div>
 
       {!hideTerms && (
@@ -52,14 +52,14 @@ export default function PriceBreakdown({ destination, pax, ticketSubtotal, meeti
               type="checkbox"
               checked={agreeToTerms}
               readOnly
-              className="mt-1 w-4 h-4 rounded border-gray-300 text-[#df7224] focus:ring-[#df7224]/30 pointer-events-none"
+              className="mt-1 w-4 h-4 rounded border-gray-300 text-[#F49D1A] focus:ring-[#F49D1A]/30 pointer-events-none"
             />
             <span className="text-xs text-gray-500">
               Saya setuju dengan{" "}
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setModalType("terms"); }}
-                className="text-[#df7224] font-semibold hover:underline"
+                className="text-[#F49D1A] font-semibold hover:underline"
               >
                 syarat & ketentuan
               </button>{" "}
@@ -67,7 +67,7 @@ export default function PriceBreakdown({ destination, pax, ticketSubtotal, meeti
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setModalType("privacy"); }}
-                className="text-[#df7224] font-semibold hover:underline"
+                className="text-[#F49D1A] font-semibold hover:underline"
               >
                 kebijakan privasi
               </button>{" "}
@@ -78,7 +78,7 @@ export default function PriceBreakdown({ destination, pax, ticketSubtotal, meeti
           <button
             onClick={onNext}
             disabled={!canProceed || !agreeToTerms}
-            className="w-full bg-[#df7224] text-white py-3.5 rounded-xl font-semibold hover:bg-[#c3611c] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Lanjut ke Pembayaran
           </button>

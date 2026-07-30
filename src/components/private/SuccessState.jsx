@@ -206,7 +206,7 @@ export default function SuccessState({ form, onReset }) {
             onClick={onReset}
             className="w-full py-3 rounded-xl text-white mb-10 font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
             style={{ backgroundColor: A }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c8631e")}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c47d12")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = A)}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

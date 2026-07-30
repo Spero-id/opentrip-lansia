@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 
-const A = "#df7224";
+const A = "#F49D1A";
 
 const TERMS_CONTENT = [
   {
@@ -197,7 +197,7 @@ export default function TermsModal({ onAgree, onClose }) {
                 ? { backgroundColor: A }
                 : { backgroundColor: "#d1d5db", cursor: "not-allowed" }
               }
-              onMouseEnter={e => { if (hasScrolledToBottom) e.currentTarget.style.backgroundColor = "#c8631e"; }}
+              onMouseEnter={e => { if (hasScrolledToBottom) e.currentTarget.style.backgroundColor = "#c47d12"; }}
               onMouseLeave={e => { if (hasScrolledToBottom) e.currentTarget.style.backgroundColor = A; }}
             >
               Setuju &amp; Lanjutkan

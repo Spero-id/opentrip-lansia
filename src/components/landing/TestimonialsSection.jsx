@@ -21,16 +21,16 @@ export default function ReviewSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 gap-4">
           <div>
-            <p className="text-[#df7224] font-semibold text-sm tracking-wide mb-3">TESTIMONI</p>
+            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">TESTIMONI</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">
-              Apa Kata Mereka Setelah <span className="text-[#df7224]">Traveling</span>
+              Apa Kata Mereka Setelah <span className="text-[#F49D1A]">Traveling</span>
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} className="text-[#df7224] fill-[#df7224]" />
+                <Star key={i} size={18} className="text-[#F49D1A] fill-[#F49D1A]" />
               ))}
             </div>
             <div>
@@ -64,7 +64,7 @@ export default function ReviewSection() {
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0">
-                  <Star size={14} className="text-[#df7224] fill-[#df7224]" />
+                  <Star size={14} className="text-[#F49D1A] fill-[#F49D1A]" />
                   <span className="text-sm font-bold text-gray-900">{r.rating.toFixed(1)}</span>
                 </div>
               </div>
@@ -90,7 +90,7 @@ export default function ReviewSection() {
                   key={i}
                   onClick={() => goTo(i)}
                   aria-label={`Ke halaman ${i + 1}`}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${i === page ? "w-7 bg-[#df7224]" : "w-2.5 bg-gray-200 hover:bg-gray-300"
+                  className={`h-2.5 rounded-full transition-all duration-300 ${i === page ? "w-7 bg-[#F49D1A]" : "w-2.5 bg-gray-200 hover:bg-gray-300"
                     }`}
                 />
               ))}

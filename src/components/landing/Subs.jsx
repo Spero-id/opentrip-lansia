@@ -22,11 +22,11 @@ export default function Subs() {
               <input
                 type="email"
                 placeholder="Masukkan email kamu"
-                className="flex-1 lg:w-72 bg-white border border-white/10 rounded-full px-5 py-3 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:border-[#df7224] transition-colors"
+                className="flex-1 lg:w-72 bg-white border border-white/10 rounded-full px-5 py-3 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] transition-colors"
               />
               <button
                 type="submit"
-                className="flex items-center gap-2 bg-[#df7224] text-white px-4 py-3 rounded-full text-[13px] font-semibold hover:bg-[#c3611c] transition-colors shrink-0"
+                className="flex items-center gap-2 bg-[#F49D1A] text-white px-4 py-3 rounded-full text-[13px] font-semibold hover:bg-[#c47d12] transition-colors shrink-0"
               >
                 Subscribe
                 <svg

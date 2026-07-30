@@ -35,7 +35,7 @@ export default function DestinationDetailPage({ params }) {
   const shortLocation = DestinationDomain.getShortLocation(dest);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#df7224]/30">
+    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#F49D1A]/30">
       {lightboxIndex !== null && (
         <Lightbox
           images={images}
@@ -49,7 +49,7 @@ export default function DestinationDetailPage({ params }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-6">
         <Link
           href="/trips"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#df7224] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#F49D1A] transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 19l-7-7 7-7"/>

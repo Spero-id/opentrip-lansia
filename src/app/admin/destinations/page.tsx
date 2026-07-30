@@ -180,7 +180,7 @@ export default function AdminDestinations() {
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#e06d26] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Destinasi</span>
@@ -214,7 +214,7 @@ export default function AdminDestinations() {
                     <td className="px-6 py-4 text-slate-500 font-medium">{d.difficultyLevel || "-"}</td>
                     <td className="px-6 py-4">
                       {d.isActive ? (
-                        <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-1 bg-[#1CA6B7]/15 text-[#1CA6B7] px-2.5 py-1 rounded-full text-[10px] font-bold">
                           <CheckCircle2 className="w-3 h-3" /> Aktif
                         </span>
                       ) : (
@@ -225,7 +225,7 @@ export default function AdminDestinations() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(d)} className="p-2 text-slate-500 hover:text-[#e06d26] hover:bg-orange-50 rounded-xl transition" title="Edit Destinasi">
+                        <button onClick={() => openEdit(d)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Destinasi">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => { setDeleting(d.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
@@ -246,28 +246,28 @@ export default function AdminDestinations() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Nama Destinasi</label>
             <input name="name" value={form.name} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Slug</label>
             <input name="slug" value={form.slug} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Lokasi</label>
               <input name="location" value={form.location} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Kategori</label>
               <select name="categoryId" value={form.categoryId} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]">
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
                 <option value="">-- Pilih Kategori --</option>
                 {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
               </select>
@@ -277,14 +277,14 @@ export default function AdminDestinations() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Latitude</label>
               <input type="number" step="any"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
                 value={latitude ?? ""} onChange={(e) => handleLatLngChange("lat", e.target.value)}
                 placeholder="-8.12345" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Longitude</label>
               <input type="number" step="any"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
                 value={longitude ?? ""} onChange={(e) => handleLatLngChange("lng", e.target.value)}
                 placeholder="114.12345" />
             </div>
@@ -294,7 +294,7 @@ export default function AdminDestinations() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Tingkat Kesulitan</label>
               <select name="difficultyLevel" value={form.difficultyLevel} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]">
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
                 <option value="">-- Pilih --</option>
                 <option value="Mudah">Mudah</option>
                 <option value="Sedang">Sedang</option>
@@ -305,22 +305,22 @@ export default function AdminDestinations() {
               <label className="block text-sm font-medium text-slate-700">Estimasi (menit)</label>
               <input name="visitEstimateMinutes" type="number" value={form.visitEstimateMinutes ?? ""}
                 onChange={e => setForm(prev => ({ ...prev, visitEstimateMinutes: e.target.value ? Number(e.target.value) : null }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" min={0} />
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" min={0} />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Informasi Aksesibilitas</label>
             <textarea name="accessibilityInfo" value={form.accessibilityInfo} onChange={handleChange} rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isActive" type="checkbox" checked={form.isActive} onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-300 text-[#e06d26] focus:ring-[#e06d26]/30" />
+              className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
             <span className="font-medium text-slate-700">Aktif</span>
           </label>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#e06d26] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition disabled:opacity-50">
+              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}

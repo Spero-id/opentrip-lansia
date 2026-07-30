@@ -26,7 +26,7 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
           <button
             onClick={onPay}
             disabled={!checkout.paymentMethod || checkout.isLoading}
-            className="flex-1 bg-[#df7224] text-white py-3 rounded-xl font-semibold hover:bg-[#c3611c] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {checkout.isLoading ? (
               <>
@@ -78,7 +78,7 @@ function PaymentSelector({ method, onChange }) {
             onClick={() => onChange(m.id)}
             className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium transition-all ${
               method === m.id
-                ? "border-[#df7224] bg-[#df7224]/5 text-[#df7224]"
+                ? "border-[#F49D1A] bg-[#F49D1A]/5 text-[#F49D1A]"
                 : "border-gray-200 text-gray-600 hover:border-gray-300"
             }`}
           >

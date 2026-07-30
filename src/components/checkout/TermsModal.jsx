@@ -176,7 +176,7 @@ export default function TermsModal({ type, onClose, onAgree }) {
           </div>
           {!hasScrolledToBottom && (
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent pt-6 pb-3 text-center z-10">
-              <span className="inline-block text-xs font-medium text-orange-600 bg-orange-50 border border-orange-200 px-3 py-1 rounded-full shadow-sm">
+              <span className="inline-block text-xs font-medium text-[#F49D1A] bg-[#FEF6E7] border border-[#F49D1A]/20 px-3 py-1 rounded-full shadow-sm">
                 Scroll ke bawah untuk menyetujui ↓
               </span>
             </div>
@@ -188,7 +188,7 @@ export default function TermsModal({ type, onClose, onAgree }) {
           <button
             onClick={() => onAgree()}
             disabled={!hasScrolledToBottom}
-            className="w-full bg-[#df7224] text-white py-3 rounded-xl font-semibold hover:bg-[#c3611c] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {hasScrolledToBottom
               ? "Saya Setuju"

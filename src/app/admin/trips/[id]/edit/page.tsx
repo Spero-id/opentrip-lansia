@@ -23,13 +23,13 @@ export default async function EditTrip({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Edit Trip</h1>
           <p className="text-sm text-slate-500 mt-1">{trip.title}</p>
         </div>
       </div>
-      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <TripForm initial={{ ...trip, itinerary, tripDestinations: destinations }} />
       </div>
     </div>

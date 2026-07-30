@@ -35,7 +35,7 @@ export default function ContactPage() {
                 <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
                     <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-                        Contact <span className="text-[#df7224]">Us</span>
+                        Contact <span className="text-[#F49D1A]">Us</span>
                     </h1>
                 </div>
 
@@ -71,8 +71,8 @@ export default function ContactPage() {
                                             href="tel:+6281234567890"
                                             className="flex items-center gap-4 bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3.5 transition-colors group"
                                         >
-                                            <div className="w-10 h-10 rounded-full bg-white group-hover:bg-[#df7224] flex items-center justify-center shrink-0 transition-colors">
-                                                <PhoneIcon className="w-4 h-4 text-[#df7224] group-hover:text-white transition-colors" />
+                                            <div className="w-10 h-10 rounded-full bg-white group-hover:bg-[#F49D1A] flex items-center justify-center shrink-0 transition-colors">
+                                                <PhoneIcon className="w-4 h-4 text-[#F49D1A] group-hover:text-white transition-colors" />
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/50">Telepon</p>
@@ -84,8 +84,8 @@ export default function ContactPage() {
                                             href="mailto:hello@opentrip.id"
                                             className="flex items-center gap-4 bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3.5 transition-colors group"
                                         >
-                                            <div className="w-10 h-10 rounded-full bg-white group-hover:bg-[#df7224] flex items-center justify-center shrink-0 transition-colors">
-                                                <EnvelopeIcon className="w-4 h-4 text-[#df7224] group-hover:text-white transition-colors" />
+                                            <div className="w-10 h-10 rounded-full bg-white group-hover:bg-[#F49D1A] flex items-center justify-center shrink-0 transition-colors">
+                                                <EnvelopeIcon className="w-4 h-4 text-[#F49D1A] group-hover:text-white transition-colors" />
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/50">Email</p>
@@ -95,7 +95,7 @@ export default function ContactPage() {
 
                                         <div className="flex items-center gap-4 bg-white/5 rounded-xl px-4 py-3.5">
                                             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
-                                                <MapPinIcon className="w-4 h-4 text-[#df7224]" />
+                                                <MapPinIcon className="w-4 h-4 text-[#F49D1A]" />
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/50">Alamat</p>
@@ -105,7 +105,7 @@ export default function ContactPage() {
 
                                         <div className="flex items-center gap-4 bg-white/5 rounded-xl px-4 py-3.5">
                                             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
-                                                <ClockIcon className="w-4 h-4 text-[#df7224]" />
+                                                <ClockIcon className="w-4 h-4 text-[#F49D1A]" />
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/50">Jam Operasional</p>
@@ -127,8 +127,8 @@ export default function ContactPage() {
 
                                 {submitted ? (
                                     <div className="flex flex-col items-center justify-center text-center py-16 border border-dashed border-gray-200 rounded-xl">
-                                        <div className="w-14 h-14 rounded-full bg-[#df7224]/10 flex items-center justify-center mb-4">
-                                            <PaperAirplaneIcon className="w-5 h-5 text-[#df7224]" />
+                                        <div className="w-14 h-14 rounded-full bg-[#F49D1A]/10 flex items-center justify-center mb-4">
+                                            <PaperAirplaneIcon className="w-5 h-5 text-[#F49D1A]" />
                                         </div>
                                         <h3 className="font-bold text-gray-900 mb-1">Pesan terkirim!</h3>
                                         <p className="text-sm text-gray-500 max-w-xs">
@@ -148,7 +148,7 @@ export default function ContactPage() {
                                                         type="email"
                                                         placeholder="nama@email.com"
                                                         required
-                                                        className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors"
+                                                        className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                                                     />
                                                 </div>
                                             </div>
@@ -161,7 +161,7 @@ export default function ContactPage() {
                                                     <input
                                                         type="tel"
                                                         placeholder="08xx-xxxx-xxxx"
-                                                        className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors"
+                                                        className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                                                     />
                                                 </div>
                                             </div>
@@ -177,7 +177,7 @@ export default function ContactPage() {
                                                     type="text"
                                                     placeholder="Nama lengkap"
                                                     required
-                                                    className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors"
+                                                    className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                                                 />
                                             </div>
                                         </div>
@@ -192,14 +192,14 @@ export default function ContactPage() {
                                                     rows={5}
                                                     placeholder="Tulis pesan kamu di sini..."
                                                     required
-                                                    className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors resize-none"
+                                                    className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors resize-none"
                                                 />
                                             </div>
                                         </div>
 
                                         <button
                                             type="submit"
-                                            className="flex items-center justify-center gap-2 bg-[#df7224] text-white px-8 py-3.5 w-full rounded-lg font-semibold hover:bg-[#c3611c] transition-colors"
+                                            className="flex items-center justify-center gap-2 bg-[#F49D1A] text-white px-8 py-3.5 w-full rounded-lg font-semibold hover:bg-[#c47d12] transition-colors"
                                         >
                                             Kirim Pesan
                                             <PaperAirplaneIcon className="w-4 h-4" />

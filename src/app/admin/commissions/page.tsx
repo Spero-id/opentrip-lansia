@@ -85,7 +85,7 @@ export default function AdminCommissions() {
   }
 
   const statusStyles: Record<string, string> = {
-    paid: "bg-emerald-100 text-emerald-800",
+    paid: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
     approved: "bg-blue-100 text-blue-700",
     pending: "bg-yellow-100 text-yellow-700",
     rejected: "bg-red-100 text-red-700",
@@ -93,14 +93,14 @@ export default function AdminCommissions() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Komisi Agen</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola komisi agen, approval, dan pencairan dana.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#e06d26] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Komisi</span>
@@ -135,7 +135,7 @@ export default function AdminCommissions() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(c)} className="p-2 text-slate-500 hover:text-[#e06d26] hover:bg-orange-50 rounded-xl transition" title="Edit Komisi">
+                        <button onClick={() => openEdit(c)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Komisi">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => { setDeleting(c.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
@@ -156,22 +156,22 @@ export default function AdminCommissions() {
           <div>
             <label className="block text-sm font-medium text-slate-700">ID Agen</label>
             <input name="agentId" value={form.agentId} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">ID Booking</label>
             <input name="bookingId" value={form.bookingId} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Jumlah (Rp)</label>
             <input name="amount" value={form.amount} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>
             <select name="status" value={form.status} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]">
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="paid">Paid</option>
@@ -180,7 +180,7 @@ export default function AdminCommissions() {
           </div>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#e06d26] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition disabled:opacity-50">
+              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}

@@ -14,8 +14,8 @@ export default function DestinationTabs({ activeTab, onChange }) {
           onClick={() => onChange(tab.id)}
           className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold text-sm sm:text-base whitespace-nowrap border-b-2 transition-colors ${
             activeTab === tab.id
-              ? 'text-[#df7224] border-[#df7224]'
-              : 'border-transparent text-gray-500 hover:text-[#df7224]'
+              ? 'text-[#F49D1A] border-[#F49D1A]'
+              : 'border-transparent text-gray-500 hover:text-[#F49D1A]'
           }`}
         >
           {tab.label}

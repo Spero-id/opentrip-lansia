@@ -22,11 +22,11 @@ export default function FAQSection() {
         <section id="faq" className="relative bg-white py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-start mb-10">
-                    <span className="text-[#df7224] font-semibold text-xs uppercase tracking-wider block mb-2">
+                    <span className="text-[#F49D1A] font-semibold text-xs uppercase tracking-wider block mb-2">
                         PERTANYAAN UMUM
                     </span>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
-                        Pertanyaan Yang Sering <span className="text-[#df7224]">Diajukan</span>
+                        Pertanyaan Yang Sering <span className="text-[#F49D1A]">Diajukan</span>
                     </h2>
                 </div>
 
@@ -39,7 +39,7 @@ export default function FAQSection() {
                                     <div
                                         key={i}
                                         className={`rounded-xl border transition-colors ${isOpen
-                                            ? "border-[#df7224]/30 bg-[#df7224]/10 shadow-xs"
+                                            ? "border-[#F49D1A]/30 bg-[#F49D1A]/10 shadow-xs"
                                             : "border-gray-200 bg-white hover:border-gray-300"
                                             }`}
                                     >
@@ -52,7 +52,7 @@ export default function FAQSection() {
                                             </span>
                                             <span
                                                 className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen
-                                                    ? "bg-[#df7224] text-white rotate-45"
+                                                    ? "bg-[#F49D1A] text-white rotate-45"
                                                     : "bg-gray-100 text-gray-600"
                                                     }`}
                                             >
@@ -90,7 +90,7 @@ export default function FAQSection() {
                                         key={i}
                                         onClick={() => goTo(i)}
                                         aria-label={`Page ${i + 1}`}
-                                        className={`h-2 rounded-full transition-all duration-200 ${i === page ? "w-6 bg-[#df7224]" : "w-2 bg-gray-200"
+                                        className={`h-2 rounded-full transition-all duration-200 ${i === page ? "w-6 bg-[#F49D1A]" : "w-2 bg-gray-200"
                                             }`}
                                     />
                                 ))}
@@ -127,11 +127,11 @@ export default function FAQSection() {
                             <input
                                 type="text"
                                 placeholder="Ketik di sini..."
-                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#df7224]/20 focus:border-[#df7224] transition-colors mb-4"
+                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors mb-4"
                             />
                             <button
                                 type="submit"
-                                className="w-full flex items-center justify-center gap-2 bg-[#df7224] text-white py-3 rounded-xl font-semibold hover:bg-[#c3611c] transition-colors"
+                                className="w-full flex items-center justify-center gap-2 bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
                             >
                                 Kirim
                                 <Send size={16} />

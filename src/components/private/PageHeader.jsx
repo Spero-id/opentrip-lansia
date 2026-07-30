@@ -1,4 +1,4 @@
-const A = "#df7224";
+const A = "#F49D1A";
 
 export default function PageHeader() {
   return (
@@ -7,7 +7,7 @@ export default function PageHeader() {
         SESUAI KEINGINANMU
       </p>
       <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-        <span className="text-[#df7224]">Private</span> Trip
+        <span className="text-[#F49D1A]">Private</span> Trip
       </h1>
       <p className="text-sm text-gray-500 max-w-lg">
         Rancang perjalananmu sendiri. Isi form di bawah dan tim kami akan membantu mewujudkan trip impianmu.

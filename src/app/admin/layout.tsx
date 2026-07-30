@@ -55,23 +55,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile hamburger */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-3 left-3 z-50 lg:hidden bg-[#0b0f19] text-white p-2.5 rounded-xl shadow-lg"
+        className="fixed top-3 left-3 z-50 lg:hidden bg-[#0D238E] text-white p-2.5 rounded-xl shadow-lg"
         aria-label="Toggle sidebar"
       >
         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0b0f19] text-slate-300 flex flex-col justify-between p-4 border-r border-slate-800 shrink-0 transition-transform duration-300 lg:static lg:inset-auto lg:translate-x-0 ${
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0D238E] text-slate-300 flex flex-col justify-between p-4 border-r border-slate-800 shrink-0 transition-transform duration-300 lg:static lg:inset-auto lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}>
         <div className="space-y-6">
           {/* Brand header */}
           <div className="px-3 pt-2">
             <Link href="/" className="flex items-center gap-2 text-xl font-extrabold text-white tracking-tight">
-              <Compass className="h-6 w-6 text-[#e06d26]" />
-              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-8 w-auto" />
-              <span className="ml-auto text-[10px] font-bold bg-[#e06d26]/20 text-[#e06d26] px-2 py-0.5 rounded-full border border-orange-500/30 uppercase">
+              <Compass className="h-6 w-6 text-[#F49D1A]" />
+              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-10 w-auto" />
+              <span className="ml-auto text-[10px] font-bold bg-[#F49D1A]/20 text-[#F49D1A] px-2 py-0.5 rounded-full border border-[#F49D1A]/30 uppercase">
                 ADMIN
               </span>
             </Link>
@@ -88,7 +88,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   href={item.href}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl transition duration-200 ${
                     isActive
-                      ? "bg-[#e06d26] text-white font-semibold shadow-lg shadow-orange-500/25"
+                      ? "bg-[#F49D1A] text-white font-semibold shadow-lg shadow-[#F49D1A]/25"
                       : "text-slate-400 hover:bg-slate-800/80 hover:text-white"
                   }`}
                 >
@@ -106,7 +106,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             href="/"
             className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-400 hover:text-white transition"
           >
-            <ArrowLeft className="w-4 h-4 text-[#e06d26]" />
+            <ArrowLeft className="w-4 h-4 text-[#F49D1A]" />
             <span>Kembali ke Website Utama</span>
           </Link>
         </div>
@@ -129,13 +129,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-4">
             <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition relative">
               <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#e06d26]" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#F49D1A]" />
             </button>
 
             <div className="h-6 w-[1px] bg-slate-200" />
 
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-orange-100 text-[#e06d26] font-bold text-xs flex items-center justify-center border border-orange-200">
+              <div className="w-8 h-8 rounded-xl bg-[#F49D1A]/15 text-[#F49D1A] font-bold text-xs flex items-center justify-center border border-[#F49D1A]/20">
                 ADM
               </div>
               <div className="hidden sm:block text-left">

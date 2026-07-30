@@ -1,4 +1,4 @@
-const A = "#df7224";
+const A = "#F49D1A";
 
 export default function MeetingSection({ dest }) {
   return (
@@ -9,9 +9,9 @@ export default function MeetingSection({ dest }) {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {dest.meetingPoints?.map((mp, idx) => (
-          <div key={idx} className="p-5 rounded-2xl bg-white shadow-sm border border-gray-100 hover:border-[#df7224]/30 hover:shadow-md transition-all group">
+          <div key={idx} className="p-5 rounded-2xl bg-white shadow-sm border border-gray-100 hover:border-[#F49D1A]/30 hover:shadow-md transition-all group">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-orange-50 text-[#df7224] shrink-0">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#FEF6E7] text-[#F49D1A] shrink-0">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />

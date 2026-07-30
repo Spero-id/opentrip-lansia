@@ -15,10 +15,23 @@ Dokumen ini merupakan panduan lengkap sistem desain (*Design System*) dan spesif
 ## 2. Palet Warna (*Color Palette*)
 
 ### Warna Utama (*Primary Accent*)
-- **Primary Orange**: `#E06D26` / `#E86016` (Hex) | `orange-600` / `amber-600` (Tailwind)
-  - Digunakan untuk: Tombol utama (CTA), kata kunci yang di-highlight, badge aktif, indikator pagination, dan ikon aksen.
-- **Primary Hover**: `#C85B18` | `orange-700`
-- **Primary Light Tint**: `#FFF7ED` | `orange-50` / `orange-100`
+- **Primary Mustard Orange**: `#F49D1A` (Hex) | Variasi: `#FFA500`, `#F7931A`
+  - Digunakan untuk: Tombol utama (CTA), ikon, aksen penting, header/navbar — disesuaikan dengan warna logo Jelajah Memoria.
+- **Primary Hover**: `#c47d12`
+- **Primary Light Tint**: `#FEF6E7`
+
+### Warna Sekunder (*Secondary / Shadow*)
+- **Secondary Dark Blue**: `#0D238E` (Hex) | Variasi: `#12239E`
+  - Digunakan untuk: Warna teks utama, latar belakang kontras tinggi (footer, sidebar admin), elemen gelap.
+
+### Warna Aksen (*Accent / Tosca Cyan*)
+- **Accent Teal**: `#1CA6B7` (Hex) | Variasi: `#20B2AA`
+  - Digunakan untuk: Badge status, highlight, tag, latar belakang bagian sekunder (card).
+
+### Warna Netral & Latar Belakang (*Backgrounds*)
+- **Base Background**: `#FAF8F5` (Krem bersih)
+- **White Content BG**: `#FFFFFF` (Putih untuk kartu/konten)
+- **Border**: `#E2E8F0` (Slate-200)
 
 ### Warna Netral & Latar Belakang (*Backgrounds*)
 - **Base Background**: `#FFFFFF` (Putih bersih)

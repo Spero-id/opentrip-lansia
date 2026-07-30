@@ -22,17 +22,17 @@ export default function DestinationSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-6 md:mb-10">
           <div>
-            <p className="text-[#df7224] font-semibold text-sm tracking-wide mb-3">
+            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">
               DESTINASI PILIHAN
             </p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
-              Destinasi Paling <span className="text-[#df7224]">Diminati</span>
+              Destinasi Paling <span className="text-[#F49D1A]">Diminati</span>
             </h2>
           </div>
 
           <Link
             href="/trips"
-            className="hidden md:flex items-center gap-1 text-sm font-semibold text-gray-700 hover:text-[#df7224] transition-colors shrink-0"
+            className="hidden md:flex items-center gap-1 text-sm font-semibold text-gray-700 hover:text-[#F49D1A] transition-colors shrink-0"
           >
             Lihat semua
             <ArrowRight size={16} className="rotate-[-45deg]" />
@@ -57,7 +57,7 @@ export default function DestinationSection() {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                <Star size={12} className="text-[#df7224] fill-[#df7224]" />
+                <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
                 <span className="text-xs font-semibold text-gray-900">
                   {dest.rating}
                 </span>
@@ -80,7 +80,7 @@ export default function DestinationSection() {
                     Rp {dest.priceMin.toLocaleString("id-ID")}
                   </p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#df7224] flex items-center justify-center transition-colors flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#F49D1A] flex items-center justify-center transition-colors flex-shrink-0">
                   <ArrowRight
                     size={16}
                     className="text-gray-500 group-hover:text-white transition-colors"

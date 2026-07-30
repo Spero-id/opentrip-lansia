@@ -1,4 +1,4 @@
-const A = "#df7224";
+const A = "#F49D1A";
 
 export default function AboutSection({ dest }) {
   return (
@@ -18,7 +18,7 @@ export default function AboutSection({ dest }) {
           {dest.highlights.map((h, i) => (
             <div
               key={i}
-              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[#df7224] text-white text-xs sm:text-sm font-semibold"
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[#F49D1A] text-white text-xs sm:text-sm font-semibold"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <polyline points="20 6 9 17 4 12"></polyline>

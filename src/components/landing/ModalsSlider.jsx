@@ -61,8 +61,8 @@ const openModal = () => {
                     onClick={openModal}
                     className="flex w-full max-w-2xl items-center gap-3 rounded-2xl bg-white shadow-md hover:shadow-lg px-5 py-4 transition-shadow cursor-pointer"
                 >
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 border border-[#df7224] shrink-0">
-                        <Search size={18} className="text-[#df7224]" />
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 border border-[#F49D1A] shrink-0">
+                        <Search size={18} className="text-[#F49D1A]" />
                     </div>
 
                     <div className="flex-1 text-left">
@@ -74,7 +74,7 @@ const openModal = () => {
 
                     <div className="w-px h-8 bg-gray-300 shrink-0" />
 
-                    <SlidersHorizontal size={18} className="text-[#df7224] shrink-0" />
+                    <SlidersHorizontal size={18} className="text-[#F49D1A] shrink-0" />
                 </button>
             </div>
             {isModalOpen && (
@@ -121,10 +121,10 @@ const openModal = () => {
                                             <button
                                                 key={loc}
                                                 onClick={() => setSelectedLocation(loc)}
-                                                className={`flex items-center gap-2 text-left text-sm transition-colors ${isSelected ? "text-[#df7224]" : "text-gray-800 hover:text-[#df7224]"
+                                                className={`flex items-center gap-2 text-left text-sm transition-colors ${isSelected ? "text-[#F49D1A]" : "text-gray-800 hover:text-[#F49D1A]"
                                                     }`}
                                             >
-                                                <MapPin size={16} className={isSelected ? "text-[#df7224]" : "text-gray-400"} />
+                                                <MapPin size={16} className={isSelected ? "text-[#F49D1A]" : "text-gray-400"} />
                                                 {loc}
                                             </button>
                                         );

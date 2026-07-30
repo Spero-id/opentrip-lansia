@@ -94,14 +94,14 @@ export default function AdminMeetingPoints() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Meeting Point</h1>
           <p className="text-sm text-slate-500 mt-1">Daftar lokasi titik kumpul keberangkatan untuk paket trip.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#e06d26] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Meeting Point</span>
@@ -129,14 +129,14 @@ export default function AdminMeetingPoints() {
                 rows.map((m) => (
                   <tr key={m.id} className="hover:bg-slate-50/60 transition">
                     <td className="px-6 py-4 font-bold text-slate-900 inline-flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#e06d26]" />
+                      <MapPin className="w-4 h-4 text-[#F49D1A]" />
                       {m.name}
                     </td>
                     <td className="px-6 py-4 text-slate-500">{m.address || "-"}</td>
                     <td className="px-6 py-4 text-slate-500 max-w-xs truncate">{m.description || "-"}</td>
                     <td className="px-6 py-4">
                       {m.isActive ? (
-                        <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-1 bg-[#1CA6B7]/15 text-[#1CA6B7] px-2.5 py-1 rounded-full text-[10px] font-bold">
                           <CheckCircle2 className="w-3 h-3" /> Aktif
                         </span>
                       ) : (
@@ -147,7 +147,7 @@ export default function AdminMeetingPoints() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(m)} className="p-2 text-slate-500 hover:text-[#e06d26] hover:bg-orange-50 rounded-xl transition" title="Edit">
+                        <button onClick={() => openEdit(m)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => { setDeleting(m.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
@@ -168,39 +168,39 @@ export default function AdminMeetingPoints() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Nama Lokasi</label>
             <input name="name" value={form.name} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Alamat</label>
             <textarea name="address" value={form.address} onChange={handleChange} rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Latitude</label>
               <input name="geoPoint" value={form.geoPoint} onChange={handleChange} placeholder="-8.12345"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Longitude</label>
               <input name="geoPoint" value="" onChange={() => {}}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26] disabled:opacity-50"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] disabled:opacity-50"
                 disabled placeholder="Gabung dengan latitude" />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e06d26]/30 focus:border-[#e06d26]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isActive" type="checkbox" checked={form.isActive} onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-300 text-[#e06d26] focus:ring-[#e06d26]/30" />
+              className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
             <span className="font-medium text-slate-700">Aktif</span>
           </label>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#e06d26] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-orange-500/20 hover:bg-[#c85b18] transition disabled:opacity-50">
+              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}
