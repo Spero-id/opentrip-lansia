@@ -211,3 +211,32 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
   - Updated: SectionCard, Field, BookingInformationSection, TripDetailSection, TripOptionSection, TripFromSection, SubmitBar, SuccessState, TermsModal, Radio, SelectedDestination, DestinationCard, PageHeader
   - Updated private page to use Navbar/Footer
 - Cleaned up empty `{detail}` artifact directory
+
+## Session 9 — Playwright E2E Tests
+
+**Goal:** Create comprehensive Playwright E2E tests for all features.
+
+**Completed:**
+- Installed `@playwright/test` ^1.62.1
+- Created `playwright.config.ts` with chromium project and dev server webServer config
+- Created 19 test files across 3 directories:
+  - **Public pages (7 files):** landing, trips, auth (login/register), checkout, contact, private-trip
+  - **Admin CRUD (11 files):** dashboard, trips, destinations, blogs, commissions, galleries, horeca, meeting-points, pesanan, private-trips, promotions, reviews, vendors
+  - **API (1 file):** endpoint smoke tests for 14 GET endpoints + 3 POST validation tests
+- All **81 tests passing** with 1 worker on chromium
+
+**Test coverage per feature phase:**
+| Phase | Features | Tests |
+|-------|----------|-------|
+| Phase 2 (Trip CRUD) | trips, destinations | 7 |
+| Phase 3 (User Pages) | landing, trips public, auth | 22 |
+| Phase 4 (Booking) | checkout, contact | 7 |
+| Phase 5 (Admin Dashboard) | dashboard, all CRUDs | 33 |
+| Phase 6 (Private Trip) | private trip, admin private trips | 7 |
+| Phase 7 (Blog) | blog public, admin blog | 5 |
+| Phase 9 (Infrastructure) | API endpoints | 17 |
+
+**Verification:**
+- `npx playwright test` — 81/81 passing
+- Runs against `npm run dev` dev server on port 3000
+- Tests are sequential (1 worker) for stability

@@ -1,11 +1,11 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-07-29",
+  "last_updated": "2026-07-31",
   "summary": {
     "total_features": 48,
     "in_review": 20,
-    "completed": 13,
-    "to_do": 15,
+    "completed": 14,
+    "to_do": 14,
     "not_started": 0
   },
   "phases": [
@@ -516,6 +516,16 @@
           "depends_on": ["feat-021"],
           "verification": ["npm run lint"],
           "evidence": "Better Auth configured but no UI for password reset"
+        },
+        {
+          "id": "feat-098",
+          "title": "Playwright E2E Test Suite",
+          "description": "Comprehensive E2E test suite covering all features: public pages (landing, trips, auth, checkout, contact, private-trip), admin CRUD pages (dashboard, trips, destinations, blogs, commissions, galleries, horeca, meeting-points, pesanan, private-trips, promotions, reviews, vendors), and API endpoint smoke tests.",
+          "status": "completed",
+          "priority": 98,
+          "depends_on": ["feat-001"],
+          "verification": ["npx playwright test"],
+          "evidence": "81 tests in 19 files across e2e/public/, e2e/admin/, e2e/api/, all passing"
         }
       ]
     }

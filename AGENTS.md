@@ -74,6 +74,9 @@ Before ending a session:
 
 # Individual checks
 npm run lint
+
+# Playwright E2E tests (requires dev server)
+npx playwright test
 ```
 
 ## Escalation
