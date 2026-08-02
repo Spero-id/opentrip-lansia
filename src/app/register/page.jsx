@@ -2,10 +2,39 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { signUp } from "@/lib/auth-client";
 
 export default function RegisterPage() {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        const { error: signUpError } = await signUp.email({
+            name,
+            email,
+            password,
+        });
+
+        if (signUpError) {
+            setError(signUpError.message || "Gagal mendaftar, coba lagi.");
+            setLoading(false);
+            return;
+        }
+
+        router.push("/admin");
+        router.refresh();
+    }
 
     return (
         <div className="fixed inset-0 overflow-hidden lg:static lg:h-auto lg:min-h-screen bg-white flex flex-col lg:flex lg:items-center lg:justify-center lg:p-4">
@@ -52,14 +81,23 @@ export default function RegisterPage() {
                         Daftar untuk mulai merencanakan trip berikutnya.
                     </p>
 
-                    <form className="space-y-3 sm:space-y-4">
+                    {error && (
+                        <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Username
+                                Nama Lengkap
                             </label>
                             <input
                                 type="text"
-                                placeholder="Masukkan Username kamu"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Masukkan nama kamu"
+                                required
                                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                             />
                         </div>
@@ -70,7 +108,10 @@ export default function RegisterPage() {
                             </label>
                             <input
                                 type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Masukkan email kamu"
+                                required
                                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                             />
                         </div>
@@ -82,7 +123,10 @@ export default function RegisterPage() {
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Masukkan password kamu"
+                                    required
                                     className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                                 />
                                 <button
@@ -107,9 +151,10 @@ export default function RegisterPage() {
 
                         <button
                             type="submit"
-                            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#F49D1A]/80 transition-colors"
+                            disabled={loading}
+                            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#F49D1A]/80 transition-colors disabled:opacity-50"
                         >
-                            Daftar
+                            {loading ? "Memproses..." : "Daftar"}
                         </button>
                     </form>
 
