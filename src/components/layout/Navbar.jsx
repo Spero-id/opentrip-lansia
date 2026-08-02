@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,22 +61,34 @@ export default function Navbar() {
               </Link>
             ))}
             <div className="flex items-center gap-2">
-              <Link
-                href="/register"
-                className="bg-[#F49D1A] hover:shadow-xl text-white px-5 py-2 rounded-[5px] text-sm font-poppins hover:bg-[#F49D1A]/80 transition-colors shadow-sm"
-              >
-                Register
-              </Link>
-              <Link
-                href="/login"
-                className={`px-5 py-2 hover:shadow-xl rounded-[5px] text-sm font-poppins transition-colors shadow-sm ${isScrolled
-                    ? "bg-white border border-[#F49D1A] text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white"
-                    : "bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-white hover:text-[#F49D1A]"
-                  }`}
-              >
-                Login
-              </Link>
-
+              {isLoggedIn ? (
+                <Link
+                  href="/profile"
+                  title="Profile"
+                  aria-label="Profile"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F49D1A] bg-white/10 text-[#F49D1A] backdrop-blur-sm transition-colors hover:bg-[#F49D1A] hover:text-white"
+                >
+                  <User size={20} />
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/register"
+                    className="bg-[#F49D1A] hover:shadow-xl text-white px-5 py-2 rounded-[5px] text-sm font-poppins hover:bg-[#F49D1A]/80 transition-colors shadow-sm"
+                  >
+                    Register
+                  </Link>
+                  <Link
+                    href="/login"
+                    className={`px-5 py-2 hover:shadow-xl rounded-[5px] text-sm font-poppins transition-colors shadow-sm ${isScrolled
+                        ? "bg-white border border-[#F49D1A] text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white"
+                        : "bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-white hover:text-[#F49D1A]"
+                      }`}
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="md:hidden">
