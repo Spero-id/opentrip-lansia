@@ -1,13 +1,13 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { destinationsData } from "@/lib/destinationsData";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
-import { DestinationDomain } from "@/lib/Destination";
+import { DestinationDomain, toDetail } from "@/lib/Destination";
 
 import Lightbox from "@/components/destinasi/detail/Lightbox";
 import DestinationHeader from "@/components/destinasi/detail/DestinationHeader";
@@ -21,14 +21,59 @@ import BookingCard from "@/components/destinasi/detail/BookingCard";
 
 export default function DestinationDetailPage({ params }) {
   const resolvedParams = use(params);
-  const id = Number(resolvedParams.id);
-  const dest = destinationsData.find((d) => d.id === id);
+  const [dest, setDest] = useState(null);
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    const rawId = resolvedParams.id;
+    let cancelled = false;
+
+    Promise.resolve()
+      .then(() => destinationsData.find((d) => d.id === Number(rawId)) ?? null)
+      .then((staticDest) => {
+        if (cancelled) return null;
+        if (staticDest) {
+          setDest(staticDest);
+          setStatus("found");
+          return null;
+        }
+        return fetch("/api/destinations").then((res) => res.json());
+      })
+      .then((data) => {
+        if (cancelled || !data) return;
+        const found = Array.isArray(data)
+          ? data.find((d) => d.id === rawId && d.isActive !== false)
+          : undefined;
+        setDest(found ? toDetail(found) : null);
+        setStatus(found ? "found" : "notfound");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setDest(null);
+        setStatus("notfound");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedParams.id]);
 
   const [activeTab, setActiveTab] = useState("tentang");
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
-  if (!dest) {
+  if (status === "notfound") {
     notFound();
+  }
+
+  if (status !== "found" || !dest) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh] text-sm text-gray-400">
+          Memuat...
+        </div>
+      </div>
+    );
   }
 
   const images = dest.images?.length ? dest.images : [dest.image];
