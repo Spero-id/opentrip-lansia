@@ -1,12 +1,46 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { MapPin, Star, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { destinationsData } from "@/lib/destinationsData";
+
+const FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",
+  "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80",
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80",
+  "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=600&q=80",
+];
+
+const DEFAULT_RATING = 5.0;
+
+function toCard(dest, index) {
+  return {
+    id: dest.id,
+    title: dest.name,
+    location: dest.location || "Indonesia",
+    rating: DEFAULT_RATING,
+    priceMin: 0,
+    image: FALLBACK_IMAGES[index % FALLBACK_IMAGES.length],
+  };
+}
 
 export default function DestinationSection() {
   const scrollRef = useRef(null);
+  const [destinations, setDestinations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/destinations")
+      .then((res) => res.json())
+      .then((data) => {
+        const active = Array.isArray(data)
+          ? data.filter((d) => d.isActive !== false)
+          : [];
+        setDestinations(active.map(toCard));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const scroll = (dir) => {
     if (!scrollRef.current) return;
@@ -44,7 +78,7 @@ export default function DestinationSection() {
         ref={scrollRef}
         className="flex md:grid md:grid-cols-4 md:grid-rows-2 md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        {destinationsData.slice(0, 8).map((dest) => (
+        {destinations.slice(0, 8).map((dest) => (
           <Link
             key={dest.id}
             href={`/trips/${dest.id}`}
@@ -75,10 +109,18 @@ export default function DestinationSection() {
 
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                 <div>
-                  <p className="text-[11px] text-gray-400">mulai dari</p>
-                  <p className="text-base font-bold text-gray-900">
-                    Rp {dest.priceMin.toLocaleString("id-ID")}
-                  </p>
+                  {dest.priceMin > 0 ? (
+                    <>
+                      <p className="text-[11px] text-gray-400">mulai dari</p>
+                      <p className="text-base font-bold text-gray-900">
+                        Rp {dest.priceMin.toLocaleString("id-ID")}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-base font-semibold text-gray-500">
+                      Hubungi kami
+                    </p>
+                  )}
                 </div>
                 <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#F49D1A] flex items-center justify-center transition-colors flex-shrink-0">
                   <ArrowRight
@@ -93,6 +135,12 @@ export default function DestinationSection() {
 
         <div className="shrink-0 w-1 md:hidden" />
       </div>
+
+      {!loading && destinations.length === 0 && (
+        <p className="text-center text-sm text-gray-400 pt-2 pb-6">
+          Belum ada destinasi. Tambahkan dulu lewat halaman admin.
+        </p>
+      )}
 
       <div className="flex md:hidden items-center justify-center gap-2 mt-6">
         <button
