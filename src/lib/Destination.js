@@ -23,19 +23,28 @@ export const FALLBACK_IMAGES = [
 export const DEFAULT_RATING = 5.0;
 
 export function toDetail(dest) {
+  const images =
+    Array.isArray(dest.images) && dest.images.length
+      ? dest.images
+      : [dest.image].filter(Boolean);
+  const fallbackImages = images.length ? images : FALLBACK_IMAGES;
+
   return {
     id: dest.id,
     title: dest.name,
-    image: FALLBACK_IMAGES[0],
-    images: FALLBACK_IMAGES,
+    image: dest.image || fallbackImages[0],
+    images: fallbackImages,
     location: dest.location || "Indonesia",
     category: dest.difficultyLevel || "Destinasi",
-    rating: DEFAULT_RATING,
-    reviewCount: 0,
-    priceMin: 0,
-    priceMax: 0,
+    rating: dest.rating || DEFAULT_RATING,
+    reviewCount: dest.reviewCount || 0,
+    priceMin: dest.priceMin || 0,
+    priceMax: dest.priceMax || 0,
     description: dest.description || "Belum ada deskripsi.",
-    highlights: [dest.difficultyLevel, dest.accessibilityInfo].filter(Boolean),
+    highlights:
+      Array.isArray(dest.highlights) && dest.highlights.length
+        ? dest.highlights
+        : [dest.difficultyLevel, dest.accessibilityInfo].filter(Boolean),
     itinerary: [],
     meetingPoints: [],
     reviewsList: [],

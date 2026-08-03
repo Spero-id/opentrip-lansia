@@ -2,6 +2,8 @@
 
 import BookingSummary from "./BookingSummary";
 import PriceBreakdown from "./PriceBreakdown";
+import Image from "next/image";
+
 
 export default function PaymentStep({ checkout, onPay, onBack }) {
   return (
@@ -59,13 +61,12 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
 
 function PaymentSelector({ method, onChange }) {
   const methods = [
-    { id: "bca", label: "BCA Virtual Account", icon: "🏦" },
-    { id: "bri", label: "BRI Virtual Account", icon: "🏦" },
-    { id: "mandiri", label: "Mandiri Virtual Account", icon: "🏦" },
-    { id: "gopay", label: "GoPay", icon: "💚" },
-    { id: "ovo", label: "OVO", icon: "💜" },
-    { id: "dana", label: "DANA", icon: "💙" },
-    { id: "qris", label: "QRIS", icon: "📱" },
+    { id: "bri", alt: "BRI", icon: "/logo-BRI.png" },
+    { id: "mandiri", alt: "Mandiri", icon: "/logo-Mandiri.webp" },
+    { id: "gopay", alt: "GoPay", icon: "/logo-GoPay.webp" },
+    { id: "ovo", alt: "OVO", icon: "/logo-OVO.webp" },
+    { id: "dana", alt: "DANA", icon: "/logo-DANA.webp" },
+    { id: "qris", alt: "QRIS", icon: "/logo-QRIS.webp" },
   ];
 
   return (
@@ -82,8 +83,7 @@ function PaymentSelector({ method, onChange }) {
                 : "border-gray-200 text-gray-600 hover:border-gray-300"
             }`}
           >
-            <span className="text-lg">{m.icon}</span>
-            {m.label}
+            <Image src={m.icon} alt={m.alt} width={62} height={62} className="object-contain" />
           </button>
         ))}
       </div>

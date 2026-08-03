@@ -6,6 +6,7 @@ import { Plus, Edit, Trash2, CheckCircle2, XCircle } from "lucide-react";
 import { slugify } from "@/shared/utils/helpers";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import ImageManager from "./image-manager";
 
 const MapPicker = dynamic(() => import("@/app/admin/components/map-picker"), { ssr: false });
 
@@ -36,6 +37,8 @@ interface Destination {
   isActive: boolean | null;
   visitEstimateMinutes: number | null;
   accessibilityInfo: string | null;
+  image: string | null;
+  images: string[] | null;
 }
 
 interface DestinationForm {
@@ -49,11 +52,14 @@ interface DestinationForm {
   isActive: boolean;
   visitEstimateMinutes: number | null;
   accessibilityInfo: string;
+  image: string;
+  images: string[];
 }
 
 const emptyForm: DestinationForm = {
   name: "", slug: "", description: "", location: "", geoPoint: "", categoryId: "",
   difficultyLevel: "", isActive: true, visitEstimateMinutes: null, accessibilityInfo: "",
+  image: "", images: [],
 };
 
 export default function AdminDestinations() {
@@ -109,6 +115,8 @@ export default function AdminDestinations() {
       isActive: item.isActive ?? true,
       visitEstimateMinutes: item.visitEstimateMinutes,
       accessibilityInfo: item.accessibilityInfo || "",
+      image: item.image || "",
+      images: item.images ?? [],
     });
     setModalOpen(true);
   }
@@ -125,6 +133,8 @@ export default function AdminDestinations() {
         visitEstimateMinutes: form.visitEstimateMinutes || null,
         categoryId: form.categoryId || null,
         slug: form.slug || slugify(form.name) + "-" + Date.now(),
+        image: form.image || null,
+        images: form.images.length ? form.images : null,
       }),
     });
     setSaving(false);
@@ -192,6 +202,7 @@ export default function AdminDestinations() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
               <tr>
+                <th className="px-6 py-4">Gambar</th>
                 <th className="px-6 py-4">Nama Destinasi</th>
                 <th className="px-6 py-4">Lokasi</th>
                 <th className="px-6 py-4">Kategori</th>
@@ -202,13 +213,21 @@ export default function AdminDestinations() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-400">Belum ada data destinasi.</td></tr>
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">Belum ada data destinasi.</td></tr>
               ) : (
                 rows.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-50/60 transition">
-                    <td className="px-6 py-4 font-bold text-slate-900">{d.name}</td>
+                    <td className="px-6 py-4">
+                      {d.image ? (
+                        <img src={d.image} alt={d.name} className="w-14 h-14 rounded-xl object-cover" />
+                      ) : (
+                        <div className="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center text-slate-300 text-[10px]">
+                          No Img
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-slate-500">{d.location || "-"}</td>
                     <td className="px-6 py-4 text-slate-500">{d.categoryId ? catMap[d.categoryId] || "-" : "-"}</td>
                     <td className="px-6 py-4 text-slate-500 font-medium">{d.difficultyLevel || "-"}</td>
@@ -290,6 +309,11 @@ export default function AdminDestinations() {
             </div>
           </div>
           <MapPicker latitude={latitude} longitude={longitude} onChange={handleMapChange} />
+          <ImageManager
+            cover={form.image || null}
+            images={form.images}
+            onChange={(next) => setForm(prev => ({ ...prev, image: next.cover ?? "", images: next.images }))}
+          />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Tingkat Kesulitan</label>
