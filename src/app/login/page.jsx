@@ -13,6 +13,13 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
+
+    function getRedirectPath() {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+        return redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/admin";
+    }
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -30,11 +37,18 @@ export default function LoginPage() {
             return;
         }
 
-        const params = new URLSearchParams(window.location.search);
-        const redirect = params.get("redirect");
-        const redirectTo = redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/admin";
-        router.push(redirectTo);
+        router.push(getRedirectPath());
         router.refresh();
+    }
+
+    async function handleGoogleLogin() {
+        setError("");
+        setGoogleLoading(true);
+        await signIn.social({
+            provider: "google",
+            callbackURL: getRedirectPath(),
+        });
+        setGoogleLoading(false);
     }
 
     return (
@@ -155,7 +169,12 @@ export default function LoginPage() {
                         <div className="flex-1 h-px bg-gray-100" />
                     </div>
 
-                    <button className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <button
+                        type="button"
+                        onClick={handleGoogleLogin}
+                        disabled={googleLoading}
+                        className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    >
                         <svg width="18" height="18" viewBox="0 0 24 24">
                             <path
                                 fill="#4285F4"
@@ -174,7 +193,7 @@ export default function LoginPage() {
                                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                             />
                         </svg>
-                        Masuk dengan Google
+                        {googleLoading ? "Menghubungkan ke Google..." : "Masuk dengan Google"}
                     </button>
 
                     <p className="text-center text-sm text-gray-500 mt-4 sm:mt-8">
