@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { slugify } from "@/shared/utils/helpers";
+import ImageManager from "./image-manager";
 
 const MapPicker = dynamic(() => import("@/app/admin/components/map-picker"), { ssr: false });
 
@@ -33,6 +34,8 @@ interface DestinationFormData {
   accessibilityInfo: string | null;
   isActive: boolean | null;
   visitEstimateMinutes: number | null;
+  image: string | null;
+  images: string[] | null;
 }
 
 export default function DestinationForm({
@@ -55,6 +58,8 @@ export default function DestinationForm({
     accessibilityInfo: initial?.accessibilityInfo ?? "",
     isActive: initial?.isActive ?? true,
     visitEstimateMinutes: initial?.visitEstimateMinutes ?? null,
+    image: initial?.image ?? null,
+    images: initial?.images ?? [],
   });
   const [loading, setLoading] = useState(false);
 
@@ -115,6 +120,8 @@ export default function DestinationForm({
         visitEstimateMinutes: form.visitEstimateMinutes || null,
         categoryId: form.categoryId || null,
         slug: form.slug || slugify(form.name) + "-" + Date.now(),
+        image: form.image || null,
+        images: form.images?.length ? form.images : null,
       }),
     });
     if (res.ok) router.push("/admin/destinations");
@@ -241,6 +248,12 @@ export default function DestinationForm({
         <label className="block text-sm font-medium text-slate-700">Peta</label>
         <MapPicker latitude={latitude} longitude={longitude} onChange={handleMapChange} />
       </div>
+
+      <ImageManager
+        cover={form.image}
+        images={form.images ?? []}
+        onChange={(next) => setForm((prev) => ({ ...prev, image: next.cover, images: next.images }))}
+      />
 
       <div>
         <label className="block text-sm font-medium text-slate-700">Informasi Aksesibilitas</label>
