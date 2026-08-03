@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PageHeader from "@/components/private/PageHeader";
@@ -16,12 +16,96 @@ import { initialForm } from "@/components/private/helpers/initialState";
 import { validate } from "@/components/private/helpers/validation";
 import { destinationsData } from "@/infrastructure/data/destinationsData";
 
+/**
+ * Builds the `destinationPreferences` text field from all form fields that
+ * have no dedicated column in private_trip_requests.
+ */
+function buildDestinationPreferences(form) {
+  const lines = [];
+
+  // Booker info
+  lines.push(`[Pemesan]`);
+  lines.push(`Nama: ${form.nama}`);
+  if (form.phone) lines.push(`Ponsel: ${form.phone}`);
+  if (form.email) lines.push(`Email: ${form.email}`);
+
+  // Trip details
+  lines.push(`[Detail Perjalanan]`);
+  if (form.tanggal) lines.push(`Tanggal Keberangkatan: ${form.tanggal}`);
+  if (form.meetingPoint) lines.push(`Meeting Point: ${form.meetingPoint}`);
+
+  // Booking source
+  lines.push(`[Asal Pemesanan]`);
+  lines.push(`Tipe: ${form.tripFrom}`);
+  if (form.tripFrom !== "Individu" && form.namaInstitusi)
+    lines.push(`Institusi: ${form.namaInstitusi}`);
+
+  // Participants
+  if (form.participants.length > 0) {
+    lines.push(`[Peserta (${form.participants.length} orang)]`);
+    form.participants.forEach((p, i) => {
+      const parts = [`${i + 1}. ${p.fullName || "-"}`];
+      if (p.birthDate) parts.push(`Lahir: ${p.birthDate}`);
+      if (p.gender) parts.push(p.gender === "male" ? "Laki-laki" : "Perempuan");
+      if (p.phone) parts.push(`HP: ${p.phone}`);
+      if (p.email) parts.push(`Email: ${p.email}`);
+      if (p.relationship) parts.push(`(${p.relationship})`);
+      lines.push(parts.join(" | "));
+    });
+  }
+
+  return lines.join("\n");
+}
+
+/**
+ * Maps the local form state to the payload expected by
+ * POST /api/private-trips  (privateTripController.create)
+ */
+function buildPayload(form, budgetValue) {
+  const title =
+    form.tripType === "custom"
+      ? form.customTripName.trim()
+      : form.selectedDestinasi?.name || form.selectedDestinasi?.title || "Trip Explorer";
+
+  return {
+    title,
+    durationDays: parseInt(form.durasi, 10) || 1,
+    participantsCount: form.participants.length,
+    destinationPreferences: buildDestinationPreferences(form),
+    specialRequirements: form.catatan?.trim() || undefined,
+    budgetEstimate: budgetValue ? String(budgetValue) : undefined,
+  };
+}
+
 export default function PrivateTripPage() {
   const [form, setForm] = useState(initialForm);
-
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
   const [showTerms, setShowTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [destinations, setDestinations] = useState(destinationsData);
+
+  useEffect(() => {
+    async function fetchDestinations() {
+      try {
+        const res = await fetch("/api/destinations");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const normalized = data.map((item) => ({
+              ...item,
+              title: item.name || item.title,
+            }));
+            setDestinations(normalized);
+          }
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data destinasi dari database:", err);
+      }
+    }
+    fetchDestinations();
+  }, []);
 
   const set = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -52,17 +136,45 @@ export default function PrivateTripPage() {
     e.preventDefault();
     const errs = validate(form);
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setSubmitError(null);
     setShowTerms(true);
   };
 
-  const handleAgree = () => {
+  const handleAgree = async () => {
     setShowTerms(false);
-    setSubmitted(true);
+    setIsLoading(true);
+    setSubmitError(null);
+
+    try {
+      const payload = buildPayload(form, budgetValue);
+      const res = await fetch("/api/private-trips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const message =
+          res.status === 401
+            ? "Anda harus login untuk mengirim request."
+            : data?.error || data?.errors?.[0]?.message || "Terjadi kesalahan. Silakan coba lagi.";
+        setSubmitError(message);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const resetForm = () => {
     setSubmitted(false);
     setErrors({});
+    setSubmitError(null);
     setForm(initialForm);
   };
 
@@ -115,14 +227,24 @@ export default function PrivateTripPage() {
                 form={form}
                 set={set}
                 errors={errors}
-                destinationsData={destinationsData}
+                destinationsData={destinations}
               />
               <TripFromSection
                 form={form}
                 set={set}
                 errors={errors}
               />
-              <SubmitBar />
+
+              {submitError && (
+                <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
+                  <svg className="shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <span>{submitError}</span>
+                </div>
+              )}
+
+              <SubmitBar isLoading={isLoading} />
 
             </div>
           </form>
@@ -133,3 +255,4 @@ export default function PrivateTripPage() {
     </>
   );
 }
+

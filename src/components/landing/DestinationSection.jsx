@@ -5,8 +5,8 @@ import { MapPin, Star, ArrowRight, ChevronLeft, ChevronRight } from "lucide-reac
 import Link from "next/link";
 
 const FALLBACK_IMAGES = [
-  "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",
-  "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4HXrHCu5wU0hTKdf2vfJj5ZiXuH3LEUeh5s2vEDS6mYWKlFLeAP91yNQ&s=10",
   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80",
   "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=600&q=80",
 ];
