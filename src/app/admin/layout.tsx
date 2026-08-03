@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -18,7 +16,6 @@ import {
   ArrowLeft,
   Search,
   Bell,
-  User,
   Route,
   ShoppingCart,
   Map,
@@ -62,7 +59,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </button>
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0D238E] text-slate-300 flex flex-col justify-between p-4 border-r border-slate-800 shrink-0 transition-transform duration-300 lg:static lg:inset-auto lg:translate-x-0 ${
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0D238E] text-slate-300 flex flex-col justify-between p-4 border-r border-slate-800 shrink-0 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:inset-auto lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}>
         <div className="space-y-6">
@@ -78,7 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Nav menu */}
-          <nav className="space-y-1 text-sm font-medium">
+          <nav className="space-y-1 text-sm font-medium overflow-y-auto max-h-[calc(100vh-9rem)]"> 
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
