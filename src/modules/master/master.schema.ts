@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, integer, boolean, timestamp, jsonb, doublePrecision } from "drizzle-orm/pg-core";
 
 export const destinationCategories = pgTable("destination_categories", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -20,6 +20,13 @@ export const destinations = pgTable("destinations", {
   isActive: boolean("is_active").default(true),
   visitEstimateMinutes: integer("visit_estimate_minutes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  image: text("image"),
+  rating: doublePrecision("rating"),
+  images: jsonb("images").$type<string[]>(),
+  reviewCount: integer("review_count"),
+  priceMin: integer("price_min"),
+  priceMax: integer("price_max"),
+  highlights: jsonb("highlights").$type<string[]>(),
 });
 
 export const horecaTypes = pgTable("horeca_types", {

@@ -7,7 +7,7 @@ const TABS = [
 
 export default function DestinationTabs({ activeTab, onChange }) {
   return (
-    <div className="flex overflow-x-auto border-b border-gray-100 bg-white mb-8 sticky top-[72px] z-40 pt-4">
+    <div className="flex overflow-x-auto border-b border-gray-100 mb-5 bg-white z-40 pt-4">
       {TABS.map(tab => (
         <button
           key={tab.id}

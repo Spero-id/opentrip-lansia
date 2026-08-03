@@ -14,13 +14,18 @@ const FALLBACK_IMAGES = [
 const DEFAULT_RATING = 5.0;
 
 function toCard(dest, index) {
+  const image =
+    dest.image ||
+    (Array.isArray(dest.images) && dest.images[0]) ||
+    FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
+
   return {
     id: dest.id,
     title: dest.name,
     location: dest.location || "Indonesia",
-    rating: DEFAULT_RATING,
-    priceMin: 0,
-    image: FALLBACK_IMAGES[index % FALLBACK_IMAGES.length],
+    rating: dest.rating || DEFAULT_RATING,
+    priceMin: dest.priceMin || 0,
+    image,
   };
 }
 
