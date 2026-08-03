@@ -5,6 +5,9 @@ export default function SelectedDestination({
   destination,
   onClear,
 }) {
+  const title = destination.title || destination.name || "Destinasi";
+  const rating = typeof destination.rating === "number" ? destination.rating.toFixed(1) : "4.8";
+
   return (
     <div
       className="flex items-center gap-3 p-3 rounded-xl border"
@@ -13,24 +16,30 @@ export default function SelectedDestination({
         backgroundColor: `${A}08`,
       }}
     >
-      <img
-        src={destination.image}
-        alt={destination.title}
-        className="w-14 h-14 rounded-xl object-cover shrink-0"
-      />
+      {destination.image ? (
+        <img
+          src={destination.image}
+          alt={title}
+          className="w-14 h-14 rounded-xl object-cover shrink-0"
+        />
+      ) : (
+        <div className="w-14 h-14 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 font-bold text-xs">
+          {title.slice(0, 2).toUpperCase()}
+        </div>
+      )}
 
       <div className="flex-1 min-w-0">
         <p className="text-sm font-bold text-gray-800 truncate">
-          {destination.title}
+          {title}
         </p>
         <p className="text-xs text-gray-500 mt-0.5">
-          {destination.location}
+          {destination.location || "Indonesia"}
         </p>
         <p
           className="text-xs font-semibold mt-0.5"
           style={{ color: A }}
         >
-          * {destination.rating.toFixed(1)}
+          ★ {rating}
           &nbsp;·&nbsp;
           mulai {formatRupiah(destination.priceMin)}
         </p>
@@ -49,3 +58,4 @@ export default function SelectedDestination({
     </div>
   );
 }
+
