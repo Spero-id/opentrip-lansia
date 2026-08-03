@@ -198,7 +198,7 @@ export default function LoginPage() {
 
                     <p className="text-center text-sm text-gray-500 mt-4 sm:mt-8">
                         Belum punya akun?{" "}
-                        <a href="/register" className="italic text-gray-900 font-semibold hover:text-[#F49D1A]">
+                        <a href={getRedirectPath() === "/admin" ? "/register" : `/register?redirect=${encodeURIComponent(getRedirectPath())}`} className="italic text-gray-900 font-semibold hover:text-[#F49D1A]">
                             Daftar di sini
                         </a>
                     </p>
