@@ -25,6 +25,18 @@ interface Category {
   name: string;
 }
 
+interface ItineraryItem {
+  day: number;
+  title: string;
+  description: string;
+}
+
+interface MeetingPointItem {
+  time: string;
+  location: string;
+  description: string;
+}
+
 interface Destination {
   id: string;
   name: string;
@@ -39,6 +51,10 @@ interface Destination {
   accessibilityInfo: string | null;
   image: string | null;
   images: string[] | null;
+  priceMin: number | null;
+  priceMax: number | null;
+  itinerary: ItineraryItem[] | null;
+  meetingPoints: MeetingPointItem[] | null;
 }
 
 interface DestinationForm {
@@ -54,12 +70,16 @@ interface DestinationForm {
   accessibilityInfo: string;
   image: string;
   images: string[];
+  priceMin: number | null;
+  priceMax: number | null;
+  itinerary: ItineraryItem[];
+  meetingPoints: MeetingPointItem[];
 }
 
 const emptyForm: DestinationForm = {
   name: "", slug: "", description: "", location: "", geoPoint: "", categoryId: "",
   difficultyLevel: "", isActive: true, visitEstimateMinutes: null, accessibilityInfo: "",
-  image: "", images: [],
+  image: "", images: [], priceMin: null, priceMax: null, itinerary: [], meetingPoints: [],
 };
 
 export default function AdminDestinations() {
@@ -117,6 +137,10 @@ export default function AdminDestinations() {
       accessibilityInfo: item.accessibilityInfo || "",
       image: item.image || "",
       images: item.images ?? [],
+      priceMin: item.priceMin,
+      priceMax: item.priceMax,
+      itinerary: item.itinerary ?? [],
+      meetingPoints: item.meetingPoints ?? [],
     });
     setModalOpen(true);
   }
@@ -135,6 +159,10 @@ export default function AdminDestinations() {
         slug: form.slug || slugify(form.name) + "-" + Date.now(),
         image: form.image || null,
         images: form.images.length ? form.images : null,
+        priceMin: form.priceMin || null,
+        priceMax: form.priceMax || null,
+        itinerary: form.itinerary.length ? form.itinerary : null,
+        meetingPoints: form.meetingPoints.length ? form.meetingPoints : null,
       }),
     });
     setSaving(false);
@@ -177,6 +205,42 @@ export default function AdminDestinations() {
       [name]: type === "checkbox" ? checked : value,
       ...(name === "name" && !editing ? { slug: slugify(value) } : {}),
     }));
+  }
+
+  function updateItinerary(idx: number, field: keyof ItineraryItem, value: string | number) {
+    setForm(prev => ({
+      ...prev,
+      itinerary: prev.itinerary.map((item, i) => (i === idx ? { ...item, [field]: value } : item)),
+    }));
+  }
+
+  function addItinerary() {
+    setForm(prev => ({
+      ...prev,
+      itinerary: [...prev.itinerary, { day: prev.itinerary.length + 1, title: "", description: "" }],
+    }));
+  }
+
+  function removeItinerary(idx: number) {
+    setForm(prev => ({ ...prev, itinerary: prev.itinerary.filter((_, i) => i !== idx) }));
+  }
+
+  function updateMeetingPoint(idx: number, field: keyof MeetingPointItem, value: string) {
+    setForm(prev => ({
+      ...prev,
+      meetingPoints: prev.meetingPoints.map((item, i) => (i === idx ? { ...item, [field]: value } : item)),
+    }));
+  }
+
+  function addMeetingPoint() {
+    setForm(prev => ({
+      ...prev,
+      meetingPoints: [...prev.meetingPoints, { time: "", location: "", description: "" }],
+    }));
+  }
+
+  function removeMeetingPoint(idx: number) {
+    setForm(prev => ({ ...prev, meetingPoints: prev.meetingPoints.filter((_, i) => i !== idx) }));
   }
 
   const catMap = categories.reduce<Record<string, string>>((acc, c) => { acc[c.id] = c.name; return acc; }, {});
@@ -336,6 +400,93 @@ export default function AdminDestinations() {
                 className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" min={0} />
             </div>
           </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700">Harga Min (Rp)</label>
+              <input name="priceMin" type="number" min={0}
+                value={form.priceMin ?? ""}
+                onChange={e => setForm(prev => ({ ...prev, priceMin: e.target.value ? Number(e.target.value) : null }))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700">Harga Max (Rp)</label>
+              <input name="priceMax" type="number" min={0}
+                value={form.priceMax ?? ""}
+                onChange={e => setForm(prev => ({ ...prev, priceMax: e.target.value ? Number(e.target.value) : null }))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+            </div>
+          </div>
+          <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <label className="text-sm font-medium text-slate-700">Itinerary (Rencana Perjalanan)</label>
+              <button type="button" onClick={addItinerary}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#F49D1A] hover:text-[#c47d12] transition">
+                <Plus className="w-3.5 h-3.5" /> Tambah Hari
+              </button>
+            </div>
+            {form.itinerary.length === 0 && (
+              <p className="text-xs text-slate-400">Belum ada itinerary. Klik &quot;Tambah Hari&quot; untuk mulai.</p>
+            )}
+            {form.itinerary.map((item, idx) => (
+              <div key={idx} className="bg-white rounded-lg border border-slate-200 p-3 space-y-2">
+                <div className="flex gap-2">
+                  <input type="number" min={1} value={item.day}
+                    onChange={(e) => updateItinerary(idx, "day", Number(e.target.value))}
+                    className="w-20 rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  <input value={item.title}
+                    onChange={(e) => updateItinerary(idx, "title", e.target.value)}
+                    placeholder="Judul kegiatan"
+                    className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  <button type="button" onClick={() => removeItinerary(idx)}
+                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus baris">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <textarea value={item.description}
+                  onChange={(e) => updateItinerary(idx, "description", e.target.value)}
+                  placeholder="Deskripsi kegiatan hari ini"
+                  rows={2}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <label className="text-sm font-medium text-slate-700">Titik Kumpul</label>
+              <button type="button" onClick={addMeetingPoint}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#F49D1A] hover:text-[#c47d12] transition">
+                <Plus className="w-3.5 h-3.5" /> Tambah Titik Kumpul
+              </button>
+            </div>
+            {form.meetingPoints.length === 0 && (
+              <p className="text-xs text-slate-400">Belum ada titik kumpul. Klik &quot;Tambah Titik Kumpul&quot; untuk mulai.</p>
+            )}
+            {form.meetingPoints.map((mp, idx) => (
+              <div key={idx} className="bg-white rounded-lg border border-slate-200 p-3 space-y-2">
+                <div className="flex gap-2">
+                  <input value={mp.time}
+                    onChange={(e) => updateMeetingPoint(idx, "time", e.target.value)}
+                    placeholder="Jam (mis. 08:00)"
+                    className="w-24 rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  <input value={mp.location}
+                    onChange={(e) => updateMeetingPoint(idx, "location", e.target.value)}
+                    placeholder="Lokasi"
+                    className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  <button type="button" onClick={() => removeMeetingPoint(idx)}
+                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus baris">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <textarea value={mp.description}
+                  onChange={(e) => updateMeetingPoint(idx, "description", e.target.value)}
+                  placeholder="Deskripsi titik kumpul"
+                  rows={1}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              </div>
+            ))}
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700">Informasi Aksesibilitas</label>
             <textarea name="accessibilityInfo" value={form.accessibilityInfo} onChange={handleChange} rows={2}
