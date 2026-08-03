@@ -1,9 +1,9 @@
 export const destinationsData = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
     images: [
-      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -32,9 +32,9 @@ export const destinationsData = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4HXrHCu5wU0hTKdf2vfJj5ZiXuH3LEUeh5s2vEDS6mYWKlFLeAP91yNQ&s=10",
     images: [
-      "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4HXrHCu5wU0hTKdf2vfJj5ZiXuH3LEUeh5s2vEDS6mYWKlFLeAP91yNQ&s=10",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -94,9 +94,9 @@ export const destinationsData = [
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS06Y_q43jk7Wjj7CqIaDWoSfDNLKOIbA6Rlf9UUCqfNg&s=10",
     images: [
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS06Y_q43jk7Wjj7CqIaDWoSfDNLKOIbA6Rlf9UUCqfNg&s=10",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -125,9 +125,9 @@ export const destinationsData = [
   },
   {
     id: 5,
-    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80",
+    image: "https://regalsprings.co.id/wp-content/uploads/2023/05/danau-toba-1024x682.jpg",
     images: [
-      "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80",
+      "https://regalsprings.co.id/wp-content/uploads/2023/05/danau-toba-1024x682.jpg",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -156,9 +156,9 @@ export const destinationsData = [
   },
   {
     id: 6,
-    image: "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=600&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTDyE8zdsszP0ow2_trFHr0KTLgTD70M66eDHdS9b6Rg&s=10",
     images: [
-      "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=600&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTDyE8zdsszP0ow2_trFHr0KTLgTD70M66eDHdS9b6Rg&s=10",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -187,9 +187,9 @@ export const destinationsData = [
   },
   {
     id: 7,
-    image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=600&q=80",
+    image: "https://indonesiajuara.asia/wp-content/uploads/2023/12/Pink-Beach-di-Indonesia.webp",
     images: [
-      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=600&q=80",
+      "https://indonesiajuara.asia/wp-content/uploads/2023/12/Pink-Beach-di-Indonesia.webp",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -218,9 +218,9 @@ export const destinationsData = [
   },
   {
     id: 8,
-    image: "https://images.unsplash.com/photo-1562602833-0f4ab2fc46e5?w=600&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsXP80SjK6zmY64MbZuZRGG1ysnvLvcC6AfnB5xLJfaA&s=10",
     images: [
-      "https://images.unsplash.com/photo-1562602833-0f4ab2fc46e5?w=600&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsXP80SjK6zmY64MbZuZRGG1ysnvLvcC6AfnB5xLJfaA&s=10",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -249,9 +249,9 @@ export const destinationsData = [
   },
   {
     id: 9,
-    image: "https://images.unsplash.com/photo-1555993539-1732b0258235?w=600&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMOIZq857i_80mhPPx71vprVZvcFoO1bTevA4gbS4s9oIZDaIsTKgdX2k&s=10",
     images: [
-      "https://images.unsplash.com/photo-1555993539-1732b0258235?w=600&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMOIZq857i_80mhPPx71vprVZvcFoO1bTevA4gbS4s9oIZDaIsTKgdX2k&s=10",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
@@ -280,9 +280,9 @@ export const destinationsData = [
   },
   {
     id: 10,
-    image: "https://images.unsplash.com/photo-1473625247510-8ceb1760943f?w=600&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTsbdk525VZcZg1D1-6XkvxRdTuC8Hij7ZHTzQqC7New&s=10",
     images: [
-      "https://images.unsplash.com/photo-1473625247510-8ceb1760943f?w=600&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTsbdk525VZcZg1D1-6XkvxRdTuC8Hij7ZHTzQqC7New&s=10",
       "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
     ],
