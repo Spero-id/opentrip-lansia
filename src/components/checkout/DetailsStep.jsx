@@ -81,6 +81,7 @@ export default function DetailsStep({ checkout, onNext }) {
       <div className="lg:col-span-2">
         <PriceBreakdown
           destination={checkout.destination}
+          pricePerPax={checkout.destination?.priceMin ?? 0}
           pax={checkout.pax}
           ticketSubtotal={checkout.ticketSubtotal}
           meetingPointFee={checkout.meetingPointFee}
