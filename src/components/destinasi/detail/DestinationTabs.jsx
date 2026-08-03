@@ -2,7 +2,6 @@ const TABS = [
   { id: "tentang", label: "Deskripsi" },
   { id: "itinerary", label: "Itinerary" },
   { id: "meeting", label: "Titik Kumpul" },
-  { id: "ulasan", label: "Ulasan" },
 ];
 
 export default function DestinationTabs({ activeTab, onChange }) {

@@ -45,8 +45,8 @@ export function toDetail(dest) {
       Array.isArray(dest.highlights) && dest.highlights.length
         ? dest.highlights
         : [dest.difficultyLevel, dest.accessibilityInfo].filter(Boolean),
-    itinerary: [],
-    meetingPoints: [],
+    itinerary: Array.isArray(dest.itinerary) ? dest.itinerary : [],
+    meetingPoints: Array.isArray(dest.meetingPoints) ? dest.meetingPoints : [],
     reviewsList: [],
   };
 }
