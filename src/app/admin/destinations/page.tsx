@@ -228,6 +228,10 @@ export default function AdminDestinations() {
                         </div>
                       )}
                     </td>
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-slate-900">{d.name}</div>
+                      {d.description && <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1 max-w-[240px]">{d.description}</div>}
+                    </td>
                     <td className="px-6 py-4 text-slate-500">{d.location || "-"}</td>
                     <td className="px-6 py-4 text-slate-500">{d.categoryId ? catMap[d.categoryId] || "-" : "-"}</td>
                     <td className="px-6 py-4 text-slate-500 font-medium">{d.difficultyLevel || "-"}</td>
