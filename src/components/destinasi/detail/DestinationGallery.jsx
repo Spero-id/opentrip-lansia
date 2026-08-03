@@ -8,7 +8,6 @@ export default function DestinationGallery({ images, title, onOpenLightbox }) {
 
   return (
     <>
-      {/* Mobile slider */}
       <div className="md:hidden relative h-[30vh] min-h-[200px] rounded-3xl overflow-hidden">
         <img
           src={images[mobileSlide] || images[0]}
@@ -51,8 +50,7 @@ export default function DestinationGallery({ images, title, onOpenLightbox }) {
         </div>
       </div>
 
-      {/* Desktop grid */}
-      <div className="hidden md:grid grid-cols-4 gap-2 sm:gap-4 min-h-[300px] overflow-hidden">
+      <div className="hidden md:grid grid-cols-4 gap-2 sm:gap-4 h-[420px] lg:h-[500px] overflow-hidden">
         <div className="col-span-3 h-full overflow-hidden">
           <img
             src={images[0]}

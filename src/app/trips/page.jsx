@@ -19,6 +19,7 @@ export default function DestisasiPage() {
   const hasActiveFilters =
     selectedLocation !== "" || priceMin !== "" || priceMax !== "" || minRating > 0;
 
+
   const resetAllFilters = () => {
     setSelectedLocation("");
     setPriceMin("");
