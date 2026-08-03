@@ -30,7 +30,10 @@ export default function LoginPage() {
             return;
         }
 
-        router.push("/admin");
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+        const redirectTo = redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/admin";
+        router.push(redirectTo);
         router.refresh();
     }
 
