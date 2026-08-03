@@ -3,6 +3,8 @@
 import { useRef, useState, useEffect } from "react";
 import { MapPin, Star, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 const FALLBACK_IMAGES = [
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
@@ -33,6 +35,15 @@ export default function DestinationSection() {
   const scrollRef = useRef(null);
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+
+  function handleCardClick(e, id) {
+    if (isLoggedIn) return;
+    e.preventDefault();
+    router.push(`/login?redirect=/trips/${id}`);
+  }
 
   useEffect(() => {
     fetch("/api/destinations")
@@ -87,6 +98,7 @@ export default function DestinationSection() {
           <Link
             key={dest.id}
             href={`/trips/${dest.id}`}
+            onClick={(e) => handleCardClick(e, dest.id)}
             className="group snap-start shrink-0 w-[280px] sm:w-[320px] md:w-auto bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300"
           >
             <div className="relative h-44 overflow-hidden">
