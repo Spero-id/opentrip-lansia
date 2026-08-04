@@ -4,11 +4,12 @@ import Link from "next/link";
 import { MapPin, Star, ArrowRight } from "lucide-react";
 import { formatRupiah } from "@/lib/formatRupiah";
 
-export default function DestinationCard({ dest }) {
+export default function DestinationCard({ dest, onClick, className = "" }) {
   return (
     <Link
       href={`/trips/${dest.id}`}
-      className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200"
+      onClick={onClick}
+      className={`group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200 ${className}`}
     >
       <div className="relative h-44 overflow-hidden">
         <img

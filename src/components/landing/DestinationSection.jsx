@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { MapPin, Star, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
+import DestinationCard from "@/components/destinasi/DestinationCard";
 
 const FALLBACK_IMAGES = [
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
@@ -27,6 +28,7 @@ function toCard(dest, index) {
     location: dest.location || "Indonesia",
     rating: dest.rating || DEFAULT_RATING,
     priceMin: dest.priceMin || 0,
+    category: dest.difficultyLevel || "Destinasi",
     image,
   };
 }
@@ -95,59 +97,12 @@ export default function DestinationSection() {
         className="flex md:grid md:grid-cols-4 md:grid-rows-2 md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         {destinations.slice(0, 8).map((dest) => (
-          <Link
+          <DestinationCard
             key={dest.id}
-            href={`/trips/${dest.id}`}
+            dest={dest}
             onClick={(e) => handleCardClick(e, dest.id)}
-            className="group snap-start shrink-0 w-[280px] sm:w-[320px] md:w-auto bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300"
-          >
-            <div className="relative h-44 overflow-hidden">
-              <img
-                src={dest.image}
-                alt={dest.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
-                <span className="text-xs font-semibold text-gray-900">
-                  {dest.rating}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-5">
-              <p className="flex items-center gap-1 text-xs text-gray-400 mb-2">
-                <MapPin size={12} />
-                {dest.location}
-              </p>
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                {dest.title}
-              </h3>
-
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div>
-                  {dest.priceMin > 0 ? (
-                    <>
-                      <p className="text-[11px] text-gray-400">mulai dari</p>
-                      <p className="text-base font-bold text-gray-900">
-                        Rp {dest.priceMin.toLocaleString("id-ID")}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-base font-semibold text-gray-500">
-                      Hubungi kami
-                    </p>
-                  )}
-                </div>
-                <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#F49D1A] flex items-center justify-center transition-colors flex-shrink-0">
-                  <ArrowRight
-                    size={16}
-                    className="text-gray-500 group-hover:text-white transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-          </Link>
+            className="snap-start shrink-0 w-[280px] sm:w-[320px] md:w-auto"
+          />
         ))}
 
         <div className="shrink-0 w-1 md:hidden" />
