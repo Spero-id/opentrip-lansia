@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 import { signOut } from "@/lib/auth-client";
 
 export default function LogoutButton() {
@@ -27,9 +28,10 @@ export default function LogoutButton() {
       type="button"
       onClick={handleLogout}
       disabled={loading}
-      className="w-full rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50 sm:w-auto"
+      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-semibold text-slate-600 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
     >
-      {loading ? "Keluar..." : "Logout"}
+      <LogOut size={16} />
+      {loading ? "Keluar..." : "Keluar dari Akun"}
     </button>
   );
 }
