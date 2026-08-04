@@ -66,6 +66,9 @@ export default function TutorialSection() {
               <img
                 src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=700&fit=crop"
                 alt="Booking trip dari HP"
+                width={600}
+                height={700}
+                loading="lazy"
                 className="w-full h-[480px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

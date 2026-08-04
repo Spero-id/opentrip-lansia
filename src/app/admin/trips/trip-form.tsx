@@ -26,7 +26,20 @@ interface TripDestination {
   notes: string;
 }
 
-export default function TripForm({ initial, onSuccess }: { initial?: any; onSuccess?: () => void }) {
+interface TripFormData {
+  id?: string;
+  title: string;
+  type: string;
+  durationDays: number;
+  maxParticipants: number | null;
+  meetingPointId: string;
+  description: string;
+  status: string;
+  itinerary?: ItineraryItem[];
+  tripDestinations?: TripDestination[];
+}
+
+export default function TripForm({ initial, onSuccess }: { initial?: TripFormData; onSuccess?: () => void }) {
   const router = useRouter();
   const [form, setForm] = useState(initial || { title: "", type: "open_trip", durationDays: 1, maxParticipants: null, meetingPointId: "", description: "", status: "draft" });
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(initial?.itinerary ?? []);
@@ -46,7 +59,7 @@ export default function TripForm({ initial, onSuccess }: { initial?: any; onSucc
       .catch(() => {});
   }, []);
 
-  function updateForm(partial: Record<string, any>) {
+  function updateForm(partial: Partial<TripFormData>) {
     setForm({ ...form, ...partial });
   }
 
@@ -86,7 +99,7 @@ export default function TripForm({ initial, onSuccess }: { initial?: any; onSucc
     setLoading(true);
     const payload = {
       ...form,
-      itinerary: itinerary.map(({ id, ...rest }) => rest),
+      itinerary: itinerary.map(({ id: _id, ...rest }) => rest),
       tripDestinations,
     };
     const url = initial?.id ? `/api/trips/${initial.id}` : "/api/trips";
@@ -231,7 +244,7 @@ export default function TripForm({ initial, onSuccess }: { initial?: any; onSucc
               {dayItems.length === 0 && (
                 <p className="text-xs text-slate-400 italic">Belum ada kegiatan untuk hari ini.</p>
               )}
-              {dayItems.map((item, idx) => {
+              {dayItems.map((item) => {
                 const globalIdx = itinerary.indexOf(item);
                 return (
                   <div key={globalIdx} className="bg-white rounded-lg border border-slate-200 p-3 space-y-2">

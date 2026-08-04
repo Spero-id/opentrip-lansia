@@ -6,7 +6,7 @@ import {
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
   blogs, blogCategories, contactMessages, promotions
 } from "../db/schema";
-import { session, account } from "../modules/auth/better-auth.schema";
+import { account } from "../modules/auth/better-auth.schema";
 import { users } from "../modules/auth/auth.schema";
 
 function hash(pw: string) {

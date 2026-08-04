@@ -94,6 +94,9 @@ export default function MarketingSection() {
               <img
                 src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&h=500&fit=crop"
                 alt="Family on beach"
+                width={600}
+                height={500}
+                loading="lazy"
                 className="w-full h-[420px] object-cover"
               />
             </div>
@@ -105,6 +108,9 @@ export default function MarketingSection() {
               <img
                 src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=200&fit=crop"
                 alt="Book a trip"
+                width={600}
+                height={200}
+                loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-black/40" />

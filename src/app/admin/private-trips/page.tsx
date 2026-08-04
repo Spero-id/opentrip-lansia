@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Eye, Filter, ChevronDown } from "lucide-react";
 
@@ -31,19 +31,24 @@ export default function AdminPrivateTripsList() {
   const [search, setSearch] = useState("");
   const [total, setTotal] = useState(0);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (statusFilter) params.set("status", statusFilter);
-    if (search) params.set("search", search);
-    const res = await fetch(`/api/private-trip/admin?${params.toString()}`);
-    const data = await res.json();
-    setRows(data.rows || []);
-    setTotal(data.total || 0);
-    setLoading(false);
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (statusFilter) params.set("status", statusFilter);
+      if (search) params.set("search", search);
+      const res = await fetch(`/api/private-trip/admin?${params.toString()}`);
+      const data = await res.json();
+      if (!cancelled) {
+        setRows(data.rows || []);
+        setTotal(data.total || 0);
+        setLoading(false);
+      }
+    }
+    run();
+    return () => { cancelled = true; };
   }, [statusFilter, search]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
 
   return (
     <div className="space-y-6">

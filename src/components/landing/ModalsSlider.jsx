@@ -1,6 +1,6 @@
 "use client";
 
-import { SlidersHorizontal, Search, X, MapPin, Calendar, } from "lucide-react";
+import { SlidersHorizontal, Search, X, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const POPULAR_LOCATIONS = [
@@ -143,6 +143,9 @@ const openModal = () => {
                                             <img
                                                 src={dest.image}
                                                 alt={dest.name}
+                                                width={128}
+                                                height={160}
+                                                loading="lazy"
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

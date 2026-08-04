@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { destinations, destinationCategories, horeca, vendors, media, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
+import { destinations, destinationCategories, horeca, vendors, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
 import { eq } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

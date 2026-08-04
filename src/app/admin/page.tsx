@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Compass, MapPin, Calendar, DollarSign, TrendingUp, Users, ArrowUpRight } from "lucide-react";
+import { MapPin, Calendar, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
 
 export default function AdminDashboard() {
   const stats = [
