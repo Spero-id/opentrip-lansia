@@ -4,63 +4,91 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, User } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
+import MobileMenu from "@/components/layout/MobileMenu";
+
+const NAV_LINKS = [
+  { name: "Beranda", href: "/" },
+  { name: "Destinasi Trip", href: "/trips" },
+  { name: "Private Trip", href: "/private" },
+  { name: "Tentang Kami", href: "/about" },
+  { name: "Hubungi Kami", href: "/contact" },
+];
+
+const cn = (...classes) => classes.filter(Boolean).join(" ");
+
+function NavbarLink({ href, children, className, onClick }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn("block rounded-lg text-sm font-medium transition-colors", className)}
+    >
+      {children}
+    </Link>
+  );
+}
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { data: session } = useSession();
-  const isLoggedIn = !!session?.user;
+  const isLoggedIn = Boolean(session?.user);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const links = [
-    { name: "Beranda", href: "/" },
-    { name: "Destinasi Trip", href: "/trips" },
-    { name: "Private Trip", href: "/private" },
-    { name: "Tentang Kami", href: "/about" },
-    { name: "Hubungi Kami", href: "/contact" },
-  ];
+  const navClasses = cn(
+    "w-full p-2 sticky top-0 z-40 transition-all duration-300",
+    isScrolled
+      ? "bg-black/50 backdrop-blur-sm shadow-lg border-b border-white/10"
+      : "bg-transparent border-b border-transparent",
+    isOpen && "bg-white/10 backdrop-blur-xl"
+  );
+
+  const logoClasses = cn(
+    "flex items-center gap-2 text-xl font-bold transition-colors",
+    isScrolled ? "text-gray-900" : "text-black"
+  );
+
+  const desktopLinkClasses = isScrolled
+    ? "hidden lg:flex font-medium text-sm text-white hover:text-[#F49D1A]"
+    : "hidden lg:flex font-medium text-sm text-black hover:text-[#F49D1A]";
+
+  const loginButtonClasses = isScrolled
+    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm bg-white border border-[#F49D1A] text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white"
+    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-white hover:text-[#F49D1A]";
+
+  const toggleButtonClasses = cn(
+    "p-2 transition-colors",
+    isScrolled ? "text-white" : "text-black"
+  );
 
   return (
-    <nav
-      className={`w-full sticky top-0 z-50 text-black transition-all duration-300 ${isScrolled
-          ? "bg-black/50 backdrop-blur-md shadow-lg border-b border-white/10"
-          : "bg-white backdrop-blur-sm border-b border-transparent text-black"
-        }`}
-    >
+    <nav className={navClasses}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="shrink-0">
-            <Link
-              href="/"
-              className={`flex items-center gap-2 text-xl font-bold transition-colors ${isScrolled ? "text-gray-900" : "text-black"
-                }`}
-            >
+          <div className="flex items-center gap-2 shrink-0">
+            <button onClick={() => setIsOpen((current) => !current)} className={cn(toggleButtonClasses, "lg:hidden")} aria-label="Toggle menu">
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <Link href="/" className={logoClasses}>
               <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-24 w-auto" />
             </Link>
           </div>
 
-          <div className="ml-auto md:flex items-center justify-end space-x-8">
-            {links.map((link) => (
-              <Link
+          <div className="ml-auto flex flex-1 items-center justify-end gap-4">
+            <div className="hidden lg:flex flex-1 items-center justify-center space-x-8">
+              {NAV_LINKS.map((link) => (
+                <NavbarLink key={link.name} href={link.href} className={desktopLinkClasses}>
+                  {link.name}
+                </NavbarLink>
+              ))}
+            </div>
 
-                key={link.name}
-                href={link.href}
-                className={`font-medium hidden md:flex transition-colors text-sm ${isScrolled
-                    ? "text-white hover:text-[#F49D1A]"
-                    : "text-black hover:text-[#F49D1A]"
-                  }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <div className="flex items-center gap-2">
+            <div className={cn("flex items-center gap-2", isOpen && "bg-transparent") }>
               {isLoggedIn ? (
                 <Link
                   href="/profile"
@@ -73,64 +101,22 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link
-                    href="/register"
-                    className="bg-[#F49D1A] hover:shadow-xl text-white px-5 py-2 rounded-[5px] text-sm font-poppins hover:bg-[#F49D1A]/80 transition-colors shadow-sm"
-                  >
-                    Register
-                  </Link>
-                  <Link
                     href="/login"
-                    className={`px-5 py-2 hover:shadow-xl rounded-[5px] text-sm font-poppins transition-colors shadow-sm ${isScrolled
-                        ? "bg-white border border-[#F49D1A] text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white"
-                        : "bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-white hover:text-[#F49D1A]"
-                      }`}
+                    className="bg-[#F49D1A] border border-[#F49D1A] hover:shadow-xl text-white px-4 py-2 rounded-xl text-sm font-medium font-poppins hover:bg-[#F49D1A]/80 transition-colors shadow-sm"
                   >
-                    Login
+                    Masuk
+                  </Link>
+                  <Link href="/register" className={loginButtonClasses}>
+                    Daftar
                   </Link>
                 </>
               )}
             </div>
           </div>
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 transition-colors ${isScrolled ? "text-white" : "text-black"
-                }`}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
         </div>
       </div>
 
-      <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"
-          } ${isScrolled ? "bg-white" : "bg-black/80 backdrop-blur-md"}`}
-      >
-        <div className="px-4 pt-2 pb-4 space-y-1 border-t border-gray-100/20">
-          {links.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className={`block px-3 py-2 rounded-lg font-medium text-sm transition-colors ${isScrolled
-                  ? "text-gray-600 hover:bg-[#F49D1A]/10 hover:text-[#F49D1A]"
-                  : "text-white hover:bg-white/10"
-                }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-          <Link
-            href="#hubungi"
-            onClick={() => setIsOpen(false)}
-            className="block mt-2 text-center bg-[#F49D1A] text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#F49D1A]/80 transition-colors"
-          >
-            Hubungi Kami
-          </Link>
-        </div>
-      </div>
+      <MobileMenu isOpen={isOpen} setIsOpen={setIsOpen} isScrolled={isScrolled} />
     </nav>
   );
 }
