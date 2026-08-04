@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
@@ -63,7 +63,7 @@ export default function Navbar() {
 
   const toggleButtonClasses = cn(
     "p-2 transition-colors",
-    isScrolled ? "text-white" : "text-black"
+    isScrolled ? "text-white" : "text-slate-700"
   );
 
   return (
@@ -94,9 +94,11 @@ export default function Navbar() {
                   href="/profile"
                   title="Profile"
                   aria-label="Profile"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F49D1A] bg-white/10 text-[#F49D1A] backdrop-blur-sm transition-colors hover:bg-[#F49D1A] hover:text-white"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors"
                 >
-                  <User size={20} />
+                  <span className="text-sm font-semibold">
+                    {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                  </span>
                 </Link>
               ) : (
                 <>

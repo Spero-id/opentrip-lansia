@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { signOut, useSession } from "@/lib/auth-client";
 
 const NAV_LINKS = [
   { name: "Beranda", href: "/" },
@@ -15,20 +16,29 @@ const NAV_LINKS = [
 
 const cn = (...classes) => classes.filter(Boolean).join(" ");
 
-function NavbarLink({ href, children, className, onClick }) {
+function MenuItem({ href, children, className, onClick }) {
+  const commonClasses = cn("block w-full rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left", className);
+
+  if (href) {
+    return (
+      <Link href={href} onClick={onClick} className={commonClasses}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className={cn("block rounded-lg text-sm font-medium transition-colors", className)}
-    >
+    <button type="button" onClick={onClick} className={commonClasses}>
       {children}
-    </Link>
+    </button>
   );
 }
 
 export default function MobileMenu({ isOpen, setIsOpen, isScrolled }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const isLoggedIn = Boolean(session?.user);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -63,9 +73,10 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled }) {
     isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
   );
 
-  const mobileLinkClasses = "px-3 py-2 text-black hover:bg-black/10 rounded-lg transition-colors";
+  const sectionLabelClasses = "px-3 text-xs font-medium tracking-wide text-gray-400";
+  const mobileLinkClasses = "block w-full rounded-lg px-3 py-2 text-sm font-medium text-black hover:bg-black/10 transition-colors";
 
-  const activeLinkClasses = "px-3 py-2 text-[#F49D1A] rounded-lg transition-colors";
+  const activeLinkClasses = mobileLinkClasses;
 
   return createPortal(
     <>
@@ -75,9 +86,9 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled }) {
         aria-hidden="true"
       />
       <div className={mobileMenuClasses}>
-        <div className="flex h-full flex-col justify-start px-4 py-6">
+        <div className="flex h-full flex-col px-4 py-6">
           <div className="flex items-center justify-between gap-4">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
               <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-24 w-auto" />
             </Link>
             <button
@@ -90,17 +101,44 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled }) {
             </button>
           </div>
 
-          <div className="mt-6 space-y-3">
-            {NAV_LINKS.map((link) => (
-              <NavbarLink
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={pathname === link.href ? activeLinkClasses : mobileLinkClasses}
-              >
-                {link.name}
-              </NavbarLink>
-            ))}
+          <div className="mt-6 flex-1 min-h-0 overflow-y-auto pr-1">
+            <div className="space-y-3">
+              <div className={sectionLabelClasses}>Menu</div>
+              {NAV_LINKS.map((link) => (
+                <MenuItem
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={pathname === link.href ? activeLinkClasses : mobileLinkClasses}
+                >
+                  {link.name}
+                </MenuItem>
+              ))}
+            </div>
+            {isLoggedIn && (
+              <div className="mt-8 space-y-3">
+                <div className={sectionLabelClasses}>Akun</div>
+                <div className="space-y-1">
+                  <MenuItem
+                    href="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className={pathname === "/profile" ? activeLinkClasses : mobileLinkClasses}
+                  >
+                    Pengaturan Profil
+                  </MenuItem>
+                  <MenuItem
+                    onClick={async () => {
+                      setIsOpen(false);
+                      await signOut();
+                      router.refresh();
+                    }}
+                    className={mobileLinkClasses}
+                  >
+                    Logout / Keluar
+                  </MenuItem>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
