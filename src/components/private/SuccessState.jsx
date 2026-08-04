@@ -202,17 +202,27 @@ export default function SuccessState({ form, onReset }) {
             </div>
           </div>
 
-          <button
-            onClick={onReset}
-            className="w-full py-3 rounded-xl text-white mb-10 font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
+          <a
+            href="/my-trips"
+            className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
             style={{ backgroundColor: A }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c47d12")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = A)}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M9 12h6M12 9v6"/><circle cx="12" cy="12" r="9"/>
+            </svg>
+            Pantau Status Request Saya
+          </a>
+
+          <button
+            onClick={onReset}
+            className="w-full py-3 rounded-xl border border-gray-200 text-gray-600 mb-10 font-semibold text-sm transition-all hover:bg-gray-50 active:scale-95 flex items-center justify-center gap-2"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <polyline points="15 18 9 12 15 6" />
             </svg>
-            Kembali ke Halaman Custom Trip
+            Ajukan Request Lain
           </button>
         </div>
       </div>
