@@ -51,14 +51,7 @@ async function getSessionUserId(request: NextRequest): Promise<string | null> {
   }
 }
 
-async function getSessionUserRole(request: NextRequest): Promise<string | null> {
-  try {
-    const session = await auth.api.getSession({ headers: request.headers });
-    return (session?.user as { role?: string })?.role ?? null;
-  } catch {
-    return null;
-  }
-}
+
 
 export const privateTripController = {
   async create(req: NextRequest) {
@@ -121,10 +114,6 @@ export const privateTripController = {
   },
 
   async listAdmin(req: NextRequest) {
-    const role = await getSessionUserRole(req);
-    if (role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
     const url = new URL(req.url);
     const status = url.searchParams.get("status") || undefined;
     const search = url.searchParams.get("search") || undefined;
@@ -134,10 +123,6 @@ export const privateTripController = {
   },
 
   async getAdminDetail(req: NextRequest, { params }: { params: { id: string } }) {
-    const role = await getSessionUserRole(req);
-    if (role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
     const request = await privateTripService.findById(params.id);
     if (!request) {
       return NextResponse.json({ error: "Request tidak ditemukan" }, { status: 404 });
@@ -147,10 +132,6 @@ export const privateTripController = {
   },
 
   async updateRequestStatus(req: NextRequest, { params }: { params: { id: string } }) {
-    const role = await getSessionUserRole(req);
-    if (role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
     let body: { action?: string };
     try {
       body = await req.json();
@@ -170,10 +151,6 @@ export const privateTripController = {
   },
 
   async createProposal(req: NextRequest, { params }: { params: { id: string } }) {
-    const role = await getSessionUserRole(req);
-    if (role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
     const userId = await getSessionUserId(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
