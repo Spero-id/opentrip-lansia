@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
     PhoneIcon,
     EnvelopeIcon,
@@ -16,10 +16,41 @@ import Subs from "@/components/landing/Subs";
 
 export default function ContactPage() {
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const formRef = useRef(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
+        setLoading(true);
+        setError("");
+
+        const formData = new FormData(formRef.current);
+        const data = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            phone: formData.get("phone") || null,
+            message: formData.get("message"),
+        };
+
+        try {
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            if (!res.ok) {
+                const body = await res.json();
+                throw new Error(body.error || "Gagal mengirim pesan");
+            }
+
+            setSubmitted(true);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -136,7 +167,7 @@ export default function ContactPage() {
                                         </p>
                                     </div>
                                 ) : (
-                                    <form onSubmit={handleSubmit} className="space-y-5">
+                                    <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
                                         <div className="grid sm:grid-cols-2 gap-5">
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -146,6 +177,7 @@ export default function ContactPage() {
                                                     <EnvelopeIcon className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input
                                                         type="email"
+                                                        name="email"
                                                         placeholder="nama@email.com"
                                                         required
                                                         className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
@@ -160,6 +192,7 @@ export default function ContactPage() {
                                                     <PhoneIcon className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input
                                                         type="tel"
+                                                        name="phone"
                                                         placeholder="08xx-xxxx-xxxx"
                                                         className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
                                                     />
@@ -175,6 +208,7 @@ export default function ContactPage() {
                                                 <UserIcon className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                                                 <input
                                                     type="text"
+                                                    name="name"
                                                     placeholder="Nama lengkap"
                                                     required
                                                     className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
@@ -190,6 +224,7 @@ export default function ContactPage() {
                                                 <ChatBubbleLeftRightIcon className="w-4 h-4 absolute left-4 top-4 text-gray-400" />
                                                 <textarea
                                                     rows={5}
+                                                    name="message"
                                                     placeholder="Tulis pesan kamu di sini..."
                                                     required
                                                     className="w-full border border-gray-200 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors resize-none"
@@ -197,12 +232,19 @@ export default function ContactPage() {
                                             </div>
                                         </div>
 
+                                        {error && (
+                                            <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                                                {error}
+                                            </p>
+                                        )}
+
                                         <button
                                             type="submit"
-                                            className="flex items-center justify-center gap-2 bg-[#F49D1A] text-white px-8 py-3.5 w-full rounded-lg font-semibold hover:bg-[#c47d12] transition-colors"
+                                            disabled={loading}
+                                            className="flex items-center justify-center gap-2 bg-[#F49D1A] text-white px-8 py-3.5 w-full rounded-lg font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            Kirim Pesan
-                                            <PaperAirplaneIcon className="w-4 h-4" />
+                                            {loading ? "Mengirim..." : "Kirim Pesan"}
+                                            {!loading && <PaperAirplaneIcon className="w-4 h-4" />}
                                         </button>
                                     </form>
                                 )}

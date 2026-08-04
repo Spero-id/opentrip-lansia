@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin, Calendar, Search, ArrowRight, TrendingUp, Users, Award } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 const stats = [
@@ -12,7 +12,11 @@ const stats = [
 
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const rafRef = useRef(null);
+  useEffect(() => {
+    rafRef.current = requestAnimationFrame(() => setMounted(true));
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, []);
 
   return (
     <section
@@ -110,6 +114,9 @@ export default function HeroSection() {
                   <img
                     src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=500&fit=crop"
                     alt="Hot air balloon"
+                    width={400}
+                    height={500}
+                    loading="lazy"
                     className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -118,6 +125,9 @@ export default function HeroSection() {
                   <img
                     src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=350&fit=crop"
                     alt="Tropical bridge"
+                    width={400}
+                    height={350}
+                    loading="lazy"
                     className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
@@ -128,6 +138,9 @@ export default function HeroSection() {
                   <img
                     src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=350&fit=crop"
                     alt="Beach walk"
+                    width={400}
+                    height={350}
+                    loading="lazy"
                     className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
@@ -135,6 +148,9 @@ export default function HeroSection() {
                   <img
                     src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400&h=500&fit=crop"
                     alt="Ocean view"
+                    width={400}
+                    height={500}
+                    loading="lazy"
                     className="w-full h-36 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>

@@ -111,6 +111,9 @@ export default function FAQSection() {
                             <img
                                 src="/FAQ-Assets-2.png"
                                 alt="FAQ Assets"
+                                width={220}
+                                height={192}
+                                loading="lazy"
                                 className="w-full h-full object-contain"
                             />
                         </div>

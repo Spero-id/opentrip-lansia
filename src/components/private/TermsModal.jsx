@@ -52,6 +52,7 @@ export default function TermsModal({ onAgree, onClose }) {
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [mounted, setMounted] = useState(false);
   const scrollRef = useRef(null);
+  const rafRef = useRef(null);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -62,11 +63,12 @@ export default function TermsModal({ onAgree, onClose }) {
   }, []);
 
   useEffect(() => {
-    setMounted(true);
+    rafRef.current = requestAnimationFrame(() => setMounted(true));
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };

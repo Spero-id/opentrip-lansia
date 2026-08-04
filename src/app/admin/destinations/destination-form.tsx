@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { Plus, Trash2 } from "lucide-react";
 import { slugify } from "@/shared/utils/helpers";
+import ImageManager from "./image-manager";
 
 const MapPicker = dynamic(() => import("@/app/admin/components/map-picker"), { ssr: false });
 
@@ -22,6 +24,18 @@ interface Category {
   name: string;
 }
 
+interface ItineraryItem {
+  day: number;
+  title: string;
+  description: string;
+}
+
+interface MeetingPointItem {
+  time: string;
+  location: string;
+  description: string;
+}
+
 interface DestinationFormData {
   name: string;
   slug: string;
@@ -33,6 +47,12 @@ interface DestinationFormData {
   accessibilityInfo: string | null;
   isActive: boolean | null;
   visitEstimateMinutes: number | null;
+  image: string | null;
+  images: string[] | null;
+  priceMin: number | null;
+  priceMax: number | null;
+  itinerary: ItineraryItem[] | null;
+  meetingPoints: MeetingPointItem[] | null;
 }
 
 export default function DestinationForm({
@@ -55,6 +75,12 @@ export default function DestinationForm({
     accessibilityInfo: initial?.accessibilityInfo ?? "",
     isActive: initial?.isActive ?? true,
     visitEstimateMinutes: initial?.visitEstimateMinutes ?? null,
+    image: initial?.image ?? null,
+    images: initial?.images ?? [],
+    priceMin: initial?.priceMin ?? null,
+    priceMax: initial?.priceMax ?? null,
+    itinerary: initial?.itinerary ?? [],
+    meetingPoints: initial?.meetingPoints ?? [],
   });
   const [loading, setLoading] = useState(false);
 
@@ -98,9 +124,50 @@ export default function DestinationForm({
     const value = target.type === "checkbox" ? (target as HTMLInputElement).checked : target.value;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "visitEstimateMinutes" ? (value ? Number(value) : null) : value,
+      [name]:
+        name === "visitEstimateMinutes" || name === "priceMin" || name === "priceMax"
+          ? value
+            ? Number(value)
+            : null
+          : value,
       ...(name === "name" && !initial ? { slug: slugify(target.value) } : {}),
     }));
+  }
+
+  function updateItinerary(idx: number, field: keyof ItineraryItem, value: string | number) {
+    setForm((prev) => ({
+      ...prev,
+      itinerary: (prev.itinerary ?? []).map((item, i) => (i === idx ? { ...item, [field]: value } : item)),
+    }));
+  }
+
+  function addItinerary() {
+    setForm((prev) => ({
+      ...prev,
+      itinerary: [...(prev.itinerary ?? []), { day: (prev.itinerary ?? []).length + 1, title: "", description: "" }],
+    }));
+  }
+
+  function removeItinerary(idx: number) {
+    setForm((prev) => ({ ...prev, itinerary: (prev.itinerary ?? []).filter((_, i) => i !== idx) }));
+  }
+
+  function updateMeetingPoint(idx: number, field: keyof MeetingPointItem, value: string) {
+    setForm((prev) => ({
+      ...prev,
+      meetingPoints: (prev.meetingPoints ?? []).map((item, i) => (i === idx ? { ...item, [field]: value } : item)),
+    }));
+  }
+
+  function addMeetingPoint() {
+    setForm((prev) => ({
+      ...prev,
+      meetingPoints: [...(prev.meetingPoints ?? []), { time: "", location: "", description: "" }],
+    }));
+  }
+
+  function removeMeetingPoint(idx: number) {
+    setForm((prev) => ({ ...prev, meetingPoints: (prev.meetingPoints ?? []).filter((_, i) => i !== idx) }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -115,6 +182,12 @@ export default function DestinationForm({
         visitEstimateMinutes: form.visitEstimateMinutes || null,
         categoryId: form.categoryId || null,
         slug: form.slug || slugify(form.name) + "-" + Date.now(),
+        image: form.image || null,
+        images: form.images?.length ? form.images : null,
+        priceMin: form.priceMin || null,
+        priceMax: form.priceMax || null,
+        itinerary: form.itinerary?.length ? form.itinerary : null,
+        meetingPoints: form.meetingPoints?.length ? form.meetingPoints : null,
       }),
     });
     if (res.ok) router.push("/admin/destinations");
@@ -214,6 +287,102 @@ export default function DestinationForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
+          <label className="block text-sm font-medium text-slate-700">Harga Min (Rp)</label>
+          <input
+            name="priceMin"
+            type="number"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+            value={form.priceMin ?? ""}
+            onChange={handleChange}
+            min={0}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700">Harga Max (Rp)</label>
+          <input
+            name="priceMax"
+            type="number"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+            value={form.priceMax ?? ""}
+            onChange={handleChange}
+            min={0}
+          />
+        </div>
+      </div>
+
+      <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <label className="text-sm font-medium text-slate-700">Itinerary (Rencana Perjalanan)</label>
+          <button type="button" onClick={addItinerary}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[#F49D1A] hover:text-[#c47d12] transition">
+            <Plus className="w-3.5 h-3.5" /> Tambah Hari
+          </button>
+        </div>
+        {(form.itinerary ?? []).length === 0 && (
+          <p className="text-xs text-slate-400">Belum ada itinerary. Klik &quot;Tambah Hari&quot; untuk mulai.</p>
+        )}
+        {(form.itinerary ?? []).map((item, idx) => (
+          <div key={idx} className="bg-white rounded-lg border border-slate-200 p-3 space-y-2">
+            <div className="flex gap-2">
+              <input type="number" min={1} value={item.day}
+                onChange={(e) => updateItinerary(idx, "day", Number(e.target.value))}
+                className="w-20 rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              <input value={item.title}
+                onChange={(e) => updateItinerary(idx, "title", e.target.value)}
+                placeholder="Judul kegiatan"
+                className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              <button type="button" onClick={() => removeItinerary(idx)}
+                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus baris">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+            <textarea value={item.description}
+              onChange={(e) => updateItinerary(idx, "description", e.target.value)}
+              placeholder="Deskripsi kegiatan hari ini"
+              rows={2}
+              className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <label className="text-sm font-medium text-slate-700">Titik Kumpul</label>
+          <button type="button" onClick={addMeetingPoint}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[#F49D1A] hover:text-[#c47d12] transition">
+            <Plus className="w-3.5 h-3.5" /> Tambah Titik Kumpul
+          </button>
+        </div>
+        {(form.meetingPoints ?? []).length === 0 && (
+          <p className="text-xs text-slate-400">Belum ada titik kumpul. Klik &quot;Tambah Titik Kumpul&quot; untuk mulai.</p>
+        )}
+        {(form.meetingPoints ?? []).map((mp, idx) => (
+          <div key={idx} className="bg-white rounded-lg border border-slate-200 p-3 space-y-2">
+            <div className="flex gap-2">
+              <input value={mp.time}
+                onChange={(e) => updateMeetingPoint(idx, "time", e.target.value)}
+                placeholder="Jam (mis. 08:00)"
+                className="w-24 rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              <input value={mp.location}
+                onChange={(e) => updateMeetingPoint(idx, "location", e.target.value)}
+                placeholder="Lokasi"
+                className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              <button type="button" onClick={() => removeMeetingPoint(idx)}
+                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus baris">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+            <textarea value={mp.description}
+              onChange={(e) => updateMeetingPoint(idx, "description", e.target.value)}
+              placeholder="Deskripsi titik kumpul"
+              rows={1}
+              className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
           <label className="block text-sm font-medium text-slate-700">Latitude</label>
           <input
             type="number"
@@ -241,6 +410,12 @@ export default function DestinationForm({
         <label className="block text-sm font-medium text-slate-700">Peta</label>
         <MapPicker latitude={latitude} longitude={longitude} onChange={handleMapChange} />
       </div>
+
+      <ImageManager
+        cover={form.image}
+        images={form.images ?? []}
+        onChange={(next) => setForm((prev) => ({ ...prev, image: next.cover, images: next.images }))}
+      />
 
       <div>
         <label className="block text-sm font-medium text-slate-700">Informasi Aksesibilitas</label>

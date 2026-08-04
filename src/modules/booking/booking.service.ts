@@ -76,6 +76,6 @@ export const bookingService = {
   },
 
   async updateBookingStatus(id: UUID, status: string) {
-    await bookingRepository.update(id, { status: status as any });
+    await bookingRepository.update(id, { status });
   },
 };

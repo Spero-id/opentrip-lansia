@@ -16,7 +16,6 @@ import DestinationTabs from "@/components/destinasi/detail/DestinationTabs";
 import AboutSection from "@/components/destinasi/detail/AboutSection";
 import ItinerarySection from "@/components/destinasi/detail/ItinerarySection";
 import MeetingSection from "@/components/destinasi/detail/MeetingSection";
-import UlasanSection from "@/components/destinasi/detail/UlasanSection";
 import BookingCard from "@/components/destinasi/detail/BookingCard";
 
 export default function DestinationDetailPage({ params }) {
@@ -120,7 +119,6 @@ export default function DestinationDetailPage({ params }) {
             {activeTab === "tentang" && <AboutSection dest={dest} />}
             {activeTab === "itinerary" && <ItinerarySection dest={dest} shortLocation={shortLocation} />}
             {activeTab === "meeting" && <MeetingSection dest={dest} />}
-            {activeTab === "ulasan" && <UlasanSection dest={dest} />}
           </div>
         </div>
 

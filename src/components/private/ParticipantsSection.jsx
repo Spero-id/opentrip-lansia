@@ -14,10 +14,6 @@ const RELATIONSHIP_OPTIONS = [
   "Saudara", "Teman", "Kolega", "Lainnya",
 ];
 
-function generateId() {
-  return `pax-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`;
-}
-
 function isComplete(p) {
   return !!(p.fullName.trim() && p.birthDate && p.gender && p.phone.trim());
 }
@@ -218,7 +214,7 @@ export default function ParticipantsSection({
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </svg>
-          <p className="text-xs text-gray-400 font-medium">Belum ada peserta. Klik "Tambah Peserta" untuk mulai.</p>
+          <p className="text-xs text-gray-400 font-medium">Belum ada peserta. Klik &quot;Tambah Peserta&quot; untuk mulai.</p>
         </div>
       )}
 

@@ -3,9 +3,11 @@ import { formatRupiah } from "./helpers/helpers";
 
 export default function DestinationCard({
   dest,
-  selected,
   onSelect,
 }) {
+  const title = dest.title || dest.name || "Destinasi";
+  const rating = typeof dest.rating === "number" ? dest.rating.toFixed(1) : "4.8";
+
   return (
     <button
       type="button"
@@ -16,26 +18,33 @@ export default function DestinationCard({
         backgroundColor: "#f9fafb",
       }}
     >
-      <img
-        src={dest.image}
-        alt={dest.title}
-        className="w-12 h-12 rounded-xl object-cover shrink-0"
-      />
+      {dest.image ? (
+        <img
+          src={dest.image}
+          alt={title}
+          className="w-12 h-12 rounded-xl object-cover shrink-0"
+        />
+      ) : (
+        <div className="w-12 h-12 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 font-bold text-xs">
+          {title.slice(0, 2).toUpperCase()}
+        </div>
+      )}
 
       <div className="flex-1 min-w-0">
         <p className="text-xs font-bold text-gray-800 truncate leading-snug">
-          {dest.title}
+          {title}
         </p>
         <p className="text-[10px] text-gray-400 truncate mt-0.5">
-          {dest.location}
+          {dest.location || "Indonesia"}
         </p>
         <p
           className="text-[10px] font-semibold mt-0.5"
           style={{ color: A }}
         >
-          * {dest.rating.toFixed(1)} · {formatRupiah(dest.priceMin)}
+          ★ {rating} · {formatRupiah(dest.priceMin)}
         </p>
       </div>
     </button>
   );
 }
+

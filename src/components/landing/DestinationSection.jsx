@@ -3,10 +3,12 @@
 import { useRef, useState, useEffect } from "react";
 import { MapPin, Star, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 const FALLBACK_IMAGES = [
-  "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",
-  "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4HXrHCu5wU0hTKdf2vfJj5ZiXuH3LEUeh5s2vEDS6mYWKlFLeAP91yNQ&s=10",
   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80",
   "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=600&q=80",
 ];
@@ -14,13 +16,18 @@ const FALLBACK_IMAGES = [
 const DEFAULT_RATING = 5.0;
 
 function toCard(dest, index) {
+  const image =
+    dest.image ||
+    (Array.isArray(dest.images) && dest.images[0]) ||
+    FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
+
   return {
     id: dest.id,
     title: dest.name,
     location: dest.location || "Indonesia",
-    rating: DEFAULT_RATING,
-    priceMin: 0,
-    image: FALLBACK_IMAGES[index % FALLBACK_IMAGES.length],
+    rating: dest.rating || DEFAULT_RATING,
+    priceMin: dest.priceMin || 0,
+    image,
   };
 }
 
@@ -28,6 +35,15 @@ export default function DestinationSection() {
   const scrollRef = useRef(null);
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+
+  function handleCardClick(e, id) {
+    if (isLoggedIn) return;
+    e.preventDefault();
+    router.push(`/login?redirect=/trips/${id}`);
+  }
 
   useEffect(() => {
     fetch("/api/destinations")
@@ -82,6 +98,7 @@ export default function DestinationSection() {
           <Link
             key={dest.id}
             href={`/trips/${dest.id}`}
+            onClick={(e) => handleCardClick(e, dest.id)}
             className="group snap-start shrink-0 w-[280px] sm:w-[320px] md:w-auto bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300"
           >
             <div className="relative h-44 overflow-hidden">

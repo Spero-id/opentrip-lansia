@@ -106,7 +106,7 @@ export const destinations = [
     rating: 4.7,
     price: "980.000",
     image:
-      "https://images.unsplash.com/photo-1466442929976-97f336a657be?w=500&h=600&fit=crop",
+      "https://regalsprings.co.id/wp-content/uploads/2023/05/danau-toba-1024x682.jpg",
   },
   {
     name: "Labuan Bajo",
