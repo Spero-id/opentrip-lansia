@@ -205,6 +205,28 @@ export default function PrivateTripPage() {
       <main className="min-h-screen bg-white">
 
         <PageHeader />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-0">
+          <a
+            href="/my-trips"
+            className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-[#F49D1A]/30 bg-[#F49D1A]/5 hover:bg-[#F49D1A]/10 transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-xl bg-[#F49D1A]/15 flex items-center justify-center shrink-0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F49D1A" strokeWidth="2.5">
+                  <path d="M9 12h6M12 9v6"/><circle cx="12" cy="12" r="9"/>
+                </svg>
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-gray-800">Sudah pernah mengajukan request?</p>
+                <p className="text-xs text-gray-500">Pantau status dan lihat proposal dari admin</p>
+              </div>
+            </div>
+            <svg className="w-4 h-4 text-[#F49D1A] group-hover:translate-x-0.5 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+        </div>
+
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <form onSubmit={handleSubmit} noValidate>
             <div className="flex flex-col gap-5">
