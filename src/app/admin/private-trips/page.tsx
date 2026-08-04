@@ -27,6 +27,7 @@ const statusStyles: Record<string, string> = {
 export default function AdminPrivateTripsList() {
   const [rows, setRows] = useState<PrivateRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
   const [total, setTotal] = useState(0);
@@ -35,14 +36,21 @@ export default function AdminPrivateTripsList() {
     let cancelled = false;
     async function run() {
       setLoading(true);
+      setFetchError("");
       const params = new URLSearchParams();
       if (statusFilter) params.set("status", statusFilter);
       if (search) params.set("search", search);
       const res = await fetch(`/api/private-trip/admin?${params.toString()}`);
       const data = await res.json();
       if (!cancelled) {
-        setRows(data.rows || []);
-        setTotal(data.total || 0);
+        if (!res.ok) {
+          setFetchError(`Error ${res.status}: ${data.error || "Gagal memuat data"}`);
+          setRows([]);
+          setTotal(0);
+        } else {
+          setRows(data.rows || []);
+          setTotal(data.total || 0);
+        }
         setLoading(false);
       }
     }
@@ -58,6 +66,12 @@ export default function AdminPrivateTripsList() {
           <p className="text-sm text-slate-500 mt-1">Kelola permintaan Private Trip dari pengguna.</p>
         </div>
       </div>
+
+      {fetchError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-3 text-sm font-medium">
+          {fetchError}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
