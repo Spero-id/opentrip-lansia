@@ -1,32 +1,33 @@
-const A = "#F49D1A";
+import {  Check } from "lucide-react";
+import SectionHeading from "./SectionHeading";
 
 export default function AboutSection({ dest }) {
   return (
     <div>
       <section className="mb-10">
-        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 flex items-center gap-2 text-gray-900">
-          <span className="w-1.5 h-6 sm:w-2 sm:h-8 rounded-full" style={{ backgroundColor: A }}></span>
+        <SectionHeading className="mb-3 sm:mb-4">
           Tentang Destinasi
-        </h2>
-        <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+        </SectionHeading>
+        <p className="text-base leading-relaxed text-gray-600 sm:text-md sm:leading-loose">
           {dest.description}
         </p>
       </section>
+
       <section>
-        <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-900">Sorotan Utama</h3>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          {dest.highlights.map((h, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[#F49D1A] text-white text-xs sm:text-sm font-semibold"
+        <h3 className="mb-4 text-lg font-bold text-gray-900 sm:text-xl">
+          Sorotan Utama
+        </h3>
+        <ul className="flex flex-wrap gap-2.5">
+          {dest.highlights?.map((highlight, index) => (
+            <li
+              key={index}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-medium text-gray-700"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              {h}
-            </div>
+              <Check size={14} strokeWidth={3} className="text-[#F49D1A]" />
+              {highlight}
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
     </div>
   );

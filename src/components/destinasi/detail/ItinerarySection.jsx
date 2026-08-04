@@ -1,28 +1,41 @@
-const A = "#F49D1A";
+import { Route } from "lucide-react";
+import SectionHeading from "./SectionHeading";
 
 export default function ItinerarySection({ dest, shortLocation }) {
   return (
     <section>
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2 text-gray-900">
-        <span className="w-1.5 h-6 sm:w-2 sm:h-8 rounded-full" style={{ backgroundColor: A }}></span>
-        Rencana Perjalanan
-      </h2>
-      <div className="space-y-4 sm:space-y-6 relative before:absolute before:inset-0 before:ml-4 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
-        {dest.itinerary?.map((item, idx) => (
-          <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-            <div className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full border-4 border-white bg-[#F49D1A] text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold text-[10px] sm:text-xs">
-              {item.day}
-            </div>
-            <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-2rem)] p-3.5 sm:p-5 rounded-2xl bg-white shadow-sm border border-gray-100 transition-all hover:shadow-md hover:border-[#F49D1A]/30">
-              <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                <h4 className="font-bold text-sm sm:text-lg" style={{ color: A }}>Hari {item.day}</h4>
-                <span className="text-[10px] sm:text-xs font-semibold text-white px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md" style={{ backgroundColor: A }}>{shortLocation}</span>
+      <SectionHeading icon={Route}>Rencana Perjalanan</SectionHeading>
+
+      <div className="relative">
+        <div
+          className="absolute bottom-3 left-4 top-3 w-px bg-slate-200"
+          aria-hidden
+        />
+        <ol className="space-y-5">
+          {dest.itinerary?.map((item, index) => (
+            <li key={index} className="relative pl-12">
+              <div className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF6E7] text-xs font-bold text-[#c47d12] ring-4 ring-white">
+                {item.day}
               </div>
-              <h5 className="font-bold text-sm sm:text-base text-gray-900 mb-1.5 sm:mb-2">{item.title}</h5>
-              <p className="text-gray-500 text-xs sm:text-sm leading-relaxed">{item.description}</p>
-            </div>
-          </div>
-        ))}
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-[#F49D1A]/40 hover:shadow-md sm:p-5">
+                <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wide text-[#F49D1A]">
+                    Hari {item.day}
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-500">
+                    {shortLocation}
+                  </span>
+                </div>
+                <h4 className="text-base font-bold text-gray-900 sm:text-lg">
+                  {item.title}
+                </h4>
+                <p className="mt-1.5 text-sm leading-relaxed text-gray-500">
+                  {item.description}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
