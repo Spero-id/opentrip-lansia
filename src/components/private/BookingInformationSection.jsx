@@ -2,7 +2,6 @@ import Field from "./Field";
 import SectionCard from "./SectionCard";
 import ParticipantsSection from "./ParticipantsSection";
 import { inputCls } from "./helpers/helpers";
-import { A } from "./helpers/constants";
 
 export default function BookingInformationSection({
   form,

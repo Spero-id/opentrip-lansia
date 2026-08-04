@@ -78,16 +78,19 @@ export default function AdminPesanan() {
   const [selected, setSelected] = useState<Booking | null>(null);
 
   useEffect(() => {
-    fetchData();
+    let cancelled = false;
+    async function run() {
+      setLoading(true);
+      const res = await fetch("/api/bookings");
+      const data = await res.json();
+      if (!cancelled) {
+        setRows(data);
+        setLoading(false);
+      }
+    }
+    run();
+    return () => { cancelled = true; };
   }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    const res = await fetch("/api/bookings");
-    const data = await res.json();
-    setRows(data);
-    setLoading(false);
-  }
 
   function openDetail(item: Booking) {
     setSelected(item);

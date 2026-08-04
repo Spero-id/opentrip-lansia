@@ -62,8 +62,6 @@ export default function AdminPrivateTripDetail() {
   const [saving, setSaving] = useState(false);
   const [actionMsg, setActionMsg] = useState("");
 
-  useEffect(() => { fetchDetail(); }, []);
-
   async function fetchDetail() {
     setLoading(true);
     const res = await fetch(`/api/private-trip/admin/${params.id}`);
@@ -72,6 +70,19 @@ export default function AdminPrivateTripDetail() {
     setData(d);
     setLoading(false);
   }
+
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
+      setLoading(true);
+      const res = await fetch(`/api/private-trip/admin/${params.id}`);
+      if (!res.ok) { if (!cancelled) { setError("Gagal memuat data"); setLoading(false); } return; }
+      const d = await res.json();
+      if (!cancelled) { setData(d); setLoading(false); }
+    }
+    run();
+    return () => { cancelled = true; };
+  }, [params.id]);
 
   async function updateStatus(action: string) {
     setActionMsg("");

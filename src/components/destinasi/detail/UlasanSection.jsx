@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const A = "#F49D1A";
+const ACCENT = "#F49D1A";
 
 export default function UlasanSection({ dest }) {
   const [ratingFilter, setRatingFilter] = useState(null);
@@ -18,7 +18,7 @@ export default function UlasanSection({ dest }) {
     <section>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
         <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-gray-900">
-          <span className="w-1.5 h-6 sm:w-2 sm:h-8 rounded-full" style={{ backgroundColor: A }}></span>
+          <span className="w-1.5 h-6 sm:w-2 sm:h-8 rounded-full" style={{ backgroundColor: ACCENT }}></span>
           Ulasan Pengunjung
         </h2>
         <div className="flex items-center gap-2 text-sm font-semibold overflow-x-auto pb-2 sm:pb-0">
