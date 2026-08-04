@@ -1,5 +1,15 @@
 import { tripRepository } from "./trip.repository";
 import type { UUID } from "@/shared/types";
+import type { trips, itineraryItems, tripDestinations } from "./trip.schema";
+
+type TripInsert = typeof trips.$inferInsert;
+type ItineraryInsert = typeof itineraryItems.$inferInsert;
+type TripDestInsert = typeof tripDestinations.$inferInsert;
+
+interface TripCreateInput extends Omit<TripInsert, "id" | "createdAt" | "updatedAt"> {
+  itinerary?: Omit<ItineraryInsert, "id" | "tripId">[];
+  tripDestinations?: Omit<TripDestInsert, "tripId">[];
+}
 
 export const tripService = {
   async getPublishedTrips() {
@@ -30,7 +40,7 @@ export const tripService = {
     return tripRepository.updateQuota(priceId, qty);
   },
 
-  async createTrip(data: any) {
+  async createTrip(data: TripCreateInput) {
     const { itinerary, tripDestinations: dests, ...tripData } = data;
     const trip = await tripRepository.create(tripData);
 
@@ -44,7 +54,7 @@ export const tripService = {
     return this.getFullTrip(trip.id);
   },
 
-  async updateTrip(id: UUID, data: any) {
+  async updateTrip(id: UUID, data: TripCreateInput) {
     const { itinerary, tripDestinations: dests, ...tripData } = data;
     const trip = await tripRepository.update(id, tripData);
     if (!trip) return null;

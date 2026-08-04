@@ -1,7 +1,6 @@
 import { db } from "@/shared/db";
 import { users } from "./auth.schema";
 import { eq } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
 
 export interface IAuthRepository {
   findById(id: string): Promise<typeof users.$inferSelect | null>;

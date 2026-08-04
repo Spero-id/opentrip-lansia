@@ -209,9 +209,9 @@ export default function RegisterPage() {
                     </button>
 
                     <p className="text-center text-sm text-gray-500 mt-4 sm:mt-8">
-                        Sudah Punya AKun?{" "}
+                        Sudah Punya Akun?{" "}
                         <a href="/login" className="italic text-gray-900 font-semibold hover:text-[#F49D1A]">
-                            Masuk disini
+                            Masuk di sini
                         </a>
                     </p>
                 </div>

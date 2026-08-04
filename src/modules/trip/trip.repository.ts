@@ -1,7 +1,7 @@
 import { db } from "@/shared/db";
 import {
   trips, tripDepartures, tripPrices, tripDestinations,
-  itineraryItems, tripHoreca, tripVendors, tripMedia, tripGalleries,
+  itineraryItems, tripGalleries,
 } from "./trip.schema";
 import { eq, and, asc, desc, sql } from "drizzle-orm";
 import type { UUID } from "@/shared/types";

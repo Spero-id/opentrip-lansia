@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { referrals, commissions, commissionRules, commissionPayouts } from "./referral.schema";
+import { referrals, commissions } from "./referral.schema";
 import { eq, desc } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
