@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
@@ -15,6 +15,7 @@ const FALLBACK_IMAGES = [
 ];
 
 const DEFAULT_RATING = 5.0;
+const PAGE_SIZE = 8;
 
 function toCard(dest, index) {
   const image =
@@ -39,9 +40,22 @@ export default function DestinationSection() {
   const scrollRef = useRef(null);
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
   const router = useRouter();
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
+
+  const pageCount = Math.max(1, Math.ceil(destinations.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount - 1);
+  const visibleDestinations = destinations.slice(
+    currentPage * PAGE_SIZE,
+    (currentPage + 1) * PAGE_SIZE
+  );
+
+  function goToPage(nextPage) {
+    setPage(Math.min(Math.max(nextPage, 0), pageCount - 1));
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   function handleCardClick(e, id) {
     if (isLoggedIn) return;
@@ -86,19 +100,19 @@ export default function DestinationSection() {
 
           <Link
             href="/trips"
-            className="hidden md:flex items-center gap-1 text-sm font-semibold text-gray-700 hover:text-[#F49D1A] transition-colors shrink-0"
+            className="hidden md:flex items-center gap-1 text-md font-semibold text-gray-700 hover:text-[#F49D1A] transition-colors shrink-0"
           >
             Lihat semua
-            <ArrowRight size={16} className="rotate-[-45deg]" />
+            <ArrowRight size={24} className="rotate-[-45deg]" />
           </Link>
         </div>
       </div>
 
       <div
         ref={scrollRef}
-        className="flex md:grid md:grid-cols-4 md:grid-rows-2 md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="flex md:grid md:grid-cols-4 md:grid-rows-2 md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 scroll-mt-28 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        {destinations.slice(0, 8).map((dest) => (
+        {visibleDestinations.map((dest) => (
           <DestinationCard
             key={dest.id}
             dest={dest}
@@ -116,7 +130,39 @@ export default function DestinationSection() {
         </p>
       )}
 
-      <div className="flex md:hidden items-center justify-center gap-2 mt-6">
+      {destinations.length > PAGE_SIZE && (
+        <div
+          className={`hidden md:flex items-center justify-center gap-4 ${
+            visibleDestinations.length <= 4 ? "mt-2" : "mt-8"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 0}
+            aria-label="Muat destinasi sebelumnya"
+            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+          >
+            <ChevronUp size={20} />
+          </button>
+
+          <span className="text-sm font-medium text-gray-400 tabular-nums">
+            {currentPage + 1} / {pageCount}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage >= pageCount - 1}
+            aria-label="Lihat destinasi lainnya"
+            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+          >
+            <ChevronDown size={20} />
+          </button>
+        </div>
+      )}
+
+      <div className="flex md:hidden items-center justify-center gap-2">
         <button
           onClick={() => scroll("left")}
           className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600"
