@@ -434,3 +434,12 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 - Perubahan blog CRUD belum di-commit (menunggu review user).
 
 
+
+### Session (2026-08-05) — Vercel Production Deploy + Build Fixes
+- Deployed `main` to production via `vercel --prod` → **https://opentrip-lansia.vercel.app** (deploy `7v1pWRF1kJykGNQwGcJkQEFiFULi`, Ready 59s)
+- **Root cause 1 (blocked deploy):** Repo was private + git author `bhuminindra` (alhafizaulia02@gmail.com) bukan member Vercel team → Vercel Hobby seat policy memblokir (`TEAM_ACCESS_REQUIRED`). User menjadikan repo public → blokir hilang (collaboration gratis utk public repo).
+- **Root cause 2 (build fail):** TypeScript error di `src/app/admin/trips/[id]/edit/page.tsx` — field itinerary/tripDestinations nullable vs `TripForm` butuh non-null. Dikoersi dengan default (`?? ""` / `?? 0`), plus `meetingPointId`/`description`.
+- **Root cause 3 (prerender fail):** `/login` crash saat SSR — `getRedirectPath()` memanggil `window` saat render. Ditambah guard `typeof window === "undefined"` (login & register).
+- `trip-form.tsx`: tambah `slug?: string` ke `TripFormData`.
+- Commit: `c3c1a36` (4 file). Lint: 0 errors / 34 warnings (pre-existing `<img>`).
+- **Catatan:** local `main` ahead of origin/main 1 commit — perlu `git push` bila ingin sinkron.
