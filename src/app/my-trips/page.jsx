@@ -514,7 +514,7 @@ export default function MyTripsPage() {
         const withProposals = await Promise.all(
           data.map(async (req) => {
             try {
-              const r = await fetch(`/api/private-trip/admin/${req.id}`);
+              const r = await fetch(`/api/private-trips/${req.id}`);
               if (!r.ok) return { ...req, proposals: [] };
               const d = await r.json();
               return { ...req, proposals: d.proposals || [] };
