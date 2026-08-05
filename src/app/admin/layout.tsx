@@ -22,8 +22,10 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  useAdminAuth();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

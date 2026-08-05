@@ -18,7 +18,10 @@ export default function LoginPage() {
     function getRedirectPath() {
         const params = new URLSearchParams(window.location.search);
         const redirect = params.get("redirect");
-        return redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/admin";
+        if (redirect && redirect.startsWith("/") && !redirect.startsWith("//") && !redirect.startsWith("/admin")) {
+            return redirect;
+        }
+        return "/";
     }
 
     async function handleSubmit(e) {
