@@ -58,8 +58,8 @@ export default function Navbar() {
     : "hidden lg:flex font-medium text-sm text-black hover:text-[#F49D1A]";
 
   const loginButtonClasses = isScrolled
-    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm bg-white border border-[#F49D1A] text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white"
-    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-white hover:text-[#F49D1A]";
+    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-white/0 border border-white/20 text-white hover:text-[#F49D1A] hover:border-[#F49D1A] hover:bg-white/10"
+    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-[#F49D1A]/20 hover:border-[#F49D1A]/20 hover:text-[#F49D1A]";
 
   const toggleButtonClasses = cn(
     "p-2 transition-colors",
@@ -102,14 +102,14 @@ export default function Navbar() {
                 </Link>
               ) : (
                 <>
-                  <Link
-                    href="/login"
-                    className="bg-[#F49D1A] border border-[#F49D1A] hover:shadow-xl text-white px-4 py-2 rounded-xl text-sm font-medium font-poppins hover:bg-[#F49D1A]/80 transition-colors shadow-sm"
-                  >
-                    Masuk
-                  </Link>
                   <Link href="/register" className={loginButtonClasses}>
                     Daftar
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="bg-[#F49D1A] border border-[#F49D1A] text-white px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-[#c47d12] hover:border-[#c47d12] hover:shadow-xl"
+                  >
+                    Masuk
                   </Link>
                 </>
               )}
