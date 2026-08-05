@@ -17,15 +17,10 @@ export default function MeetingPointInfo({ destination }) {
         </p>
       ) : (
         <div className="relative">
-          <div
-            className="absolute bottom-3 left-4 top-3 w-px bg-slate-200"
-            aria-hidden
-          />
+          
           <ol className="space-y-5">
-            <li className="relative pl-12">
-              <span className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF6E7] text-[#c47d12] ring-4 ring-white">
-                <Clock size={15} />
-              </span>
+            <li className="relative">
+             
               <div className="rounded-2xl border border-slate-200 bg-gray-50 p-4 sm:p-5">
                 <div className="mb-1.5 flex flex-wrap items-center gap-2">
                   <span className="text-[11px] font-bold uppercase tracking-wide text-[#F49D1A]">

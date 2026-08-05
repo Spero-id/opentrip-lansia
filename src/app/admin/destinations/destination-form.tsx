@@ -40,6 +40,7 @@ interface DestinationFormData {
   name: string;
   slug: string;
   description: string | null;
+  accessibilityInfo: string | null;
   location: string | null;
   geoPoint: string | null;
   categoryId: string | null;
@@ -68,6 +69,7 @@ export default function DestinationForm({
     name: initial?.name || "",
     slug: initial?.slug || "",
     description: initial?.description ?? "",
+    accessibilityInfo: initial?.accessibilityInfo ?? "",
     location: initial?.location ?? "",
     geoPoint: initial?.geoPoint ?? "",
     categoryId: initial?.categoryId ?? "",
@@ -204,6 +206,7 @@ export default function DestinationForm({
         itinerary: form.itinerary?.length ? form.itinerary : null,
         meetingPoints: form.meetingPoints?.length ? form.meetingPoints : null,
         facilities: form.facilities?.length ? form.facilities : null,
+        accessibilityInfo: form.accessibilityInfo || null,
       }),
     });
     if (res.ok) router.push("/admin/destinations");
@@ -242,6 +245,18 @@ export default function DestinationForm({
           rows={4}
           value={form.description ?? ""}
           onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700">Aksesibilitas</label>
+        <textarea
+          name="accessibilityInfo"
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+          rows={3}
+          value={form.accessibilityInfo ?? ""}
+          onChange={handleChange}
+          placeholder="Deskripsi aksesibilitas (mis. Tersedia kursi roda, area istirahat setiap 100m)"
         />
       </div>
 
