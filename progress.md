@@ -261,3 +261,16 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 - `npx eslint src/app/my-trips/page.jsx src/app/api/private-trips/[id]/respond/route.ts` — ✅ 0 errors, 0 warnings
 - Pattern mengikuti pola project yang ada (async function lokal di dalam useEffect + cancelled flag)
 - feat-054 dan feat-055 benar-benar complete setelah session ini
+
+## Session 11 — Navbar & Body Background Alignment (Private & My Trips)
+
+**Goal:** Samakan warna navbar & body background halaman Private Trip (`/private`) dan Request Saya (`/my-trips`) agar berwarna putih bersih sebelum discroll, persis seperti halaman Destinasi Trip (`/trips`).
+
+**Completed:**
+- Modified `src/app/private/page.jsx` — dibungkus dengan `<div className="min-h-screen bg-white">` agar area backdrop & body berlatar putih.
+- Modified `src/app/my-trips/page.jsx` — dibungkus dengan `<div className="min-h-screen bg-white">` dan ubah `<main className="bg-[#FAF8F5]">` menjadi `<main className="bg-white">` (termasuk pada state loading).
+- Komponen `Navbar.jsx` tetap aman tanpa ada perubahan internal.
+
+**Verification:**
+- `src/app/private/page.jsx` & `src/app/my-trips/page.jsx` disamakan struktur wrapper-nya dengan `src/app/trips/page.jsx`.
+

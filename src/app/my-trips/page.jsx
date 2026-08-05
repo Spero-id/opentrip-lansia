@@ -538,21 +538,21 @@ export default function MyTripsPage() {
 
   if (isPending || (!session?.user && !error)) {
     return (
-      <>
+      <div className="min-h-screen bg-white">
         <Navbar />
-        <main className="flex min-h-screen items-center justify-center">
+        <main className="flex min-h-screen items-center justify-center bg-white">
           <p className="text-gray-400 text-sm">Memuat...</p>
         </main>
         <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="min-h-screen bg-[#FAF8F5]">
+      <main className="min-h-screen bg-white">
         {/* Page header — konsisten dengan halaman private */}
         <div className="bg-white border-b border-gray-100">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
@@ -629,6 +629,6 @@ export default function MyTripsPage() {
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 }
