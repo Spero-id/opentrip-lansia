@@ -274,3 +274,18 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 **Verification:**
 - `src/app/private/page.jsx` & `src/app/my-trips/page.jsx` disamakan struktur wrapper-nya dengan `src/app/trips/page.jsx`.
 
+## Session 12 — Simplifikasi Form Private Trip (Ganti Detail Peserta dengan Jumlah Peserta)
+
+**Goal:** Menghilangkan form detail peserta (nama, tgl lahir, jenis kelamin, HP, email per peserta) di Private Trip dan menggantinya dengan input angka sederhana "Jumlah Peserta".
+
+**Completed:**
+- Updated `src/components/private/BookingInformationSection.jsx` — mengubah field `Jumlah Peserta` menjadi input number interaktif (min 1) dan menghapus komponen `<ParticipantsSection>`.
+- Updated `src/components/private/helpers/initialState.js` — mengganti `participants: []` dengan `jumlahPeserta: "1"`.
+- Updated `src/components/private/helpers/validation.js` — mengubah validasi array `participants` menjadi validasi angka `jumlahPeserta >= 1`.
+- Updated `src/app/private/page.jsx` — memperbarui `buildPayload` dan `buildDestinationPreferences` agar menyertakan `jumlahPeserta`, serta menghapus handler peserta per-orang.
+- Updated `src/components/private/SuccessState.jsx` — memperbarui tampilan ringkasan sukses agar menampilkan jumlah peserta tanpa daftar kartu detail peserta.
+
+**Verification:**
+- Verified `./init.sh` runs cleanly without errors.
+
+
