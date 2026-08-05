@@ -46,7 +46,7 @@ interface Destination {
   location: string | null;
   geoPoint: string | null;
   categoryId: string | null;
-  difficultyLevel: string | null;
+  isSeniorFriendly: boolean | null;
   isActive: boolean | null;
   visitEstimateMinutes: number | null;
   image: string | null;
@@ -66,7 +66,7 @@ interface DestinationForm {
   location: string;
   geoPoint: string;
   categoryId: string;
-  difficultyLevel: string;
+  isSeniorFriendly: boolean;
   isActive: boolean;
   visitEstimateMinutes: number | null;
   image: string;
@@ -79,8 +79,8 @@ interface DestinationForm {
 }
 
 const emptyForm: DestinationForm = {
-  name: "", slug: "", description: "", accessibilityInfo: "", location: "", geoPoint: "", categoryId: "",
-  difficultyLevel: "", isActive: true, visitEstimateMinutes: null,
+  name: "", slug: "", description: "", location: "", geoPoint: "", categoryId: "",
+  isSeniorFriendly: false, isActive: true, visitEstimateMinutes: null,
   image: "", images: [], priceMin: null, priceMax: null, itinerary: [], meetingPoints: [], facilities: [],
 };
 
@@ -134,7 +134,7 @@ export default function AdminDestinations() {
       location: item.location || "",
       geoPoint: item.geoPoint || "",
       categoryId: item.categoryId || "",
-      difficultyLevel: item.difficultyLevel || "",
+      isSeniorFriendly: item.isSeniorFriendly ?? false,
       isActive: item.isActive ?? true,
       visitEstimateMinutes: item.visitEstimateMinutes,
       image: item.image || "",
@@ -290,7 +290,7 @@ export default function AdminDestinations() {
                 <th className="px-6 py-4">Nama Destinasi</th>
                 <th className="px-6 py-4">Lokasi</th>
                 <th className="px-6 py-4">Kategori</th>
-                <th className="px-6 py-4">Tingkat Kesulitan</th>
+                <th className="px-6 py-4">Ramah Lansia</th>
                 <th className="px-6 py-4">Status Aktif</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
@@ -318,7 +318,7 @@ export default function AdminDestinations() {
                     </td>
                     <td className="px-6 py-4 text-slate-500">{d.location || "-"}</td>
                     <td className="px-6 py-4 text-slate-500">{d.categoryId ? catMap[d.categoryId] || "-" : "-"}</td>
-                    <td className="px-6 py-4 text-slate-500 font-medium">{d.difficultyLevel || "-"}</td>
+                    <td className="px-6 py-4 text-slate-500 font-medium">{d.isSeniorFriendly ? "Ya" : "Tidak"}</td>
                     <td className="px-6 py-4">
                       {d.isActive ? (
                         <span className="inline-flex items-center gap-1 bg-[#1CA6B7]/15 text-[#1CA6B7] px-2.5 py-1 rounded-full text-[10px] font-bold">
@@ -409,15 +409,10 @@ export default function AdminDestinations() {
             onChange={(next) => setForm(prev => ({ ...prev, image: next.cover ?? "", images: next.images }))}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Tingkat Kesulitan</label>
-              <select name="difficultyLevel" value={form.difficultyLevel} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
-                <option value="">-- Pilih --</option>
-                <option value="Mudah">Mudah</option>
-                <option value="Sedang">Sedang</option>
-                <option value="Sulit">Sulit</option>
-              </select>
+            <div className="flex items-center gap-3 mt-6">
+              <input name="isSeniorFriendly" type="checkbox" checked={form.isSeniorFriendly} onChange={handleChange}
+                className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
+              <span className="text-sm font-medium text-slate-700">Ramah Lansia</span>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Estimasi (menit)</label>

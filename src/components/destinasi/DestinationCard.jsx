@@ -27,12 +27,6 @@ export default function DestinationCard({ dest, onClick, className = "" }) {
         </div>
 
         <div className="absolute top-3 right-3 flex items-center gap-1.5 flex-wrap justify-end">
-          {dest.isSeniorFriendly && (
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-teal-800 bg-teal-100/95 backdrop-blur-sm border border-teal-200 shadow-xs flex items-center gap-1">
-              <Heart size={10} className="fill-teal-600 text-teal-600" />
-              Ramah Lansia
-            </span>
-          )}
           <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-[#F49D1A] shadow-xs">
             {dest.category || "Destinasi"}
           </span>
@@ -44,9 +38,17 @@ export default function DestinationCard({ dest, onClick, className = "" }) {
           <MapPin size={12} />
           {dest.location}
         </p>
-        <h3 className="text-base font-bold text-gray-900 mb-4 line-clamp-1">
+        <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-1">
           {dest.title}
         </h3>
+        <div className="h-6 mb-3 flex items-center">
+          {dest.isSeniorFriendly && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-100 flex items-center gap-1 w-max">
+              <Heart size={10} className="fill-teal-600 text-teal-600" />
+              Ramah Lansia
+            </span>
+          )}
+        </div>
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           <div>
             <p className="text-[11px] text-gray-400">mulai dari</p>

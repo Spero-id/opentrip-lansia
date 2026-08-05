@@ -29,8 +29,8 @@ function toCard(dest, index) {
     location: dest.location || "Indonesia",
     rating: dest.rating || DEFAULT_RATING,
     priceMin: dest.priceMin || 0,
-    category: dest.category || dest.categoryName || (dest.categoryId ? "Budaya" : "Alam"),
-    isSeniorFriendly: dest.isSeniorFriendly !== undefined ? dest.isSeniorFriendly : (dest.difficultyLevel === "mudah" || !dest.difficultyLevel),
+    category: dest.category || dest.categoryName || "Alam",
+    isSeniorFriendly: dest.isSeniorFriendly !== undefined ? dest.isSeniorFriendly : true,
 
     image,
   };
