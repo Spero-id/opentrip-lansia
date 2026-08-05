@@ -108,52 +108,47 @@ export default function HeroSection() {
 
           {/* Right - Image Collage */}
           <div className={`relative hidden lg:block transition-all duration-700 delay-300 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4 pt-8">
-                <div className="rounded-3xl overflow-hidden shadow-2xl relative group">
-                  <img
-                    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=500&fit=crop"
-                    alt="Hot air balloon"
-                    width={400}
-                    height={500}
-                    loading="lazy"
-                    className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="rounded-3xl overflow-hidden shadow-2xl group">
-                  <img
-                    src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=350&fit=crop"
-                    alt="Tropical bridge"
-                    width={400}
-                    height={350}
-                    loading="lazy"
-                    className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
+            <div className="grid grid-cols-2 gap-4 items-stretch">
+              <div className="rounded-3xl overflow-hidden shadow-2xl relative group h-[280px]">
+                <img
+                  src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=500&fit=crop"
+                  alt="Hot air balloon"
+                  width={400}
+                  height={500}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-
-              <div className="space-y-4">
-                <div className="rounded-3xl overflow-hidden shadow-2xl relative group">
-                  <img
-                    src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=350&fit=crop"
-                    alt="Beach walk"
-                    width={400}
-                    height={350}
-                    loading="lazy"
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
-                <div className="rounded-3xl overflow-hidden shadow-2xl group">
-                  <img
-                    src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400&h=500&fit=crop"
-                    alt="Ocean view"
-                    width={400}
-                    height={500}
-                    loading="lazy"
-                    className="w-full h-36 object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
+              <div className="rounded-3xl overflow-hidden shadow-2xl group h-[280px]">
+                <img
+                  src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=350&fit=crop"
+                  alt="Tropical bridge"
+                  width={400}
+                  height={350}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+              <div className="rounded-3xl overflow-hidden shadow-2xl relative group h-[280px]">
+                <img
+                  src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=350&fit=crop"
+                  alt="Beach walk"
+                  width={400}
+                  height={350}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+              <div className="rounded-3xl overflow-hidden shadow-2xl group h-[280px]">
+                <img
+                  src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400&h=500&fit=crop"
+                  alt="Ocean view"
+                  width={400}
+                  height={500}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
               </div>
             </div>
 
