@@ -1,9 +1,20 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Filter, MapPin, DollarSign, Star, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Filter, MapPin, DollarSign, Tag, Heart, X, ChevronDown, ChevronUp, Check } from "lucide-react";
 
 const A = "#F49D1A";
+
+const CATEGORY_OPTIONS = [
+  "Semua",
+  "Alam",
+  "Budaya",
+  "Religi",
+  "Pantai",
+  "Pulau",
+  "Gunung",
+  "Danau",
+];
 
 export default function FilterPanel({
   destinations,
@@ -13,8 +24,10 @@ export default function FilterPanel({
   setPriceMin,
   priceMax,
   setPriceMax,
-  minRating,
-  setMinRating,
+  selectedCategory,
+  setSelectedCategory,
+  isSeniorFriendlyOnly,
+  setIsSeniorFriendlyOnly,
   onResetAll,
   hasActiveFilters,
 }) {
@@ -22,7 +35,7 @@ export default function FilterPanel({
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   const allLocations = useMemo(
-    () => [...new Set(destinations.map((d) => d.location))],
+    () => [...new Set(destinations.map((d) => d.location).filter(Boolean))],
     [destinations]
   );
 
@@ -31,22 +44,17 @@ export default function FilterPanel({
     return "Rp " + Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
-  const ratingOptions = [
-    { value: 0,   label: "Semua" },
-    { value: 4.0, label: "4.0+" },
-    { value: 4.5, label: "4.5+" },
-    { value: 4.8, label: "4.8+" },
-  ];
-
   const activeCount = [
     selectedLocation !== "",
     priceMin !== "",
     priceMax !== "",
-    minRating > 0,
+    selectedCategory !== "",
+    isSeniorFriendlyOnly === true,
   ].filter(Boolean).length;
 
   return (
     <aside className="w-full">
+      {/* Mobile Toggle Button */}
       <div className="lg:hidden mb-4">
         <button
           type="button"
@@ -78,6 +86,7 @@ export default function FilterPanel({
           isMobileOpen ? "block" : "hidden lg:block"
         }`}
       >
+        {/* Header Filter */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <Filter size={16} style={{ color: A }} />
@@ -94,10 +103,8 @@ export default function FilterPanel({
           {hasActiveFilters && (
             <button
               onClick={onResetAll}
-              className="text-xs font-semibold flex items-center gap-1 transition-colors"
+              className="text-xs font-semibold flex items-center gap-1 transition-colors hover:opacity-75"
               style={{ color: A }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
             >
               <X size={12} /> Reset
             </button>
@@ -105,6 +112,71 @@ export default function FilterPanel({
         </div>
 
         <div className="p-5 space-y-6">
+          {/* Filter 1: Ramah Lansia Toggle */}
+          <div className="bg-teal-50/80 rounded-2xl p-3.5 border border-teal-200/80 space-y-2">
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="senior-friendly-toggle"
+                className="text-xs font-bold text-teal-900 flex items-center gap-1.5 cursor-pointer select-none"
+              >
+                <Heart size={14} className="fill-teal-600 text-teal-600" />
+                Ramah Lansia
+              </label>
+              <button
+                type="button"
+                id="senior-friendly-toggle"
+                role="switch"
+                aria-checked={isSeniorFriendlyOnly}
+                onClick={() => setIsSeniorFriendlyOnly(!isSeniorFriendlyOnly)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isSeniorFriendlyOnly ? "bg-teal-600" : "bg-gray-200"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    isSeniorFriendlyOnly ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-[11px] text-teal-700 leading-snug">
+              Tampilkan hanya destinasi dengan akses mudah, medan datar, dan fasilitas ramah lansia.
+            </p>
+          </div>
+
+          {/* Filter 2: Kategori */}
+          <div className="space-y-2.5">
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Tag size={12} style={{ color: A }} />
+              Kategori
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {CATEGORY_OPTIONS.map((cat) => {
+                const val = cat === "Semua" ? "" : cat;
+                const active = selectedCategory === val;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(val)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1"
+                    style={
+                      active
+                        ? { backgroundColor: A, borderColor: A, color: "#fff" }
+                        : { backgroundColor: "#f9fafb", borderColor: "#e5e7eb", color: "#4b5563" }
+                    }
+                  >
+                    {active && <Check size={11} />}
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <hr className="border-gray-100" />
+
+          {/* Filter 3: Lokasi */}
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
               <MapPin size={12} style={{ color: A }} />
@@ -188,6 +260,7 @@ export default function FilterPanel({
 
           <hr className="border-gray-100" />
 
+          {/* Filter 4: Range Harga */}
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
               <DollarSign size={12} style={{ color: A }} />
@@ -223,39 +296,6 @@ export default function FilterPanel({
             </div>
           </div>
 
-          <hr className="border-gray-100" />
-
-          <div className="space-y-2.5">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Star size={12} style={{ color: A }} />
-              Rating Minimum
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {ratingOptions.map(({ value, label }) => {
-                const active = minRating === value;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setMinRating(value)}
-                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl border text-xs font-semibold transition-all"
-                    style={active
-                      ? { backgroundColor: A, borderColor: A, color: "#fff" }
-                      : { backgroundColor: "#f9fafb", borderColor: "#e5e7eb", color: "#374151" }
-                    }
-                  >
-                    <Star
-                      size={11}
-                      fill={active ? "#fff" : "#F59E0B"}
-                      style={{ color: active ? "#fff" : "#F59E0B" }}
-                    />
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {hasActiveFilters && (
             <button
               type="button"
@@ -271,8 +311,6 @@ export default function FilterPanel({
             onClick={() => setIsMobileOpen(false)}
             className="lg:hidden w-full py-3 px-4 rounded-xl text-white text-xs font-bold transition-colors"
             style={{ backgroundColor: A }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c47d12")}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = A)}
           >
             Terapkan Filter
           </button>
