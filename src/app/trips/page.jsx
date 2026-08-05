@@ -17,7 +17,8 @@ export default function DestisasiPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
-  const [minRating, setMinRating] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [isSeniorFriendlyOnly, setIsSeniorFriendlyOnly] = useState(false);
 
   useEffect(() => {
     fetch("/api/destinations")
@@ -34,13 +35,18 @@ export default function DestisasiPage() {
   }, []);
 
   const hasActiveFilters =
-    selectedLocation !== "" || priceMin !== "" || priceMax !== "" || minRating > 0;
+    selectedLocation !== "" ||
+    priceMin !== "" ||
+    priceMax !== "" ||
+    selectedCategory !== "" ||
+    isSeniorFriendlyOnly === true;
 
   const resetAllFilters = () => {
     setSelectedLocation("");
     setPriceMin("");
     setPriceMax("");
-    setMinRating(0);
+    setSelectedCategory("");
+    setIsSeniorFriendlyOnly(false);
     setSearch("");
   };
 
@@ -48,17 +54,46 @@ export default function DestisasiPage() {
     return destinations.filter((d) => {
       const titleStr = d.title || d.name || "";
       const locStr = d.location || "";
+      const categoryStr = d.category || "";
+
       const matchSearch =
         titleStr.toLowerCase().includes(search.toLowerCase()) ||
-        locStr.toLowerCase().includes(search.toLowerCase());
+        locStr.toLowerCase().includes(search.toLowerCase()) ||
+        categoryStr.toLowerCase().includes(search.toLowerCase());
+
       const matchLocation =
         selectedLocation === "" || locStr === selectedLocation;
+
       const matchPriceMin = priceMin === "" || (d.priceMin ?? 0) >= Number(priceMin);
       const matchPriceMax = priceMax === "" || (d.priceMin ?? 0) <= Number(priceMax);
-      const matchRating = (d.rating ?? 0) >= minRating;
-      return matchSearch && matchLocation && matchPriceMin && matchPriceMax && matchRating;
+
+      const matchCategory =
+        selectedCategory === "" ||
+        categoryStr.toLowerCase() === selectedCategory.toLowerCase();
+
+      const matchSenior =
+        !isSeniorFriendlyOnly ||
+        d.isSeniorFriendly === true ||
+        d.difficultyLevel === "mudah";
+
+      return (
+        matchSearch &&
+        matchLocation &&
+        matchPriceMin &&
+        matchPriceMax &&
+        matchCategory &&
+        matchSenior
+      );
     });
-  }, [destinations, search, selectedLocation, priceMin, priceMax, minRating]);
+  }, [
+    destinations,
+    search,
+    selectedLocation,
+    priceMin,
+    priceMax,
+    selectedCategory,
+    isSeniorFriendlyOnly,
+  ]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -78,8 +113,10 @@ export default function DestisasiPage() {
                 setPriceMin={setPriceMin}
                 priceMax={priceMax}
                 setPriceMax={setPriceMax}
-                minRating={minRating}
-                setMinRating={setMinRating}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                isSeniorFriendlyOnly={isSeniorFriendlyOnly}
+                setIsSeniorFriendlyOnly={setIsSeniorFriendlyOnly}
                 onResetAll={resetAllFilters}
                 hasActiveFilters={hasActiveFilters}
               />
@@ -100,4 +137,3 @@ export default function DestisasiPage() {
     </div>
   );
 }
-

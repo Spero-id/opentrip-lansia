@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Star, ArrowRight } from "lucide-react";
+import { MapPin, Star, ArrowRight, Heart } from "lucide-react";
 import { formatRupiah } from "@/lib/formatRupiah";
 
 export default function DestinationCard({ dest, onClick, className = "" }) {
+  const ratingVal = typeof dest.rating === "number" ? dest.rating.toFixed(1) : "4.8";
+
   return (
     <Link
       href={`/trips/${dest.id}`}
@@ -17,14 +19,23 @@ export default function DestinationCard({ dest, onClick, className = "" }) {
           alt={dest.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full">
+        <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-xs">
           <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
           <span className="text-xs font-semibold text-gray-900">
-            {dest.rating.toFixed(1)}
+            {ratingVal}
           </span>
         </div>
-        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-amber-500">
-          {dest.category}
+
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 flex-wrap justify-end">
+          {dest.isSeniorFriendly && (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-teal-800 bg-teal-100/95 backdrop-blur-sm border border-teal-200 shadow-xs flex items-center gap-1">
+              <Heart size={10} className="fill-teal-600 text-teal-600" />
+              Ramah Lansia
+            </span>
+          )}
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-[#F49D1A] shadow-xs">
+            {dest.category || "Destinasi"}
+          </span>
         </div>
       </div>
 

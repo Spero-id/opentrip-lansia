@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { X, LogOut } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
+
+const emptySubscribe = () => () => {};
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
 
 const NAV_LINKS = [
   { name: "Beranda", href: "/" },
@@ -34,32 +43,25 @@ function MenuItem({ href, children, className, onClick }) {
   );
 }
 
-export default function MobileMenu({ isOpen, setIsOpen, isScrolled }) {
+export default function MobileMenu({ isOpen, setIsOpen, _isScrolled }) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
   const isLoggedIn = Boolean(session?.user);
-  const [mounted, setMounted] = useState(false);
+  const isClient = useIsClient();
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
+    if (!isOpen || typeof document === "undefined") return;
 
     const previousOverflow = document.body.style.overflow;
-
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    }
+    document.body.style.overflow = "hidden";
 
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [isOpen, mounted]);
+  }, [isOpen]);
 
-  if (!mounted) {
+  if (!isClient) {
     return null;
   }
 

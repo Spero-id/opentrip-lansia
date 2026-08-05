@@ -274,3 +274,18 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 **Verification:**
 - `src/app/private/page.jsx` & `src/app/my-trips/page.jsx` disamakan struktur wrapper-nya dengan `src/app/trips/page.jsx`.
 
+## Session 13 — Pembaruan Filter Kategori & Filter Ramah Lansia
+
+**Goal:** Mengganti filter rating minimum menjadi filter kategori (Alam, Budaya, Religi, Pantai, Pulau, Gunung, Danau), mengubah label badge pada kartu destinasi agar menampilkan Kategori (bukan difficultyLevel), serta menambahkan toggle filter "Ramah Lansia".
+
+**Completed:**
+- Updated `src/components/destinasi/FilterPanel.jsx` — mengganti section Rating Minimum dengan pilihan chip Kategori dan menambahkan toggle switch "Ramah Lansia".
+- Updated `src/components/destinasi/DestinationCard.jsx` — menampilkan badge kategori (seperti Pantai, Budaya, Religi, Alam, dll) dan badge khusus "Ramah Lansia".
+- Updated `src/lib/destinationsData.js` — menambahkan properti `category` & `isSeniorFriendly` pada setiap item destinasi, serta menambahkan destinasi religi (Masjid Istiqlal, Pura Besakih).
+- Updated `src/lib/Destination.js` & `src/components/landing/DestinationSection.jsx` — memastikan fungsi mapper `toDetail` dan `toCard` menggunakan `dest.category` dan `dest.isSeniorFriendly`.
+- Updated `src/app/trips/page.jsx` — mengintegrasikan state & logika filtering untuk `selectedCategory` dan `isSeniorFriendlyOnly`.
+
+**Verification:**
+- Verified `./init.sh` runs cleanly without errors.
+
+
