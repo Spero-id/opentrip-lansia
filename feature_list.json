@@ -1,10 +1,10 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-07-31",
+  "last_updated": "2026-08-05",
   "summary": {
-    "total_features": 48,
+    "total_features": 49,
     "in_review": 20,
-    "completed": 14,
+    "completed": 15,
     "to_do": 14,
     "not_started": 0
   },
@@ -153,6 +153,16 @@
           "depends_on": ["feat-030"],
           "verification": ["npm run lint"],
           "evidence": "promotion.service.ts with full applyPromo logic"
+        },
+        {
+          "id": "feat-034",
+          "title": "Unified Booking History Page & Navbar Integration",
+          "description": "User booking history dashboard at /my-trips displaying Open Trip bookings and Private Trip requests with tabs, search, status filter, expandable card details, and Navbar/MobileMenu integration.",
+          "status": "completed",
+          "priority": 34,
+          "depends_on": ["feat-030", "feat-055"],
+          "verification": ["npm run lint"],
+          "evidence": "/my-trips page, GET /api/bookings, POST /api/checkout session integration, Navbar.jsx, MobileMenu.jsx"
         }
       ]
     },

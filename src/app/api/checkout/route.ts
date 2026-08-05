@@ -3,10 +3,22 @@ import { db } from "@/shared/db";
 import { bookings, bookingParticipants } from "@/modules/booking/booking.schema";
 import { payments } from "@/modules/payment/payment.schema";
 
+import { auth } from "@/modules/auth/auth.config";
+
 const PLACEHOLDER_UUID = "00000000-0000-0000-0000-000000000000";
 
 export async function POST(req: NextRequest) {
   try {
+    let userId = PLACEHOLDER_UUID;
+    try {
+      const session = await auth.api.getSession({ headers: req.headers });
+      if (session?.user?.id) {
+        userId = session.user.id;
+      }
+    } catch {
+      // Guest checkout fallback
+    }
+
     const body = await req.json();
     const {
       orderId,
@@ -45,7 +57,7 @@ export async function POST(req: NextRequest) {
     // Simpan booking
     const [booking] = await db.insert(bookings).values({
       bookingCode: orderId,
-      userId: PLACEHOLDER_UUID,
+      userId,
       departureId: PLACEHOLDER_UUID,
       status: "confirmed",
       totalParticipants: pax,

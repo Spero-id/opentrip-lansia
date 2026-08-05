@@ -71,8 +71,23 @@ export const bookingService = {
     return bookingRepository.findAll();
   },
 
-  async getUserBookings(userId: UUID) {
-    return bookingRepository.findByUserId(userId);
+  async getUserBookings(userId: UUID, email?: string) {
+    const list = await bookingRepository.findByUserIdOrEmail(userId, email);
+    return Promise.all(
+      list.map(async (b) => {
+        const [participants, items, paymentsList] = await Promise.all([
+          bookingRepository.findParticipantsByBookingId(b.id),
+          bookingRepository.findItemsByBookingId(b.id),
+          bookingRepository.findPaymentsByBookingId(b.id),
+        ]);
+        return {
+          ...b,
+          participants,
+          items,
+          payments: paymentsList,
+        };
+      })
+    );
   },
 
   async updateBookingStatus(id: UUID, status: string) {
