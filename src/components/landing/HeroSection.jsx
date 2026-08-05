@@ -152,8 +152,8 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* Floating card */}
-            <div className="absolute -bottom-4 -left-8 bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
+            {/* Floating card below grid */}
+            <div className="relative mt-4 w-full bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#F49D1A]/20 flex items-center justify-center">
                   <Users size={18} className="text-[#F49D1A]" />
