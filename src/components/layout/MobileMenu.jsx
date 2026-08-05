@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
-import { X } from "lucide-react";
+import { X, LogOut } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
 
@@ -126,16 +126,26 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled }) {
                   >
                     Pengaturan Profil
                   </MenuItem>
-                  <MenuItem
-                    onClick={async () => {
-                      setIsOpen(false);
-                      await signOut();
-                      router.refresh();
-                    }}
-                    className={mobileLinkClasses}
-                  >
-                    Logout / Keluar
-                  </MenuItem>
+                </div>
+                <div className="mt-4 pt-4">
+                  <div className="px-3">
+                    <div className="border-t border-gray-200" />
+                  </div>
+                  <div className="mt-3">
+                    <MenuItem
+                      onClick={async () => {
+                        setIsOpen(false);
+                        await signOut();
+                        router.refresh();
+                      }}
+                      className="block w-full rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+                    >
+                      <div className="flex items-center gap-3">
+                        <LogOut size={16} className="text-red-600" />
+                        <span>Keluar</span>
+                      </div>
+                    </MenuItem>
+                  </div>
                 </div>
               </div>
             )}
