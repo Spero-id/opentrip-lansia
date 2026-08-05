@@ -14,8 +14,8 @@ import DestinationHeader from "@/components/destinasi/detail/DestinationHeader";
 import DestinationGallery from "@/components/destinasi/detail/DestinationGallery";
 import DestinationTabs from "@/components/destinasi/detail/DestinationTabs";
 import AboutSection from "@/components/destinasi/detail/AboutSection";
+import AccessibilitySection from "@/components/destinasi/detail/AccessibilitySection";
 import ItinerarySection from "@/components/destinasi/detail/ItinerarySection";
-import MeetingSection from "@/components/destinasi/detail/MeetingSection";
 import BookingCard from "@/components/destinasi/detail/BookingCard";
 
 export default function DestinationDetailPage({ params }) {
@@ -118,7 +118,7 @@ export default function DestinationDetailPage({ params }) {
           <div className="min-h-[400px]">
             {activeTab === "tentang" && <AboutSection dest={dest} />}
             {activeTab === "itinerary" && <ItinerarySection dest={dest} shortLocation={shortLocation} />}
-            {activeTab === "meeting" && <MeetingSection dest={dest} />}
+            {activeTab === "aksesibilitas" && <AccessibilitySection dest={dest} />}
           </div>
         </div>
 

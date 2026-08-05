@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { OrderDomain, MEETING_POINTS, AVAILABLE_VOUCHERS } from "../Order";
+import { OrderDomain, AVAILABLE_VOUCHERS } from "../Order";
 
 const initialCustomer = {
   fullName: "",
@@ -32,7 +32,6 @@ export function useCheckout(initialDestination) {
     travelDate: "",
     customer: { ...initialCustomer },
     participants: [createEmptyParticipant()],
-    meetingPointId: "main_office",
     voucherCode: "",
     appliedVoucher: null,
     voucherError: "",
@@ -129,10 +128,6 @@ export function useCheckout(initialDestination) {
     }));
   }, []);
 
-  const setMeetingPointId = useCallback((id) => {
-    setState((prev) => ({ ...prev, meetingPointId: id }));
-  }, []);
-
   const setVoucherCode = useCallback((code) => {
     setState((prev) => ({ ...prev, voucherCode: code, voucherError: "" }));
   }, []);
@@ -172,11 +167,6 @@ export function useCheckout(initialDestination) {
     return (s.destination?.priceMin ?? 0) * s.pax;
   }, []);
 
-  const getMeetingPointFee = useCallback((s) => {
-    const mp = MEETING_POINTS.find((m) => m.id === s.meetingPointId);
-    return mp?.additionalCost ?? 0;
-  }, []);
-
   const getDiscount = useCallback((s) => {
     if (!s.appliedVoucher) return 0;
     const subtotal = getTicketSubtotal(s);
@@ -188,10 +178,9 @@ export function useCheckout(initialDestination) {
 
   const getTotal = useCallback((s) => {
     const sub = getTicketSubtotal(s);
-    const mpFee = getMeetingPointFee(s);
     const disc = getDiscount(s);
-    return Math.max(0, sub + mpFee + SERVICE_FEE - disc);
-  }, [getTicketSubtotal, getMeetingPointFee, getDiscount]);
+    return Math.max(0, sub + SERVICE_FEE - disc);
+  }, [getTicketSubtotal, getDiscount]);
 
   const goToPayment = useCallback(() => {
     setState((prev) => {
@@ -214,7 +203,6 @@ export function useCheckout(initialDestination) {
         travelDate: prev.travelDate,
         customer: prev.customer,
         participants: prev.participants,
-        meetingPointId: prev.meetingPointId,
         voucherCode: prev.voucherCode,
         appliedVoucher: prev.appliedVoucher,
         paymentMethod: prev.paymentMethod,
@@ -255,7 +243,6 @@ export function useCheckout(initialDestination) {
       travelDate: "",
       customer: { ...initialCustomer },
       participants: [createEmptyParticipant()],
-      meetingPointId: "main_office",
       voucherCode: "",
       appliedVoucher: null,
       voucherError: "",
@@ -277,7 +264,6 @@ export function useCheckout(initialDestination) {
   }, []);
 
   const ticketSubtotal = getTicketSubtotal(state);
-  const meetingPointFee = getMeetingPointFee(state);
   const discount = getDiscount(state);
   const total = getTotal(state);
 
@@ -285,7 +271,6 @@ export function useCheckout(initialDestination) {
     ...state,
     serviceFee: SERVICE_FEE,
     ticketSubtotal,
-    meetingPointFee,
     discount,
     total,
     setDestination,
@@ -296,7 +281,6 @@ export function useCheckout(initialDestination) {
     addParticipant,
     updateParticipant,
     removeParticipant,
-    setMeetingPointId,
     setVoucherCode,
     applyVoucher,
     removeVoucher,

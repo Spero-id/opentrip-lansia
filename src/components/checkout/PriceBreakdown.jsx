@@ -9,7 +9,6 @@ export default function PriceBreakdown({
   pricePerPax,
   pax,
   ticketSubtotal,
-  meetingPointFee,
   serviceFee,
   discount,
   total,
@@ -43,13 +42,6 @@ export default function PriceBreakdown({
           </div>
           <span className="font-semibold text-gray-700">{OrderDomain.formatPrice(ticketSubtotal)}</span>
         </div>
-
-        {meetingPointFee > 0 && (
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Biaya antar jemput</span>
-            <span className="font-semibold text-gray-700">+{OrderDomain.formatPrice(meetingPointFee)}</span>
-          </div>
-        )}
 
         <div className="flex justify-between items-center text-sm">
           <span className="text-gray-600">Biaya layanan</span>

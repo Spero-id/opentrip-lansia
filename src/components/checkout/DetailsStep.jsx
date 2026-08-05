@@ -2,7 +2,7 @@
 
 import VoucherCard from "./VoucherCard";
 import PriceBreakdown from "./PriceBreakdown";
-import MeetingPointSelector from "./MeetingPointSelector";
+import MeetingPointInfo from "./MeetingPointInfo";
 import CustomerForm from "./CustomerForm";
 import ParticipantCard from "./ParticipantCard";
 import BookingSummary from "./BookingSummary";
@@ -66,7 +66,7 @@ export default function DetailsStep({ checkout, onNext }) {
           </div>
         </div>
 
-        <MeetingPointSelector meetingPointId={checkout.meetingPointId} onChange={checkout.setMeetingPointId} />
+        <MeetingPointInfo destination={checkout.destination} />
 
         <VoucherCard
           voucherCode={checkout.voucherCode}
@@ -84,7 +84,6 @@ export default function DetailsStep({ checkout, onNext }) {
           pricePerPax={checkout.destination?.priceMin ?? 0}
           pax={checkout.pax}
           ticketSubtotal={checkout.ticketSubtotal}
-          meetingPointFee={checkout.meetingPointFee}
           serviceFee={checkout.serviceFee}
           discount={checkout.discount}
           total={checkout.total}

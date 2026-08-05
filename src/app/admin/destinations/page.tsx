@@ -48,13 +48,13 @@ interface Destination {
   difficultyLevel: string | null;
   isActive: boolean | null;
   visitEstimateMinutes: number | null;
-  accessibilityInfo: string | null;
   image: string | null;
   images: string[] | null;
   priceMin: number | null;
   priceMax: number | null;
   itinerary: ItineraryItem[] | null;
   meetingPoints: MeetingPointItem[] | null;
+  facilities: string[] | null;
 }
 
 interface DestinationForm {
@@ -67,19 +67,19 @@ interface DestinationForm {
   difficultyLevel: string;
   isActive: boolean;
   visitEstimateMinutes: number | null;
-  accessibilityInfo: string;
   image: string;
   images: string[];
   priceMin: number | null;
   priceMax: number | null;
   itinerary: ItineraryItem[];
   meetingPoints: MeetingPointItem[];
+  facilities: string[];
 }
 
 const emptyForm: DestinationForm = {
   name: "", slug: "", description: "", location: "", geoPoint: "", categoryId: "",
-  difficultyLevel: "", isActive: true, visitEstimateMinutes: null, accessibilityInfo: "",
-  image: "", images: [], priceMin: null, priceMax: null, itinerary: [], meetingPoints: [],
+  difficultyLevel: "", isActive: true, visitEstimateMinutes: null,
+  image: "", images: [], priceMin: null, priceMax: null, itinerary: [], meetingPoints: [], facilities: [],
 };
 
 export default function AdminDestinations() {
@@ -134,13 +134,13 @@ export default function AdminDestinations() {
       difficultyLevel: item.difficultyLevel || "",
       isActive: item.isActive ?? true,
       visitEstimateMinutes: item.visitEstimateMinutes,
-      accessibilityInfo: item.accessibilityInfo || "",
       image: item.image || "",
       images: item.images ?? [],
       priceMin: item.priceMin,
       priceMax: item.priceMax,
       itinerary: item.itinerary ?? [],
       meetingPoints: item.meetingPoints ?? [],
+      facilities: item.facilities ?? [],
     });
     setModalOpen(true);
   }
@@ -163,6 +163,7 @@ export default function AdminDestinations() {
         priceMax: form.priceMax || null,
         itinerary: form.itinerary.length ? form.itinerary : null,
         meetingPoints: form.meetingPoints.length ? form.meetingPoints : null,
+        facilities: form.facilities.length ? form.facilities : null,
       }),
     });
     setSaving(false);
@@ -241,6 +242,21 @@ export default function AdminDestinations() {
 
   function removeMeetingPoint(idx: number) {
     setForm(prev => ({ ...prev, meetingPoints: prev.meetingPoints.filter((_, i) => i !== idx) }));
+  }
+
+  function updateFacility(idx: number, value: string) {
+    setForm(prev => ({
+      ...prev,
+      facilities: prev.facilities.map((item, i) => (i === idx ? value : item)),
+    }));
+  }
+
+  function addFacility() {
+    setForm(prev => ({ ...prev, facilities: [...prev.facilities, ""] }));
+  }
+
+  function removeFacility(idx: number) {
+    setForm(prev => ({ ...prev, facilities: prev.facilities.filter((_, i) => i !== idx) }));
   }
 
   const catMap = categories.reduce<Record<string, string>>((acc, c) => { acc[c.id] = c.name; return acc; }, {});
@@ -487,10 +503,29 @@ export default function AdminDestinations() {
             ))}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Informasi Aksesibilitas</label>
-            <textarea name="accessibilityInfo" value={form.accessibilityInfo} onChange={handleChange} rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+          <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <label className="text-sm font-medium text-slate-700">Fasilitas</label>
+              <button type="button" onClick={addFacility}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#F49D1A] hover:text-[#c47d12] transition">
+                <Plus className="w-3.5 h-3.5" /> Tambah Fasilitas
+              </button>
+            </div>
+            {form.facilities.length === 0 && (
+              <p className="text-xs text-slate-400">Belum ada fasilitas. Klik &quot;Tambah Fasilitas&quot; untuk mulai.</p>
+            )}
+            {form.facilities.map((item, idx) => (
+              <div key={idx} className="flex gap-2">
+                <input value={item}
+                  onChange={(e) => updateFacility(idx, e.target.value)}
+                  placeholder="Nama fasilitas (mis. Kursi roda, Ramp, Toilet khusus lansia)"
+                  className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                <button type="button" onClick={() => removeFacility(idx)}
+                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus baris">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isActive" type="checkbox" checked={form.isActive} onChange={handleChange}

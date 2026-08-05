@@ -29,6 +29,7 @@ export const destinations = pgTable("destinations", {
   highlights: jsonb("highlights").$type<string[]>(),
   itinerary: jsonb("itinerary").$type<{ day: number; title: string; description: string }[]>(),
   meetingPoints: jsonb("meeting_points").$type<{ time: string; location: string; description: string }[]>(),
+  facilities: jsonb("facilities").$type<string[]>(),
 });
 
 export const horecaTypes = pgTable("horeca_types", {

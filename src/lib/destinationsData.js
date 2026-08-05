@@ -15,7 +15,8 @@ export const destinationsData = [
     priceMax: 750000,
     category: "Pantai",
     description: "Pantai Kuta adalah salah satu tempat wisata paling terkenal di Bali. Terkenal dengan garis pantai berpasir putih yang panjang, ombak yang cocok untuk berselancar pemula, dan pemandangan matahari terbenam (sunset) yang sangat memukau.",
-    highlights: ["Sunset Terindah", "Aktivitas Surfing", "Dekat Pusat Belanja", "Kuliner Pantai"],
+    facilities: ["Akses kursi roda ke area pantai", "Toilet khusus lansia", "Area istirahat berbayang", "Jalur pejalan kaki rata"],
+    accessibilityInfo: "Akses kursi roda ke area pantai, toilet khusus lansia, area istirahat berbayang, jalur pejalan kaki rata yang aman untuk lansia.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -46,7 +47,8 @@ export const destinationsData = [
     priceMax: 450000,
     category: "Budaya",
     description: "Candi Borobudur adalah candi Buddha terbesar di dunia yang dibangun pada abad ke-9. Merupakan salah satu situs warisan dunia UNESCO.",
-    highlights: ["Warisan Dunia UNESCO", "Sunrise Tour Megah", "Sejarah & Edukasi", "Spot Foto Klasik"],
+    facilities: ["Shuttle keliling kompleks", "Kursi roda tersedia", "Area istirahat setiap 100 m", "Pemandu ramah lansia"],
+    accessibilityInfo: "Shuttle keliling kompleks, kursi roda tersedia, area istirahat setiap 100 m, dan pemandu ramah lansia.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -77,7 +79,8 @@ export const destinationsData = [
     priceMax: 6000000,
     category: "Pulau",
     description: "Kepulauan Raja Ampat di Papua Barat dikenal sebagai surga bawah laut dunia. Memiliki keanekaragaman hayati laut tertinggi di planet bumi.",
-    highlights: ["Surga Diving Dunia", "Gugusan Karang Eksotis", "Fauna Langka", "Eko-Wisata Premium"],
+    facilities: ["Kapal dengan akses mudah", "Jaket pelampung gratis", "Pemandu berpengalaman", "Perlengkapan snorkeling lengkap"],
+    accessibilityInfo: "Kapal dengan akses mudah untuk lansia, jaket pelampung gratis, pemandu berpengalaman, dan perlengkapan snorkeling lengkap.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -108,7 +111,8 @@ export const destinationsData = [
     priceMax: 850000,
     category: "Gunung",
     description: "Gunung Bromo adalah salah satu gunung berapi aktif paling ikonik di Indonesia. Terkenal dengan lautan pasirnya yang luas, kawah yang megah.",
-    highlights: ["Matahari Terbit Ikonik", "Keliling Naik Jeep 4x4", "Lautan Pasir Bromo", "Pendakian Mudah"],
+    facilities: ["Jeep 4x4 ramah lansia", "Jaket & selimut hangat", "Area istirahat", "Pemandu lokal"],
+    accessibilityInfo: "Jeep 4x4 ramah lansia, jaket & selimut hangat, area istirahat, dan pemandu lokal yang membantu sepanjang perjalanan.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -139,7 +143,8 @@ export const destinationsData = [
     priceMax: 900000,
     category: "Danau",
     description: "Danau Toba adalah danau vulkanik terbesar di dunia yang terbentuk akibat letusan supervolcano purba.",
-    highlights: ["Danau Vulkanik Terbesar", "Budaya Batak Samosir", "Udara Pegunungan Sejuk", "Resort Tepi Danau"],
+    facilities: ["Akses mobil ke pinggir danau", "Area duduk tersedia", "Toilet bersih", "Restoran ramah keluarga"],
+    accessibilityInfo: "Akses mobil sampai pinggir danau, area duduk tersedia, toilet bersih, dan restoran ramah keluarga.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -170,7 +175,8 @@ export const destinationsData = [
     priceMax: 3500000,
     category: "Pulau",
     description: "Pulau Komodo merupakan habitat asli kadal terbesar di dunia, biawak komodo. Taman Nasional ini menawarkan keindahan sabana kering yang dramatis.",
-    highlights: ["Melihat Komodo Langsung", "Trekking Viewpoint Ikonik", "Snorkeling Air Jernih", "Situs UNESCO"],
+    facilities: ["Trekking jalur landai", "Pemandu berlisensi", "Air minum gratis", "Area istirahat"],
+    accessibilityInfo: "Trekking jalur landai, pemandu berlisensi, air minum gratis, dan area istirahat di sepanjang rute.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -201,7 +207,8 @@ export const destinationsData = [
     priceMax: 2000000,
     category: "Pantai",
     description: "Pantai Pink adalah satu dari sedikit pantai berpasir pink di dunia. Warna pink berasal dari organisme mikroskopis Foraminifera yang bercampur dengan pasir putih.",
-    highlights: ["Pasir Pink Unik", "Gradasi Laut Toska", "Sempurna untuk Snorkeling", "Spot Foto Estetik"],
+    facilities: ["Kapal cepat dengan akses aman", "Perlengkapan snorkeling", "Pemandu berpengalaman", "Area berteduh"],
+    accessibilityInfo: "Kapal cepat dengan akses aman, perlengkapan snorkeling, pemandu berpengalaman, dan area berteduh di pantai.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -232,7 +239,8 @@ export const destinationsData = [
     priceMax: 400000,
     category: "Gunung",
     description: "Kawah Ijen terkenal di seluruh dunia karena fenomena alam langka 'Blue Fire' atau api biru yang hanya bisa dilihat sebelum fajar.",
-    highlights: ["Fenomena Langka Blue Fire", "Danau Kawah Hijau Toska", "Trekking Menantang", "Melihat Penambang Belerang"],
+    facilities: ["Masker gas & senter", "Sewa porter & tandu", "Pemandu berpengalaman", "Jalur trekking bertanda"],
+    accessibilityInfo: "Masker gas & senter, tersedia sewa porter & tandu, pemandu berpengalaman, dan jalur trekking bertanda.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -263,7 +271,8 @@ export const destinationsData = [
     priceMax: 1100000,
     category: "Pantai",
     description: "Nusa Penida adalah pulau kecil di sebelah tenggara Bali yang terkenal dengan tebing-tebing karang raksasa.",
-    highlights: ["Tebing Kelingking T-Rex", "Broken Beach & Angel Billabong", "Spot Diving Manta Ray", "Suasana Eksotis"],
+    facilities: ["Mobil wisata ber-AC", "Titik pandang aman", "Pemandu lokal", "Air mineral gratis"],
+    accessibilityInfo: "Mobil wisata ber-AC, titik pandang yang aman, pemandu lokal, dan air mineral gratis.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },
@@ -294,7 +303,8 @@ export const destinationsData = [
     priceMax: 1800000,
     category: "Pulau",
     description: "Gili Trawangan adalah pulau terbesar di antara tiga pulau kecil (gili) di barat laut Lombok. Pulau bebas polusi ini melarang kendaraan bermotor.",
-    highlights: ["Bebas Polusi Kendaraan", "Bersepeda Keliling Pulau", "Snorkeling Bersama Penyu", "Sunset Swing Romantis"],
+    facilities: ["Cidomo & sepeda", "Perlengkapan snorkeling", "Pemandu lokal", "Area istirahat"],
+    accessibilityInfo: "Transportasi cidomo & sepeda, perlengkapan snorkeling, pemandu lokal, dan area istirahat tersedia.",
     itinerary: [
       { day: 1, title: 'Kedatangan & Eksplorasi Awal', description: 'Tiba di lokasi, check-in, dan eksplorasi seputar area penginapan.' },
       { day: 2, title: 'Tour Utama', description: 'Menikmati destinasi utama dari pagi hingga sore.' },

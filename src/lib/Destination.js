@@ -41,10 +41,9 @@ export function toDetail(dest) {
     priceMin: dest.priceMin || 0,
     priceMax: dest.priceMax || 0,
     description: dest.description || "Belum ada deskripsi.",
-    highlights:
-      Array.isArray(dest.highlights) && dest.highlights.length
-        ? dest.highlights
-        : [dest.difficultyLevel, dest.accessibilityInfo].filter(Boolean),
+    accessibilityInfo: dest.accessibilityInfo || "",
+    highlights: Array.isArray(dest.highlights) && dest.highlights.length ? dest.highlights : [],
+    facilities: Array.isArray(dest.facilities) ? dest.facilities : [],
     itinerary: Array.isArray(dest.itinerary) ? dest.itinerary : [],
     meetingPoints: Array.isArray(dest.meetingPoints) ? dest.meetingPoints : [],
     reviewsList: [],

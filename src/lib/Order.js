@@ -18,33 +18,6 @@ export const OrderDomain = {
   },
 };
 
-export const MEETING_POINTS = [
-  {
-    id: "hotel_pickup",
-    label: "Hotel Pickup",
-    description: "Dijemput langsung di hotel Anda",
-    additionalCost: 150000,
-  },
-  {
-    id: "main_office",
-    label: "Kantor Pusat",
-    description: "Jl. Raya Kuta No. 88, Bali",
-    additionalCost: 0,
-  },
-  {
-    id: "airport",
-    label: "Bandara Ngurah Rai",
-    description: "Terminal Kedatangan Internasional",
-    additionalCost: 200000,
-  },
-  {
-    id: "seminyak",
-    label: "Seminyak Square",
-    description: "Area Seminyak, Bali Selatan",
-    additionalCost: 75000,
-  },
-];
-
 export const AVAILABLE_VOUCHERS = [
   {
     code: "NEWTRIP10",

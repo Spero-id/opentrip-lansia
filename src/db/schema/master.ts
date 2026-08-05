@@ -27,6 +27,7 @@ export const destinations = pgTable("destinations", {
   priceMin: integer("price_min"),
   priceMax: integer("price_max"),
   highlights: jsonb("highlights").$type<string[]>(),
+  facilities: jsonb("facilities").$type<string[]>(),
 });
 
 export const horecaTypes = pgTable("horeca_types", {
