@@ -73,6 +73,7 @@ function parseNotes(notes: string | null): NotesInfo | null {
 export default function AdminPesanan() {
   const [rows, setRows] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [detailOpen, setDetailOpen] = useState(false);
   const [selected, setSelected] = useState<Booking | null>(null);
@@ -81,11 +82,24 @@ export default function AdminPesanan() {
     let cancelled = false;
     async function run() {
       setLoading(true);
-      const res = await fetch("/api/bookings");
-      const data = await res.json();
-      if (!cancelled) {
-        setRows(data);
-        setLoading(false);
+      try {
+        const res = await fetch("/api/bookings");
+        const data = await res.json();
+        if (cancelled) return;
+        if (!res.ok) {
+          setError(data?.error || "Gagal memuat data pesanan.");
+          setRows([]);
+        } else {
+          setError(null);
+          setRows(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Gagal memuat data pesanan.");
+          setRows([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
     run();
@@ -131,6 +145,15 @@ export default function AdminPesanan() {
                     className="px-6 py-12 text-center text-slate-400"
                   >
                     Memuat data...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-red-500"
+                  >
+                    {error}
                   </td>
                 </tr>
               ) : rows.length === 0 ? (

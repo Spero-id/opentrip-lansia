@@ -10,7 +10,10 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const bookings = await bookingService.getUserBookings(session.user.id, session.user.email);
+    const bookings =
+      session.user.role === "admin"
+        ? await bookingService.getAllBookings()
+        : await bookingService.getUserBookings(session.user.id, session.user.email);
     return NextResponse.json(bookings);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";
