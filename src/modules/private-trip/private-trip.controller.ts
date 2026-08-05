@@ -72,20 +72,25 @@ export const privateTripController = {
       return NextResponse.json({ errors }, { status: 400 });
     }
 
-    const result = await privateTripService.submitRequest(userId, {
-      title: body.title as string,
-      durationDays: body.durationDays as number,
-      participantsCount: body.participantsCount as number,
-      destinationPreferences: (body.destinationPreferences as string) || "",
-      specialRequirements: (body.specialRequirements as string) || undefined,
-      budgetEstimate: body.budgetEstimate ? String(body.budgetEstimate) : undefined,
-    });
+    try {
+      const result = await privateTripService.submitRequest(userId, {
+        title: body.title as string,
+        durationDays: body.durationDays as number,
+        participantsCount: body.participantsCount as number,
+        destinationPreferences: (body.destinationPreferences as string) || "",
+        specialRequirements: (body.specialRequirements as string) || undefined,
+        budgetEstimate: body.budgetEstimate ? String(body.budgetEstimate) : undefined,
+      });
 
-    return NextResponse.json({
-      id: result.id,
-      status: result.status,
-      submittedAt: result.submittedAt,
-    }, { status: 201 });
+      return NextResponse.json({
+        id: result.id,
+        status: result.status,
+        submittedAt: result.submittedAt,
+      }, { status: 201 });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Gagal menyimpan request";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
   },
 
   async listByUser(req: NextRequest) {
