@@ -79,9 +79,23 @@ interface DestinationForm {
 }
 
 const emptyForm: DestinationForm = {
-  name: "", slug: "", description: "", location: "", geoPoint: "", categoryId: "",
-  isSeniorFriendly: false, isActive: true, visitEstimateMinutes: null,
-  image: "", images: [], priceMin: null, priceMax: null, itinerary: [], meetingPoints: [], facilities: [],
+  name: "",
+  slug: "",
+  description: "",
+  accessibilityInfo: "",
+  location: "",
+  geoPoint: "",
+  categoryId: "",
+  isSeniorFriendly: false,
+  isActive: true,
+  visitEstimateMinutes: null,
+  image: "",
+  images: [],
+  priceMin: null,
+  priceMax: null,
+  itinerary: [],
+  meetingPoints: [],
+  facilities: [],
 };
 
 export default function AdminDestinations() {

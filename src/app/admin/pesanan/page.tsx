@@ -83,7 +83,7 @@ export default function AdminPesanan() {
     async function run() {
       setLoading(true);
       try {
-        const res = await fetch("/api/bookings");
+        const res = await fetch("/api/bookings", { credentials: "include" });
         const data = await res.json();
         if (cancelled) return;
         if (!res.ok) {
