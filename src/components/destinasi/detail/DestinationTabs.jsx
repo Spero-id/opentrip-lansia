@@ -2,7 +2,7 @@ import { FileText, Route, Accessibility } from "lucide-react";
 
 const TABS = [
   { id: "tentang", label: "Deskripsi", icon: FileText },
-  { id: "itinerary", label: "Itinerary", icon: Route },
+  { id: "itinerary", label: "Rundown", icon: Route },
   { id: "aksesibilitas", label: "Aksesibilitas", icon: Accessibility },
 ];
 
