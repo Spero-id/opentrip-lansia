@@ -192,7 +192,7 @@ export default function PrivateTripPage() {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       {showTerms && (
@@ -274,7 +274,7 @@ export default function PrivateTripPage() {
       </main>
       <Subs />
       <Footer />
-    </>
+    </div>
   );
 }
 
