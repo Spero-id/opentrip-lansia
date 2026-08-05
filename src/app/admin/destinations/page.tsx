@@ -42,6 +42,7 @@ interface Destination {
   name: string;
   slug: string;
   description: string | null;
+  accessibilityInfo: string | null;
   location: string | null;
   geoPoint: string | null;
   categoryId: string | null;
@@ -61,6 +62,7 @@ interface DestinationForm {
   name: string;
   slug: string;
   description: string;
+  accessibilityInfo: string;
   location: string;
   geoPoint: string;
   categoryId: string;
@@ -128,6 +130,7 @@ export default function AdminDestinations() {
       name: item.name,
       slug: item.slug,
       description: item.description || "",
+      accessibilityInfo: item.accessibilityInfo || "",
       location: item.location || "",
       geoPoint: item.geoPoint || "",
       categoryId: item.categoryId || "",
@@ -164,6 +167,7 @@ export default function AdminDestinations() {
         itinerary: form.itinerary.length ? form.itinerary : null,
         meetingPoints: form.meetingPoints.length ? form.meetingPoints : null,
         facilities: form.facilities.length ? form.facilities : null,
+        accessibilityInfo: form.accessibilityInfo || null,
       }),
     });
     setSaving(false);
@@ -359,6 +363,12 @@ export default function AdminDestinations() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700">Aksesibilitas</label>
+            <textarea name="accessibilityInfo" value={form.accessibilityInfo} onChange={handleChange} rows={3}
+              placeholder="Deskripsi aksesibilitas (mis. Tersedia kursi roda, area istirahat setiap 100m)"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
