@@ -115,7 +115,7 @@ export default function SuccessState({ form, onReset }) {
               <Row icon={icons.email}    label="Email"         value={form.email || "-"} />
               <Row icon={icons.calendar} label="Tanggal"       value={form.tanggal ? new Date(form.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "-"} />
               <Row icon={icons.clock}    label="Durasi"        value={form.durasi ? `${form.durasi} Hari` : "-"} />
-              <Row icon={icons.users}    label="Peserta"       value={form.participants?.length ? `${form.participants.length} orang` : "-"} />
+              <Row icon={icons.users}    label="Peserta"       value={form.jumlahPeserta ? `${form.jumlahPeserta} orang` : "-"} />
               <Row icon={icons.pin}      label="Meeting Point" value={form.meetingPoint || "-"} />
               <Row icon={icons.building} label="Trip Dari"     value={form.tripFrom + (form.namaInstitusi ? ` — ${form.namaInstitusi}` : "")} />
 
@@ -153,31 +153,7 @@ export default function SuccessState({ form, onReset }) {
                 </div>
               )}
 
-              {form.participants && form.participants.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-50">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                    Peserta ({form.participants.length})
-                  </p>
-                  <div className="space-y-1.5">
-                    {form.participants.map((p, i) => (
-                      <div key={p.id} className="flex items-center gap-2">
-                        <div
-                          className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-semibold shrink-0"
-                          style={{ backgroundColor: `${A}15`, color: A }}
-                        >
-                          {i + 1}
-                        </div>
-                        <p className="text-xs font-semibold text-gray-700 flex-1 truncate">
-                          {p.fullName || `Peserta ${i + 1}`}
-                        </p>
-                        <span className="text-[10px] text-gray-400 shrink-0">
-                          {p.gender === "male" ? "Laki-laki" : p.gender === "female" ? "Perempuan" : "—"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+
             </div>
           </div>
 

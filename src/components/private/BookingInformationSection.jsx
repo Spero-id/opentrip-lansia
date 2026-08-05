@@ -1,24 +1,18 @@
 import Field from "./Field";
 import SectionCard from "./SectionCard";
-import ParticipantsSection from "./ParticipantsSection";
 import { inputCls } from "./helpers/helpers";
 
 export default function BookingInformationSection({
   form,
   set,
   errors,
-  onAddParticipant,
-  onUpdateParticipant,
-  onRemoveParticipant,
 }) {
-  const pesertaCount = form.participants.length;
-
   return (
     <SectionCard
       icon={<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
       title="Informasi Pemesan"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Field label="Nama Pemesan" required error={errors.nama}>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -55,8 +49,7 @@ export default function BookingInformationSection({
         <Field
           label="Jumlah Peserta"
           required
-          error={errors.peserta}
-          hint={pesertaCount > 0 ? `Dihitung dari ${pesertaCount} peserta yang ditambahkan` : "Tambah peserta di bawah"}
+          error={errors.jumlahPeserta}
         >
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -64,22 +57,14 @@ export default function BookingInformationSection({
             </span>
             <input
               type="number"
-              readOnly
-              value={pesertaCount || ""}
-              placeholder="Otomatis dari daftar peserta"
-              className={inputCls(errors.peserta, "pl-9 bg-gray-100 cursor-not-allowed text-gray-500")}
+              min="1"
+              value={form.jumlahPeserta}
+              onChange={e => set("jumlahPeserta", e.target.value)}
+              placeholder="Ex. 5"
+              className={inputCls(errors.jumlahPeserta, "pl-9")}
             />
           </div>
         </Field>
-      </div>
-
-      <div className="border-t border-gray-100 pt-5">
-        <ParticipantsSection
-          participants={form.participants}
-          onAdd={onAddParticipant}
-          onUpdate={onUpdateParticipant}
-          onRemove={onRemoveParticipant}
-        />
       </div>
     </SectionCard>
   );

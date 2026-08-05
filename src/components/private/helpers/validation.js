@@ -16,8 +16,8 @@ export function validate(form) {
   if (!form.catatan.trim())
     e.catatan = "Wajib diisi";
 
-  if (!form.participants || form.participants.length < 1)
-    e.peserta = "Tambah minimal 1 peserta";
+  if (!form.jumlahPeserta || parseInt(form.jumlahPeserta, 10) < 1)
+    e.jumlahPeserta = "Jumlah peserta minimal 1 orang";
 
   if (
     form.tripType === "custom" &&

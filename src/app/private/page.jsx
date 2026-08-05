@@ -41,18 +41,8 @@ function buildDestinationPreferences(form) {
     lines.push(`Institusi: ${form.namaInstitusi}`);
 
   // Participants
-  if (form.participants.length > 0) {
-    lines.push(`[Peserta (${form.participants.length} orang)]`);
-    form.participants.forEach((p, i) => {
-      const parts = [`${i + 1}. ${p.fullName || "-"}`];
-      if (p.birthDate) parts.push(`Lahir: ${p.birthDate}`);
-      if (p.gender) parts.push(p.gender === "male" ? "Laki-laki" : "Perempuan");
-      if (p.phone) parts.push(`HP: ${p.phone}`);
-      if (p.email) parts.push(`Email: ${p.email}`);
-      if (p.relationship) parts.push(`(${p.relationship})`);
-      lines.push(parts.join(" | "));
-    });
-  }
+  lines.push(`[Peserta]`);
+  lines.push(`Jumlah Peserta: ${form.jumlahPeserta || 1} orang`);
 
   return lines.join("\n");
 }
@@ -70,7 +60,7 @@ function buildPayload(form, budgetValue) {
   return {
     title,
     durationDays: parseInt(form.durasi, 10) || 1,
-    participantsCount: form.participants.length,
+    participantsCount: parseInt(form.jumlahPeserta, 10) || 1,
     destinationPreferences: buildDestinationPreferences(form),
     specialRequirements: form.catatan?.trim() || undefined,
     budgetEstimate: budgetValue ? String(budgetValue) : undefined,
@@ -112,25 +102,6 @@ export default function PrivateTripPage() {
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-  // Participant handlers
-  const addParticipant = () => {
-    const newP = {
-      id: `pax-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
-      fullName: "", birthDate: "", gender: "", phone: "", email: "", relationship: "",
-    };
-    setForm((prev) => ({ ...prev, participants: [...prev.participants, newP] }));
-  };
-
-  const updateParticipant = (id, field, value) => {
-    setForm((prev) => ({
-      ...prev,
-      participants: prev.participants.map((p) => p.id === id ? { ...p, [field]: value } : p),
-    }));
-  };
-
-  const removeParticipant = (id) => {
-    setForm((prev) => ({ ...prev, participants: prev.participants.filter((p) => p.id !== id) }));
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -235,9 +206,6 @@ export default function PrivateTripPage() {
                 form={form}
                 set={set}
                 errors={errors}
-                onAddParticipant={addParticipant}
-                onUpdateParticipant={updateParticipant}
-                onRemoveParticipant={removeParticipant}
               />
               <TripDetailSection
                 form={form}
