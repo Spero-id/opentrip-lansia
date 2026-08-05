@@ -15,7 +15,7 @@ export const destinations = pgTable("destinations", {
   location: text("location"),
   geoPoint: text("geo_point"),
   categoryId: uuid("category_id").references(() => destinationCategories.id),
-  difficultyLevel: varchar("difficulty_level", { length: 20 }),
+  isSeniorFriendly: boolean("is_senior_friendly").default(false),
   accessibilityInfo: text("accessibility_info"),
   isActive: boolean("is_active").default(true),
   visitEstimateMinutes: integer("visit_estimate_minutes"),

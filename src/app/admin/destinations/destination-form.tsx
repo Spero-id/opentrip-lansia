@@ -43,7 +43,7 @@ interface DestinationFormData {
   location: string | null;
   geoPoint: string | null;
   categoryId: string | null;
-  difficultyLevel: string | null;
+  isSeniorFriendly: boolean | null;
   isActive: boolean | null;
   visitEstimateMinutes: number | null;
   image: string | null;
@@ -71,7 +71,7 @@ export default function DestinationForm({
     location: initial?.location ?? "",
     geoPoint: initial?.geoPoint ?? "",
     categoryId: initial?.categoryId ?? "",
-    difficultyLevel: initial?.difficultyLevel ?? "",
+    isSeniorFriendly: initial?.isSeniorFriendly ?? false,
     isActive: initial?.isActive ?? true,
     visitEstimateMinutes: initial?.visitEstimateMinutes ?? null,
     image: initial?.image ?? null,
@@ -274,19 +274,15 @@ export default function DestinationForm({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700">Tingkat Kesulitan</label>
-          <select
-            name="difficultyLevel"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
-            value={form.difficultyLevel ?? ""}
+        <div className="flex items-center gap-3 mt-6">
+          <input
+            name="isSeniorFriendly"
+            type="checkbox"
+            className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30"
+            checked={form.isSeniorFriendly ?? false}
             onChange={handleChange}
-          >
-            <option value="">-- Pilih --</option>
-            <option value="Mudah">Mudah</option>
-            <option value="Sedang">Sedang</option>
-            <option value="Sulit">Sulit</option>
-          </select>
+          />
+          <span className="text-sm font-medium text-slate-700">Ramah Lansia</span>
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700">Estimasi Kunjungan (menit)</label>

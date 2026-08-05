@@ -7,7 +7,18 @@ type DestinationInsert = typeof destinations.$inferInsert;
 
 export const masterRepository = {
   async getDestinations() {
-    return db.select().from(destinations);
+    const results = await db
+      .select({
+        dest: destinations,
+        categoryName: destinationCategories.name,
+      })
+      .from(destinations)
+      .leftJoin(destinationCategories, eq(destinations.categoryId, destinationCategories.id));
+    
+    return results.map((r) => ({
+      ...r.dest,
+      categoryName: r.categoryName,
+    }));
   },
 
   async getDestinationById(id: UUID) {

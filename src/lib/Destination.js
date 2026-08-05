@@ -32,13 +32,12 @@ export function toDetail(dest) {
   const categoryName =
     dest.category ||
     dest.categoryName ||
-    (dest.categoryId ? "Budaya" : null) ||
     "Alam";
 
   const isSeniorFriendly =
     dest.isSeniorFriendly !== undefined
       ? dest.isSeniorFriendly
-      : dest.difficultyLevel === "mudah" || !dest.difficultyLevel;
+      : dest.isSeniorFriendly !== false;
 
   return {
     id: dest.id,

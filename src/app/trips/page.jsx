@@ -74,7 +74,7 @@ export default function DestisasiPage() {
       const matchSenior =
         !isSeniorFriendlyOnly ||
         d.isSeniorFriendly === true ||
-        d.difficultyLevel === "mudah";
+        d.isSeniorFriendly !== false;
 
       return (
         matchSearch &&
