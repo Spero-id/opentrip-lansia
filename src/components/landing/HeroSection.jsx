@@ -33,7 +33,7 @@ export default function HeroSection() {
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#1CA6B7]/10 rounded-full blur-[120px] animate-pulse delay-1000" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-[1fr_0.85fr] gap-12 items-center">
           {/* Left Content */}
           <div className={`space-y-8 transition-all duration-700 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
             {/* Badge */}
@@ -95,15 +95,7 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="flex items-center gap-8 pt-4">
-              {stats.map((s, i) => (
-                <div key={i} className="text-center sm:text-left">
-                  <p className="text-2xl sm:text-3xl font-bold text-white">{s.value}</p>
-                  <p className="text-xs text-white/60">{s.label}</p>
-                </div>
-              ))}
-            </div>
+            {/* Stats removed per request */}
           </div>
 
           {/* Right - Image Collage */}
