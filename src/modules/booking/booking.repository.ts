@@ -1,17 +1,21 @@
 import { db } from "@/shared/db";
 import { bookings, bookingItems, bookingParticipants } from "./booking.schema";
-import { eq, desc } from "drizzle-orm";
+import { payments } from "@/modules/payment/payment.schema";
+import { eq, desc, or, like } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export interface IBookingRepository {
   findAll(): Promise<(typeof bookings.$inferSelect)[]>;
   findById(id: UUID): Promise<typeof bookings.$inferSelect | null>;
   findByUserId(userId: UUID): Promise<(typeof bookings.$inferSelect)[]>;
+  findByUserIdOrEmail(userId: UUID, email?: string): Promise<(typeof bookings.$inferSelect)[]>;
   create(data: typeof bookings.$inferInsert): Promise<typeof bookings.$inferSelect>;
   update(id: UUID, data: Partial<typeof bookings.$inferInsert>): Promise<void>;
   createItems(items: (typeof bookingItems.$inferInsert)[]): Promise<void>;
   findItemsByBookingId(bookingId: UUID): Promise<(typeof bookingItems.$inferSelect)[]>;
   createParticipants(participants: (typeof bookingParticipants.$inferInsert)[]): Promise<void>;
+  findParticipantsByBookingId(bookingId: UUID): Promise<(typeof bookingParticipants.$inferSelect)[]>;
+  findPaymentsByBookingId(bookingId: UUID): Promise<(typeof payments.$inferSelect)[]>;
 }
 
 export const bookingRepository: IBookingRepository = {
@@ -25,6 +29,17 @@ export const bookingRepository: IBookingRepository = {
   },
 
   async findByUserId(userId) {
+    return db.select().from(bookings).where(eq(bookings.userId, userId)).orderBy(desc(bookings.createdAt));
+  },
+
+  async findByUserIdOrEmail(userId, email) {
+    if (email) {
+      return db
+        .select()
+        .from(bookings)
+        .where(or(eq(bookings.userId, userId), like(bookings.notes, `%${email}%`)))
+        .orderBy(desc(bookings.createdAt));
+    }
     return db.select().from(bookings).where(eq(bookings.userId, userId)).orderBy(desc(bookings.createdAt));
   },
 
@@ -49,4 +64,13 @@ export const bookingRepository: IBookingRepository = {
     if (participants.length === 0) return;
     await db.insert(bookingParticipants).values(participants);
   },
+
+  async findParticipantsByBookingId(bookingId) {
+    return db.select().from(bookingParticipants).where(eq(bookingParticipants.bookingId, bookingId));
+  },
+
+  async findPaymentsByBookingId(bookingId) {
+    return db.select().from(payments).where(eq(payments.bookingId, bookingId));
+  },
 };
+

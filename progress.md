@@ -295,7 +295,24 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 - Updated `src/app/private/page.jsx` — memperbarui `buildPayload` dan `buildDestinationPreferences` agar menyertakan `jumlahPeserta`, serta menghapus handler peserta per-orang.
 - Updated `src/components/private/SuccessState.jsx` — memperbarui tampilan ringkasan sukses agar menampilkan jumlah peserta tanpa daftar kartu detail peserta.
 
+## Session 14 — Unified Booking History & Navbar Integration
+
+**Goal:** Transform the existing `my-trips` page into a unified **Booking History ("Riwayat Pemesanan")** dashboard covering both Open Trip bookings and Private Trip requests with rich details and consistent UI styling, and add "Riwayat Pemesanan" link to Navbar and Mobile Menu.
+
+**Completed:**
+- Updated `src/modules/booking/booking.repository.ts` — Added `findByUserIdOrEmail`, `findParticipantsByBookingId`, and `findPaymentsByBookingId` methods.
+- Updated `src/modules/booking/booking.service.ts` — Enhanced `getUserBookings` to enrich each booking with its associated items, participants, and payments.
+- Updated `src/modules/booking/booking.controller.ts` — `GET /api/bookings` now authenticates session via `auth.api.getSession` and returns user's Open Trip bookings.
+- Updated `src/app/api/checkout/route.ts` — Automatically saves `session.user.id` when logged in during checkout.
+- Redesigned `src/app/my-trips/page.jsx` — Transformed into unified **Riwayat Pemesanan** dashboard:
+  - Tab navigation: `Semua`, `Open Trip`, `Private Trip` with badge counters.
+  - Search by trip/destination name & booking code, plus status filter dropdown.
+  - `OpenTripBookingCard` component displaying booking code, travel date, pax count, total price, status badge, expandable breakdown, customer info, and participant list.
+  - `RequestCard` component displaying private trip details, budget estimate, parsed preferences, and interactive admin proposals (Accept, Revise, Reject).
+  - Consistent UI styling (`#F49D1A` brand colors, rounded-2xl cards, empty states, loading skeletons).
+- Modified `src/components/layout/Navbar.jsx` & `src/components/layout/MobileMenu.jsx` — Added "Riwayat Pemesanan" link to NAV_LINKS and mobile account menu.
+
 **Verification:**
-- Verified `./init.sh` runs cleanly without errors.
+- `npm run lint` — Clean pass with 0 errors on modified code.
 
 

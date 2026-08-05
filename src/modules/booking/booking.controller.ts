@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bookingService } from "./booking.service";
+import { auth } from "../auth/auth.config";
 
 // --- Next.js Route Handlers ---
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const bookings = await bookingService.getAllBookings();
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const bookings = await bookingService.getUserBookings(session.user.id, session.user.email);
     return NextResponse.json(bookings);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";

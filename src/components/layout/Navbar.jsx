@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { name: "Beranda", href: "/" },
   { name: "Destinasi Trip", href: "/trips" },
   { name: "Private Trip", href: "/private" },
+  { name: "Riwayat Pemesanan", href: "/my-trips" },
   { name: "Tentang Kami", href: "/about" },
   { name: "Hubungi Kami", href: "/contact" },
 ];

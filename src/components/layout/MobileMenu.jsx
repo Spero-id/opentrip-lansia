@@ -20,6 +20,7 @@ const NAV_LINKS = [
   { name: "Beranda", href: "/" },
   { name: "Destinasi Trip", href: "/trips" },
   { name: "Private Trip", href: "/private" },
+  { name: "Riwayat Pemesanan", href: "/my-trips" },
   { name: "Tentang Kami", href: "/about" },
 ];
 
@@ -121,6 +122,13 @@ export default function MobileMenu({ isOpen, setIsOpen, _isScrolled }) {
               <div className="mt-8 space-y-3">
                 <div className={sectionLabelClasses}>Akun</div>
                 <div className="space-y-1">
+                  <MenuItem
+                    href="/my-trips"
+                    onClick={() => setIsOpen(false)}
+                    className={pathname === "/my-trips" ? activeLinkClasses : mobileLinkClasses}
+                  >
+                    Riwayat Pemesanan
+                  </MenuItem>
                   <MenuItem
                     href="/profile"
                     onClick={() => setIsOpen(false)}

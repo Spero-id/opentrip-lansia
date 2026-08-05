@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -9,7 +10,7 @@ import Footer from "@/components/layout/Footer";
 // ─── Warna brand project ───────────────────────────────────────────────────
 const A = "#F49D1A";
 
-// ─── Label & warna status ─────────────────────────────────────────────────
+// ─── Label & warna status Private Trip ──────────────────────────────────
 const STATUS_LABEL = {
   draft: "Draft",
   submitted: "Menunggu Tinjauan",
@@ -39,29 +40,35 @@ const PROPOSAL_COLOR = {
   revised: "bg-purple-100 text-purple-700",
 };
 
+// ─── Label & warna status Open Trip ─────────────────────────────────────
+const OPEN_TRIP_STATUS_LABEL = {
+  confirmed: "Terkonfirmasi",
+  pending: "Menunggu Pembayaran",
+  paid: "Lunas",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
+};
+const OPEN_TRIP_STATUS_COLOR = {
+  confirmed: "bg-teal-100 text-teal-800 border border-teal-200",
+  pending: "bg-amber-100 text-amber-800 border border-amber-200",
+  paid: "bg-emerald-100 text-emerald-800 border border-emerald-200",
+  completed: "bg-blue-100 text-blue-800 border border-blue-200",
+  cancelled: "bg-red-100 text-red-800 border border-red-200",
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────
 function formatRupiah(val) {
-  if (!val || val === "0") return null;
+  if (val === undefined || val === null || val === "" || val === "0") return null;
+  const num = Number(val);
+  if (isNaN(num)) return null;
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(Number(val));
+  }).format(num);
 }
 
-/**
- * Menguraikan teks destinationPreferences yang disimpan sebagai plain-text
- * berformat:
- *   [Pemesan]
- *   Nama: X
- *   [Detail Perjalanan]
- *   Tanggal: X
- *   [Peserta (N orang)]
- *   1. Fulan | Lahir: ... | Laki-laki | HP: ...
- *
- * Mengembalikan array section: { heading, rows }
- */
 function parseDestinationPreferences(text) {
   if (!text) return [];
   const sections = [];
@@ -82,7 +89,6 @@ function parseDestinationPreferences(text) {
         const val = line.slice(colonIdx + 2).trim();
         currentSection.rows.push({ type: "kv", key, val });
       } else {
-        // Baris peserta: "1. Fulan | Lahir: ... | ..."
         const parts = line.split("|").map((s) => s.trim());
         currentSection.rows.push({ type: "participant", parts });
       }
@@ -92,7 +98,7 @@ function parseDestinationPreferences(text) {
   return sections;
 }
 
-// ─── Ikon kecil ───────────────────────────────────────────────────────────
+// ─── Ikon ─────────────────────────────────────────────────────────────────
 const icons = {
   chevron: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
@@ -115,12 +121,23 @@ const icons = {
       <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   ),
+  copy: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  ),
+  copied: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 text-teal-600">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
 };
 
-// ─── Komponen: Tampilan satu proposal ────────────────────────────────────
+// ─── ProposalCard (Private Trip) ──────────────────────────────────────────
 function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null); // { type: "ok"|"err", text }
+  const [msg, setMsg] = useState(null);
 
   const isActionable =
     (proposal.status === "pending" || proposal.status === "revised") &&
@@ -159,7 +176,6 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
 
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-5 space-y-4 shadow-sm">
-      {/* Header proposal */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <span
           className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
@@ -176,7 +192,6 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
         </span>
       </div>
 
-      {/* Konten proposal */}
       <div>
         <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
           Detail Penawaran
@@ -186,7 +201,6 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
         </p>
       </div>
 
-      {/* Harga & fasilitas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="rounded-xl border border-gray-100 p-3.5">
           <p className="text-[11px] font-semibold text-gray-400 uppercase mb-1">Estimasi Harga</p>
@@ -208,7 +222,6 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
         </div>
       </div>
 
-      {/* Feedback setelah action */}
       {msg && (
         <p
           className={`text-xs font-semibold px-3 py-2.5 rounded-xl border ${
@@ -221,7 +234,6 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
         </p>
       )}
 
-      {/* Tombol aksi */}
       {isActionable && (
         <div className="flex flex-wrap gap-2 pt-1">
           <button
@@ -254,7 +266,6 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
   );
 }
 
-// ─── Komponen: Info request yang sudah di-parse ───────────────────────────
 function ParsedPreferences({ text }) {
   const sections = parseDestinationPreferences(text);
   if (sections.length === 0) return null;
@@ -262,8 +273,6 @@ function ParsedPreferences({ text }) {
   return (
     <div className="space-y-3">
       {sections.map((sec, si) => {
-        // ── Khusus: Asal Pemesanan ───────────────────────────────────────
-        // Kalau hanya ada "Tipe: Individu" tanpa institusi, tampilkan ringkas
         if (sec.heading.startsWith("Asal Pemesanan")) {
           const tipeRow = sec.rows.find((r) => r.type === "kv" && r.key === "Tipe");
           const institusiRow = sec.rows.find((r) => r.type === "kv" && r.key === "Institusi");
@@ -305,7 +314,6 @@ function ParsedPreferences({ text }) {
           );
         }
 
-        // ── Default: section biasa ────────────────────────────────────────
         return (
           <div key={si} className="rounded-xl border border-gray-100 overflow-hidden">
             <div
@@ -326,7 +334,6 @@ function ParsedPreferences({ text }) {
                     </div>
                   );
                 }
-                // Baris peserta
                 return (
                   <div key={ri} className="bg-gray-50 rounded-lg px-3 py-2 flex flex-wrap gap-x-3 gap-y-1">
                     {row.parts.map((part, pi) => (
@@ -348,7 +355,7 @@ function ParsedPreferences({ text }) {
   );
 }
 
-// ─── Komponen: Satu kartu request ─────────────────────────────────────────
+// ─── Kartu Request (Private Trip) ─────────────────────────────────────────
 function RequestCard({ req, onRefresh }) {
   const [open, setOpen] = useState(false);
   const pendingProposals = req.proposals?.filter(
@@ -356,15 +363,19 @@ function RequestCard({ req, onRefresh }) {
   ).length ?? 0;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      {/* Header — klik untuk expand */}
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
       <button
         id={`trip-card-${req.id}`}
         className="w-full text-left px-5 py-4 flex items-start justify-between gap-4 hover:bg-gray-50/70 transition"
         onClick={() => setOpen((v) => !v)}
       >
         <div className="flex-1 min-w-0 space-y-1">
-          <p className="text-sm font-bold text-gray-900 truncate">{req.title}</p>
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200">
+              Private Trip
+            </span>
+            <p className="text-sm font-bold text-gray-900 truncate">{req.title}</p>
+          </div>
           <div className="flex flex-wrap gap-x-3 gap-y-0.5">
             <span className="text-xs text-gray-500">{req.durationDays} hari</span>
             <span className="text-xs text-gray-400">·</span>
@@ -373,7 +384,7 @@ function RequestCard({ req, onRefresh }) {
               <>
                 <span className="text-xs text-gray-400">·</span>
                 <span className="text-xs text-gray-500">
-                  {new Date(req.submittedAt).toLocaleDateString("id-ID", {
+                  Diajukan: {new Date(req.submittedAt).toLocaleDateString("id-ID", {
                     day: "numeric", month: "short", year: "numeric",
                   })}
                 </span>
@@ -403,19 +414,14 @@ function RequestCard({ req, onRefresh }) {
           >
             {STATUS_LABEL[req.status] || req.status}
           </span>
-          <span
-            className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-          >
+          <span className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
             {icons.chevron}
           </span>
         </div>
       </button>
 
-      {/* Detail (expand) */}
       {open && (
-        <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-5">
-
-          {/* Budget */}
+        <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-5 bg-gray-50/30">
           {formatRupiah(req.budgetEstimate) && (
             <div>
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
@@ -427,7 +433,6 @@ function RequestCard({ req, onRefresh }) {
             </div>
           )}
 
-          {/* Detail permintaan (parsed) */}
           {req.destinationPreferences && (
             <div>
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
@@ -437,7 +442,6 @@ function RequestCard({ req, onRefresh }) {
             </div>
           )}
 
-          {/* Kebutuhan khusus */}
           {req.specialRequirements && (
             <div>
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
@@ -449,13 +453,12 @@ function RequestCard({ req, onRefresh }) {
             </div>
           )}
 
-          {/* Proposal dari admin */}
           <div>
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
               Proposal dari Admin
             </p>
             {!req.proposals || req.proposals.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-gray-200 py-8 text-center">
+              <div className="rounded-xl border border-dashed border-gray-200 py-8 text-center bg-white">
                 <p className="text-sm text-gray-400">Belum ada proposal.</p>
                 <p className="text-xs text-gray-300 mt-1">Tim kami sedang menyiapkan penawaran terbaik untuk Anda.</p>
               </div>
@@ -479,11 +482,204 @@ function RequestCard({ req, onRefresh }) {
   );
 }
 
-// ─── Halaman utama ────────────────────────────────────────────────────────
+// ─── Kartu Open Trip Booking ──────────────────────────────────────────────
+function OpenTripBookingCard({ booking }) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  let notesObj = {};
+  if (booking.notes) {
+    try {
+      notesObj = typeof booking.notes === "string" ? JSON.parse(booking.notes) : booking.notes;
+    } catch {
+      notesObj = { raw: booking.notes };
+    }
+  }
+
+  const destinationName = notesObj.destinationName || "Paket Open Trip";
+  const travelDate = notesObj.travelDate || null;
+  const customerName = notesObj.customerName || null;
+  const customerEmail = notesObj.customerEmail || null;
+  const customerPhone = notesObj.customerPhone || null;
+  const specialRequest = notesObj.specialRequest || null;
+
+  const copyCode = (e) => {
+    e.stopPropagation();
+    if (booking.bookingCode) {
+      navigator.clipboard.writeText(booking.bookingCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const paymentStatus = booking.payments?.[0]?.status || booking.status || "confirmed";
+  const paymentMethod = booking.payments?.[0]?.method || "online";
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
+      <button
+        id={`open-trip-card-${booking.id}`}
+        className="w-full text-left px-5 py-4 flex items-start justify-between gap-4 hover:bg-gray-50/70 transition"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <div className="flex-1 min-w-0 space-y-1.5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-[#F49D1A] border border-[#F49D1A]/30">
+              Open Trip
+            </span>
+            <p className="text-sm font-bold text-gray-900 truncate">{destinationName}</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+            <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-gray-100 rounded px-2 py-0.5">
+              {booking.bookingCode}
+              <button
+                onClick={copyCode}
+                title="Salin Kode Booking"
+                className="hover:text-gray-900 transition p-0.5"
+              >
+                {copied ? icons.copied : icons.copy}
+              </button>
+            </span>
+
+            {travelDate && (
+              <>
+                <span>·</span>
+                <span>Tgl Perjalanan: <strong className="text-gray-700">{travelDate}</strong></span>
+              </>
+            )}
+
+            <span>·</span>
+            <span>{booking.totalParticipants} Peserta</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+          <div className="text-right">
+            <p className="text-sm font-extrabold text-gray-900" style={{ color: A }}>
+              {formatRupiah(booking.totalAmount) || "IDR " + booking.totalAmount}
+            </p>
+            <span
+              className={`inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                OPEN_TRIP_STATUS_COLOR[booking.status] || "bg-teal-100 text-teal-800"
+              }`}
+            >
+              {OPEN_TRIP_STATUS_LABEL[booking.status] || booking.status}
+            </span>
+          </div>
+          <span className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+            {icons.chevron}
+          </span>
+        </div>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
+          {/* Ringkasan Biaya */}
+          <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+              Rincian Pembayaran
+            </p>
+            <div className="flex justify-between text-xs text-gray-600">
+              <span>Subtotal ({booking.totalParticipants} pax)</span>
+              <span>{formatRupiah(booking.subtotal) || booking.subtotal}</span>
+            </div>
+            {Number(booking.discountAmount) > 0 && (
+              <div className="flex justify-between text-xs text-teal-600 font-medium">
+                <span>Diskon Voucher</span>
+                <span>-{formatRupiah(booking.discountAmount)}</span>
+              </div>
+            )}
+            <div className="border-t border-gray-100 pt-2 flex justify-between text-sm font-bold text-gray-900">
+              <span>Total Pembayaran</span>
+              <span style={{ color: A }}>{formatRupiah(booking.totalAmount)}</span>
+            </div>
+            <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500">
+              <span>Metode: <strong className="uppercase">{paymentMethod}</strong></span>
+              <span>Status Pembayaran: <strong className="capitalize text-teal-700">{paymentStatus}</strong></span>
+            </div>
+          </div>
+
+          {/* Pemesan Utama */}
+          {(customerName || customerEmail || customerPhone) && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-1.5">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                Kontak Pemesan
+              </p>
+              {customerName && (
+                <div className="flex text-xs">
+                  <span className="w-28 text-gray-400 shrink-0">Nama Pemesan</span>
+                  <span className="font-semibold text-gray-800">{customerName}</span>
+                </div>
+              )}
+              {customerPhone && (
+                <div className="flex text-xs">
+                  <span className="w-28 text-gray-400 shrink-0">No. WhatsApp</span>
+                  <span className="text-gray-700">{customerPhone}</span>
+                </div>
+              )}
+              {customerEmail && (
+                <div className="flex text-xs">
+                  <span className="w-28 text-gray-400 shrink-0">Email</span>
+                  <span className="text-gray-700">{customerEmail}</span>
+                </div>
+              )}
+              {specialRequest && (
+                <div className="flex text-xs pt-1">
+                  <span className="w-28 text-gray-400 shrink-0">Catatan</span>
+                  <span className="text-amber-800 font-medium bg-amber-50 rounded px-2 py-0.5">{specialRequest}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Daftar Peserta */}
+          {booking.participants && booking.participants.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">
+                Daftar Peserta ({booking.participants.length} Orang)
+              </p>
+              <div className="space-y-2">
+                {booking.participants.map((p, idx) => (
+                  <div
+                    key={p.id || idx}
+                    className="flex items-center justify-between text-xs bg-gray-50 rounded-lg p-2.5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-orange-100 text-[#F49D1A] font-bold text-[10px] flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                      <span className="font-semibold text-gray-800">{p.fullName}</span>
+                      {p.isPrimary && (
+                        <span className="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-full">
+                          Pemesan Utama
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-gray-500">{p.phone || "-"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Halaman utama Booking History ─────────────────────────────────────────
 export default function MyTripsPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [requests, setRequests] = useState([]);
+
+  const [activeTab, setActiveTab] = useState("all"); // 'all' | 'open' | 'private'
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [privateRequests, setPrivateRequests] = useState([]);
+  const [openBookings, setOpenBookings] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -499,130 +695,289 @@ export default function MyTripsPage() {
 
     let cancelled = false;
 
-    async function load() {
+    async function loadData() {
       setLoading(true);
       setError("");
+
       try {
-        const res = await fetch("/api/private-trips");
-        if (!res.ok) {
-          if (res.status === 401) { router.push("/login"); return; }
-          throw new Error("Gagal memuat data");
+        const [resPrivate, resOpen] = await Promise.all([
+          fetch("/api/private-trips").catch(() => null),
+          fetch("/api/bookings").catch(() => null),
+        ]);
+
+        let privateData = [];
+        if (resPrivate && resPrivate.ok) {
+          const list = await resPrivate.json();
+          privateData = await Promise.all(
+            list.map(async (req) => {
+              try {
+                const r = await fetch(`/api/private-trips/${req.id}`);
+                if (!r.ok) return { ...req, proposals: [] };
+                const d = await r.json();
+                return { ...req, proposals: d.proposals || [] };
+              } catch {
+                return { ...req, proposals: [] };
+              }
+            })
+          );
         }
-        const data = await res.json();
 
-        // Ambil proposal per request
-        const withProposals = await Promise.all(
-          data.map(async (req) => {
-            try {
-              const r = await fetch(`/api/private-trips/${req.id}`);
-              if (!r.ok) return { ...req, proposals: [] };
-              const d = await r.json();
-              return { ...req, proposals: d.proposals || [] };
-            } catch {
-              return { ...req, proposals: [] };
-            }
-          })
-        );
+        let openData = [];
+        if (resOpen && resOpen.ok) {
+          openData = await resOpen.json();
+        }
 
-        if (!cancelled) setRequests(withProposals);
+        if (!cancelled) {
+          setPrivateRequests(Array.isArray(privateData) ? privateData : []);
+          setOpenBookings(Array.isArray(openData) ? openData : []);
+        }
       } catch (e) {
-        if (!cancelled) setError(e.message || "Terjadi kesalahan");
+        if (!cancelled) setError(e.message || "Terjadi kesalahan saat memuat data.");
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
 
-    load();
+    loadData();
     return () => { cancelled = true; };
   }, [isPending, session, router, refreshKey]);
 
   if (isPending || (!session?.user && !error)) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white flex flex-col justify-between">
         <Navbar />
-        <main className="flex min-h-screen items-center justify-center bg-white">
-          <p className="text-gray-400 text-sm">Memuat...</p>
+        <main className="flex-1 flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 rounded-full border-4 border-[#F49D1A]/20 border-t-[#F49D1A] animate-spin" />
+            <p className="text-gray-400 text-sm">Memuat Riwayat Pemesanan...</p>
+          </div>
         </main>
         <Footer />
       </div>
     );
   }
 
+  // Filter items
+  const filteredOpenBookings = openBookings.filter((b) => {
+    let notesObj = {};
+    try {
+      notesObj = typeof b.notes === "string" ? JSON.parse(b.notes) : b.notes || {};
+    } catch {
+      notesObj = {};
+    }
+    const title = notesObj.destinationName || "Open Trip";
+    const matchSearch =
+      title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.bookingCode.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchStatus = statusFilter === "all" || b.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  const filteredPrivateRequests = privateRequests.filter((r) => {
+    const matchSearch =
+      r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (r.destinationPreferences || "").toLowerCase().includes(searchQuery.toLowerCase());
+    const matchStatus = statusFilter === "all" || r.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  const totalOpen = openBookings.length;
+  const totalPrivate = privateRequests.length;
+  const totalAll = totalOpen + totalPrivate;
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col justify-between">
       <Navbar />
 
-      <main className="min-h-screen bg-white">
-        {/* Page header — konsisten dengan halaman private */}
+      <main className="flex-1 min-h-screen bg-white pb-20">
+        {/* Header */}
         <div className="bg-white border-b border-gray-100">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
-            <p className="font-semibold text-sm tracking-wide mb-1" style={{ color: A }}>
-              PRIVATE TRIP
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+            <p className="font-semibold text-xs tracking-wider uppercase mb-1" style={{ color: A }}>
+              PESANAN SAYA
             </p>
             <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Request <span style={{ color: A }}>Saya</span>
+              Riwayat <span style={{ color: A }}>Pemesanan</span>
             </h1>
-            <p className="text-sm text-gray-500 mt-1 max-w-lg">
-              Pantau status pengajuan dan tanggapi proposal dari tim admin.
+            <p className="text-sm text-gray-500 mt-1 max-w-xl">
+              Lihat status pengajuan Private Trip dan rincian pemesanan Open Trip Anda dalam satu tempat.
             </p>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Tombol ajukan baru */}
-          <div className="mb-6">
-            <a
-              id="btn-new-trip-request"
-              href="/private"
-              className="inline-flex items-center gap-2 rounded-2xl text-white px-5 py-2.5 text-sm font-bold transition active:scale-95 shadow-md"
-              style={{ backgroundColor: A }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#c47d12")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = A)}
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              Ajukan Request Baru
-            </a>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          {/* Controls: Tabs & Actions */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Tabs */}
+            <div className="flex items-center gap-1 bg-gray-100 p-1.5 rounded-2xl w-fit">
+              <button
+                id="tab-all"
+                onClick={() => setActiveTab("all")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                  activeTab === "all"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                Semua
+                <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "all" ? "bg-orange-100 text-[#F49D1A]" : "bg-gray-200 text-gray-600"}`}>
+                  {totalAll}
+                </span>
+              </button>
+
+              <button
+                id="tab-open-trip"
+                onClick={() => setActiveTab("open")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                  activeTab === "open"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                Open Trip
+                <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "open" ? "bg-orange-100 text-[#F49D1A]" : "bg-gray-200 text-gray-600"}`}>
+                  {totalOpen}
+                </span>
+              </button>
+
+              <button
+                id="tab-private-trip"
+                onClick={() => setActiveTab("private")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                  activeTab === "private"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                Private Trip
+                <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "private" ? "bg-orange-100 text-[#F49D1A]" : "bg-gray-200 text-gray-600"}`}>
+                  {totalPrivate}
+                </span>
+              </button>
+            </div>
+
+            {/* Quick CTAs */}
+            <div className="flex items-center gap-2">
+              <Link
+                id="btn-browse-destinations"
+                href="/trips"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 text-xs font-bold transition"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                Cari Open Trip
+              </Link>
+
+              <Link
+                id="btn-new-private-trip"
+                href="/private"
+                className="inline-flex items-center gap-1.5 rounded-xl text-white px-4 py-2 text-xs font-bold transition active:scale-95 shadow-sm"
+                style={{ backgroundColor: A }}
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Ajukan Private Trip
+              </Link>
+            </div>
           </div>
 
-          {/* Content */}
+          {/* Search & Filter */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <input
+                id="input-search-booking"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari trip, destinasi, atau kode booking..."
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#F49D1A] focus:border-transparent"
+              />
+              <svg className="w-4 h-4 text-gray-400 absolute left-3 top-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </div>
+
+            <select
+              id="select-status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A] font-medium text-gray-700"
+            >
+              <option value="all">Semua Status</option>
+              <option value="confirmed">Terkonfirmasi</option>
+              <option value="pending">Menunggu</option>
+              <option value="reviewed">Sedang Ditinjau</option>
+              <option value="approved">Disetujui</option>
+              <option value="cancelled">Dibatalkan</option>
+              <option value="rejected">Ditolak</option>
+            </select>
+          </div>
+
+          {/* Content Listing */}
           {loading ? (
-            <div className="space-y-3">
-              {[1, 2].map((i) => (
-                <div key={i} className="h-20 bg-gray-200 rounded-2xl animate-pulse" />
+            <div className="space-y-3 pt-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-24 bg-gray-100 rounded-2xl animate-pulse" />
               ))}
             </div>
           ) : error ? (
             <div className="rounded-2xl bg-red-50 border border-red-200 px-5 py-6 text-center">
               <p className="text-sm text-red-700 font-semibold">{error}</p>
-              <button
-                onClick={triggerRefresh}
-                className="mt-3 text-xs font-bold text-red-600 underline"
-              >
+              <button onClick={triggerRefresh} className="mt-3 text-xs font-bold text-red-600 underline">
                 Coba lagi
               </button>
             </div>
-          ) : requests.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
-              <div className="text-4xl mb-3">🗺️</div>
-              <p className="text-sm font-semibold text-gray-700">Belum ada request Private Trip</p>
-              <p className="text-xs text-gray-400 mt-1 mb-5">
-                Klik tombol di atas untuk mengajukan perjalanan impian Anda.
-              </p>
-              <a
-                href="/private"
-                className="inline-flex items-center gap-2 rounded-xl text-white px-4 py-2 text-sm font-bold"
-                style={{ backgroundColor: A }}
-              >
-                Ajukan Sekarang
-              </a>
-            </div>
           ) : (
-            <div className="space-y-3">
-              {requests.map((req) => (
-                <RequestCard key={req.id} req={req} onRefresh={triggerRefresh} />
-              ))}
+            <div className="space-y-4 pt-2">
+              {/* Render Open Trip items */}
+              {(activeTab === "all" || activeTab === "open") &&
+                filteredOpenBookings.map((b) => (
+                  <OpenTripBookingCard key={`open-${b.id}`} booking={b} />
+                ))}
+
+              {/* Render Private Trip items */}
+              {(activeTab === "all" || activeTab === "private") &&
+                filteredPrivateRequests.map((req) => (
+                  <RequestCard key={`private-${req.id}`} req={req} onRefresh={triggerRefresh} />
+                ))}
+
+              {/* Empty states */}
+              {((activeTab === "all" && filteredOpenBookings.length === 0 && filteredPrivateRequests.length === 0) ||
+                (activeTab === "open" && filteredOpenBookings.length === 0) ||
+                (activeTab === "private" && filteredPrivateRequests.length === 0)) && (
+                <div className="rounded-2xl border border-dashed border-gray-300 py-16 px-4 text-center bg-gray-50/50">
+                  <div className="text-4xl mb-3">🧳</div>
+                  <p className="text-sm font-bold text-gray-800">Belum ada riwayat pemesanan</p>
+                  <p className="text-xs text-gray-400 mt-1 mb-6 max-w-sm mx-auto">
+                    {searchQuery || statusFilter !== "all"
+                      ? "Tidak ada pemesanan yang sesuai dengan filter pencarian Anda."
+                      : activeTab === "open"
+                      ? "Anda belum pernah memesan Open Trip."
+                      : activeTab === "private"
+                      ? "Anda belum pernah mengajukan Private Trip."
+                      : "Jelajahi paket Open Trip atau buat perjalanan Private Trip impian Anda."}
+                  </p>
+                  <div className="flex justify-center gap-3 flex-wrap">
+                    <Link
+                      href="/trips"
+                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-4 py-2 text-xs font-bold text-gray-800 shadow-sm"
+                    >
+                      Jelajah Open Trip
+                    </Link>
+                    <Link
+                      href="/private"
+                      className="inline-flex items-center gap-2 rounded-xl text-white px-4 py-2 text-xs font-bold shadow-sm"
+                      style={{ backgroundColor: A }}
+                    >
+                      Buat Private Trip
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
