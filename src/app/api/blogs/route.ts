@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { blogRepository } from "@/modules/blog";
+import { blogRepository, blogService } from "@/modules/blog";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const data = await blogRepository.findAll();
+    const publishedOnly = req.nextUrl.searchParams.get("published") === "1";
+    const data = publishedOnly
+      ? await blogService.getPublishedBlogs()
+      : await blogRepository.findAll();
     return NextResponse.json(data);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";

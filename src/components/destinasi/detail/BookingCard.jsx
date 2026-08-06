@@ -3,7 +3,24 @@ import { formatRupiah } from "@/lib/format";
 
 const A = "#F49D1A";
 
+const QUOTA_MAX = 10;
+const MIN_TO_GO = 6;
+
+function QuotaStatus({ booked }) {
+  if (booked >= QUOTA_MAX) {
+    return <span className="rounded-full bg-red-100 px-2.5 py-1 text-[10px] font-bold text-red-600">Kuota Penuh</span>;
+  }
+  if (booked >= MIN_TO_GO) {
+    return <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold text-emerald-600">To Go</span>;
+  }
+  return <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-600">Menunggu Kuota</span>;
+}
+
 export default function BookingCard({ dest }) {
+  const bookedCount =
+    typeof dest.bookedCount === "number" ? dest.bookedCount : null;
+  const remaining = bookedCount === null ? null : Math.max(QUOTA_MAX - bookedCount, 0);
+
   return (
     <div className="sticky top-28 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col gap-6">
       <div className="pb-6 border-b border-gray-100">
@@ -13,6 +30,31 @@ export default function BookingCard({ dest }) {
         </div>
         <div className="text-sm text-gray-400 mt-1">per orang / pax</div>
       </div>
+
+      {bookedCount !== null && (
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-gray-500">Kuota Tersedia</span>
+            <QuotaStatus booked={bookedCount} />
+          </div>
+          <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${Math.min((bookedCount / QUOTA_MAX) * 100, 100)}%`,
+                backgroundColor: A,
+              }}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-2 text-xs font-semibold text-gray-600">
+            <span>Sudah booking {bookedCount} orang</span>
+            <span>Tinggal {remaining} slot</span>
+          </div>
+          <p className="text-[11px] text-gray-400 mt-1.5">
+            Minimal {MIN_TO_GO} peserta agar trip berangkat (to go).
+          </p>
+        </div>
+      )}
 
       <div className="pt-2">
         <Link href={`/checkout?destination=${dest.id}`} className="block w-full">

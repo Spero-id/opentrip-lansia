@@ -1,10 +1,10 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-08-05",
+  "last_updated": "2026-08-07",
   "summary": {
-    "total_features": 49,
+    "total_features": 51,
     "in_review": 20,
-    "completed": 15,
+    "completed": 17,
     "to_do": 14,
     "not_started": 0
   },
@@ -536,6 +536,33 @@
           "depends_on": ["feat-001"],
           "verification": ["npx playwright test"],
           "evidence": "81 tests in 19 files across e2e/public/, e2e/admin/, e2e/api/, all passing"
+        }
+      ]
+    },
+    {
+      "id": "phase-revisi-client",
+      "name": "Revisi Client (Kuota & Blog)",
+      "prd_epic": "OTL-REV",
+      "features": [
+        {
+          "id": "feat-099",
+          "title": "Kuota Open Trip di UI (min 6 to go / max 10)",
+          "description": "Tampilkan kuota open trip di BookingCard halaman detail: sudah booking berapa orang, sisa slot, progress bar, dan badge status (To Go / Menunggu Kuota / Kuota Penuh) dengan batas minimal 6 peserta untuk berangkat dan kapasitas maksimal 10. Sumber data = sum total_participants booking berstatus confirmed per destinasi. UI only (tanpa ubah logika/enforce backend).",
+          "status": "completed",
+          "priority": 99,
+          "depends_on": [],
+          "verification": ["npm run lint", "GET /api/destinations"],
+          "evidence": "bookedCount dikembalikan API (verified: Pantai Parangtritis bookedCount=1); blok kuota dirender di BookingCard; lint 0 error pada file yang diubah"
+        },
+        {
+          "id": "feat-100",
+          "title": "Halaman Blog Publik (News & Articles)",
+          "description": "Halaman publik /blog (daftar artikel) dan /blog/[slug] (detail) yang membaca artikel berstatus published via /api/blogs?published=1. Link Blog ditambahkan di Navbar, MobileMenu, dan Footer. Konten dirender sebagai plain text (whitespace-pre-line).",
+          "status": "completed",
+          "priority": 100,
+          "depends_on": [],
+          "verification": ["npm run lint", "GET /api/blogs?published=1"],
+          "evidence": "GET /api/blogs?published=1 hanya mengembalikan published; /blog dan /blog/[slug] merespons 200"
         }
       ]
     }
