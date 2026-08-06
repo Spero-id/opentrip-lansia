@@ -119,7 +119,7 @@ export default function AdminPrivateTripsList() {
             <option value="">Semua Status</option>
             <option value="submitted">Submitted</option>
             <option value="reviewed">Reviewed</option>
-            <option value="revision">Revision</option>
+            {/* <option value="revision">Revision</option> */}{/* HIDDEN sementara */}
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
           </select>
@@ -183,8 +183,8 @@ export default function AdminPrivateTripsList() {
                               <span className="hidden lg:inline">Tinjau</span>
                             </button>
                           )}
-                          {/* Buat Proposal */}
-                          {canAct && (
+                          {/* Buat Proposal — HIDDEN (sementara disembunyikan) */}
+                          {false && canAct && (
                             <Link
                               href={`/admin/private-trips/${r.id}?proposal=1`}
                               title="Buat Proposal"
