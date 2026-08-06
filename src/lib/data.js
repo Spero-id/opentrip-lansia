@@ -185,7 +185,7 @@ export const faqs = [
   {
     question: "Apakah bisa reschedule tanggal keberangkatan?",
     answer:
-      "Bisa, selama pengajuan dilakukan minimal 3 hari sebelum tanggal keberangkatan dan sesuai dengan ketersediaan slot pada tanggal baru.",
+      "Bisa, Reschedule bisa dilakukan H-7 sebelum keberangkatan (Maximal), dan tergantung ketersediaan slot.",
   },
   {
     question: "Apa saja yang termasuk dalam paket trip?",
