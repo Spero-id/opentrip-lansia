@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Star } from "lucide-react";
 
 const ACCENT = "#F49D1A";
 
@@ -42,7 +43,7 @@ export default function UlasanSection({ dest }) {
                   : 'bg-white text-gray-500 border-gray-200 hover:border-[#F49D1A]'
               }`}
             >
-              {star} <span className={ratingFilter === star ? "text-white" : "text-[#F49D1A]"}>★</span>
+              {star} <span className={ratingFilter === star ? "text-white" : "text-[#F49D1A]"}><Star className="w-3.5 h-3.5 fill-current" /></span>
             </button>
           ))}
         </div>
@@ -62,7 +63,7 @@ export default function UlasanSection({ dest }) {
                 </div>
               </div>
               <div className="flex items-center gap-1 bg-[#FEF6E7] px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg">
-                <span className="text-[#F49D1A] font-bold text-xs sm:text-sm">★</span>
+                <span className="text-[#F49D1A] font-bold text-xs sm:text-sm flex items-center"><Star className="w-3.5 h-3.5 fill-current" /></span>
                 <span className="font-bold text-xs sm:text-sm text-gray-900">{review.rating.toFixed(1)}</span>
               </div>
             </div>

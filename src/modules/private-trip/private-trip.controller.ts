@@ -194,7 +194,7 @@ export const privateTripController = {
     const userId = await getSessionUserId(req);
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    let body: { proposalId?: string; action?: string };
+    let body: { proposalId?: string; action?: string; revisionNote?: string };
     try {
       body = await req.json();
     } catch {
@@ -203,8 +203,14 @@ export const privateTripController = {
     if (!body.proposalId || !body.action) {
       return NextResponse.json({ error: "proposalId and action are required" }, { status: 400 });
     }
+    if (body.action === "revise" && body.revisionNote && body.revisionNote.trim().length > 1000) {
+      return NextResponse.json({ error: "Catatan revisi maksimal 1000 karakter" }, { status: 400 });
+    }
     try {
-      const result = await privateTripService.respondToProposal(params.id, body.proposalId, userId, body.action);
+      const result = await privateTripService.respondToProposal(
+        params.id, body.proposalId, userId, body.action,
+        body.revisionNote?.trim() || undefined
+      );
       return NextResponse.json(result);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Unknown error";

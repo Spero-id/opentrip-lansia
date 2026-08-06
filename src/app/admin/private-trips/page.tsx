@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Eye, Filter, ChevronDown } from "lucide-react";
+import { Eye, Filter, ChevronDown, ClipboardCheck, FileSignature, Ban } from "lucide-react";
 
 interface PrivateRequest {
   id: string;
@@ -31,6 +31,26 @@ export default function AdminPrivateTripsList() {
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
   const [total, setTotal] = useState(0);
+  const [actioningId, setActioningId] = useState<string | null>(null);
+
+  async function fetchData() {
+    setLoading(true);
+    setFetchError("");
+    const params = new URLSearchParams();
+    if (statusFilter) params.set("status", statusFilter);
+    if (search) params.set("search", search);
+    const res = await fetch(`/api/private-trip/admin?${params.toString()}`);
+    const data = await res.json();
+    if (!res.ok) {
+      setFetchError(`Error ${res.status}: ${data.error || "Gagal memuat data"}`);
+      setRows([]);
+      setTotal(0);
+    } else {
+      setRows(data.rows || []);
+      setTotal(data.total || 0);
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -57,6 +77,17 @@ export default function AdminPrivateTripsList() {
     run();
     return () => { cancelled = true; };
   }, [statusFilter, search]);
+
+  async function quickAction(id: string, action: string) {
+    setActioningId(id);
+    await fetch(`/api/private-trip/admin/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action }),
+    });
+    setActioningId(null);
+    fetchData();
+  }
 
   return (
     <div className="space-y-6">
@@ -124,28 +155,71 @@ export default function AdminPrivateTripsList() {
               ) : rows.length === 0 ? (
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-400">Belum ada request Private Trip.</td></tr>
               ) : (
-                rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/60 transition">
-                    <td className="px-6 py-4 font-semibold text-slate-900 max-w-xs truncate">{r.title}</td>
-                    <td className="px-6 py-4 text-slate-500">{r.participantsCount} org</td>
-                    <td className="px-6 py-4 text-slate-500">{r.durationDays} hari</td>
-                    <td className="px-6 py-4 text-slate-500">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString("id-ID") : "-"}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[r.status] || "bg-slate-100 text-slate-600"}`}>
-                        {r.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link
-                        href={`/admin/private-trips/${r.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#F49D1A]/10 text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white px-3.5 py-2 text-[11px] font-bold transition"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>Lihat Detail</span>
-                      </Link>
-                    </td>
-                  </tr>
-                ))
+                rows.map((r) => {
+                  const busy = actioningId === r.id;
+                  const canAct = r.status === "submitted" || r.status === "reviewed" || r.status === "revision";
+                  return (
+                    <tr key={r.id} className="hover:bg-slate-50/60 transition">
+                      <td className="px-6 py-4 font-semibold text-slate-900 max-w-xs truncate">{r.title}</td>
+                      <td className="px-6 py-4 text-slate-500">{r.participantsCount} org</td>
+                      <td className="px-6 py-4 text-slate-500">{r.durationDays} hari</td>
+                      <td className="px-6 py-4 text-slate-500">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString("id-ID") : "-"}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[r.status] || "bg-slate-100 text-slate-600"}`}>
+                          {r.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* Tandai Ditinjau — hanya submitted */}
+                          {r.status === "submitted" && (
+                            <button
+                              disabled={busy}
+                              onClick={() => quickAction(r.id, "review")}
+                              title="Tandai Sudah Ditinjau"
+                              className="inline-flex items-center gap-1 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
+                            >
+                              <ClipboardCheck className="w-3.5 h-3.5" />
+                              <span className="hidden lg:inline">Tinjau</span>
+                            </button>
+                          )}
+                          {/* Buat Proposal */}
+                          {canAct && (
+                            <Link
+                              href={`/admin/private-trips/${r.id}?proposal=1`}
+                              title="Buat Proposal"
+                              className="inline-flex items-center gap-1 rounded-xl bg-[#F49D1A]/10 text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition"
+                            >
+                              <FileSignature className="w-3.5 h-3.5" />
+                              <span className="hidden lg:inline">Proposal</span>
+                            </Link>
+                          )}
+                          {/* Tolak */}
+                          {canAct && (
+                            <button
+                              disabled={busy}
+                              onClick={() => quickAction(r.id, "reject")}
+                              title="Tolak Request"
+                              className="inline-flex items-center gap-1 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
+                            >
+                              <Ban className="w-3.5 h-3.5" />
+                              <span className="hidden lg:inline">Tolak</span>
+                            </button>
+                          )}
+                          {/* Lihat Detail — selalu ada */}
+                          <Link
+                            href={`/admin/private-trips/${r.id}`}
+                            title="Lihat Detail"
+                            className="inline-flex items-center gap-1 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-700 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span className="hidden lg:inline">Detail</span>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

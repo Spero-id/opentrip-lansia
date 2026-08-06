@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { Luggage } from "lucide-react";
 
 // ─── Warna brand project ───────────────────────────────────────────────────
 const A = "#F49D1A";
@@ -14,9 +15,9 @@ const A = "#F49D1A";
 const STATUS_LABEL = {
   draft: "Draft",
   submitted: "Menunggu Tinjauan",
-  reviewed: "Sedang Ditinjau",
-  revision: "Revisi",
-  approved: "Disetujui",
+  reviewed: "Sedang Diproses", // sementara, aslinya: "Sedang Ditinjau"
+  revision: "Sedang Diproses", // sementara, aslinya: "Revisi"
+  approved: "Terkonfirmasi",
   rejected: "Ditolak",
 };
 const STATUS_COLOR = {
@@ -29,7 +30,7 @@ const STATUS_COLOR = {
 };
 const PROPOSAL_LABEL = {
   pending: "Menunggu Respons",
-  accepted: "Diterima ✓",
+  accepted: "Diterima",
   rejected: "Ditolak",
   revised: "Diminta Revisi",
 };
@@ -138,19 +139,23 @@ const icons = {
 function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
+  const [reviseOpen, setReviseOpen] = useState(false);
+  const [revisionNote, setRevisionNote] = useState("");
 
   const isActionable =
     (proposal.status === "pending" || proposal.status === "revised") &&
     requestStatus === "reviewed";
 
-  async function handleAction(action) {
+  async function handleAction(action, note) {
     setLoading(true);
     setMsg(null);
     try {
+      const body = { proposalId: proposal.id, action };
+      if (action === "revise" && note?.trim()) body.revisionNote = note.trim();
       const res = await fetch(`/api/private-trips/${requestId}/respond`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proposalId: proposal.id, action }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -162,9 +167,11 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
             action === "accept"
               ? "Proposal berhasil diterima! Admin akan menghubungi Anda."
               : action === "revise"
-              ? "Permintaan revisi berhasil dikirim."
+              ? "Permintaan revisi berhasil dikirim ke admin."
               : "Proposal telah ditolak.",
         });
+        setReviseOpen(false);
+        setRevisionNote("");
         onRefresh();
       }
     } catch {
@@ -234,32 +241,75 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
         </p>
       )}
 
-      {isActionable && (
-        <div className="flex flex-wrap gap-2 pt-1">
-          <button
-            id={`btn-accept-${proposal.id}`}
-            onClick={() => handleAction("accept")}
-            disabled={loading}
-            className="flex items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-          >
-            {icons.check} Terima Proposal
-          </button>
-          <button
-            id={`btn-revise-${proposal.id}`}
-            onClick={() => handleAction("revise")}
-            disabled={loading}
-            className="flex items-center gap-1.5 rounded-xl border border-purple-300 text-purple-700 hover:bg-purple-50 active:scale-95 px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-          >
-            {icons.revise} Minta Revisi
-          </button>
-          <button
-            id={`btn-reject-${proposal.id}`}
-            onClick={() => handleAction("reject")}
-            disabled={loading}
-            className="flex items-center gap-1.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 active:scale-95 px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-          >
-            {icons.reject} Tolak
-          </button>
+      {/* ACTION BUTTONS — sementara disembunyikan, uncomment untuk mengaktifkan kembali */}
+      {false && isActionable && (
+        <div className="space-y-3 pt-1">
+          {/* Inline revisi form */}
+          {reviseOpen && (
+            <div className="rounded-2xl border border-purple-200 bg-purple-50/50 p-4 space-y-3">
+              <p className="text-xs font-bold text-purple-700">Apa yang ingin kamu minta revisi?</p>
+              <textarea
+                value={revisionNote}
+                onChange={(e) => setRevisionNote(e.target.value)}
+                rows={3}
+                maxLength={1000}
+                placeholder="Contoh: Tolong ganti hotel ke bintang 4, dan tambahkan kunjungan ke Tanah Lot..."
+                className="w-full rounded-xl border border-purple-200 bg-white px-3.5 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 resize-none transition"
+              />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[11px] text-gray-400">{revisionNote.length}/1000</span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setReviseOpen(false); setRevisionNote(""); }}
+                    disabled={loading}
+                    className="rounded-xl border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:bg-gray-50 transition disabled:opacity-50"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAction("revise", revisionNote)}
+                    disabled={loading}
+                    className="flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white px-4 py-1.5 text-xs font-bold transition disabled:opacity-50"
+                  >
+                    {icons.revise} Kirim Permintaan Revisi
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              id={`btn-accept-${proposal.id}`}
+              onClick={() => handleAction("accept")}
+              disabled={loading}
+              className="flex items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
+            >
+              {icons.check} Terima Proposal
+            </button>
+            <button
+              id={`btn-revise-${proposal.id}`}
+              onClick={() => setReviseOpen((v) => !v)}
+              disabled={loading}
+              className={`flex items-center gap-1.5 rounded-xl border px-4 py-2 text-xs font-bold transition disabled:opacity-50 active:scale-95 ${
+                reviseOpen
+                  ? "border-purple-400 bg-purple-100 text-purple-700"
+                  : "border-purple-300 text-purple-700 hover:bg-purple-50"
+              }`}
+            >
+              {icons.revise} Minta Revisi
+            </button>
+            <button
+              id={`btn-reject-${proposal.id}`}
+              onClick={() => handleAction("reject")}
+              disabled={loading}
+              className="flex items-center gap-1.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 active:scale-95 px-4 py-2 text-xs font-bold transition disabled:opacity-50"
+            >
+              {icons.reject} Tolak
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -394,7 +444,8 @@ function RequestCard({ req, onRefresh }) {
         </div>
 
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-          {pendingProposals > 0 && (
+          {/* PROPOSAL BADGES — sementara disembunyikan */}
+          {false && pendingProposals > 0 && (
             <span
               className="text-[10px] font-bold rounded-full px-2 py-0.5 animate-pulse"
               style={{ backgroundColor: `${A}20`, color: "#8a5c00" }}
@@ -402,7 +453,7 @@ function RequestCard({ req, onRefresh }) {
               {pendingProposals} proposal baru
             </span>
           )}
-          {req.proposals?.length > 0 && pendingProposals === 0 && (
+          {false && req.proposals?.length > 0 && pendingProposals === 0 && (
             <span className="text-[10px] font-semibold text-gray-400 rounded-full px-2 py-0.5 bg-gray-100">
               {req.proposals.length} proposal
             </span>
@@ -448,11 +499,14 @@ function RequestCard({ req, onRefresh }) {
                 Kebutuhan Khusus
               </p>
               <p className="text-sm text-gray-700 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 leading-relaxed">
-                {req.specialRequirements}
+                {/* Strip catatan revisi yang di-append — tampilkan hanya teks asli */}
+                {req.specialRequirements.split("\n[Catatan Revisi")[0].trim() || "—"}
               </p>
             </div>
           )}
 
+          {/* SECTION PROPOSAL — sementara disembunyikan */}
+          {false && (
           <div>
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
               Proposal dari Admin
@@ -476,6 +530,7 @@ function RequestCard({ req, onRefresh }) {
               </div>
             )}
           </div>
+          )}
         </div>
       )}
     </div>
@@ -517,10 +572,13 @@ function OpenTripBookingCard({ booking }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
-      <button
+      <div
         id={`open-trip-card-${booking.id}`}
-        className="w-full text-left px-5 py-4 flex items-start justify-between gap-4 hover:bg-gray-50/70 transition"
+        role="button"
+        tabIndex={0}
+        className="w-full text-left px-5 py-4 flex items-start justify-between gap-4 hover:bg-gray-50/70 transition cursor-pointer"
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen((v) => !v); } }}
       >
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex items-center gap-2 flex-wrap">
@@ -571,7 +629,7 @@ function OpenTripBookingCard({ booking }) {
             {icons.chevron}
           </span>
         </div>
-      </button>
+      </div>
 
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
@@ -769,7 +827,10 @@ export default function MyTripsPage() {
     const matchSearch =
       title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.bookingCode.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchStatus = statusFilter === "all" || b.status === statusFilter;
+    const matchStatus = statusFilter === "all"
+      || b.status === statusFilter
+      || (statusFilter === "terkonfirmasi" && (b.status === "confirmed" || b.status === "approved"))
+      || (statusFilter === "menunggu" && (b.status === "pending" || b.status === "reviewed" || b.status === "submitted" || b.status === "revision"));
     return matchSearch && matchStatus;
   });
 
@@ -777,7 +838,10 @@ export default function MyTripsPage() {
     const matchSearch =
       r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (r.destinationPreferences || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const matchStatus = statusFilter === "all" || r.status === statusFilter;
+    const matchStatus = statusFilter === "all"
+      || r.status === statusFilter
+      || (statusFilter === "terkonfirmasi" && (r.status === "confirmed" || r.status === "approved"))
+      || (statusFilter === "menunggu" && (r.status === "pending" || r.status === "reviewed" || r.status === "submitted" || r.status === "revision"));
     return matchSearch && matchStatus;
   });
 
@@ -908,10 +972,8 @@ export default function MyTripsPage() {
               className="px-3 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A] font-medium text-gray-700"
             >
               <option value="all">Semua Status</option>
-              <option value="confirmed">Terkonfirmasi</option>
-              <option value="pending">Menunggu</option>
-              <option value="reviewed">Sedang Ditinjau</option>
-              <option value="approved">Disetujui</option>
+              <option value="terkonfirmasi">Terkonfirmasi</option>
+              <option value="menunggu">Menunggu Tinjauan</option>
               <option value="cancelled">Dibatalkan</option>
               <option value="rejected">Ditolak</option>
             </select>
@@ -950,7 +1012,9 @@ export default function MyTripsPage() {
                 (activeTab === "open" && filteredOpenBookings.length === 0) ||
                 (activeTab === "private" && filteredPrivateRequests.length === 0)) && (
                 <div className="rounded-2xl border border-dashed border-gray-300 py-16 px-4 text-center bg-gray-50/50">
-                  <div className="text-4xl mb-3">🧳</div>
+                  <div className="flex justify-center mb-3">
+                    <Luggage className="w-10 h-10 text-gray-300" />
+                  </div>
                   <p className="text-sm font-bold text-gray-800">Belum ada riwayat pemesanan</p>
                   <p className="text-xs text-gray-400 mt-1 mb-6 max-w-sm mx-auto">
                     {searchQuery || statusFilter !== "all"

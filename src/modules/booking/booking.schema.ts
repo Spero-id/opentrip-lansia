@@ -3,7 +3,7 @@ import { pgTable, uuid, varchar, text, integer, boolean, timestamp, date } from 
 export const bookings = pgTable("bookings", {
   id: uuid("id").primaryKey().defaultRandom(),
   bookingCode: varchar("booking_code", { length: 50 }).notNull().unique(),
-  userId: uuid("user_id").notNull(),
+  userId: text("user_id").notNull(),
   departureId: uuid("departure_id").notNull(),
   status: varchar("status", { length: 20 }).notNull().default("pending"),
   totalParticipants: integer("total_participants").notNull(),

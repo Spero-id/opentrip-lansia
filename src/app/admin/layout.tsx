@@ -22,8 +22,10 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  useAdminAuth();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -59,18 +61,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </button>
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#0D238E] text-slate-300 flex flex-col justify-between p-4 border-r border-slate-800 shrink-0 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:inset-auto lg:translate-x-0 ${
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-black/80 text-slate-300 flex flex-col justify-between p-4 border-r border-slate-800 shrink-0 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:inset-auto lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}>
         <div className="space-y-6">
           {/* Brand header */}
           <div className="px-3 pt-2">
             <Link href="/" className="flex items-center gap-2 text-xl font-extrabold text-white tracking-tight">
-              <Compass className="h-6 w-6 text-[#F49D1A]" />
-              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-10 w-auto" />
-              <span className="ml-auto text-[10px] font-bold bg-[#F49D1A]/20 text-[#F49D1A] px-2 py-0.5 rounded-full border border-[#F49D1A]/30 uppercase">
-                ADMIN
-              </span>
+              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-15 w-auto" />
             </Link>
           </div>
 
@@ -86,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl transition duration-200 ${
                     isActive
                       ? "bg-[#F49D1A] text-white font-semibold shadow-lg shadow-[#F49D1A]/25"
-                      : "text-slate-400 hover:bg-slate-800/80 hover:text-white"
+                      : "text-white hover:bg-slate-800/80 hover:text-white"
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -101,7 +99,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="pt-4 border-t border-slate-800">
           <Link
             href="/"
-            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-400 hover:text-white transition"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-white hover:text-white transition"
           >
             <ArrowLeft className="w-4 h-4 text-[#F49D1A]" />
             <span>Kembali ke Website Utama</span>
@@ -113,15 +111,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col min-w-0">
         
         {/* Topbar Header */}
-        <header className="bg-white border-b border-slate-200/80 pl-14 lg:pl-6 pr-3 sm:pr-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-3 bg-slate-100 px-3.5 py-2 rounded-2xl border border-slate-200/60 w-48 sm:w-64 lg:w-80">
-            <Search className="w-4 h-4 text-slate-400 shrink-0" />
-            <input
-              type="text"
-              placeholder="Cari data admin..."
-              className="bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden w-full"
-            />
-          </div>
+        <header className="bg-white border-b border-slate-200/80 pl-14 lg:pl-6 pr-3 sm:pr-6 py-3.5 flex items-center justify-end sticky top-0 z-30">
 
           <div className="flex items-center gap-4">
             <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition relative">

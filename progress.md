@@ -315,4 +315,22 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 **Verification:**
 - `npm run lint` — Clean pass with 0 errors on modified code.
 
+## Session 15 — Penghapusan Semua Emoji dari Kode
+
+**Goal:** Menghapus semua emoji dari kode `src/`; bila suatu section membutuhkan ikon, menggantinya dengan ikon lucide (bukan emoji).
+
+**Completed:**
+- `src/app/admin/horeca/page.tsx` — label rating di dropdown `<option>` (★ → "N Bintang").
+- `src/app/checkout/page.jsx` — "Pemesanan Berhasil 🎉" → "Pemesanan Berhasil".
+- `src/app/my-trips/page.jsx` — status `"Diterima ✓"` → `"Diterima"`; ikon empty state 🧳 → ikon lucide `Luggage`.
+- `src/components/checkout/TermsModal.jsx` — panah ↓ pada pill "Scroll ke bawah untuk menyetujui" → ikon lucide `ArrowDown`.
+- `src/components/destinasi/detail/DestinationHeader.jsx` — bintang rating ★ → ikon lucide `Star`.
+- `src/components/destinasi/detail/UlasanSection.jsx` — bintang filter & rating ulasan ★ → ikon lucide `Star`.
+- `src/components/private/DestinationCard.jsx` & `SelectedDestination.jsx` — bintang rating ★ → ikon lucide `Star`.
+
+**Verification:**
+- Scan code-point seluruh `src/**/*.{ts,tsx,js,jsx,css}`: **0 emoji tersisa** (sebelumnya 13 kecocokan).
+- `npm run lint` — tidak ada error/warning baru; 1 error di `admin/private-trips/[id]/page.tsx:212` adalah pre-existing (di luar scope).
+- Catatan: arrow `→` di docs/JSON (PRD, flow, feature_list, progress, jira-export) adalah simbol teks, bukan emoji, dan berada di luar `src/` — tidak disentuh.
+
 

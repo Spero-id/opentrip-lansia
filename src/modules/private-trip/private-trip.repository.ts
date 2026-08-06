@@ -8,6 +8,7 @@ export interface IPrivateTripRepository {
   findById(id: string): Promise<typeof privateTripRequests.$inferSelect | null>;
   findAll(options?: { status?: string; search?: string; limit?: number; offset?: number }): Promise<{ rows: (typeof privateTripRequests.$inferSelect)[]; total: number }>;
   updateStatus(id: string, status: string): Promise<typeof privateTripRequests.$inferSelect | null>;
+  updateSpecialRequirements(id: string, value: string): Promise<void>;
   createProposal(data: typeof privateTripProposals.$inferInsert): Promise<typeof privateTripProposals.$inferSelect>;
   findProposalsByRequestId(requestId: string): Promise<(typeof privateTripProposals.$inferSelect)[]>;
   findProposalById(id: string): Promise<typeof privateTripProposals.$inferSelect | null>;
@@ -44,6 +45,10 @@ export const privateTripRepository: IPrivateTripRepository = {
   async updateStatus(id, status) {
     const [req] = await db.update(privateTripRequests).set({ status, updatedAt: new Date() }).where(eq(privateTripRequests.id, id)).returning();
     return req ?? null;
+  },
+
+  async updateSpecialRequirements(id, value) {
+    await db.update(privateTripRequests).set({ specialRequirements: value, updatedAt: new Date() }).where(eq(privateTripRequests.id, id));
   },
 
   async createProposal(data) {

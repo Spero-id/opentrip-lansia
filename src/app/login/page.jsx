@@ -1,10 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
+
+function getServerSnapshot() {
+    return "/";
+}
+
+function getClientSnapshot() {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    if (redirect && redirect.startsWith("/") && !redirect.startsWith("//") && !redirect.startsWith("/admin")) {
+        return redirect;
+    }
+    return "/";
+}
+
+const emptySubscribe = () => () => {};
 
 export default function LoginPage() {
     const router = useRouter();
@@ -14,12 +29,7 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
-
-    function getRedirectPath() {
-        const params = new URLSearchParams(window.location.search);
-        const redirect = params.get("redirect");
-        return redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/admin";
-    }
+    const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -37,7 +47,7 @@ export default function LoginPage() {
             return;
         }
 
-        router.push(getRedirectPath());
+        router.push(redirectPath);
         router.refresh();
     }
 
@@ -46,7 +56,7 @@ export default function LoginPage() {
         setGoogleLoading(true);
         await signIn.social({
             provider: "google",
-            callbackURL: getRedirectPath(),
+            callbackURL: redirectPath,
         });
         setGoogleLoading(false);
     }
@@ -198,7 +208,7 @@ export default function LoginPage() {
 
                     <p className="text-center text-sm text-gray-500 mt-4 sm:mt-8">
                         Belum punya akun?{" "}
-                        <a href={getRedirectPath() === "/admin" ? "/register" : `/register?redirect=${encodeURIComponent(getRedirectPath())}`} className="italic text-gray-900 font-semibold hover:text-[#F49D1A]">
+                        <a href={redirectPath === "/admin" ? "/register" : `/register?redirect=${encodeURIComponent(redirectPath)}`} className="italic text-gray-900 font-semibold hover:text-[#F49D1A]">
                             Daftar di sini
                         </a>
                     </p>
