@@ -1,6 +1,26 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Footer() {
+  const [popular, setPopular] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/destinations")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        const active = data.filter((d) => d.isActive !== false);
+        const sorted = [...active].sort(
+          (a, b) =>
+            (b.reviewCount ?? 0) - (a.reviewCount ?? 0) ||
+            (a.name || "").localeCompare(b.name || "")
+        );
+        setPopular(sorted.slice(0, 5));
+      })
+      .catch(() => {});
+  }, []);
   return (
     <footer className="relative bg-[#0B0F19] text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -89,31 +109,16 @@ export default function Footer() {
               DESTINASI POPULER
             </p>
             <ul className="space-y-3 text-sm text-white/60">
-              <li>
-                <Link href="/trips/4" className="hover:text-[#F49D1A] transition-colors">
-                  Gunung Bromo
-                </Link>
-              </li>
-              <li>
-                <Link href="/trips/3" className="hover:text-[#F49D1A] transition-colors">
-                  Raja Ampat
-                </Link>
-              </li>
-              <li>
-                <Link href="/trips/6" className="hover:text-[#F49D1A] transition-colors">
-                  Labuan Bajo
-                </Link>
-              </li>
-              <li>
-                <Link href="/trips/5" className="hover:text-[#F49D1A] transition-colors">
-                  Danau Toba
-                </Link>
-              </li>
-              <li>
-                <Link href="/trips/9" className="hover:text-[#F49D1A] transition-colors">
-                  Nusa Penida
-                </Link>
-              </li>
+              {popular.map((d) => (
+                <li key={d.id}>
+                  <Link
+                    href={`/trips/${d.id}`}
+                    className="hover:text-[#F49D1A] transition-colors"
+                  >
+                    {d.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
