@@ -138,19 +138,23 @@ const icons = {
 function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
+  const [reviseOpen, setReviseOpen] = useState(false);
+  const [revisionNote, setRevisionNote] = useState("");
 
   const isActionable =
     (proposal.status === "pending" || proposal.status === "revised") &&
     requestStatus === "reviewed";
 
-  async function handleAction(action) {
+  async function handleAction(action, note) {
     setLoading(true);
     setMsg(null);
     try {
+      const body = { proposalId: proposal.id, action };
+      if (action === "revise" && note?.trim()) body.revisionNote = note.trim();
       const res = await fetch(`/api/private-trips/${requestId}/respond`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proposalId: proposal.id, action }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -162,9 +166,11 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
             action === "accept"
               ? "Proposal berhasil diterima! Admin akan menghubungi Anda."
               : action === "revise"
-              ? "Permintaan revisi berhasil dikirim."
+              ? "Permintaan revisi berhasil dikirim ke admin."
               : "Proposal telah ditolak.",
         });
+        setReviseOpen(false);
+        setRevisionNote("");
         onRefresh();
       }
     } catch {
@@ -235,31 +241,73 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
       )}
 
       {isActionable && (
-        <div className="flex flex-wrap gap-2 pt-1">
-          <button
-            id={`btn-accept-${proposal.id}`}
-            onClick={() => handleAction("accept")}
-            disabled={loading}
-            className="flex items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-          >
-            {icons.check} Terima Proposal
-          </button>
-          <button
-            id={`btn-revise-${proposal.id}`}
-            onClick={() => handleAction("revise")}
-            disabled={loading}
-            className="flex items-center gap-1.5 rounded-xl border border-purple-300 text-purple-700 hover:bg-purple-50 active:scale-95 px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-          >
-            {icons.revise} Minta Revisi
-          </button>
-          <button
-            id={`btn-reject-${proposal.id}`}
-            onClick={() => handleAction("reject")}
-            disabled={loading}
-            className="flex items-center gap-1.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 active:scale-95 px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-          >
-            {icons.reject} Tolak
-          </button>
+        <div className="space-y-3 pt-1">
+          {/* Inline revisi form */}
+          {reviseOpen && (
+            <div className="rounded-2xl border border-purple-200 bg-purple-50/50 p-4 space-y-3">
+              <p className="text-xs font-bold text-purple-700">Apa yang ingin kamu minta revisi?</p>
+              <textarea
+                value={revisionNote}
+                onChange={(e) => setRevisionNote(e.target.value)}
+                rows={3}
+                maxLength={1000}
+                placeholder="Contoh: Tolong ganti hotel ke bintang 4, dan tambahkan kunjungan ke Tanah Lot..."
+                className="w-full rounded-xl border border-purple-200 bg-white px-3.5 py-2.5 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 resize-none transition"
+              />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[11px] text-gray-400">{revisionNote.length}/1000</span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setReviseOpen(false); setRevisionNote(""); }}
+                    disabled={loading}
+                    className="rounded-xl border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:bg-gray-50 transition disabled:opacity-50"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAction("revise", revisionNote)}
+                    disabled={loading}
+                    className="flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white px-4 py-1.5 text-xs font-bold transition disabled:opacity-50"
+                  >
+                    {icons.revise} Kirim Permintaan Revisi
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              id={`btn-accept-${proposal.id}`}
+              onClick={() => handleAction("accept")}
+              disabled={loading}
+              className="flex items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
+            >
+              {icons.check} Terima Proposal
+            </button>
+            <button
+              id={`btn-revise-${proposal.id}`}
+              onClick={() => setReviseOpen((v) => !v)}
+              disabled={loading}
+              className={`flex items-center gap-1.5 rounded-xl border px-4 py-2 text-xs font-bold transition disabled:opacity-50 active:scale-95 ${
+                reviseOpen
+                  ? "border-purple-400 bg-purple-100 text-purple-700"
+                  : "border-purple-300 text-purple-700 hover:bg-purple-50"
+              }`}
+            >
+              {icons.revise} Minta Revisi
+            </button>
+            <button
+              id={`btn-reject-${proposal.id}`}
+              onClick={() => handleAction("reject")}
+              disabled={loading}
+              className="flex items-center gap-1.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 active:scale-95 px-4 py-2 text-xs font-bold transition disabled:opacity-50"
+            >
+              {icons.reject} Tolak
+            </button>
+          </div>
         </div>
       )}
     </div>

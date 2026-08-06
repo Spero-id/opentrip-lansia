@@ -88,7 +88,7 @@ export const privateTripService = {
     return privateTripRepository.findProposalsByRequestId(requestId);
   },
 
-  async respondToProposal(requestId: string, proposalId: string, userId: string, action: string) {
+  async respondToProposal(requestId: string, proposalId: string, userId: string, action: string, revisionNote?: string) {
     const req = await privateTripRepository.findById(requestId);
     if (!req) throw new Error("Request not found");
     if (req.userId !== userId) throw new Error("Unauthorized");
@@ -110,6 +110,18 @@ export const privateTripService = {
     if (newReqStatus) {
       await privateTripRepository.updateStatus(requestId, newReqStatus);
     }
+
+    // Append catatan revisi ke specialRequirements agar admin bisa baca
+    if (action === "revise" && revisionNote) {
+      const timestamp = new Date().toLocaleString("id-ID", {
+        day: "numeric", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      });
+      const noteEntry = `\n[Catatan Revisi – ${timestamp}]\n${revisionNote}`;
+      const current = req.specialRequirements || "";
+      await privateTripRepository.updateSpecialRequirements(requestId, current + noteEntry);
+    }
+
     return privateTripRepository.updateProposalStatus(proposalId, newPropStatus);
   },
 };
