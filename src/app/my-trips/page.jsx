@@ -15,9 +15,9 @@ const A = "#F49D1A";
 const STATUS_LABEL = {
   draft: "Draft",
   submitted: "Menunggu Tinjauan",
-  reviewed: "Sedang Ditinjau",
-  revision: "Revisi",
-  approved: "Disetujui",
+  reviewed: "Sedang Diproses", // sementara, aslinya: "Sedang Ditinjau"
+  revision: "Sedang Diproses", // sementara, aslinya: "Revisi"
+  approved: "Terkonfirmasi",
   rejected: "Ditolak",
 };
 const STATUS_COLOR = {
@@ -241,7 +241,8 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
         </p>
       )}
 
-      {isActionable && (
+      {/* ACTION BUTTONS — sementara disembunyikan, uncomment untuk mengaktifkan kembali */}
+      {false && isActionable && (
         <div className="space-y-3 pt-1">
           {/* Inline revisi form */}
           {reviseOpen && (
@@ -443,7 +444,8 @@ function RequestCard({ req, onRefresh }) {
         </div>
 
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-          {pendingProposals > 0 && (
+          {/* PROPOSAL BADGES — sementara disembunyikan */}
+          {false && pendingProposals > 0 && (
             <span
               className="text-[10px] font-bold rounded-full px-2 py-0.5 animate-pulse"
               style={{ backgroundColor: `${A}20`, color: "#8a5c00" }}
@@ -451,7 +453,7 @@ function RequestCard({ req, onRefresh }) {
               {pendingProposals} proposal baru
             </span>
           )}
-          {req.proposals?.length > 0 && pendingProposals === 0 && (
+          {false && req.proposals?.length > 0 && pendingProposals === 0 && (
             <span className="text-[10px] font-semibold text-gray-400 rounded-full px-2 py-0.5 bg-gray-100">
               {req.proposals.length} proposal
             </span>
@@ -497,11 +499,14 @@ function RequestCard({ req, onRefresh }) {
                 Kebutuhan Khusus
               </p>
               <p className="text-sm text-gray-700 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 leading-relaxed">
-                {req.specialRequirements}
+                {/* Strip catatan revisi yang di-append — tampilkan hanya teks asli */}
+                {req.specialRequirements.split("\n[Catatan Revisi")[0].trim() || "—"}
               </p>
             </div>
           )}
 
+          {/* SECTION PROPOSAL — sementara disembunyikan */}
+          {false && (
           <div>
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
               Proposal dari Admin
@@ -525,6 +530,7 @@ function RequestCard({ req, onRefresh }) {
               </div>
             )}
           </div>
+          )}
         </div>
       )}
     </div>
@@ -821,7 +827,10 @@ export default function MyTripsPage() {
     const matchSearch =
       title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.bookingCode.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchStatus = statusFilter === "all" || b.status === statusFilter;
+    const matchStatus = statusFilter === "all"
+      || b.status === statusFilter
+      || (statusFilter === "terkonfirmasi" && (b.status === "confirmed" || b.status === "approved"))
+      || (statusFilter === "menunggu" && (b.status === "pending" || b.status === "reviewed" || b.status === "submitted" || b.status === "revision"));
     return matchSearch && matchStatus;
   });
 
@@ -829,7 +838,10 @@ export default function MyTripsPage() {
     const matchSearch =
       r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (r.destinationPreferences || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const matchStatus = statusFilter === "all" || r.status === statusFilter;
+    const matchStatus = statusFilter === "all"
+      || r.status === statusFilter
+      || (statusFilter === "terkonfirmasi" && (r.status === "confirmed" || r.status === "approved"))
+      || (statusFilter === "menunggu" && (r.status === "pending" || r.status === "reviewed" || r.status === "submitted" || r.status === "revision"));
     return matchSearch && matchStatus;
   });
 
@@ -960,10 +972,8 @@ export default function MyTripsPage() {
               className="px-3 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A] font-medium text-gray-700"
             >
               <option value="all">Semua Status</option>
-              <option value="confirmed">Terkonfirmasi</option>
-              <option value="pending">Menunggu</option>
-              <option value="reviewed">Sedang Ditinjau</option>
-              <option value="approved">Disetujui</option>
+              <option value="terkonfirmasi">Terkonfirmasi</option>
+              <option value="menunggu">Menunggu Tinjauan</option>
               <option value="cancelled">Dibatalkan</option>
               <option value="rejected">Ditolak</option>
             </select>
