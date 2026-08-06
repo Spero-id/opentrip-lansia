@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { ArrowDown } from "lucide-react";
 
 const TERMS_CONTENT = {
   terms: {
@@ -176,8 +177,9 @@ export default function TermsModal({ type, onClose, onAgree }) {
           </div>
           {!hasScrolledToBottom && (
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent pt-6 pb-3 text-center z-10">
-              <span className="inline-block text-xs font-medium text-[#F49D1A] bg-[#FEF6E7] border border-[#F49D1A]/20 px-3 py-1 rounded-full shadow-sm">
-                Scroll ke bawah untuk menyetujui ↓
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-[#F49D1A] bg-[#FEF6E7] border border-[#F49D1A]/20 px-3 py-1 rounded-full shadow-sm">
+                Scroll ke bawah untuk menyetujui
+                <ArrowDown className="w-3 h-3" />
               </span>
             </div>
           )}

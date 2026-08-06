@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { Luggage } from "lucide-react";
 
 // ─── Warna brand project ───────────────────────────────────────────────────
 const A = "#F49D1A";
@@ -29,7 +30,7 @@ const STATUS_COLOR = {
 };
 const PROPOSAL_LABEL = {
   pending: "Menunggu Respons",
-  accepted: "Diterima ✓",
+  accepted: "Diterima",
   rejected: "Ditolak",
   revised: "Diminta Revisi",
 };
@@ -1001,7 +1002,9 @@ export default function MyTripsPage() {
                 (activeTab === "open" && filteredOpenBookings.length === 0) ||
                 (activeTab === "private" && filteredPrivateRequests.length === 0)) && (
                 <div className="rounded-2xl border border-dashed border-gray-300 py-16 px-4 text-center bg-gray-50/50">
-                  <div className="text-4xl mb-3">🧳</div>
+                  <div className="flex justify-center mb-3">
+                    <Luggage className="w-10 h-10 text-gray-300" />
+                  </div>
                   <p className="text-sm font-bold text-gray-800">Belum ada riwayat pemesanan</p>
                   <p className="text-xs text-gray-400 mt-1 mb-6 max-w-sm mx-auto">
                     {searchQuery || statusFilter !== "all"

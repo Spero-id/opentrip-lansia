@@ -122,7 +122,7 @@ function CheckoutContent() {
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 {checkout.step === "details" && "Konfirmasi Pemesanan"}
                 {checkout.step === "payment" && "Pembayaran"}
-                {checkout.step === "confirmation" && "Pemesanan Berhasil 🎉"}
+                {checkout.step === "confirmation" && "Pemesanan Berhasil"}
               </h1>
               <p className="text-sm text-gray-500 mt-1">
                 {checkout.step === "details" && "Lengkapi detail perjalanan dan data peserta"}
