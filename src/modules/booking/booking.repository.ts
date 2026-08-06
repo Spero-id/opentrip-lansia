@@ -1,14 +1,8 @@
 import { db } from "@/shared/db";
 import { bookings, bookingItems, bookingParticipants } from "./booking.schema";
 import { payments } from "@/modules/payment/payment.schema";
-import { eq, desc, or, like, type SQL } from "drizzle-orm";
+import { eq, desc, or, like } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
-
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function isUuid(value: string): boolean {
-  return UUID_RE.test(value);
-}
 
 export interface IBookingRepository {
   findAll(): Promise<(typeof bookings.$inferSelect)[]>;
@@ -35,20 +29,18 @@ export const bookingRepository: IBookingRepository = {
   },
 
   async findByUserId(userId) {
-    if (!isUuid(userId)) return [];
     return db.select().from(bookings).where(eq(bookings.userId, userId)).orderBy(desc(bookings.createdAt));
   },
 
   async findByUserIdOrEmail(userId, email) {
-    const conditions: SQL<unknown>[] = [];
-    if (isUuid(userId)) conditions.push(eq(bookings.userId, userId));
-    if (email) conditions.push(like(bookings.notes, `%${email}%`));
-    if (conditions.length === 0) return [];
-    return db
-      .select()
-      .from(bookings)
-      .where(or(...conditions))
-      .orderBy(desc(bookings.createdAt));
+    if (email) {
+      return db
+        .select()
+        .from(bookings)
+        .where(or(eq(bookings.userId, userId), like(bookings.notes, `%${email}%`)))
+        .orderBy(desc(bookings.createdAt));
+    }
+    return db.select().from(bookings).where(eq(bookings.userId, userId)).orderBy(desc(bookings.createdAt));
   },
 
   async create(data) {

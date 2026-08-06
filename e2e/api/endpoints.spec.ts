@@ -27,9 +27,9 @@ test.describe("API Endpoints", () => {
     });
   }
 
-  test("POST /api/checkout returns 500 without body", async ({ request }) => {
+  test("POST /api/checkout returns 401 without auth (login required)", async ({ request }) => {
     const res = await request.post("/api/checkout");
-    expect(res.status()).toBe(500);
+    expect(res.status()).toBe(401);
   });
 
   test("POST /api/destinations returns 400 without valid body", async ({ request }) => {

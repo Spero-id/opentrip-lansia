@@ -209,7 +209,7 @@ export function useCheckout(initialDestination) {
         subtotal: (prev.destination?.priceMin ?? 0) * prev.pax,
         totalAmount: prev.totalAmount,
       };
-      return { ...prev, isLoading: true };
+      return { ...prev, isLoading: true, error: null };
     });
 
     if (!snapshot) return;
@@ -225,14 +225,35 @@ export function useCheckout(initialDestination) {
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        console.error("Gagal menyimpan pesanan:", text);
+        let message = "Gagal memproses pesanan. Silakan coba lagi.";
+        try {
+          const data = await res.json();
+          if (data?.error) message = data.error;
+        } catch {
+          // ignore parse error, pakai pesan default
+        }
+
+        if (res.status === 401) {
+          const redirect = encodeURIComponent(
+            window.location.pathname + window.location.search
+          );
+          window.location.href = `/login?redirect=${redirect}`;
+          return;
+        }
+
+        setState((prev) => ({ ...prev, error: message, isLoading: false }));
+        return;
       }
+
+      setState((prev) => ({ ...prev, step: "confirmation", isLoading: false }));
     } catch (err) {
       console.error("Gagal menyimpan pesanan:", err);
+      setState((prev) => ({
+        ...prev,
+        error: "Terjadi kesalahan jaringan. Silakan coba lagi.",
+        isLoading: false,
+      }));
     }
-
-    setState((prev) => ({ ...prev, step: "confirmation", isLoading: false }));
   }, []);
 
   const reset = useCallback(() => {
