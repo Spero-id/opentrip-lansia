@@ -57,10 +57,11 @@ export default function BookingInformationSection({
             </span>
             <input
               type="number"
-              min="1"
+              min="6"
+              max="10"
               value={form.jumlahPeserta}
               onChange={e => set("jumlahPeserta", e.target.value)}
-              placeholder="Ex. 5"
+              placeholder="Ex. 6 – 10"
               className={inputCls(errors.jumlahPeserta, "pl-9")}
             />
           </div>

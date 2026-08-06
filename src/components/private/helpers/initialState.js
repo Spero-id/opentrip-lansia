@@ -12,6 +12,6 @@ export const initialForm = {
   selectedDestinasi: null,
   tripFrom: "Individu",
   namaInstitusi: "",
-  jumlahPeserta: "1",
+  jumlahPeserta: "6",
 };
 
