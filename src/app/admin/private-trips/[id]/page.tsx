@@ -206,12 +206,12 @@ export default function AdminPrivateTripDetail() {
     return () => { cancelled = true; };
   }, [params.id]);
 
-  // Auto-buka proposal modal jika ada ?proposal=1 dari list page
-  useEffect(() => {
-    if (searchParams.get("proposal") === "1") {
-      setProposalOpen(true);
-    }
-  }, [searchParams]);
+  // Auto-buka proposal modal jika ada ?proposal=1 dari list page — HIDDEN sementara
+  // useEffect(() => {
+  //   if (searchParams.get("proposal") === "1") {
+  //     setProposalOpen(true);
+  //   }
+  // }, [searchParams]);
 
   async function updateStatus(action: string) {
     setActionMsg("");
@@ -303,13 +303,14 @@ export default function AdminPrivateTripDetail() {
                   <ClipboardCheck className="w-3.5 h-3.5" />
                   Tandai Sudah Ditinjau
                 </button>
-                <button
+                {/* Buat Proposal — HIDDEN sementara */}
+                {false && <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-[#F49D1A] hover:bg-[#c47d12] text-white px-4 py-2 text-xs font-bold transition shadow-sm shadow-[#F49D1A]/20"
                 >
                   <FileSignature className="w-3.5 h-3.5" />
                   Buat Proposal
-                </button>
+                </button>}
                 <button
                   onClick={() => updateStatus("reject")}
                   className="inline-flex items-center gap-1.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 text-xs font-bold transition"
@@ -319,7 +320,8 @@ export default function AdminPrivateTripDetail() {
                 </button>
               </>
             )}
-            {(data.status === "reviewed" || data.status === "revision") && (
+            {/* Kirim/Perbarui Proposal & Tolak untuk status reviewed/revision — HIDDEN sementara */}
+            {false && (data.status === "reviewed" || data.status === "revision") && (
               <>
                 <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
@@ -392,7 +394,8 @@ export default function AdminPrivateTripDetail() {
         )}
       </div>
 
-      {/* Proposals History */}
+      {/* Riwayat Proposal — HIDDEN sementara */}
+      {false && (
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Riwayat Proposal ({data.proposals?.length || 0})</h2>
         {(!data.proposals || data.proposals.length === 0) ? (
@@ -425,9 +428,10 @@ export default function AdminPrivateTripDetail() {
           </div>
         )}
       </div>
+      )}
 
-      {/* Proposal Panel — bottom sheet di mobile, side panel di desktop */}
-      {proposalOpen && (
+      {/* Proposal Panel — HIDDEN sementara */}
+      {false && proposalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
           onClick={() => setProposalOpen(false)}
