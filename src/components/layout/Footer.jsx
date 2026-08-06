@@ -97,6 +97,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/blog" className="hover:text-[#F49D1A] transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="hover:text-[#F49D1A] transition-colors">
                   Hubungi Kami
                 </Link>

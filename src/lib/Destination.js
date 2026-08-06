@@ -58,5 +58,6 @@ export function toDetail(dest) {
     itinerary: Array.isArray(dest.itinerary) ? dest.itinerary : [],
     meetingPoints: Array.isArray(dest.meetingPoints) ? dest.meetingPoints : [],
     reviewsList: dest.reviewsList || [],
+    bookedCount: dest.bookedCount ?? null,
   };
 }

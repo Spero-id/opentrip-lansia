@@ -333,4 +333,26 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 - `npm run lint` — tidak ada error/warning baru; 1 error di `admin/private-trips/[id]/page.tsx:212` adalah pre-existing (di luar scope).
 - Catatan: arrow `→` di docs/JSON (PRD, flow, feature_list, progress, jira-export) adalah simbol teks, bukan emoji, dan berada di luar `src/` — tidak disentuh.
 
+## Session 16 — Revisi Client: Kuota Open Trip (UI) + Blog Publik
+
+**Goal:** Menerjemahkan revisi client: (1) tampilkan kuota open trip "sudah booking berapa / tinggal berapa" dengan batas per trip min 6 to go / max 10 (UI only, tanpa ubah logika backend), (2) halaman blog publik untuk news & articles.
+
+**Completed — Kuota Open Trip (UI only):**
+- `src/app/api/destinations/route.ts` — GET kini menambahkan `bookedCount` per destinasi = `sum(total_participants)` booking berstatus `confirmed` dikelompokkan per `departure_id`, dibungkus try/catch (log error, tidak mematikan endpoint), di-skip bila daftar destinasi kosong.
+- `src/lib/Destination.js` — `toDetail()` meneruskan `bookedCount ?? null`.
+- `src/components/destinasi/detail/BookingCard.jsx` — blok kuota (progress bar 0–10, "Sudah booking X orang", "Tinggal Y slot", badge status: Menunggu Kuota <6, To Go ≥6, Kuota Penuh ≥10, catatan "Minimal 6 peserta agar trip berangkat"). Hanya dirender bila `bookedCount` bertipe number (jalur data DB); jalur data statis otomatis tersembunyi.
+
+**Completed — Blog Publik:**
+- `src/app/api/blogs/route.ts` — GET mendukung `?published=1` → hanya artikel published via `blogService.getPublishedBlogs()`; tanpa param admin tetap melihat semua.
+- `src/modules/blog/blog.repository.ts` — `findAllPublished()` diurutkan `createdAt DESC` (sebelumnya `publishedAt` yang tidak pernah diisi admin).
+- `src/app/blog/page.jsx` (baru) — daftar kartu artikel publik.
+- `src/app/blog/[slug]/page.jsx` (baru) — detail artikel, `notFound()` bila slug tak ditemukan, konten dirender `whitespace-pre-line` (tanpa library markdown).
+- Link "Blog" ditambahkan di `Navbar.jsx`, `MobileMenu.jsx`, `Footer.jsx`.
+
+**Verification:**
+- `npm run lint` — 0 error di semua file yang diubah (targeted eslint); error total repo tetap 1 (pre-existing `private-trips/[id]/page.tsx:212`).
+- Smoke test live (dev server :3000): `GET /api/destinations` 200, 9 destinasi dengan `bookedCount` (Pantai Parangtritis = 1); `GET /api/blogs?published=1` 200 hanya published (3 artikel); `/blog`, `/blog/tips-perjalanan-lansia`, `/trips/{uuid}` semua 200.
+- QA agent: PASS; reviewer: temuan critical-nya diverifikasi false alarm (kolom `bookings.departure_id` tidak ber-FK ke `trip_departures`; penulis live `/api/checkout` menulis `departure_id = destination.id`, sehingga grouping by departure_id ↔ lookup by destinations.id cocok). Perbaikan diambil: `count(*)` → `sum(total_participants)` (kuota per orang), guard data kosong, dan log error count.
+- Catatan risiko: destinasi dari data statis (`destinationsData`, id numerik) tidak punya `bookedCount` → blok kuota tersembunyi; jalur utama live (listing `/trips` dari API uuid) menampilkan kuota.
+
 

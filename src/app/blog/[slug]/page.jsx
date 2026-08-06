@@ -1,0 +1,96 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import Subs from "@/components/landing/Subs";
+
+const dateLabel = (dateStr) =>
+  new Date(dateStr).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+export default function BlogDetailPage({ params }) {
+  const resolvedParams = use(params);
+  const [post, setPost] = useState(null);
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    const slug = resolvedParams.slug;
+    let cancelled = false;
+
+    fetch("/api/blogs?published=1")
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (!Array.isArray(data)) {
+          setStatus("notfound");
+          return;
+        }
+        const found = data.find((b) => b.slug === slug);
+        setPost(found ?? null);
+        setStatus(found ? "found" : "notfound");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setStatus("notfound");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedParams.slug]);
+
+  if (status === "notfound") {
+    notFound();
+  }
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900">
+      <Navbar />
+
+      {status !== "found" || !post ? (
+        <div className="flex items-center justify-center min-h-[60vh] text-sm text-gray-400">
+          Memuat artikel...
+        </div>
+      ) : (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#F49D1A] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Kembali ke Blog
+          </Link>
+
+          <div className="mt-6">
+            <div className="text-xs font-semibold text-[#F49D1A] uppercase tracking-wider mb-3">
+              {dateLabel(post.publishedAt || post.createdAt)}
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight">
+              {post.title}
+            </h1>
+            {post.excerpt && (
+              <p className="text-sm sm:text-base text-gray-500 mt-4 leading-relaxed">
+                {post.excerpt}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-8 border-t border-gray-100 pt-8">
+            <div className="text-sm text-gray-700 leading-7 whitespace-pre-line">
+              {post.content || "Konten artikel belum tersedia."}
+            </div>
+          </div>
+        </div>
+      )}
+      <Subs />
+      <Footer />
+    </div>
+  );
+}

@@ -15,7 +15,7 @@ export interface IBlogRepository {
 
 export const blogRepository: IBlogRepository = {
   async findAllPublished() {
-    return db.select().from(blogs).where(eq(blogs.status, "published")).orderBy(desc(blogs.publishedAt));
+    return db.select().from(blogs).where(eq(blogs.status, "published")).orderBy(desc(blogs.createdAt));
   },
 
   async findAll() {
