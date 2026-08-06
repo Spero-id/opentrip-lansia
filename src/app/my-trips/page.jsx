@@ -565,10 +565,13 @@ function OpenTripBookingCard({ booking }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
-      <button
+      <div
         id={`open-trip-card-${booking.id}`}
-        className="w-full text-left px-5 py-4 flex items-start justify-between gap-4 hover:bg-gray-50/70 transition"
+        role="button"
+        tabIndex={0}
+        className="w-full text-left px-5 py-4 flex items-start justify-between gap-4 hover:bg-gray-50/70 transition cursor-pointer"
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen((v) => !v); } }}
       >
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex items-center gap-2 flex-wrap">
@@ -619,7 +622,7 @@ function OpenTripBookingCard({ booking }) {
             {icons.chevron}
           </span>
         </div>
-      </button>
+      </div>
 
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
