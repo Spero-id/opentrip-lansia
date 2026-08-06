@@ -1,4 +1,5 @@
 import { A } from "./helpers/constants";
+import { Star } from "lucide-react";
 import { formatRupiah } from "./helpers/helpers";
 
 export default function DestinationCard({
@@ -41,7 +42,7 @@ export default function DestinationCard({
           className="text-[10px] font-semibold mt-0.5"
           style={{ color: A }}
         >
-          ★ {rating} · {formatRupiah(dest.priceMin)}
+          <Star className="w-3 h-3 fill-current inline" /> {rating} · {formatRupiah(dest.priceMin)}
         </p>
       </div>
     </button>

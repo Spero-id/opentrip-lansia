@@ -5,11 +5,9 @@ import { payments } from "@/modules/payment/payment.schema";
 
 import { auth } from "@/modules/auth/auth.config";
 
-const PLACEHOLDER_UUID = "00000000-0000-0000-0000-000000000000";
-
 export async function POST(req: NextRequest) {
   try {
-    let userId = PLACEHOLDER_UUID;
+    let userId: string | null = null;
     try {
       const session = await auth.api.getSession({ headers: req.headers });
       if (session?.user?.id) {
@@ -17,6 +15,14 @@ export async function POST(req: NextRequest) {
       }
     } catch {
       // Guest checkout fallback
+    }
+
+    // Kalo bookings.userId NOT NULL + FK ke users, guest checkout gak bisa lanjut
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Anda harus login untuk melakukan checkout" },
+        { status: 401 }
+      );
     }
 
     const body = await req.json();
@@ -41,6 +47,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Ganti ini sesuai field asli yang nyimpen departure id di object destination lo
+    const departureId = destination.departureId ?? destination.id;
+    if (!departureId) {
+      return NextResponse.json(
+        { error: "Departure tidak valid" },
+        { status: 400 }
+      );
+    }
+
     const total = String(Math.round(totalAmount));
     const sub = subtotal ? String(Math.round(subtotal)) : total;
 
@@ -58,7 +73,7 @@ export async function POST(req: NextRequest) {
     const [booking] = await db.insert(bookings).values({
       bookingCode: orderId,
       userId,
-      departureId: PLACEHOLDER_UUID,
+      departureId,
       status: "confirmed",
       totalParticipants: pax,
       subtotal: sub,

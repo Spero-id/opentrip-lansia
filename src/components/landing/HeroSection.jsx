@@ -28,21 +28,13 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
 
-      {/* Animated gradient orbs */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-[#F49D1A]/20 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#1CA6B7]/10 rounded-full blur-[120px] animate-pulse delay-1000" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
         <div className="grid lg:grid-cols-[1fr_0.85fr] gap-12 items-center">
-          {/* Left Content */}
           <div className={`space-y-8 transition-all duration-700 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm">
-              <TrendingUp size={14} className="text-[#F49D1A]" />
-              <span className="text-xs font-medium text-white/90">Platform Open Trip #1 di Indonesia</span>
-            </div>
 
-            {/* Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
               Jelajahi{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F49D1A] to-[#F7931A]">
@@ -55,19 +47,17 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            {/* Subtitle */}
             <p className="text-white/70 text-lg max-w-lg leading-relaxed">
               Temukan pengalaman perjalanan tak terlupakan dengan harga terbaik. Dari Sabang sampai Merauke, kami siap antar kamu.
             </p>
 
-            {/* Search Bar */}
             <div className="flex flex-col sm:flex-row gap-3 max-w-xl">
-              <div className="flex-1 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl px-5 py-3.5 border border-white/20">
+              <div className="flex-1 flex items-center gap-3 bg-white backdrop-blur-md rounded-2xl px-5 py-3.5 border border-white/20">
                 <Search size={18} className="text-[#F49D1A] shrink-0" />
                 <input
                   type="text"
                   placeholder="Cari destinasi impianmu..."
-                  className="bg-transparent text-sm text-white placeholder:text-white/50 w-full focus:outline-none"
+                  className="bg-transparent text-sm text-black placeholder:text-gray-400 w-full focus:outline-none"
                 />
               </div>
               <Link
@@ -79,26 +69,23 @@ export default function HeroSection() {
               </Link>
             </div>
 
-            {/* Quick Info Chips */}
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                <MapPin size={14} className="text-[#1CA6B7]" />
-                <span className="text-xs text-white/70">Semua Destinasi</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
+                <MapPin size={14} className="text-[#df7224]" />
+                <span className="text-xs text-black">Semua Destinasi</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                <Calendar size={14} className="text-[#1CA6B7]" />
-                <span className="text-xs text-white/70">Fleksibel Jadwal</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
+                <Calendar size={14} className="text-[#df7224]" />
+                <span className="text-xs text-black">Fleksibel Jadwal</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                <Users size={14} className="text-[#1CA6B7]" />
-                <span className="text-xs text-white/70">Ramah Lansia</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
+                <Users size={14} className="text-[#df7224]" />
+                <span className="text-xs text-black">Ramah Lansia</span>
               </div>
             </div>
 
-            {/* Stats removed per request */}
           </div>
 
-          {/* Right - Image Collage */}
           <div className={`relative hidden lg:block transition-all duration-700 delay-300 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
             <div className="grid grid-cols-2 gap-4 items-stretch">
               <div className="rounded-3xl overflow-hidden shadow-2xl relative group h-[280px]">
@@ -144,15 +131,14 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* Floating card below grid */}
-            <div className="relative mt-4 w-full bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
+            <div className="relative mt-4 w-full bg-white backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#F49D1A]/20 flex items-center justify-center">
                   <Users size={18} className="text-[#F49D1A]" />
                 </div>
                 <div>
-                  <p className="text-white text-sm font-semibold">10rb+ Traveler</p>
-                  <p className="text-white/60 text-xs">Sudah percaya kami</p>
+                  <p className="text-black text-sm font-semibold">10rb+ Traveler</p>
+                  <p className="text-black/70 text-xs">Sudah percaya kami</p>
                 </div>
               </div>
             </div>

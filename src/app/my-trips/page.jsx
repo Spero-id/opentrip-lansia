@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { Luggage } from "lucide-react";
 
 // ─── Warna brand project ───────────────────────────────────────────────────
 const A = "#F49D1A";
@@ -29,7 +30,7 @@ const STATUS_COLOR = {
 };
 const PROPOSAL_LABEL = {
   pending: "Menunggu Respons",
-  accepted: "Diterima ✓",
+  accepted: "Diterima",
   rejected: "Ditolak",
   revised: "Diminta Revisi",
 };
@@ -1012,12 +1013,7 @@ export default function MyTripsPage() {
                 (activeTab === "private" && filteredPrivateRequests.length === 0)) && (
                 <div className="rounded-2xl border border-dashed border-gray-300 py-16 px-4 text-center bg-gray-50/50">
                   <div className="flex justify-center mb-3">
-                    <svg className="w-12 h-12 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="8" width="18" height="13" rx="2"/>
-                      <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      <line x1="12" y1="12" x2="12" y2="16"/>
-                      <line x1="10" y1="14" x2="14" y2="14"/>
-                    </svg>
+                    <Luggage className="w-10 h-10 text-gray-300" />
                   </div>
                   <p className="text-sm font-bold text-gray-800">Belum ada riwayat pemesanan</p>
                   <p className="text-xs text-gray-400 mt-1 mb-6 max-w-sm mx-auto">

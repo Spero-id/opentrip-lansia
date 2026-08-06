@@ -6,6 +6,9 @@ import { faqs } from "@/lib/data.js";
 
 const PAGE_SIZE = 6;
 
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+const WHATSAPP_MESSAGE = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
+
 export default function FAQSection() {
     const [openIndex, setOpenIndex] = useState(0);
     const [page, setPage] = useState(0);
@@ -17,6 +20,8 @@ export default function FAQSection() {
         setPage(Math.max(0, Math.min(target, totalPages - 1)));
         setOpenIndex(-1);
     };
+
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
     return (
         <section id="faq" className="relative bg-white py-16">
@@ -126,20 +131,15 @@ export default function FAQSection() {
                             kami di sini.
                         </p>
 
-                        <form className="text-left">
-                            <input
-                                type="text"
-                                placeholder="Ketik di sini..."
-                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors mb-4"
-                            />
-                            <button
-                                type="submit"
-                                className="w-full flex items-center justify-center gap-2 bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
-                            >
-                                Kirim
-                                <Send size={16} />
-                            </button>
-                        </form>
+                        <a
+                            href={whatsappUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full flex items-center p-1 justify-center gap-2 bg-[#25D366] text-white py-2 rounded-xl font-semibold hover:bg-[#25c15e]/80 transition-colors"
+                        >
+                            <img className="rounded-full border-border" src="/whatsapp-logo.webp" alt="whatsapp" width={40} height={40} />
+                            Silahkan Hubungi Kami
+                        </a>
                     </div>
                 </div>
             </div>
