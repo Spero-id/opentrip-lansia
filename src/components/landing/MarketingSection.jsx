@@ -9,7 +9,7 @@ import { features } from "@/lib/data";
 
 
 export default function MarketingSection() {
-  const [openIndex, setOpenIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState(null);
 
   const toggle = (i) => {
     setOpenIndex(openIndex === i ? -1 : i);
