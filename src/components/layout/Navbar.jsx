@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { Menu, X, User, ShoppingBag } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
@@ -31,6 +31,8 @@ function NavbarLink({ href, children, className, onClick }) {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const { data: session } = useSession();
   const isLoggedIn = Boolean(session?.user);
 
@@ -38,6 +40,17 @@ export default function Navbar() {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Tutup dropdown kalau klik di luar
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const navClasses = cn(
@@ -88,35 +101,58 @@ export default function Navbar() {
               ))}
             </div>
 
-            <div className={cn("flex items-center gap-2", isOpen && "bg-transparent") }>
+            <div className={cn("flex items-center gap-2", isOpen && "bg-transparent")}>
               {isLoggedIn ? (
-                <>
-                  {/* Riwayat Pemesanan — icon only */}
-                  <Link
-                    href="/my-trips"
-                    title="Riwayat Pemesanan"
-                    aria-label="Riwayat Pemesanan"
-                    className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
-                      isScrolled
-                        ? "border-white/20 text-white hover:border-[#F49D1A] hover:text-[#F49D1A] hover:bg-white/10"
-                        : "border-slate-300/60 text-slate-700 hover:border-[#F49D1A] hover:text-[#F49D1A] hover:bg-[#F49D1A]/5"
-                    )}
-                  >
-                    <ShoppingBag className="w-5 h-5" />
-                  </Link>
-                  {/* Avatar profile */}
-                  <Link
-                    href="/profile"
-                    title="Profile"
-                    aria-label="Profile"
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors hover:bg-[#c47d12]"
+                /* Avatar + Dropdown */
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setDropdownOpen((v) => !v)}
+                    aria-label="Menu akun"
+                    aria-expanded={dropdownOpen}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors hover:bg-[#c47d12] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/50 focus:ring-offset-1"
                   >
                     <span className="text-sm font-semibold">
                       {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
                     </span>
-                  </Link>
-                </>
+                  </button>
+
+                  {/* Dropdown panel */}
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                      {/* User info */}
+                      <div className="px-4 py-3 border-b border-slate-100">
+                        <p className="text-xs font-bold text-slate-900 truncate">
+                          {session.user.name || "Pengguna"}
+                        </p>
+                        <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                          {session.user.email}
+                        </p>
+                      </div>
+
+                      {/* Menu items */}
+                      <div className="py-1.5">
+                        <Link
+                          href="/profile"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#F49D1A] transition-colors"
+                        >
+                          <User className="w-4 h-4 shrink-0" />
+                          Profil Saya
+                        </Link>
+                        <Link
+                          href="/my-trips"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#F49D1A] transition-colors"
+                        >
+                          <ShoppingBag className="w-4 h-4 shrink-0" />
+                          Histori Trip
+                        </Link>
+                      </div>
+
+                      {/* Logout */}
+                                          </div>
+                  )}
+                </div>
               ) : (
                 <>
                   <Link href="/register" className={loginButtonClasses}>
