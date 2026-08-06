@@ -122,6 +122,51 @@ function DestinationTable({ raw }: { raw: string }) {
   );
 }
 
+/** Memisahkan teks specialRequirements menjadi bagian kebutuhan awal
+ *  dan catatan revisi yang di-append dengan format [Catatan Revisi – ...] */
+function SpecialRequirementsBlock({ raw }: { raw: string }) {
+  // Pisah berdasarkan marker catatan revisi
+  const revisionMarker = /\n\[Catatan Revisi\s*[–-][^\]]*\]/g;
+  const parts = raw.split(/(?=\n\[Catatan Revisi)/);
+
+  const original = parts[0].trim();
+  const revisions = parts.slice(1).map((block) => {
+    const headerMatch = block.match(/^\n\[Catatan Revisi\s*[–-]\s*([^\]]+)\]/);
+    const timestamp = headerMatch?.[1]?.trim() ?? "";
+    const note = block.replace(/^\n\[Catatan Revisi[^\]]*\]\n?/, "").trim();
+    return { timestamp, note };
+  });
+
+  return (
+    <div className="space-y-2">
+      {/* Kebutuhan khusus asli */}
+      {original && (
+        <div className="bg-amber-50/50 rounded-2xl p-4 border border-amber-100/50">
+          <p className="text-[11px] font-semibold text-amber-700 uppercase tracking-wide mb-1">Kebutuhan Khusus</p>
+          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{original}</p>
+        </div>
+      )}
+      {/* Catatan revisi dari user */}
+      {revisions.map((rev, i) => (
+        <div key={i} className="rounded-2xl border border-purple-200 bg-purple-50/50 p-4 space-y-1.5">
+          <div className="flex items-center gap-2">
+            <svg className="w-3.5 h-3.5 text-purple-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+            </svg>
+            <p className="text-[11px] font-bold text-purple-700 uppercase tracking-wide">
+              Catatan Revisi {revisions.length > 1 ? `#${i + 1}` : ""}
+            </p>
+            {rev.timestamp && (
+              <span className="text-[10px] text-purple-400 ml-auto">{rev.timestamp}</span>
+            )}
+          </div>
+          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap pl-5">{rev.note || "—"}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminPrivateTripDetail() {
   const params = useParams();
   const router = useRouter();
@@ -341,8 +386,8 @@ export default function AdminPrivateTripDetail() {
 
         {data.specialRequirements && (
           <div>
-            <span className="block text-[11px] font-semibold text-slate-400 uppercase mb-1">Kebutuhan Khusus</span>
-            <p className="text-sm text-slate-700 bg-amber-50/50 rounded-2xl p-4 border border-amber-100/50 leading-relaxed">{data.specialRequirements}</p>
+            <span className="block text-[11px] font-semibold text-slate-400 uppercase mb-2">Kebutuhan Khusus &amp; Catatan Revisi</span>
+            <SpecialRequirementsBlock raw={data.specialRequirements} />
           </div>
         )}
       </div>
