@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
@@ -10,7 +10,6 @@ const NAV_LINKS = [
   { name: "Beranda", href: "/" },
   { name: "Destinasi Trip", href: "/trips" },
   { name: "Private Trip", href: "/private" },
-  { name: "Riwayat Pemesanan", href: "/my-trips" },
   { name: "Tentang Kami", href: "/about" },
   { name: "Hubungi Kami", href: "/contact" },
 ];
@@ -91,16 +90,33 @@ export default function Navbar() {
 
             <div className={cn("flex items-center gap-2", isOpen && "bg-transparent") }>
               {isLoggedIn ? (
-                <Link
-                  href="/profile"
-                  title="Profile"
-                  aria-label="Profile"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors"
-                >
-                  <span className="text-sm font-semibold">
-                    {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
-                  </span>
-                </Link>
+                <>
+                  {/* Riwayat Pemesanan — icon only */}
+                  <Link
+                    href="/my-trips"
+                    title="Riwayat Pemesanan"
+                    aria-label="Riwayat Pemesanan"
+                    className={cn(
+                      "flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+                      isScrolled
+                        ? "border-white/20 text-white hover:border-[#F49D1A] hover:text-[#F49D1A] hover:bg-white/10"
+                        : "border-slate-300/60 text-slate-700 hover:border-[#F49D1A] hover:text-[#F49D1A] hover:bg-[#F49D1A]/5"
+                    )}
+                  >
+                    <ShoppingBag className="w-5 h-5" />
+                  </Link>
+                  {/* Avatar profile */}
+                  <Link
+                    href="/profile"
+                    title="Profile"
+                    aria-label="Profile"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors hover:bg-[#c47d12]"
+                  >
+                    <span className="text-sm font-semibold">
+                      {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                    </span>
+                  </Link>
+                </>
               ) : (
                 <>
                   <Link href="/register" className={loginButtonClasses}>
