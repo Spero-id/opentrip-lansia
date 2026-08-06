@@ -135,9 +135,9 @@ export default function FAQSection() {
                             href={whatsappUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full flex items-center p-1 justify-center gap-2 bg-[#25c15e] text-white py-2 rounded-xl font-semibold hover:bg-[#25c15e]/80 transition-colors"
+                            className="w-full flex items-center p-1 justify-center gap-2 bg-[#25D366] text-white py-2 rounded-xl font-semibold hover:bg-[#25c15e]/80 transition-colors"
                         >
-                            <img className="bg-white rounded-full p-1 border-border" src="/whatsapp-logo.png" alt="whatsapp" width={40} height={40} />
+                            <img className="rounded-full border-border" src="/whatsapp-logo.webp" alt="whatsapp" width={40} height={40} />
                             Silahkan Hubungi Kami
                         </a>
                     </div>

@@ -189,11 +189,11 @@ export default function AdminHoreca() {
               <select name="starCategory" value={form.starCategory} onChange={handleChange}
                 className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
                 <option value="">-- Pilih --</option>
-                <option value="1">★</option>
-                <option value="2">★★</option>
-                <option value="3">★★★</option>
-                <option value="4">★★★★</option>
-                <option value="5">★★★★★</option>
+                <option value="1">1 Bintang</option>
+                <option value="2">2 Bintang</option>
+                <option value="3">3 Bintang</option>
+                <option value="4">4 Bintang</option>
+                <option value="5">5 Bintang</option>
               </select>
             </div>
             <div>

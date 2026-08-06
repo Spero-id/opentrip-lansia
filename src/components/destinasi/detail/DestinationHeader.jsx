@@ -1,4 +1,5 @@
 import { formatNumber } from "@/lib/format";
+import { Star } from "lucide-react";
 
 export default function DestinationHeader({ dest }) {
   return (
@@ -8,7 +9,7 @@ export default function DestinationHeader({ dest }) {
           {dest.category}
         </span>
         <span className="flex items-center gap-1 text-[#F49D1A] font-bold bg-[#FEF6E7] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
-          ★ {dest.rating.toFixed(1)} <span className="text-gray-500 font-normal">({formatNumber(dest.reviewCount)} ulasan)</span>
+          <Star className="w-3.5 h-3.5 fill-current" /> {dest.rating.toFixed(1)} <span className="text-gray-500 font-normal">({formatNumber(dest.reviewCount)} ulasan)</span>
         </span>
       </div>
       <h1 className="text-3xl sm:text-5xl font-bold mb-2 tracking-tight text-gray-900">
