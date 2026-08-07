@@ -15,7 +15,7 @@ export default function ForbiddenPage() {
         <div className="space-y-3">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 rounded-2xl bg-[#df7224] text-white font-semibold hover:bg-[#df7224]/70 transition"
+            className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 rounded-2xl bg-[#F49D1A] text-white font-semibold hover:bg-[#F49D1A]/70 transition"
           >
             <Home className="w-4 h-4" />
             <span>Kembali ke Beranda</span>

@@ -71,15 +71,15 @@ export default function HeroSection() {
 
             <div className="flex flex-wrap gap-3">
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
-                <MapPin size={14} className="text-[#df7224]" />
+                <MapPin size={14} className="text-[#F49D1A]" />
                 <span className="text-xs text-black">Semua Destinasi</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
-                <Calendar size={14} className="text-[#df7224]" />
+                <Calendar size={14} className="text-[#F49D1A]" />
                 <span className="text-xs text-black">Fleksibel Jadwal</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
-                <Users size={14} className="text-[#df7224]" />
+                <Users size={14} className="text-[#F49D1A]" />
                 <span className="text-xs text-black">Ramah Lansia</span>
               </div>
             </div>

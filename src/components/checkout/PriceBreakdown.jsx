@@ -55,11 +55,11 @@ export default function PriceBreakdown({
                 <polyline points="20 6 9 17 4 12" />
               </svg>
               <div>
-                <span className="font-bold text-[#df7224]">{appliedVoucher.code}</span>
+                <span className="font-bold text-[#F49D1A]">{appliedVoucher.code}</span>
                 <p className="text-[10px] text-gray-400">{appliedVoucher.label}</p>
               </div>
             </div>
-            <span className="font-bold text-[#df7224]">−{OrderDomain.formatPrice(discount)}</span>
+            <span className="font-bold text-[#F49D1A]">−{OrderDomain.formatPrice(discount)}</span>
           </div>
         )}
 
