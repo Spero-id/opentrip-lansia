@@ -51,7 +51,7 @@ export default function BookingCard({ dest }) {
             <span>Tinggal {remaining} slot</span>
           </div>
           <p className="text-[11px] text-gray-400 mt-1.5">
-            Minimal {MIN_TO_GO} peserta agar trip berangkat (to go).
+            Minimal {MIN_TO_GO} peserta agar trip berangkat.
           </p>
         </div>
       )}
