@@ -9,17 +9,25 @@ export default async function EditTrip({ params }: { params: Promise<{ id: strin
   const [trip] = await db.select().from(trips).where(eq(trips.id, id)).limit(1);
   if (!trip) notFound();
 
-  const itinerary = await db
+  const itinerary = (await db
     .select()
     .from(itineraryItems)
     .where(eq(itineraryItems.tripId, id))
-    .orderBy(asc(itineraryItems.dayNumber), asc(itineraryItems.startTime));
+    .orderBy(asc(itineraryItems.dayNumber), asc(itineraryItems.startTime)))
+    .map((item) => ({
+      ...item,
+      startTime: item.startTime ?? "",
+      endTime: item.endTime ?? "",
+      description: item.description ?? "",
+      destinationId: item.destinationId ?? "",
+    }));
 
-  const destinations = await db
+  const destinations = (await db
     .select()
     .from(tripDestinations)
     .where(eq(tripDestinations.tripId, id))
-    .orderBy(asc(tripDestinations.dayOrder));
+    .orderBy(asc(tripDestinations.dayOrder)))
+    .map((dest) => ({ ...dest, durationHours: dest.durationHours ?? 0, notes: dest.notes ?? "" }));
 
   return (
     <div className="space-y-6">
@@ -30,7 +38,15 @@ export default async function EditTrip({ params }: { params: Promise<{ id: strin
         </div>
       </div>
       <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
-        <TripForm initial={{ ...trip, itinerary, tripDestinations: destinations }} />
+        <TripForm
+          initial={{
+            ...trip,
+            description: trip.description ?? "",
+            meetingPointId: trip.meetingPointId ?? "",
+            itinerary,
+            tripDestinations: destinations,
+          }}
+        />
       </div>
     </div>
   );

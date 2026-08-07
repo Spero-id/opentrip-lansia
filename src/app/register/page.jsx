@@ -17,6 +17,7 @@ export default function RegisterPage() {
     const [googleLoading, setGoogleLoading] = useState(false);
 
     function getRedirectPath() {
+        if (typeof window === "undefined") return "/admin";
         const params = new URLSearchParams(window.location.search);
         const redirect = params.get("redirect");
         if (redirect && redirect.startsWith("/") && !redirect.startsWith("//") && !redirect.startsWith("/admin")) {
