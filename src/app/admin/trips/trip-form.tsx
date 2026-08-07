@@ -29,6 +29,7 @@ interface TripDestination {
 interface TripFormData {
   id?: string;
   title: string;
+  slug?: string;
   type: string;
   durationDays: number;
   maxParticipants: number | null;
