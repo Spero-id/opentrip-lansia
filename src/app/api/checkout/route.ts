@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/shared/db";
 import { bookings, bookingParticipants } from "@/modules/booking/booking.schema";
-import { payments } from "@/modules/payment/payment.schema";
+import { payments, paymentAccounts } from "@/modules/payment/payment.schema";
+import { eq } from "drizzle-orm";
 
 import { auth } from "@/modules/auth/auth.config";
 
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
       voucherCode,
       appliedVoucher,
       paymentMethod,
+      proofUrl,
       subtotal,
       totalAmount,
     } = body;
@@ -43,6 +45,37 @@ export async function POST(req: NextRequest) {
     if (!orderId || !destination || !pax || !totalAmount) {
       return NextResponse.json(
         { error: "Data pesanan tidak lengkap" },
+        { status: 400 }
+      );
+    }
+    if (!paymentMethod) {
+      return NextResponse.json(
+        { error: "Pilih metode pembayaran terlebih dahulu" },
+        { status: 400 }
+      );
+    }
+    if (!proofUrl) {
+      return NextResponse.json(
+        { error: "Upload bukti transfer terlebih dahulu" },
+        { status: 400 }
+      );
+    }
+    if (!proofUrl.startsWith("/payments/") || proofUrl.includes("..")) {
+      return NextResponse.json(
+        { error: "URL bukti transfer tidak valid" },
+        { status: 400 }
+      );
+    }
+
+    const [account] = await db
+      .select()
+      .from(paymentAccounts)
+      .where(eq(paymentAccounts.method, paymentMethod))
+      .limit(1);
+
+    if (!account) {
+      return NextResponse.json(
+        { error: "Metode pembayaran tidak tersedia" },
         { status: 400 }
       );
     }
@@ -74,7 +107,7 @@ export async function POST(req: NextRequest) {
       bookingCode: orderId,
       userId,
       departureId,
-      status: "confirmed",
+      status: "pending",
       totalParticipants: pax,
       subtotal: sub,
       discountAmount: String(discount),
@@ -108,10 +141,13 @@ export async function POST(req: NextRequest) {
     // Simpan pembayaran
     await db.insert(payments).values({
       bookingId: booking.id,
-      method: paymentMethod || "manual",
+      method: paymentMethod,
       amount: total,
-      status: "paid",
-      paidAt: new Date(),
+      status: "pending",
+      proofUrl,
+      bankName: account?.bankName ?? null,
+      accountNumber: account?.accountNumber ?? null,
+      accountHolder: account?.accountHolder ?? null,
     });
 
     return NextResponse.json({ success: true, booking });

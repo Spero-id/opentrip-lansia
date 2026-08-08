@@ -28,4 +28,24 @@ export const paymentService = {
       await bookingRepository.update(payment.bookingId, { status: "confirmed" });
     }
   },
+
+  async getActiveAccounts() {
+    return paymentRepository.findActiveAccounts();
+  },
+
+  async reviewPayment(paymentId: UUID, action: "approve" | "reject", note: string | null, adminId: string) {
+    const payment = await paymentRepository.findById(paymentId);
+    if (!payment) return null;
+    const reviewed = { adminNote: note || null, reviewedAt: new Date(), reviewedBy: adminId as UUID };
+
+    if (action === "approve") {
+      await paymentRepository.update(paymentId, { status: "paid", paidAt: new Date(), ...reviewed });
+      await bookingRepository.update(payment.bookingId, { status: "confirmed" });
+    } else {
+      await paymentRepository.update(paymentId, { status: "rejected", ...reviewed });
+      await bookingRepository.update(payment.bookingId, { status: "cancelled" });
+    }
+
+    return paymentRepository.findById(paymentId);
+  },
 };

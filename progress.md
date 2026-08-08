@@ -355,4 +355,43 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 - QA agent: PASS; reviewer: temuan critical-nya diverifikasi false alarm (kolom `bookings.departure_id` tidak ber-FK ke `trip_departures`; penulis live `/api/checkout` menulis `departure_id = destination.id`, sehingga grouping by departure_id ↔ lookup by destinations.id cocok). Perbaikan diambil: `count(*)` → `sum(total_participants)` (kuota per orang), guard data kosong, dan log error count.
 - Catatan risiko: destinasi dari data statis (`destinationsData`, id numerik) tidak punya `bookedCount` → blok kuota tersembunyi; jalur utama live (listing `/trips` dari API uuid) menampilkan kuota.
 
+## Session 17 — Fitur Payment Manual untuk Checkout
+
+**Goal:** User memilih metode pembayaran, melihat nomor rekening tujuan, upload bukti transfer (disimpan lokal di `public/payments`), booking default `pending`. Admin memverifikasi bukti di `/admin/pesanan` (approve/reject + alasan). `my-trips` menampilkan status pembayaran, bukti, dan catatan admin.
+
+**DB (SQL dieksekusi manual oleh user):**
+- `CREATE TABLE payment_accounts` + seed 6 metode: bri (1234-5678-9012-3456), mandiri (1234567890), gopay/ovo/dana (0812-3456-7890), qris (QRIS-OTL-0001) — semua a.n. PT OpenTrip Lansia, is_active true.
+- `ALTER TABLE payments` tambah 7 kolom: `proof_url` text, `bank_name` varchar(100), `account_number` varchar(50), `account_holder` varchar(255), `admin_note` text, `reviewed_at` timestamp, `reviewed_by` uuid (+ FK opsional → users.id).
+
+**Backend:**
+- `payment.schema.ts` — kolom baru payments + tabel `paymentAccounts` (method unique, bankName, accountNumber, accountHolder, isActive, createdAt, updatedAt).
+- `payment.repository.ts` — `findActiveAccounts()`; `payment.service.ts` — `getActiveAccounts()` + `reviewPayment(id, "approve"|"reject", note, adminId)` (approve → payment paid/paidAt + booking confirmed; reject → payment rejected + booking cancelled; admin_note/reviewed_at/reviewed_by tersimpan).
+- API baru: `/api/payments/upload` (POST auth + DELETE hanya path `/payments/...`, 5MB, tipe jpg/png/webp/gif/avif/svg), `/api/payments/accounts` (GET publik), `/api/payments/[paymentId]/review` (POST admin-only, reject wajib alasan).
+- `checkout/route.ts` — wajib `paymentMethod` + `proofUrl`; snapshot rekening dari `payment_accounts`; booking `status: "pending"`; payment `status: "pending"` + proofUrl + snapshot (tanpa paidAt).
+- `booking.service.ts` — `getAllBookings()` & `getUserBookings()` melampirkan participants/items/payments via helper `withDetails(...)`.
+- `shared/types/index.ts` — `PaymentStatus` + `"rejected"`.
+
+**Frontend:**
+- `useCheckout.js` +`proofUrl`/`setProofUrl`; `PaymentStep.jsx` di-rewrite — 6 metode berlogo (assets sudah ada di `public/`), AccountCard rekening tujuan + Salin/Tersalin, ProofUploader (upload/preview/Hapus), tombol "Kirim Bukti Pembayaran" disabled tanpa metode+bukti.
+- `checkout/page.jsx` — copy step & sukses → "Menunggu Verifikasi" / "Bukti Pembayaran Terkirim! Pesanan Anda sedang menunggu verifikasi admin".
+- `admin/pesanan/page.tsx` — badge pembayaran (Menunggu Verifikasi/Lunas/Ditolak), detail modal (rekening tujuan, bukti transfer, catatan admin), form verifikasi Terima/Tolak + textarea alasan; refactor `loadRows`→`applyRows` (fix lint react-hooks/set-state-in-effect).
+- `my-trips/page.jsx` — tampil metode + badge status pembayaran, blok Bukti Transfer, blok Catatan Admin (`booking.payments?.[0]`).
+
+**Verification:**
+- Targeted eslint 0 error; `npm run lint` 0 error / 44 warning (hanya +3 warning img dari perubahan ini); `tsc --noEmit` error hanya pre-existing (admin private-trips edit, e2e api).
+- Smoke live (:3000): `GET /api/payments/accounts` 200 (6 akun camelCase); `/checkout?destination=1`, `/admin/pesanan`, `/my-trips` 200; checkout/upload/bookings tanpa auth → 401.
+- Test DB: insert booking+payment pending → review approve (payment paid + booking confirmed + admin_note + reviewed_by) → verified → cleanup.
+- Server dimatikan; temp files (`_verify_payment.mjs`, `_test_review.mjs`, `dev-server.log`) dihapus.
+
+**QA Round (subagent qa) + hardening:**
+- Temuan HIGH diperbaiki: checkout kini menolak `paymentMethod` yang tidak ada di `payment_accounts` → 400 (`checkout/route.ts`, null-check `account`), sehingga tidak ada booking/payment yang dibuat.
+- Hardening lain: DELETE `/api/payments/upload` kini wajib auth (401) + mengembalikan 404 bila file tidak ada; `proofUrl` divalidasi harus `/payments/*` tanpa `..` (400); `image/svg+xml` dihapus dari ALLOWED_TYPES (anti stored-XSS); endpoint review menolak review ulang payment berstatus bukan `pending` → 400 (guard di `review/route.ts`).
+- Temuan MEDIUM `booking_items` kosong = perilaku pre-existing checkout (bukan regresi fitur ini; di luar scope).
+- Verifikasi pasca-fix: targeted eslint 0 error; `tsc --noEmit` 0 error di file payment/checkout; smoke live — GET `/api/payments/accounts` 200 (6 akun camelCase); POST/DELETE upload, POST review, POST checkout tanpa auth semua 401; DB live terkonfirmasi 7 kolom baru payments + tabel `payment_accounts` (6 baris) ada.
+- Catatan: saat sesi QA, `node_modules` sempat kosong → `npm install` ulang; `dev-server.log`/pid dibersihkan setelah smoke test.
+
+**Belum dilakukan / risiko:**
+- Perubahan belum di-commit; `public/uploads/1786087232308-797633830.jpeg` untracked dari sesi sebelumnya (bukan bagian perubahan ini).
+- Error pre-existing (di luar scope): Edge Middleware `import crypto` di `auth.config.ts` via `middleware.ts`; lint `admin/private-trips/[id]/page.tsx`.
+
 

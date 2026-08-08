@@ -36,6 +36,7 @@ export function useCheckout(initialDestination) {
     appliedVoucher: null,
     voucherError: "",
     paymentMethod: null,
+    proofUrl: "",
     orderId: "",
     totalAmount: 0,
     isLoading: false,
@@ -159,6 +160,10 @@ export function useCheckout(initialDestination) {
     setState((prev) => ({ ...prev, paymentMethod: method }));
   }, []);
 
+  const setProofUrl = useCallback((url) => {
+    setState((prev) => ({ ...prev, proofUrl: url }));
+  }, []);
+
   const setAgreeToTerms = useCallback((value) => {
     setState((prev) => ({ ...prev, agreeToTerms: value }));
   }, []);
@@ -206,6 +211,7 @@ export function useCheckout(initialDestination) {
         voucherCode: prev.voucherCode,
         appliedVoucher: prev.appliedVoucher,
         paymentMethod: prev.paymentMethod,
+        proofUrl: prev.proofUrl,
         subtotal: (prev.destination?.priceMin ?? 0) * prev.pax,
         totalAmount: prev.totalAmount,
       };
@@ -268,6 +274,7 @@ export function useCheckout(initialDestination) {
       appliedVoucher: null,
       voucherError: "",
       paymentMethod: null,
+      proofUrl: "",
       orderId: "",
       totalAmount: 0,
       isLoading: false,
@@ -306,6 +313,7 @@ export function useCheckout(initialDestination) {
     applyVoucher,
     removeVoucher,
     setPaymentMethod,
+    setProofUrl,
     setAgreeToTerms,
     goToPayment,
     initiatePayment,

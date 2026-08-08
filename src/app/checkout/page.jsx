@@ -122,12 +122,12 @@ function CheckoutContent() {
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 {checkout.step === "details" && "Konfirmasi Pemesanan"}
                 {checkout.step === "payment" && "Pembayaran"}
-                {checkout.step === "confirmation" && "Pemesanan Berhasil"}
+                {checkout.step === "confirmation" && "Menunggu Verifikasi"}
               </h1>
               <p className="text-sm text-gray-500 mt-1">
                 {checkout.step === "details" && "Lengkapi detail perjalanan dan data peserta"}
-                {checkout.step === "payment" && "Pilih metode pembayaran dan selesaikan transaksi"}
-                {checkout.step === "confirmation" && "Terima kasih, perjalanan Anda sudah terkonfirmasi"}
+                {checkout.step === "payment" && "Pilih metode pembayaran dan unggah bukti transfer"}
+                {checkout.step === "confirmation" && "Bukti transfer Anda sedang diverifikasi admin"}
               </p>
             </div>
 
@@ -150,8 +150,8 @@ function CheckoutContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <p className="text-lg font-semibold text-gray-900 mb-2">Pembayaran Berhasil!</p>
-                <p className="text-sm text-gray-500 mb-1">Terima kasih, perjalanan Anda sudah terkonfirmasi</p>
+                <p className="text-lg font-semibold text-gray-900 mb-2">Bukti Pembayaran Terkirim!</p>
+                <p className="text-sm text-gray-500 mb-1">Pesanan Anda sedang menunggu verifikasi admin</p>
                 {checkout.orderId && (
                   <p className="text-xs text-gray-400 mb-8">
                     Kode Booking: <span className="font-mono font-bold text-[#F49D1A]">{checkout.orderId}</span>
