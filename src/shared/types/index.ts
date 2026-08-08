@@ -4,7 +4,7 @@ export type Currency = "IDR" | "USD";
 
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed" | "refunded";
 
-export type PaymentStatus = "pending" | "paid" | "failed" | "expired" | "refunded";
+export type PaymentStatus = "pending" | "paid" | "failed" | "expired" | "refunded" | "rejected";
 
 export type TripStatus = "draft" | "published" | "cancelled" | "completed";
 

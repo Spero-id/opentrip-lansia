@@ -68,29 +68,30 @@ export const bookingService = {
   },
 
   async getAllBookings() {
-    return bookingRepository.findAll();
+    const list = await bookingRepository.findAll();
+    return Promise.all(list.map(withDetails));
   },
 
   async getUserBookings(userId: UUID, email?: string) {
     const list = await bookingRepository.findByUserIdOrEmail(userId, email);
-    return Promise.all(
-      list.map(async (b) => {
-        const [participants, items, paymentsList] = await Promise.all([
-          bookingRepository.findParticipantsByBookingId(b.id),
-          bookingRepository.findItemsByBookingId(b.id),
-          bookingRepository.findPaymentsByBookingId(b.id),
-        ]);
-        return {
-          ...b,
-          participants,
-          items,
-          payments: paymentsList,
-        };
-      })
-    );
+    return Promise.all(list.map(withDetails));
   },
 
   async updateBookingStatus(id: UUID, status: string) {
     await bookingRepository.update(id, { status });
   },
 };
+
+async function withDetails(b: typeof import("../booking/booking.schema").bookings.$inferSelect) {
+  const [participants, items, paymentsList] = await Promise.all([
+    bookingRepository.findParticipantsByBookingId(b.id),
+    bookingRepository.findItemsByBookingId(b.id),
+    bookingRepository.findPaymentsByBookingId(b.id),
+  ]);
+  return {
+    ...b,
+    participants,
+    items,
+    payments: paymentsList,
+  };
+}

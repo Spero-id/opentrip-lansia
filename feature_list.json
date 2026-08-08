@@ -127,12 +127,12 @@
         {
           "id": "feat-031",
           "title": "Payment flow (manual transfer + confirmation)",
-          "description": "Payment page with booking code, total amount, payment method selection (manual/Midtrans), confirmation. Schema for gateway webhook ready.",
+          "description": "Payment method selection per metode (bri/mandiri/gopay/ovo/dana/qris) menampilkan rekening tujuan dari tabel payment_accounts, upload bukti transfer wajib sebelum submit (disimpan ke public/payments), booking default pending. Admin verifikasi di /admin/pesanan (approve → paid/confirmed, reject wajib alasan → rejected/cancelled). Alur ini menggantikan konfirmasi otomatis checkout lama; schema gateway webhook tetap siap.",
           "status": "in_review",
           "priority": 31,
           "depends_on": ["feat-030"],
           "verification": ["npm run lint"],
-          "evidence": "/booking/[id]/payment page, PaymentForm, payment module with idempotency"
+          "evidence": "PaymentStep.jsx (6 metode + account card + proof uploader), /api/payments/upload, /api/payments/accounts, /api/payments/[paymentId]/review, /api/checkout (booking pending + payment pending + snapshot rekening), admin/pesanan detail + form verifikasi, my-trips status pembayaran/bukti/catatan, payment.schema.ts (7 kolom baru + paymentAccounts)"
         },
         {
           "id": "feat-032",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Eye } from "lucide-react";
 import Modal from "../components/modal";
 
@@ -14,6 +14,20 @@ interface Booking {
   currency: string;
   bookingDate: string;
   notes: string | null;
+  payments?: Payment[];
+}
+
+interface Payment {
+  id: string;
+  method: string | null;
+  status: string;
+  amount: string;
+  proofUrl: string | null;
+  bankName: string | null;
+  accountNumber: string | null;
+  accountHolder: string | null;
+  adminNote: string | null;
+  reviewedAt: string | null;
 }
 
 interface NotesInfo {
@@ -43,6 +57,21 @@ const statusBadge: Record<string, { label: string; className: string }> = {
   completed: {
     label: "Selesai",
     className: "bg-blue-100 text-blue-800",
+  },
+};
+
+const paymentBadge: Record<string, { label: string; className: string }> = {
+  pending: {
+    label: "Menunggu Verifikasi",
+    className: "bg-amber-100 text-amber-800",
+  },
+  paid: {
+    label: "Lunas",
+    className: "bg-emerald-100 text-emerald-800",
+  },
+  rejected: {
+    label: "Ditolak",
+    className: "bg-red-100 text-red-800",
   },
 };
 
@@ -78,37 +107,71 @@ export default function AdminPesanan() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [selected, setSelected] = useState<Booking | null>(null);
 
+  const [reviewNote, setReviewNote] = useState("");
+  const [reviewing, setReviewing] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+
+  const applyRows = useCallback(async () => {
+    try {
+      const res = await fetch("/api/bookings", { credentials: "include" });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data?.error || "Gagal memuat data pesanan.");
+        setRows([]);
+      } else {
+        setError(null);
+        setRows(Array.isArray(data) ? data : []);
+      }
+    } catch {
+      setError("Gagal memuat data pesanan.");
+      setRows([]);
+    }
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     async function run() {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/bookings", { credentials: "include" });
-        const data = await res.json();
-        if (cancelled) return;
-        if (!res.ok) {
-          setError(data?.error || "Gagal memuat data pesanan.");
-          setRows([]);
-        } else {
-          setError(null);
-          setRows(Array.isArray(data) ? data : []);
-        }
-      } catch {
-        if (!cancelled) {
-          setError("Gagal memuat data pesanan.");
-          setRows([]);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      await applyRows();
     }
-    run();
+    run().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
     return () => { cancelled = true; };
-  }, []);
+  }, [applyRows]);
 
   function openDetail(item: Booking) {
     setSelected(item);
     setDetailOpen(true);
+  }
+
+  async function review(action: "approve" | "reject") {
+    const payment = selected?.payments?.[0];
+    if (!payment) return;
+    if (action === "reject" && !reviewNote.trim()) {
+      setReviewError("Alasan wajib diisi saat menolak pembayaran.");
+      return;
+    }
+    setReviewing(true);
+    setReviewError("");
+    try {
+      const res = await fetch(`/api/payments/${payment.id}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, note: reviewNote.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setReviewError(data?.error || "Gagal memproses verifikasi.");
+        return;
+      }
+      setReviewNote("");
+      setDetailOpen(false);
+      await applyRows();
+    } catch {
+      setReviewError("Terjadi kesalahan jaringan.");
+    } finally {
+      setReviewing(false);
+    }
   }
 
   return (
@@ -133,6 +196,7 @@ export default function AdminPesanan() {
                 <th className="px-6 py-4">Peserta</th>
                 <th className="px-6 py-4">Total</th>
                 <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Pembayaran</th>
                 <th className="px-6 py-4">Tanggal Booking</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
@@ -141,7 +205,7 @@ export default function AdminPesanan() {
               {loading ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-6 py-12 text-center text-slate-400"
                   >
                     Memuat data...
@@ -150,7 +214,7 @@ export default function AdminPesanan() {
               ) : error ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-6 py-12 text-center text-red-500"
                   >
                     {error}
@@ -159,7 +223,7 @@ export default function AdminPesanan() {
               ) : rows.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-6 py-12 text-center text-slate-400"
                   >
                     Belum ada data pesanan.
@@ -171,6 +235,13 @@ export default function AdminPesanan() {
                     label: b.status,
                     className: "bg-slate-100 text-slate-600",
                   };
+                  const payment = b.payments?.[0];
+                  const payBadge = payment
+                    ? (paymentBadge[payment.status] ?? {
+                        label: payment.status,
+                        className: "bg-slate-100 text-slate-600",
+                      })
+                    : null;
                   return (
                     <tr
                       key={b.id}
@@ -193,6 +264,17 @@ export default function AdminPesanan() {
                         >
                           {badge.label}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {payBadge ? (
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${payBadge.className}`}
+                          >
+                            {payBadge.label}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">-</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-slate-500">
                         {formatDate(b.bookingDate)}
@@ -223,6 +305,13 @@ export default function AdminPesanan() {
       >
         {selected && (() => {
           const notesInfo = parseNotes(selected.notes);
+          const payment = selected.payments?.[0] ?? null;
+          const payBadge = payment
+            ? (paymentBadge[payment.status] ?? {
+                label: payment.status,
+                className: "bg-slate-100 text-slate-600",
+              })
+            : null;
           return (
           <div className="space-y-4 text-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -292,6 +381,97 @@ export default function AdminPesanan() {
                 </p>
               </div>
             </div>
+
+            {payment && (
+              <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-bold text-slate-800">Informasi Pembayaran</p>
+                  {payBadge && (
+                    <span
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${payBadge.className}`}
+                    >
+                      {payBadge.label}
+                    </span>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-slate-500 font-medium text-xs">Metode</p>
+                    <p className="font-semibold uppercase">{payment.method ?? "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 font-medium text-xs">Nominal</p>
+                    <p className="font-bold text-slate-900">
+                      Rp {Number(payment.amount).toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  {payment.bankName && (
+                    <div className="sm:col-span-2">
+                      <p className="text-slate-500 font-medium text-xs">Rekening Tujuan</p>
+                      <p className="font-semibold">{payment.bankName}</p>
+                      <p className="text-xs text-slate-400">
+                        {payment.accountHolder} ·{" "}
+                        <span className="font-mono">{payment.accountNumber}</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+                {payment.proofUrl && (
+                  <div>
+                    <p className="text-slate-500 font-medium text-xs mb-1.5">Bukti Transfer</p>
+                    <a href={payment.proofUrl} target="_blank" rel="noreferrer">
+                      <img
+                        src={payment.proofUrl}
+                        alt="Bukti transfer"
+                        className="max-h-56 rounded-xl border border-slate-200 bg-white object-contain"
+                      />
+                    </a>
+                  </div>
+                )}
+                {payment.adminNote && (
+                  <div>
+                    <p className="text-slate-500 font-medium text-xs mb-1">Catatan Admin</p>
+                    <p className="bg-white rounded-xl p-3 text-slate-700">
+                      {payment.adminNote}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {payment?.status === "pending" && (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4 space-y-3">
+                <p className="text-sm font-bold text-amber-800">Verifikasi Pembayaran</p>
+                <textarea
+                  value={reviewNote}
+                  onChange={(e) => setReviewNote(e.target.value)}
+                  rows={3}
+                  maxLength={1000}
+                  placeholder="Alasan (wajib diisi saat menolak pembayaran)"
+                  className="w-full rounded-xl border border-amber-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 resize-none"
+                />
+                {reviewError && (
+                  <p className="text-xs font-semibold text-red-600">{reviewError}</p>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => review("approve")}
+                    disabled={reviewing}
+                    className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
+                  >
+                    Terima Pembayaran
+                  </button>
+                  <button
+                    onClick={() => review("reject")}
+                    disabled={reviewing}
+                    className="rounded-xl bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
+                  >
+                    Tolak Pembayaran
+                  </button>
+                </div>
+              </div>
+            )}
+
             {notesInfo?.specialRequest && (
               <div>
                 <p className="text-slate-500 font-medium mb-1">Catatan / Permintaan Khusus</p>

@@ -56,6 +56,18 @@ const OPEN_TRIP_STATUS_COLOR = {
   completed: "bg-blue-100 text-blue-800 border border-blue-200",
   cancelled: "bg-red-100 text-red-800 border border-red-200",
 };
+const PAYMENT_STATUS_LABEL = {
+  pending: "Menunggu Verifikasi",
+  paid: "Lunas",
+  rejected: "Ditolak",
+  failed: "Gagal",
+};
+const PAYMENT_STATUS_COLOR = {
+  pending: "bg-amber-100 text-amber-800 border border-amber-200",
+  paid: "bg-emerald-100 text-emerald-800 border border-emerald-200",
+  rejected: "bg-red-100 text-red-800 border border-red-200",
+  failed: "bg-red-100 text-red-800 border border-red-200",
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 function formatRupiah(val) {
@@ -567,8 +579,11 @@ function OpenTripBookingCard({ booking }) {
     }
   };
 
-  const paymentStatus = booking.payments?.[0]?.status || booking.status || "confirmed";
-  const paymentMethod = booking.payments?.[0]?.method || "online";
+  const payment = booking.payments?.[0] || null;
+  const paymentStatus = payment?.status || "pending";
+  const paymentMethod = payment?.method || "manual";
+  const paymentProof = payment?.proofUrl || null;
+  const paymentNote = payment?.adminNote || null;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
@@ -654,9 +669,44 @@ function OpenTripBookingCard({ booking }) {
             </div>
             <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500">
               <span>Metode: <strong className="uppercase">{paymentMethod}</strong></span>
-              <span>Status Pembayaran: <strong className="capitalize text-teal-700">{paymentStatus}</strong></span>
+              <span className="inline-flex items-center gap-1">
+                Status Pembayaran:
+                <span className={`ml-0.5 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  PAYMENT_STATUS_COLOR[paymentStatus] || "bg-gray-100 text-gray-600"
+                }`}>
+                  {PAYMENT_STATUS_LABEL[paymentStatus] || paymentStatus}
+                </span>
+              </span>
             </div>
           </div>
+
+          {/* Bukti Transfer */}
+          {paymentProof && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                Bukti Transfer
+              </p>
+              <a href={paymentProof} target="_blank" rel="noreferrer">
+                <img
+                  src={paymentProof}
+                  alt="Bukti transfer"
+                  className="max-h-56 rounded-xl border border-gray-200 object-contain bg-gray-50"
+                />
+              </a>
+            </div>
+          )}
+
+          {/* Catatan Admin / Alasan */}
+          {paymentNote && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                Catatan Admin
+              </p>
+              <p className="text-xs text-gray-700 bg-amber-50 border border-amber-100 rounded-xl px-3.5 py-2.5 leading-relaxed">
+                {paymentNote}
+              </p>
+            </div>
+          )}
 
           {/* Pemesan Utama */}
           {(customerName || customerEmail || customerPhone) && (

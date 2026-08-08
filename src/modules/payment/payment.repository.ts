@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { payments } from "./payment.schema";
+import { payments, paymentAccounts } from "./payment.schema";
 import { eq } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
@@ -8,6 +8,7 @@ export interface IPaymentRepository {
   findByBookingId(bookingId: UUID): Promise<(typeof payments.$inferSelect)[]>;
   create(data: typeof payments.$inferInsert): Promise<typeof payments.$inferSelect>;
   update(id: UUID, data: Partial<typeof payments.$inferInsert>): Promise<void>;
+  findActiveAccounts(): Promise<(typeof paymentAccounts.$inferSelect)[]>;
 }
 
 export const paymentRepository: IPaymentRepository = {
@@ -27,5 +28,9 @@ export const paymentRepository: IPaymentRepository = {
 
   async update(id, data) {
     await db.update(payments).set(data).where(eq(payments.id, id));
+  },
+
+  async findActiveAccounts() {
+    return db.select().from(paymentAccounts).where(eq(paymentAccounts.isActive, true));
   },
 };
