@@ -443,3 +443,78 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 - `trip-form.tsx`: tambah `slug?: string` ke `TripFormData`.
 - Commit: `c3c1a36` (4 file). Lint: 0 errors / 34 warnings (pre-existing `<img>`).
 - **Catatan:** local `main` ahead of origin/main 1 commit — perlu `git push` bila ingin sinkron.
+
+## Session 17 — Auto Generate Slug di Modal Tambah/Edit Trip
+
+**Goal:** Auto-generate slug secara otomatis di modal Tambah/Edit Trip (`src/app/admin/trips/page.tsx`) saat admin menginputkan Judul Trip.
+
+**Completed:**
+- Updated `src/app/admin/trips/page.tsx`:
+  - Mengimpor `slugify` dari `@/shared/utils/helpers`.
+  - Memperbarui `handleChange` agar setiap kali `title` diubah, `form.slug` secara otomatis terisi dengan versi `slugify(title)`.
+  - Mengunci tipe trip menjadi **Open Trip** saja (menghapus pilihan tipe dropdown).
+  - Menambahkan manajemen **Itinerary** dinamis (multiple items) dengan field: Hari ke berapa (`dayNumber`), Wilayah/Lokasi (`location`), Judul Kegiatan (`title`), dan Deskripsi (`description`).
+  - Menjaga section **Aksesibilitas Lansia** (checkbox Ramah Lansia & text area Info Aksesibilitas).
+  - Menghapus input **Estimasi Waktu (menit)**.
+  - Menghapus input **Highlights** dan **Fasilitas**.
+
+
+## Session 18 — Hapus Meeting Point dari Sidebar & Master Meeting Point
+
+**Goal:** Menghapus menu Meeting Point dari sidebar admin dan menghapus halaman master Meeting Point.
+
+**Completed:**
+- Diperbarui `src/app/admin/layout.tsx`:
+  - Menghapus link `"Meeting Point"` (`/admin/meeting-points`) dari kelompok navigasi `"Trip & Tempat"`.
+  - Menghapus import `Map` yang tidak digunakan dari `lucide-react`.
+- Menghapus halaman & folder master meeting point `src/app/admin/meeting-points/page.tsx` dan file spec E2E `e2e/admin/meeting-points.spec.ts`.
+
+
+## Session 19 — Perubahan Input Harga, Kategori Auto-complete, dan Pilih Provinsi
+
+**Goal:** Mengganti input harga min/max dengan single input Harga (auto format Rupiah), menambahkan auto-complete Kategori dengan `react-select/creatable` (bisa freetext & tersimpan ke DB), serta menambahkan dropdown Pilih Provinsi di Informasi Destinasi.
+
+**Completed:**
+- Updated `src/app/admin/trips/page.tsx`:
+  - Mengubah input `Harga Min` & `Harga Max` menjadi single input **Harga (Rp)** dengan format Rupiah otomatis saat mengetik (`formatRupiah` & `parseRupiah`).
+  - Mengintegrasikan `CreatableSelect` dari `react-select/creatable` pada input **Kategori**, sehingga mendukung auto-complete serta freetext yang akan langsung dikirim ke `POST /api/destinations/categories` dan tersimpan ke database.
+  - Menambahkan dropdown **Pilih Provinsi** berisi 38 provinsi di Indonesia pada bagian **Informasi Destinasi**.
+- Updated `src/db/schema/trips.ts` & `src/modules/trip/trip.schema.ts`:
+  - Menambahkan kolom `province: text("province")` pada tabel `trips`.
+- Updated `src/modules/master/master.repository.ts` & `src/app/api/destinations/categories/route.ts`:
+  - Menambahkan method `createDestinationCategory` dan handler `POST` di `/api/destinations/categories` untuk menyimpan kategori baru.
+
+## Session 20 — Admin Users Management Page (/admin/users)
+
+**Goal:** Tambahkan halaman Users terdaftar pada `/admin/users` untuk melihat, mencari, memfilter role, mengedit detail/role, dan menghapus user terdaftar.
+
+**Completed:**
+- Updated `src/modules/auth/auth.repository.ts` — Menambahkan method `findAll()`, `update()`, dan `delete()`.
+- Updated `src/modules/auth/auth.service.ts` — Menambahkan method `getAllUsers()`, `updateUser()`, dan `deleteUser()`.
+- Created `src/app/api/users/route.ts` — Handler `GET /api/users` untuk mengambil semua pengguna terdaftar.
+- Created `src/app/api/users/[id]/route.ts` — Handler `PUT` dan `DELETE` `/api/users/[id]` untuk mengubah dan menghapus pengguna.
+- Created `src/app/admin/users/page.tsx` — Halaman manajemen user dengan kartu KPI (Total, User Biasa, Agent, Admin), pencarian, filter role, tabel user (avatar, nama, email, hp, role badge, referral, poin loyalitas, tanggal daftar), Modal Edit Pengguna, dan Modal Konfirmasi Hapus.
+- Updated `src/app/admin/layout.tsx` — Menambahkan menu navigasi "Pengguna" di sidebar admin.
+- Created `e2e/admin/users.spec.ts` — Playwright E2E test suite untuk halaman `/admin/users`.
+- Updated `feature_list.json` — Menambahkan `feat-049` (completed).
+
+## Session 21 — Bug Fix: Admin Trips rows.map is not a function
+
+**Goal:** Fix runtime TypeError (`rows.map is not a function`) in `src/app/admin/trips/page.tsx:353:22` when creating trips or when API responses return non-array error objects.
+
+**Completed:**
+- Updated `src/app/admin/trips/page.tsx`:
+  - Enforced array validation in `fetchData()` (`if (res.ok && Array.isArray(data)) setRows(data)`), setting `rows` to `[]` on non-array or error responses.
+  - Added robust error handling in `handleSubmit()` (`if (!res.ok)`), displaying feedback to user instead of failing silently and closing modal.
+  - Safe render mapping with `const tripRows = Array.isArray(rows) ? rows : [];` to prevent crashes under any state anomaly.
+- Updated `src/modules/trip/trip.repository.ts`:
+  - Fixed `saveItinerary()` to explicitly map supported columns (`tripId`, `dayNumber`, `title`, `description`, `startTime`, `endTime`) and omit non-schema properties (such as `location`), plus guaranteeing fallback non-null values for `title`.
+
+**Verification:**
+- `npm run lint` passed with 0 errors.
+
+
+
+
+
+
