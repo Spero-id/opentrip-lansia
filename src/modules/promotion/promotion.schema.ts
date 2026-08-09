@@ -20,7 +20,7 @@ export const promotions = pgTable("promotions", {
 export const promotionUsages = pgTable("promotion_usages", {
   id: uuid("id").primaryKey().defaultRandom(),
   promotionId: uuid("promotion_id").notNull().references(() => promotions.id),
-  userId: uuid("user_id").notNull(),
+  userId: text("user_id").notNull(),
   bookingId: uuid("booking_id").notNull().unique(),
   usedAt: timestamp("used_at").defaultNow().notNull(),
 });

@@ -14,7 +14,7 @@ export const contactMessages = pgTable("contact_messages", {
 
 export const auditLogs = pgTable("audit_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
-  adminId: uuid("admin_id"),
+  adminId: text("admin_id"),
   action: varchar("action", { length: 20 }).notNull(),
   entityType: varchar("entity_type", { length: 100 }).notNull(),
   entityId: uuid("entity_id"),

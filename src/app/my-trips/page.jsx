@@ -8,8 +8,10 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Luggage } from "lucide-react";
 
-// ─── Warna brand project ───────────────────────────────────────────────────
+
 const A = "#F49D1A";
+
+
 
 // ─── Label & warna status Private Trip ──────────────────────────────────
 const STATUS_LABEL = {
@@ -57,10 +59,10 @@ const OPEN_TRIP_STATUS_COLOR = {
   cancelled: "bg-red-100 text-red-800 border border-red-200",
 };
 const PAYMENT_STATUS_LABEL = {
-  pending: "Menunggu Verifikasi",
-  paid: "Lunas",
+  pending: "Menunggu Tinjauan",
+  paid: "Diterima",
   rejected: "Ditolak",
-  failed: "Gagal",
+  failed: "Ditolak",
 };
 const PAYMENT_STATUS_COLOR = {
   pending: "bg-amber-100 text-amber-800 border border-amber-200",
@@ -68,6 +70,10 @@ const PAYMENT_STATUS_COLOR = {
   rejected: "bg-red-100 text-red-800 border border-red-200",
   failed: "bg-red-100 text-red-800 border border-red-200",
 };
+
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+const WHATSAPP_MESSAGE = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
+
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 function formatRupiah(val) {
@@ -179,8 +185,8 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
             action === "accept"
               ? "Proposal berhasil diterima! Admin akan menghubungi Anda."
               : action === "revise"
-              ? "Permintaan revisi berhasil dikirim ke admin."
-              : "Proposal telah ditolak.",
+                ? "Permintaan revisi berhasil dikirim ke admin."
+                : "Proposal telah ditolak.",
         });
         setReviseOpen(false);
         setRevisionNote("");
@@ -197,9 +203,8 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
     <div className="rounded-2xl border border-gray-100 bg-white p-5 space-y-4 shadow-sm">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <span
-          className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-            PROPOSAL_COLOR[proposal.status] || "bg-gray-100 text-gray-600"
-          }`}
+          className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${PROPOSAL_COLOR[proposal.status] || "bg-gray-100 text-gray-600"
+            }`}
         >
           {PROPOSAL_LABEL[proposal.status] || proposal.status}
         </span>
@@ -243,11 +248,10 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
 
       {msg && (
         <p
-          className={`text-xs font-semibold px-3 py-2.5 rounded-xl border ${
-            msg.type === "ok"
+          className={`text-xs font-semibold px-3 py-2.5 rounded-xl border ${msg.type === "ok"
               ? "bg-teal-50 text-teal-700 border-teal-200"
               : "bg-red-50 text-red-700 border-red-200"
-          }`}
+            }`}
         >
           {msg.text}
         </p>
@@ -305,11 +309,10 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
               id={`btn-revise-${proposal.id}`}
               onClick={() => setReviseOpen((v) => !v)}
               disabled={loading}
-              className={`flex items-center gap-1.5 rounded-xl border px-4 py-2 text-xs font-bold transition disabled:opacity-50 active:scale-95 ${
-                reviseOpen
+              className={`flex items-center gap-1.5 rounded-xl border px-4 py-2 text-xs font-bold transition disabled:opacity-50 active:scale-95 ${reviseOpen
                   ? "border-purple-400 bg-purple-100 text-purple-700"
                   : "border-purple-300 text-purple-700 hover:bg-purple-50"
-              }`}
+                }`}
             >
               {icons.revise} Minta Revisi
             </button>
@@ -353,7 +356,7 @@ function ParsedPreferences({ text }) {
                 {isIndividu ? (
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 bg-gray-100 rounded-full px-3 py-1">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
                     </svg>
                     Individu
                   </span>
@@ -471,9 +474,8 @@ function RequestCard({ req, onRefresh }) {
             </span>
           )}
           <span
-            className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-              STATUS_COLOR[req.status] || "bg-gray-100 text-gray-600"
-            }`}
+            className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${STATUS_COLOR[req.status] || "bg-gray-100 text-gray-600"
+              }`}
           >
             {STATUS_LABEL[req.status] || req.status}
           </span>
@@ -519,29 +521,29 @@ function RequestCard({ req, onRefresh }) {
 
           {/* SECTION PROPOSAL — sementara disembunyikan */}
           {false && (
-          <div>
-            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Proposal dari Admin
-            </p>
-            {!req.proposals || req.proposals.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-gray-200 py-8 text-center bg-white">
-                <p className="text-sm text-gray-400">Belum ada proposal.</p>
-                <p className="text-xs text-gray-300 mt-1">Tim kami sedang menyiapkan penawaran terbaik untuk Anda.</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {req.proposals.map((p) => (
-                  <ProposalCard
-                    key={p.id}
-                    proposal={p}
-                    requestId={req.id}
-                    requestStatus={req.status}
-                    onRefresh={onRefresh}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+            <div>
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                Proposal dari Admin
+              </p>
+              {!req.proposals || req.proposals.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-gray-200 py-8 text-center bg-white">
+                  <p className="text-sm text-gray-400">Belum ada proposal.</p>
+                  <p className="text-xs text-gray-300 mt-1">Tim kami sedang menyiapkan penawaran terbaik untuk Anda.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {req.proposals.map((p) => (
+                    <ProposalCard
+                      key={p.id}
+                      proposal={p}
+                      requestId={req.id}
+                      requestStatus={req.status}
+                      onRefresh={onRefresh}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -551,6 +553,7 @@ function RequestCard({ req, onRefresh }) {
 
 // ─── Kartu Open Trip Booking ──────────────────────────────────────────────
 function OpenTripBookingCard({ booking }) {
+
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -579,11 +582,15 @@ function OpenTripBookingCard({ booking }) {
     }
   };
 
+
   const payment = booking.payments?.[0] || null;
   const paymentStatus = payment?.status || "pending";
   const paymentMethod = payment?.method || "manual";
   const paymentProof = payment?.proofUrl || null;
   const paymentNote = payment?.adminNote || null;
+
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
@@ -633,9 +640,8 @@ function OpenTripBookingCard({ booking }) {
               {formatRupiah(booking.totalAmount) || "IDR " + booking.totalAmount}
             </p>
             <span
-              className={`inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                OPEN_TRIP_STATUS_COLOR[booking.status] || "bg-teal-100 text-teal-800"
-              }`}
+              className={`inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${OPEN_TRIP_STATUS_COLOR[booking.status] || "bg-teal-100 text-teal-800"
+                }`}
             >
               {OPEN_TRIP_STATUS_LABEL[booking.status] || booking.status}
             </span>
@@ -648,6 +654,20 @@ function OpenTripBookingCard({ booking }) {
 
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-2 w-full rounded-xl bg-[#25D366] text-white text-xs font-bold py-1 shadow-sm transition"
+          >
+            <img
+              src="/whatsapp-logo.webp"
+              alt="WhatsApp"
+              className="w-10 h-10 object-contain transition duration-200 group-hover:brightness-90"
+            />
+            Hubungi Admin
+          </a>
+
           {/* Ringkasan Biaya */}
           <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
@@ -671,9 +691,8 @@ function OpenTripBookingCard({ booking }) {
               <span>Metode: <strong className="uppercase">{paymentMethod}</strong></span>
               <span className="inline-flex items-center gap-1">
                 Status Pembayaran:
-                <span className={`ml-0.5 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                  PAYMENT_STATUS_COLOR[paymentStatus] || "bg-gray-100 text-gray-600"
-                }`}>
+                <span className={`ml-0.5 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${PAYMENT_STATUS_COLOR[paymentStatus] || "bg-gray-100 text-gray-600"
+                  }`}>
                   {PAYMENT_STATUS_LABEL[paymentStatus] || paymentStatus}
                 </span>
               </span>
@@ -927,11 +946,10 @@ export default function MyTripsPage() {
               <button
                 id="tab-all"
                 onClick={() => setActiveTab("all")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
-                  activeTab === "all"
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === "all"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-500 hover:text-gray-800"
-                }`}
+                  }`}
               >
                 Semua
                 <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "all" ? "bg-orange-100 text-[#F49D1A]" : "bg-gray-200 text-gray-600"}`}>
@@ -942,11 +960,10 @@ export default function MyTripsPage() {
               <button
                 id="tab-open-trip"
                 onClick={() => setActiveTab("open")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
-                  activeTab === "open"
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === "open"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-500 hover:text-gray-800"
-                }`}
+                  }`}
               >
                 Open Trip
                 <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "open" ? "bg-orange-100 text-[#F49D1A]" : "bg-gray-200 text-gray-600"}`}>
@@ -957,11 +974,10 @@ export default function MyTripsPage() {
               <button
                 id="tab-private-trip"
                 onClick={() => setActiveTab("private")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
-                  activeTab === "private"
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${activeTab === "private"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-500 hover:text-gray-800"
-                }`}
+                  }`}
               >
                 Private Trip
                 <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "private" ? "bg-orange-100 text-[#F49D1A]" : "bg-gray-200 text-gray-600"}`}>
@@ -1061,37 +1077,37 @@ export default function MyTripsPage() {
               {((activeTab === "all" && filteredOpenBookings.length === 0 && filteredPrivateRequests.length === 0) ||
                 (activeTab === "open" && filteredOpenBookings.length === 0) ||
                 (activeTab === "private" && filteredPrivateRequests.length === 0)) && (
-                <div className="rounded-2xl border border-dashed border-gray-300 py-16 px-4 text-center bg-gray-50/50">
-                  <div className="flex justify-center mb-3">
-                    <Luggage className="w-10 h-10 text-gray-300" />
+                  <div className="rounded-2xl border border-dashed border-gray-300 py-16 px-4 text-center bg-gray-50/50">
+                    <div className="flex justify-center mb-3">
+                      <Luggage className="w-10 h-10 text-gray-300" />
+                    </div>
+                    <p className="text-sm font-bold text-gray-800">Belum ada riwayat pemesanan</p>
+                    <p className="text-xs text-gray-400 mt-1 mb-6 max-w-sm mx-auto">
+                      {searchQuery || statusFilter !== "all"
+                        ? "Tidak ada pemesanan yang sesuai dengan filter pencarian Anda."
+                        : activeTab === "open"
+                          ? "Anda belum pernah memesan Open Trip."
+                          : activeTab === "private"
+                            ? "Anda belum pernah mengajukan Private Trip."
+                            : "Jelajahi paket Open Trip atau buat perjalanan Private Trip impian Anda."}
+                    </p>
+                    <div className="flex justify-center gap-3 flex-wrap">
+                      <Link
+                        href="/trips"
+                        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-4 py-2 text-xs font-bold text-gray-800 shadow-sm"
+                      >
+                        Jelajah Open Trip
+                      </Link>
+                      <Link
+                        href="/private"
+                        className="inline-flex items-center gap-2 rounded-xl text-white px-4 py-2 text-xs font-bold shadow-sm"
+                        style={{ backgroundColor: A }}
+                      >
+                        Buat Private Trip
+                      </Link>
+                    </div>
                   </div>
-                  <p className="text-sm font-bold text-gray-800">Belum ada riwayat pemesanan</p>
-                  <p className="text-xs text-gray-400 mt-1 mb-6 max-w-sm mx-auto">
-                    {searchQuery || statusFilter !== "all"
-                      ? "Tidak ada pemesanan yang sesuai dengan filter pencarian Anda."
-                      : activeTab === "open"
-                      ? "Anda belum pernah memesan Open Trip."
-                      : activeTab === "private"
-                      ? "Anda belum pernah mengajukan Private Trip."
-                      : "Jelajahi paket Open Trip atau buat perjalanan Private Trip impian Anda."}
-                  </p>
-                  <div className="flex justify-center gap-3 flex-wrap">
-                    <Link
-                      href="/trips"
-                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 px-4 py-2 text-xs font-bold text-gray-800 shadow-sm"
-                    >
-                      Jelajah Open Trip
-                    </Link>
-                    <Link
-                      href="/private"
-                      className="inline-flex items-center gap-2 rounded-xl text-white px-4 py-2 text-xs font-bold shadow-sm"
-                      style={{ backgroundColor: A }}
-                    >
-                      Buat Private Trip
-                    </Link>
-                  </div>
-                </div>
-              )}
+                )}
             </div>
           )}
         </div>

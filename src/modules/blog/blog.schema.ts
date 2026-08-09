@@ -14,7 +14,7 @@ export const blogs = pgTable("blogs", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   content: text("content"),
   excerpt: text("excerpt"),
-  authorId: uuid("author_id").notNull(),
+  authorId: text("author_id").notNull(),
   categoryId: uuid("category_id"),
   coverImageId: uuid("cover_image_id"),
   tags: jsonb("tags"),

@@ -259,7 +259,7 @@
           "priority": 48,
           "depends_on": ["feat-040"],
           "verification": ["npm run lint"],
-          "evidence": "Admin blogs page, API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages"
+          "evidence": "Admin blogs page (list + create/edit modal + delete, error feedback, slug auto dari judul), API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages. CRUD di-fe: authorId di-inject dari session (fallback admin), slug unik auto-generate, publishedAt di-set saat published, updatedAt ter-update saat edit."
         }
       ]
     },

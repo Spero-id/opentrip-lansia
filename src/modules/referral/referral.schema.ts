@@ -2,7 +2,7 @@ import { pgTable, uuid, varchar, text, integer, boolean, timestamp, date } from 
 
 export const commissionRules = pgTable("commission_rules", {
   id: uuid("id").primaryKey().defaultRandom(),
-  agentId: uuid("agent_id"),
+  agentId: text("agent_id"),
   tripId: uuid("trip_id"),
   type: varchar("type", { length: 20 }).notNull(),
   value: varchar("value", { length: 50 }).notNull(),
@@ -14,8 +14,8 @@ export const commissionRules = pgTable("commission_rules", {
 
 export const referrals = pgTable("referrals", {
   id: uuid("id").primaryKey().defaultRandom(),
-  referrerId: uuid("referrer_id").notNull(),
-  referredUserId: uuid("referred_user_id"),
+  referrerId: text("referrer_id").notNull(),
+  referredUserId: text("referred_user_id"),
   bookingId: uuid("booking_id"),
   status: varchar("status", { length: 20 }).default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -23,7 +23,7 @@ export const referrals = pgTable("referrals", {
 
 export const commissions = pgTable("commissions", {
   id: uuid("id").primaryKey().defaultRandom(),
-  agentId: uuid("agent_id").notNull(),
+  agentId: text("agent_id").notNull(),
   referralId: uuid("referral_id"),
   bookingId: uuid("booking_id").notNull(),
   ruleId: uuid("rule_id"),
@@ -36,11 +36,11 @@ export const commissions = pgTable("commissions", {
 
 export const commissionPayouts = pgTable("commission_payouts", {
   id: uuid("id").primaryKey().defaultRandom(),
-  agentId: uuid("agent_id").notNull(),
+  agentId: text("agent_id").notNull(),
   amountRequested: varchar("amount_requested", { length: 50 }).notNull(),
   status: varchar("status", { length: 20 }).default("pending"),
   adminNotes: text("admin_notes"),
-  approvedBy: uuid("approved_by"),
+  approvedBy: text("approved_by"),
   paidAt: timestamp("paid_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -52,7 +52,7 @@ export const payoutCommissions = pgTable("payout_commissions", {
 
 export const loyaltyTransactions = pgTable("loyalty_transactions", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull(),
+  userId: text("user_id").notNull(),
   points: integer("points").notNull(),
   type: varchar("type", { length: 20 }).notNull(),
   referenceType: varchar("reference_type", { length: 50 }),

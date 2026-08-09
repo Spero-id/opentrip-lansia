@@ -70,7 +70,7 @@ export const bookingRepository: IBookingRepository = {
   },
 
   async findPaymentsByBookingId(bookingId) {
-    return db.select().from(payments).where(eq(payments.bookingId, bookingId));
+    return db.select().from(payments).where(eq(payments.bookingId, bookingId)).orderBy(desc(payments.createdAt));
   },
 };
 

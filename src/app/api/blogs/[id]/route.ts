@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { blogRepository } from "@/modules/blog";
+import { blogRepository, blogService } from "@/modules/blog";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -17,8 +17,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const body = await req.json();
-    await blogRepository.update(id, body);
-    return NextResponse.json({ success: true });
+    const data = await blogService.updateBlog(id, body);
+    if (!data) return NextResponse.json({ error: "Blog tidak ditemukan" }, { status: 404 });
+    return NextResponse.json(data);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";
     return NextResponse.json({ error: message }, { status: 400 });
