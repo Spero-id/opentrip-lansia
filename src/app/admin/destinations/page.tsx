@@ -116,14 +116,18 @@ export default function AdminDestinations() {
 
   useEffect(() => {
     fetchData();
-    fetch("/api/destinations/categories").then(r => r.json()).then(setCategories).catch(() => {});
+    fetch("/api/destinations/categories").then(r => r.json()).then(d => setCategories(Array.isArray(d) ? d : [])).catch(() => {});
   }, []);
 
   async function fetchData() {
     setLoading(true);
-    const res = await fetch("/api/destinations");
-    const data = await res.json();
-    setRows(data);
+    try {
+      const res = await fetch("/api/destinations");
+      const data = await res.json();
+      setRows(Array.isArray(data) ? data : []);
+    } catch {
+      setRows([]);
+    }
     setLoading(false);
   }
 

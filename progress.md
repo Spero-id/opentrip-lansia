@@ -394,4 +394,43 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 - Perubahan belum di-commit; `public/uploads/1786087232308-797633830.jpeg` untracked dari sesi sebelumnya (bukan bagian perubahan ini).
 - Error pre-existing (di luar scope): Edge Middleware `import crypto` di `auth.config.ts` via `middleware.ts`; lint `admin/private-trips/[id]/page.tsx`.
 
+### Session 18 — Admin CRUD Blogs (feat-048)
+
+**Tujuan:** CRUD blog berfungsi penuh: slug otomatis + unik, authorId dari session, publishedAt/updatedAt terjaga, error ditampilkan ke admin.
+
+**Backend:**
+- `blog.service.ts` — `createBlog` & `updateBlog` baru: authorId dari `auth.api.getSession` (fallback admin), slug auto-generate dari title + suffix `-2`/`-3` saat bentrok, `publishedAt` di-set saat status jadi `published`, `updatedAt` di-update saat edit, return 404-vs-400 lebih jelas.
+- `api/blogs/route.ts` POST — pakai `blogService.createBlog`; `api/blogs/[id]/route.ts` PUT — pakai `blogService.updateBlog` (import `blogService`).
+
+**Frontend (`admin/blogs/page.tsx`):**
+- Error dari API ditampilkan di modal (fetch-check `res.ok`); slug auto terisi dari judul saat slug masih kosong; fetchData defensif (kalau response bukan array → []).
+
+**Bugfix author_id (ditemukan user, live):**
+- Error `invalid input syntax for type uuid: "2QxjtOjK7w3GcojmKrFEa40t3JuCmzHt"` saat create blog dari akun signup. Akar: `blogs.author_id` di-migrasi sebagai `uuid`, padahal `users.id` adalah `text` (better-auth memakai nanoid 32 char utk user signup; seed admin pakai UUID string yg kebetulan valid).
+- Fix: `blog.schema.ts` `authorId: uuid(...)` → `text(...)` (author_id text, tak ada FK yg perlu di-drop). ALTER sudah dieksekusi ke DB live: `ALTER TABLE blogs ALTER COLUMN author_id TYPE text;` → insert pakai nanoid author terbukti sukses, test row dihapus.
+- LATENT sama (belum difix): `review.user_id`, `referral.user_id`, `promotion.user_id` masih `uuid` → akan gagal utk user signup (nanoid).
+
+**Bugfix menyeluruh UUID→TEXT utk semua kolom user-id (ditemukan user, error yang sama di payments.reviewed_by):**
+- Error sama saat konfirmasi admin payment: `update payments set ... reviewed_by = $4` gagal krn `payments.reviewed_by` masih `uuid`. Akar identik: semua kolom yg menyimpan `users.id` harus `text` (users.id = text).
+- Fix KODE (15 kolom di schema, semua `uuid("...")` → `text("...")`):
+  `blogs.author_id`, `payments.reviewed_by`, `refunds.requested_by`, `refunds.approved_by`, `reviews.user_id`, `promotion_usages.user_id`, `loyalty_transactions.user_id`, `audit_logs.admin_id`, `commission_payouts.approved_by`, `commission_payouts.agent_id`, `commissions.agent_id`, `commission_rules.agent_id`, `referrals.referrer_id`, `referrals.referred_user_id`, `gallery_media.uploaded_by`.
+  File: `blog.schema.ts`, `payment.schema.ts`, `review.schema.ts`, `promotion.schema.ts`, `referral.schema.ts`, `contact.schema.ts`, `trip.schema.ts`.
+- SQL utk user dijalankan manual: `docs/database/fix_uuid_user_columns_to_text.sql` (idempotent, DO block, skip kolom yg tak ada, drop/re-add FK ke users.id bila ada).
+- Catatan DB: sesi ini sempat terjadi ketidakkonsistenan target koneksi (DB yg terjangkau via .env menunjukkan state sebelum fitur payment — tidak ada `reviewed_by`/`payment_accounts`, dan kolom uuid kembali); user menyatakan DB adalah domain mereka — kode saja yang saya ubah, DB dikelola user. `npm run lint` 0 error / tsc bersih di semua schema yg diubah.
+
+**Bugfix admin crash `rows.map is not a function` (browser):**
+- `admin/destinations` (dan 8 halaman admin lain) memanggil `setRows(data)` tanpa memastikan array → begitu API mengembalikan `{error}` (mis. schema DB tidak sinkron), React crash di `rows.map`.
+- Fix defensif di `fetchData`: try/catch + `setRows(Array.isArray(data) ? data : [])`. Diterapkan ke: `admin/destinations`, `admin/commissions`, `admin/horeca`, `admin/galleries`, `admin/promotions`, `admin/vendors`, `admin/reviews`, `admin/trips`, `admin/meeting-points`. Plus fetch kategori di `destinations/page.tsx` & `destination-form.tsx` (sama-sama dipastikan array).
+- `admin/private-trips` & `admin/pesanan` sudah defensif (tanpa perubahan).
+- Verifikasi: targeted eslint 0 error (1 warning `<img>` pre-existing), tsc bersih.
+- Catatan: halaman kini tampil kosong ("Belum ada data") saat API error — akar penyebab (kolom `destinations` tidak sinkron dgn schema) ada di sisi DB yang dikelola user.
+
+**Verifikasi:**
+- Targeted eslint 0 error; `npm run lint` 0 error / 44 warning (baseline sama); `tsc --noEmit` 0 error di file blog.
+- Smoke live (:3000): POST create → 201 slug `blog-tes-crud` + authorId admin ter-inject + publishedAt ter-set; POST judul duplikat → slug `blog-tes-crud-2`; PUT update → 200 content/updatedAt berubah, publishedAt null saat jadi draft; DELETE → 200; GET list bersih kembali ke 3 blog seed. Server dimatikan, temp files + `dev-server.log`/pid dibersihkan.
+
+**Catatan:**
+- Fitur pembayaran (sesi sebelumnya) sudah di-commit user via PR #50 (commit `1abdb67`), namun ikut ter-commit `dev-server.log`, `dev-server.pid`, dan `public/uploads/1786087232308-797633830.jpeg` (kebersihan belum sempurna; log/pid sudah dihapus dari working tree).
+- Perubahan blog CRUD belum di-commit (menunggu review user).
+
 

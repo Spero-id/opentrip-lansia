@@ -99,7 +99,7 @@ export const galleryMedia = pgTable("gallery_media", {
   id: uuid("id").primaryKey().defaultRandom(),
   galleryId: uuid("gallery_id").notNull().references(() => tripGalleries.id),
   mediaId: uuid("media_id").notNull(),
-  uploadedBy: uuid("uploaded_by").notNull(),
+  uploadedBy: text("uploaded_by").notNull(),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

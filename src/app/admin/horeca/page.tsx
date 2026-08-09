@@ -48,9 +48,13 @@ export default function AdminHoreca() {
 
   async function fetchData() {
     setLoading(true);
-    const res = await fetch("/api/horeca");
-    const data = await res.json();
-    setRows(data);
+    try {
+      const res = await fetch("/api/horeca");
+      const data = await res.json();
+      setRows(Array.isArray(data) ? data : []);
+    } catch {
+      setRows([]);
+    }
     setLoading(false);
   }
 

@@ -26,6 +26,16 @@ interface BlogForm {
 
 const emptyForm: BlogForm = { title: "", slug: "", content: "", excerpt: "", status: "draft" };
 
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export default function AdminBlogs() {
   const [rows, setRows] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +44,7 @@ export default function AdminBlogs() {
   const [editing, setEditing] = useState<Blog | null>(null);
   const [form, setForm] = useState<BlogForm>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -42,34 +53,52 @@ export default function AdminBlogs() {
 
   async function fetchData() {
     setLoading(true);
-    const res = await fetch("/api/blogs");
-    const data = await res.json();
-    setRows(data);
+    try {
+      const res = await fetch("/api/blogs");
+      const data = await res.json();
+      setRows(Array.isArray(data) ? data : []);
+    } catch {
+      setRows([]);
+    }
     setLoading(false);
   }
 
   function openCreate() {
     setEditing(null);
     setForm(emptyForm);
+    setSaveError(null);
     setModalOpen(true);
   }
 
   function openEdit(item: Blog) {
     setEditing(item);
     setForm({ title: item.title, slug: item.slug, content: item.content || "", excerpt: item.excerpt || "", status: item.status });
+    setSaveError(null);
     setModalOpen(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setSaveError(null);
     const url = editing ? `/api/blogs/${editing.id}` : "/api/blogs";
-    await fetch(url, {
+    const res = await fetch(url, {
       method: editing ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
     setSaving(false);
+    if (!res.ok) {
+      let msg = "Gagal menyimpan blog.";
+      try {
+        const data = await res.json();
+        if (data?.error) msg = data.error;
+      } catch {
+        // pakai pesan default
+      }
+      setSaveError(msg);
+      return;
+    }
     setModalOpen(false);
     fetchData();
   }
@@ -84,7 +113,12 @@ export default function AdminBlogs() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      if (name === "title" && !prev.slug.trim()) {
+        return { ...prev, title: value, slug: slugify(value) };
+      }
+      return { ...prev, [name]: value };
+    });
   }
 
   return (
@@ -175,6 +209,9 @@ export default function AdminBlogs() {
               <option value="published">Published</option>
             </select>
           </div>
+          {saveError && (
+            <p className="text-xs font-medium text-red-600 bg-red-50 rounded-lg px-3 py-2">{saveError}</p>
+          )}
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">

@@ -40,9 +40,13 @@ export default function AdminMeetingPoints() {
 
   async function fetchData() {
     setLoading(true);
-    const res = await fetch("/api/meeting-points");
-    const data = await res.json();
-    setRows(data);
+    try {
+      const res = await fetch("/api/meeting-points");
+      const data = await res.json();
+      setRows(Array.isArray(data) ? data : []);
+    } catch {
+      setRows([]);
+    }
     setLoading(false);
   }
 

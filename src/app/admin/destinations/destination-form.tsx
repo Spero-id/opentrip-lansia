@@ -113,7 +113,7 @@ export default function DestinationForm({
     if (!initialCategories) {
       fetch("/api/destinations/categories")
         .then((r) => r.json())
-        .then(setCategories)
+        .then((d) => setCategories(Array.isArray(d) ? d : []))
         .catch(() => {});
     }
   }, [initialCategories]);

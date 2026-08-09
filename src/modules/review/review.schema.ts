@@ -3,7 +3,7 @@ import { pgTable, uuid, varchar, text, integer, boolean, timestamp } from "drizz
 export const reviews = pgTable("reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
   bookingId: uuid("booking_id").notNull().unique(),
-  userId: uuid("user_id").notNull(),
+  userId: text("user_id").notNull(),
   tripId: uuid("trip_id").notNull(),
   departureId: uuid("departure_id"),
   rating: integer("rating").notNull(),

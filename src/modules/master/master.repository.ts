@@ -1,6 +1,6 @@
 import { db } from "@/shared/db";
 import { destinations, destinationCategories, horeca, vendors, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 type DestinationInsert = typeof destinations.$inferInsert;
@@ -13,7 +13,8 @@ export const masterRepository = {
         categoryName: destinationCategories.name,
       })
       .from(destinations)
-      .leftJoin(destinationCategories, eq(destinations.categoryId, destinationCategories.id));
+      .leftJoin(destinationCategories, eq(destinations.categoryId, destinationCategories.id))
+      .orderBy(desc(destinations.createdAt));
     
     return results.map((r) => ({
       ...r.dest,
@@ -53,11 +54,11 @@ export const masterRepository = {
   },
 
   async getHorecaList() {
-    return db.select().from(horeca);
+    return db.select().from(horeca).orderBy(desc(horeca.createdAt));
   },
 
   async getVendors() {
-    return db.select().from(vendors);
+    return db.select().from(vendors).orderBy(desc(vendors.createdAt));
   },
 
   // HORECA
@@ -102,7 +103,7 @@ export const masterRepository = {
 
   // Meeting Points
   async getMeetingPoints() {
-    return db.select().from(meetingPoints).orderBy(meetingPoints.name);
+    return db.select().from(meetingPoints).orderBy(desc(meetingPoints.createdAt));
   },
 
   async getMeetingPointById(id: UUID) {

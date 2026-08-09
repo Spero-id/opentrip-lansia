@@ -62,14 +62,18 @@ const statusBadge: Record<string, { label: string; className: string }> = {
 
 const paymentBadge: Record<string, { label: string; className: string }> = {
   pending: {
-    label: "Menunggu Verifikasi",
+    label: "Menunggu Tinjauan",
     className: "bg-amber-100 text-amber-800",
   },
   paid: {
-    label: "Lunas",
+    label: "Diterima",
     className: "bg-emerald-100 text-emerald-800",
   },
   rejected: {
+    label: "Ditolak",
+    className: "bg-red-100 text-red-800",
+  },
+  failed: {
     label: "Ditolak",
     className: "bg-red-100 text-red-800",
   },
