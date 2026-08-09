@@ -7,15 +7,15 @@ export default function Footer() {
   const [popular, setPopular] = useState([]);
 
   useEffect(() => {
-    fetch("/api/destinations")
+    fetch("/api/trips")
       .then((res) => res.json())
       .then((data) => {
         if (!Array.isArray(data)) return;
-        const active = data.filter((d) => d.isActive !== false);
+        const active = data.filter((d) => d.status === "published");
         const sorted = [...active].sort(
           (a, b) =>
             (b.reviewCount ?? 0) - (a.reviewCount ?? 0) ||
-            (a.name || "").localeCompare(b.name || "")
+            (a.title || "").localeCompare(b.title || "")
         );
         setPopular(sorted.slice(0, 5));
       })
@@ -120,7 +120,7 @@ export default function Footer() {
                     href={`/trips/${d.id}`}
                     className="hover:text-[#F49D1A] transition-colors"
                   >
-                    {d.name}
+                    {d.title}
                   </Link>
                 </li>
               ))}

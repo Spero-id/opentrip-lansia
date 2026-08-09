@@ -1,5 +1,5 @@
-import { pgTable, uuid, varchar, text, integer, boolean, timestamp, date, time } from "drizzle-orm/pg-core";
-import { destinations, meetingPoints } from "../master/master.schema";
+import { pgTable, uuid, varchar, text, integer, boolean, timestamp, date, time, jsonb, doublePrecision } from "drizzle-orm/pg-core";
+import { destinationCategories, meetingPoints } from "../master/master.schema";
 
 export const trips = pgTable("trips", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -14,6 +14,24 @@ export const trips = pgTable("trips", {
   maxParticipants: integer("max_participants"),
   meetingPointId: uuid("meeting_point_id").references(() => meetingPoints.id),
   isFeatured: boolean("is_featured").default(false),
+  // Destination fields (merged from destinations table)
+  categoryId: uuid("category_id").references(() => destinationCategories.id),
+  location: text("location"),
+  province: text("province"),
+  geoPoint: text("geo_point"),
+  isSeniorFriendly: boolean("is_senior_friendly").default(false),
+  accessibilityInfo: text("accessibility_info"),
+  visitEstimateMinutes: integer("visit_estimate_minutes"),
+  image: text("image"),
+  rating: doublePrecision("rating"),
+  images: jsonb("images").$type<string[]>(),
+  reviewCount: integer("review_count"),
+  priceMin: integer("price_min"),
+  priceMax: integer("price_max"),
+  highlights: jsonb("highlights").$type<string[]>(),
+  facilities: jsonb("facilities").$type<(string | { name: string; icon?: string })[]>(),
+  itinerary: jsonb("itinerary").$type<{ day: number; title: string; description: string }[]>(),
+  meetingPointsJson: jsonb("meeting_points").$type<{ time: string; location: string; description: string }[]>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -44,14 +62,6 @@ export const tripPrices = pgTable("trip_prices", {
   isActive: boolean("is_active").default(true),
 });
 
-export const tripDestinations = pgTable("trip_destinations", {
-  tripId: uuid("trip_id").notNull().references(() => trips.id),
-  destinationId: uuid("destination_id").notNull().references(() => destinations.id),
-  dayOrder: integer("day_order").notNull(),
-  durationHours: integer("duration_hours"),
-  notes: text("notes"),
-});
-
 export const tripHoreca = pgTable("trip_horeca", {
   tripId: uuid("trip_id").notNull().references(() => trips.id),
   horecaId: uuid("horeca_id").notNull(),
@@ -74,7 +84,6 @@ export const itineraryItems = pgTable("itinerary_items", {
   endTime: time("end_time"),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  destinationId: uuid("destination_id").references(() => destinations.id),
   horecaId: uuid("horeca_id"),
 });
 

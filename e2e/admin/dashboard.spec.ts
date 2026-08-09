@@ -45,9 +45,4 @@ test.describe("Admin Dashboard", () => {
     await page.locator("aside a").filter({ hasText: "Paket Trip" }).click();
     await expect(page).toHaveURL(/\/admin\/trips/);
   });
-
-  test("should navigate to destinations via sidebar", async ({ page }) => {
-    await page.locator("aside a").filter({ hasText: "Destinasi" }).click();
-    await expect(page).toHaveURL(/\/admin\/destinations/);
-  });
 });

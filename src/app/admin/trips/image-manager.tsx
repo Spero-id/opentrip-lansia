@@ -48,7 +48,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-slate-700">Gambar Destinasi</label>
+      <label className="block text-sm font-medium text-slate-700">Gambar Trip</label>
 
       {images.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -81,7 +81,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
         </div>
       ) : (
         <div className="rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
-          Belum ada gambar. Unggah gambar destinasi di bawah.
+          Belum ada gambar. Unggah gambar trip di bawah.
         </div>
       )}
 

@@ -24,7 +24,8 @@ module.exports = {
   },
   setupFiles: [],
   setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
-  testMatch: ["**/__tests__/**/*.test.{ts,tsx}"],
+  modulePathIgnorePatterns: ["<rootDir>/public/"],
+  testMatch: ["**/*.test.{ts,tsx}"],
   transformIgnorePatterns: [
     "/node_modules/(?!(lucide-react|better-auth)/)",
   ],

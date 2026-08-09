@@ -79,7 +79,7 @@ export default function PrivateTripPage() {
   useEffect(() => {
     async function fetchDestinations() {
       try {
-        const res = await fetch("/api/destinations");
+        const res = await fetch("/api/trips");
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { MapPin, Calendar, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
+import { Compass, Calendar, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
 
 export default function AdminDashboard() {
   const stats = [
-    { label: "Total Paket Trip", value: "24", change: "+12% bln ini", icon: MapPin, color: "text-[#F49D1A]", bg: "bg-[#FEF6E7]" },
+    { label: "Total Destinasi & Trip", value: "24", change: "+12% bln ini", icon: Compass, color: "text-[#F49D1A]", bg: "bg-[#FEF6E7]" },
     { label: "Pemesanan Bulan Ini", value: "148", change: "+24% vs lalu", icon: Calendar, color: "text-[#1CA6B7]", bg: "bg-[#1CA6B7]/10" },
     { label: "Total Pendapatan", value: "Rp 128.5M", change: "+18.4%", icon: DollarSign, color: "text-blue-600", bg: "bg-blue-50" },
     { label: "Promo Aktif", value: "6", change: "2 Berakhir", icon: TrendingUp, color: "text-purple-600", bg: "bg-purple-50" },
@@ -110,10 +110,10 @@ export default function AdminDashboard() {
               <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
             </Link>
             <Link
-              href="/admin/destinations"
+              href="/admin/trips/new"
               className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Tambah Destinasi Baru</span>
+              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Tambah Trip Baru</span>
               <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
             </Link>
             <Link

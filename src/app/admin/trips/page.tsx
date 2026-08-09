@@ -7,6 +7,7 @@ import { slugify } from "@/shared/utils/helpers";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 import ImageManager from "./image-manager";
+import IconPicker from "../components/icon-picker";
 
 const PROVINCES = [
   "Aceh",
@@ -78,6 +79,7 @@ interface Trip {
   accessibilityInfo: string | null;
   priceMin: number | null;
   priceMax: number | null;
+  facilities?: (string | { name: string; icon?: string })[] | null;
   itinerary?: { day: number; location?: string; title: string; description: string }[];
   itineraryItems?: { dayNumber: number; location?: string; title: string; description: string }[];
   createdAt: string;
@@ -88,6 +90,11 @@ interface ItineraryItemInput {
   location: string;
   title: string;
   description: string;
+}
+
+interface FacilityItemInput {
+  name: string;
+  icon: string;
 }
 
 interface TripForm {
@@ -136,6 +143,7 @@ export default function AdminTrips() {
   const [form, setForm] = useState<TripForm>(emptyForm);
   const [images, setImages] = useState<string[]>([]);
   const [itineraryList, setItineraryList] = useState<ItineraryItemInput[]>([]);
+  const [facilitiesList, setFacilitiesList] = useState<FacilityItemInput[]>([]);
   const [saving, setSaving] = useState(false);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -191,6 +199,7 @@ export default function AdminTrips() {
     setForm(emptyForm);
     setImages([]);
     setItineraryList([{ dayNumber: 1, location: "", title: "", description: "" }]);
+    setFacilitiesList([{ name: "", icon: "Check" }]);
     setModalOpen(true);
   }
 
@@ -226,6 +235,18 @@ export default function AdminTrips() {
           }))
         : []
     );
+
+    const rawFacilities = item.facilities || [];
+    setFacilitiesList(
+      Array.isArray(rawFacilities) && rawFacilities.length > 0
+        ? rawFacilities.map((f) =>
+            typeof f === "string"
+              ? { name: f, icon: "Check" }
+              : { name: f?.name || "", icon: f?.icon || "Check" }
+          )
+        : []
+    );
+
     setModalOpen(true);
   }
 
@@ -251,6 +272,12 @@ export default function AdminTrips() {
       images: images.length > 0 ? images : undefined,
       priceMin: form.price || undefined,
       priceMax: form.price || undefined,
+      facilities: facilitiesList
+        .filter((item) => item.name.trim() !== "")
+        .map((item) => ({
+          name: item.name.trim(),
+          icon: item.icon || "Check",
+        })),
       itinerary: itineraryList.map((item) => ({
         day: Number(item.dayNumber) || 1,
         location: item.location,

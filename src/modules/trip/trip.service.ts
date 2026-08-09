@@ -1,14 +1,12 @@
 import { tripRepository } from "./trip.repository";
 import type { UUID } from "@/shared/types";
-import type { trips, itineraryItems, tripDestinations } from "./trip.schema";
+import type { trips, itineraryItems } from "./trip.schema";
 
 type TripInsert = typeof trips.$inferInsert;
 type ItineraryInsert = typeof itineraryItems.$inferInsert;
-type TripDestInsert = typeof tripDestinations.$inferInsert;
 
 interface TripCreateInput extends Omit<TripInsert, "id" | "createdAt" | "updatedAt"> {
-  itinerary?: Omit<ItineraryInsert, "id" | "tripId">[];
-  tripDestinations?: Omit<TripDestInsert, "tripId">[];
+  itineraryItems?: Omit<ItineraryInsert, "id" | "tripId">[];
 }
 
 export const tripService = {
@@ -41,29 +39,23 @@ export const tripService = {
   },
 
   async createTrip(data: TripCreateInput) {
-    const { itinerary, tripDestinations: dests, ...tripData } = data;
+    const { itineraryItems, ...tripData } = data;
     const trip = await tripRepository.create(tripData);
 
-    if (dests?.length) {
-      await tripRepository.saveTripDestinations(trip.id, dests);
-    }
-    if (itinerary?.length) {
-      await tripRepository.saveItinerary(trip.id, itinerary);
+    if (itineraryItems?.length) {
+      await tripRepository.saveItinerary(trip.id, itineraryItems);
     }
 
     return this.getFullTrip(trip.id);
   },
 
   async updateTrip(id: UUID, data: TripCreateInput) {
-    const { itinerary, tripDestinations: dests, ...tripData } = data;
+    const { itineraryItems, ...tripData } = data;
     const trip = await tripRepository.update(id, tripData);
     if (!trip) return null;
 
-    if (dests !== undefined) {
-      await tripRepository.saveTripDestinations(id, dests);
-    }
-    if (itinerary !== undefined) {
-      await tripRepository.saveItinerary(id, itinerary);
+    if (itineraryItems !== undefined) {
+      await tripRepository.saveItinerary(id, itineraryItems);
     }
 
     return this.getFullTrip(id);
@@ -73,8 +65,7 @@ export const tripService = {
     const trip = await tripRepository.findById(id);
     if (!trip) return null;
     const itinerary = await tripRepository.findItineraryByTripId(id);
-    const tripDestinations = await tripRepository.findTripDestinations(id);
-    return { ...trip, itinerary, tripDestinations };
+    return { ...trip, itinerary };
   },
 
   async deleteTrip(id: UUID) {

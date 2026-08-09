@@ -435,6 +435,21 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 **Verification:**
 - `npm run lint` passed with 0 errors.
 
+## Session 22 — HugeRTE WYSIWYG Editor for Admin Blogs Modal
+
+**Goal:** Implement WYSIWYG rich text editor for blog content textarea in create/edit modal (`src/app/admin/blogs/page.tsx`) using `@hugerte/hugerte-react`.
+
+**Completed:**
+- Installed `@hugerte/hugerte-react` and `hugerte` packages.
+- Added postinstall script to `package.json` to mirror `hugerte` static assets into `public/hugerte` for client-side bundle loading.
+- Created reusable client component `src/app/admin/components/wysiwyg-editor.tsx` wrapping `@hugerte/hugerte-react` with Next.js dynamic import (`ssr: false`).
+- Integrated `WysiwygEditor` into `src/app/admin/blogs/page.tsx` create/edit modal content field.
+- Updated public blog detail page `src/app/blog/[slug]/page.jsx` to render HTML content using `dangerouslySetInnerHTML` with styled prose typography.
+
+**Verification:**
+- `./init.sh` executed cleanly (all 3 Jest test suites passed, 0 lint errors on modified files).
+
+
 
 
 

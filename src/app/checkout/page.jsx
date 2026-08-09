@@ -34,12 +34,12 @@ function CheckoutContent() {
     if (staticDest || !destId) return;
     let cancelled = false;
 
-    fetch("/api/destinations")
+    fetch("/api/trips")
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
         const found = Array.isArray(data)
-          ? data.find((d) => d.id === destId && d.isActive !== false)
+          ? data.find((d) => d.id === destId && d.status === "published")
           : undefined;
         if (found) {
           setDestination(toDetail(found));

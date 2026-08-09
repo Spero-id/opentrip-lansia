@@ -6,19 +6,17 @@ import { useState } from "react";
 import {
   Compass,
   LayoutDashboard,
-  MapPin,
   Building2,
   Users,
+  UserCheck,
   Tag,
   Percent,
   Star,
   FileText,
   ArrowLeft,
-  Search,
   Bell,
   Route,
   ShoppingCart,
-  Map,
   Menu,
   X,
 } from "lucide-react";
@@ -29,19 +27,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navItems = [
-    { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { name: "Paket Trip", href: "/admin/trips", icon: MapPin },
-    { name: "Destinasi", href: "/admin/destinations", icon: Compass },
-    { name: "HORECA", href: "/admin/horeca", icon: Building2 },
-    { name: "Vendor", href: "/admin/vendors", icon: Users },
-    { name: "Promo", href: "/admin/promotions", icon: Tag },
-    { name: "Komisi", href: "/admin/commissions", icon: Percent },
-    { name: "Ulasan", href: "/admin/reviews", icon: Star },
-    { name: "Meeting Point", href: "/admin/meeting-points", icon: Map },
-    { name: "Blog", href: "/admin/blogs", icon: FileText },
-    { name: "Pesanan", href: "/admin/pesanan", icon: ShoppingCart },
-    { name: "Private Trip", href: "/admin/private-trips", icon: Route },
+  const navGroups = [
+    {
+      label: null,
+      items: [{ name: "Dashboard", href: "/admin", icon: LayoutDashboard }],
+    },
+    {
+      label: "Trip & Tempat",
+      items: [
+        { name: "Paket Trip", href: "/admin/trips", icon: Compass },
+        { name: "Private Trip", href: "/admin/private-trips", icon: Route },
+      ],
+    },
+    {
+      label: "Pengguna & Partner",
+      items: [
+        { name: "Pengguna", href: "/admin/users", icon: UserCheck },
+        { name: "HORECA", href: "/admin/horeca", icon: Building2 },
+        { name: "Vendor", href: "/admin/vendors", icon: Users },
+      ],
+    },
+    {
+      label: "Marketing",
+      items: [
+        { name: "Promo", href: "/admin/promotions", icon: Tag },
+        { name: "Komisi", href: "/admin/commissions", icon: Percent },
+      ],
+    },
+    {
+      label: "Order",
+      items: [
+        { name: "Pesanan", href: "/admin/pesanan", icon: ShoppingCart },
+        { name: "Ulasan", href: "/admin/reviews", icon: Star },
+      ],
+    },
+    {
+      label: "Konten",
+      items: [{ name: "Blog", href: "/admin/blogs", icon: FileText }],
+    },
   ];
 
   return (
@@ -54,14 +77,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile hamburger */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-3 left-3 z-50 lg:hidden bg-[#0D238E] text-white p-2.5 rounded-xl shadow-lg"
+        className="fixed top-3 left-3 z-50 lg:hidden bg-[#0D238E] text-white p-2.5 rounded-xl shadow-lg shadow-[#0D238E]/30"
         aria-label="Toggle sidebar"
       >
         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-black/80 text-slate-300 flex flex-col justify-between p-4 border-r border-slate-800 shrink-0 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:inset-auto lg:translate-x-0 ${
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#081868] text-slate-200 flex flex-col justify-between p-4 border-r border-[#061452] shrink-0 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:inset-auto lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}>
         <div className="space-y-6">
@@ -73,33 +96,42 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Nav menu */}
-          <nav className="space-y-1 text-sm font-medium overflow-y-auto max-h-[calc(100vh-9rem)]"> 
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl transition duration-200 ${
-                    isActive
-                      ? "bg-[#F49D1A] text-white font-semibold shadow-lg shadow-[#F49D1A]/25"
-                      : "text-white hover:bg-slate-800/80 hover:text-white"
-                  }`}
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
+          <nav className="space-y-4 text-sm font-medium overflow-y-auto max-h-[calc(100vh-9rem)]">
+            {navGroups.map((group, gi) => (
+              <div key={gi} className="space-y-1">
+                {group.label && (
+                  <p className="px-3.5 text-[10px] font-bold uppercase tracking-wider text-blue-300/50">
+                    {group.label}
+                  </p>
+                )}
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-200 ${
+                        isActive
+                          ? "bg-[#F49D1A] text-white font-semibold shadow-lg shadow-[#F49D1A]/25"
+                          : "text-blue-100 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
         </div>
 
         {/* Back to main website link */}
-        <div className="pt-4 border-t border-slate-800">
+        <div className="pt-4 border-t border-white/10">
           <Link
             href="/"
-            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-white hover:text-white transition"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-blue-100 hover:text-white transition"
           >
             <ArrowLeft className="w-4 h-4 text-[#F49D1A]" />
             <span>Kembali ke Website Utama</span>
