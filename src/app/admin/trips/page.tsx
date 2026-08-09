@@ -364,6 +364,22 @@ export default function AdminTrips() {
     });
   }
 
+  function addFacilityItem() {
+    setFacilitiesList((prev) => [...prev, { name: "", icon: "Check" }]);
+  }
+
+  function removeFacilityItem(index: number) {
+    setFacilitiesList((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleFacilityChange(index: number, field: keyof FacilityItemInput, value: string) {
+    setFacilitiesList((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  }
+
   const tripRows = Array.isArray(rows) ? rows : [];
 
   return (
@@ -641,6 +657,59 @@ export default function AdminTrips() {
                         className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
                       />
                     </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-slate-200 pt-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Fasilitas Trip</h3>
+                <p className="text-xs text-slate-500">Kelola fasilitas dan pilih icon terkait.</p>
+              </div>
+              <button
+                type="button"
+                onClick={addFacilityItem}
+                className="px-3 py-1.5 text-xs font-semibold text-[#F49D1A] bg-[#F49D1A]/10 hover:bg-[#F49D1A]/20 rounded-xl transition inline-flex items-center gap-1.5"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah Fasilitas</span>
+              </button>
+            </div>
+
+            {facilitiesList.length === 0 ? (
+              <p className="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+                Belum ada fasilitas. Klik tombol di atas untuk menambah fasilitas.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {facilitiesList.map((item, index) => (
+                  <div key={index} className="flex items-start gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80">
+                    <div className="w-32 shrink-0">
+                      <IconPicker
+                        value={item.icon}
+                        onChange={(newIcon) => handleFacilityChange(index, "icon", newIcon)}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => handleFacilityChange(index, "name", e.target.value)}
+                        placeholder="Nama Fasilitas (cth: Bus AC)"
+                        className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeFacilityItem(index)}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0 mt-0.5"
+                      title="Hapus Fasilitas"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 ))}
               </div>
