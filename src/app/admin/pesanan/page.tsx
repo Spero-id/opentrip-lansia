@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Eye } from "lucide-react";
+import { Eye, CheckCircle, Loader2, ExternalLink } from "lucide-react";
 import Modal from "../components/modal";
 
 interface Booking {
@@ -14,6 +14,20 @@ interface Booking {
   currency: string;
   bookingDate: string;
   notes: string | null;
+}
+
+interface Payment {
+  id: string;
+  bookingId: string;
+  method: string | null;
+  amount: string;
+  status: string;
+  gatewayResponse: { proofUrl?: string } | null;
+  paidAt: string | null;
+}
+
+interface BookingDetail extends Booking {
+  payments: Payment[];
 }
 
 interface NotesInfo {
@@ -31,6 +45,10 @@ const statusBadge: Record<string, { label: string; className: string }> = {
   pending: {
     label: "Pending",
     className: "bg-amber-100 text-amber-800",
+  },
+  awaiting_verification: {
+    label: "Menunggu Verifikasi",
+    className: "bg-orange-100 text-orange-800",
   },
   confirmed: {
     label: "Dikonfirmasi",
@@ -77,6 +95,10 @@ export default function AdminPesanan() {
 
   const [detailOpen, setDetailOpen] = useState(false);
   const [selected, setSelected] = useState<Booking | null>(null);
+  const [detailData, setDetailData] = useState<BookingDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [approvingRowId, setApprovingRowId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -106,10 +128,52 @@ export default function AdminPesanan() {
     return () => { cancelled = true; };
   }, []);
 
-  function openDetail(item: Booking) {
+  async function openDetail(item: Booking) {
     setSelected(item);
     setDetailOpen(true);
+    setDetailLoading(true);
+    setDetailData(null);
+    try {
+      const res = await fetch(`/api/bookings/${item.id}`, { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setDetailData(data);
+      }
+    } catch {
+      // silently fail, will show basic data from selected
+    } finally {
+      setDetailLoading(false);
+    }
   }
+
+  async function handleApprove(bookingId: string, setRow?: boolean) {
+    if (setRow) setApprovingRowId(bookingId);
+    else setApproving(true);
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: "confirmed" }),
+      });
+      if (res.ok) {
+        setRows(prev => prev.map(r => r.id === bookingId ? { ...r, status: "confirmed" } : r));
+        if (selected?.id === bookingId) {
+          setSelected(prev => prev ? { ...prev, status: "confirmed" } : prev);
+          setDetailData(prev => prev ? { ...prev, status: "confirmed" } : prev);
+        }
+      }
+    } catch {
+      // silently fail
+    } finally {
+      if (setRow) setApprovingRowId(null);
+      else setApproving(false);
+    }
+  }
+
+  const displayData = detailData ?? selected;
+  const payments = detailData?.payments ?? [];
+  const proofPayments = payments.filter(p => p.gatewayResponse?.proofUrl);
 
   return (
     <div className="space-y-6">
@@ -198,13 +262,29 @@ export default function AdminPesanan() {
                         {formatDate(b.bookingDate)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => openDetail(b)}
-                          className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
-                          title="Lihat Detail"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          {(b.status === "pending" || b.status === "awaiting_verification") && (
+                            <button
+                              onClick={() => handleApprove(b.id, true)}
+                              disabled={approvingRowId === b.id}
+                              className="p-2 text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition disabled:opacity-50"
+                              title="Approve"
+                            >
+                              {approvingRowId === b.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <CheckCircle className="w-4 h-4" />
+                              )}
+                            </button>
+                          )}
+                          <button
+                            onClick={() => openDetail(b)}
+                            className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                            title="Lihat Detail"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -217,19 +297,25 @@ export default function AdminPesanan() {
 
       <Modal
         open={detailOpen}
-        onClose={() => setDetailOpen(false)}
+        onClose={() => { setDetailOpen(false); setSelected(null); setDetailData(null); }}
         title="Detail Pesanan"
         size="lg"
       >
-        {selected && (() => {
-          const notesInfo = parseNotes(selected.notes);
+        {displayData && (() => {
+          const notesInfo = parseNotes(displayData.notes);
           return (
           <div className="space-y-4 text-sm">
+            {detailLoading && (
+              <div className="flex items-center gap-2 text-slate-400 text-xs">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Memuat detail...
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-slate-500 font-medium">Kode Booking</p>
                 <p className="font-mono font-bold text-[#F49D1A] text-base">
-                  {selected.bookingCode}
+                  {displayData.bookingCode}
                 </p>
               </div>
               <div>
@@ -237,11 +323,11 @@ export default function AdminPesanan() {
                 <p>
                   <span
                     className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                      statusBadge[selected.status]?.className ??
+                      statusBadge[displayData.status]?.className ??
                       "bg-slate-100 text-slate-600"
                     }`}
                   >
-                    {statusBadge[selected.status]?.label ?? selected.status}
+                    {statusBadge[displayData.status]?.label ?? displayData.status}
                   </span>
                 </p>
               </div>
@@ -259,19 +345,19 @@ export default function AdminPesanan() {
               <div>
                 <p className="text-slate-500 font-medium">Jumlah Peserta</p>
                 <p className="font-semibold">
-                  {selected.totalParticipants} orang
+                  {displayData.totalParticipants} orang
                 </p>
               </div>
               <div>
                 <p className="text-slate-500 font-medium">Total Pembayaran</p>
                 <p className="font-bold text-slate-900">
                   Rp{" "}
-                  {Number(selected.totalAmount).toLocaleString("id-ID")}
+                  {Number(displayData.totalAmount).toLocaleString("id-ID")}
                 </p>
               </div>
               <div>
                 <p className="text-slate-500 font-medium">Tanggal Booking</p>
-                <p>{formatDate(selected.bookingDate)}</p>
+                <p>{formatDate(displayData.bookingDate)}</p>
               </div>
               {notesInfo?.customerName && (
                 <div>
@@ -288,16 +374,70 @@ export default function AdminPesanan() {
               <div>
                 <p className="text-slate-500 font-medium">ID Pengguna</p>
                 <p className="font-mono text-xs truncate">
-                  {selected.userId}
+                  {displayData.userId}
                 </p>
               </div>
             </div>
+
+            {/* Payment Proof Section */}
+            {proofPayments.length > 0 && (
+              <div className="border-t border-slate-100 pt-4">
+                <p className="text-slate-500 font-medium mb-3">Bukti Pembayaran</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {proofPayments.map((payment) => (
+                    <div
+                      key={payment.id}
+                      className="relative group rounded-xl border border-slate-200 overflow-hidden bg-slate-50"
+                    >
+                      <img
+                        src={payment.gatewayResponse!.proofUrl!}
+                        alt="Bukti pembayaran"
+                        className="w-full h-48 object-contain"
+                      />
+                      <div className="p-2 flex items-center justify-between text-xs">
+                        <span className="text-slate-500">
+                          {payment.method ?? "Transfer"}
+                        </span>
+                        <a
+                          href={payment.gatewayResponse!.proofUrl!}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#1CA6B7] hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Buka
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {notesInfo?.specialRequest && (
               <div>
                 <p className="text-slate-500 font-medium mb-1">Catatan / Permintaan Khusus</p>
                 <p className="bg-slate-50 rounded-xl p-3 text-slate-700">
                   {notesInfo.specialRequest}
                 </p>
+              </div>
+            )}
+
+            {/* Approve Button - Full Width at Bottom */}
+            {(displayData.status === "pending" || displayData.status === "awaiting_verification") && (
+              <div className="border-t border-slate-100 pt-4">
+                <button
+                  onClick={() => handleApprove(displayData.id)}
+                  disabled={approving}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-[#1CA6B7] text-white text-sm font-bold rounded-xl hover:bg-[#1CA6B7]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {approving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4" />
+                  )}
+                  {approving ? "Memproses..." : "Approve Pesanan"}
+                </button>
               </div>
             )}
           </div>

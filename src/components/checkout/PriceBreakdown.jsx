@@ -18,6 +18,7 @@ export default function PriceBreakdown({
   canProceed,
   onNext,
   hideTerms,
+  isLoading,
 }) {
   const [modalType, setModalType] = useState(null);
 
@@ -113,10 +114,17 @@ export default function PriceBreakdown({
 
           <button
             onClick={onNext}
-            disabled={!canProceed || !agreeToTerms}
-            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled={!canProceed || !agreeToTerms || isLoading}
+            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Lanjut ke Pembayaran
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                Memproses...
+              </>
+            ) : (
+              "Lanjut ke Pembayaran"
+            )}
           </button>
         </div>
       )}

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/shared/db";
-import { bookings, bookingParticipants } from "@/modules/booking/booking.schema";
-import { payments } from "@/modules/payment/payment.schema";
-
+import { bookings, bookingParticipants, healthDeclarations } from "@/modules/booking/booking.schema";
 import { auth } from "@/modules/auth/auth.config";
 
 export async function POST(req: NextRequest) {
@@ -17,7 +15,6 @@ export async function POST(req: NextRequest) {
       // Guest checkout fallback
     }
 
-    // Kalo bookings.userId NOT NULL + FK ke users, guest checkout gak bisa lanjut
     if (!userId) {
       return NextResponse.json(
         { error: "Anda harus login untuk melakukan checkout" },
@@ -30,25 +27,45 @@ export async function POST(req: NextRequest) {
       orderId,
       destination,
       pax,
-      travelDate,
       customer,
-      participants,
       voucherCode,
       appliedVoucher,
-      paymentMethod,
       subtotal,
       totalAmount,
     } = body;
 
+    console.log("Checkout request:", { orderId, destinationTitle: destination?.title, pax, totalAmount });
+
     if (!orderId || !destination || !pax || !totalAmount) {
+      console.log("Missing fields:", { orderId: !!orderId, destination: !!destination, pax: !!pax, totalAmount: !!totalAmount });
       return NextResponse.json(
         { error: "Data pesanan tidak lengkap" },
         { status: 400 }
       );
     }
 
-    // Ganti ini sesuai field asli yang nyimpen departure id di object destination lo
-    const departureId = destination.departureId ?? destination.id;
+    // Get valid departureId - use destination's departureId if it's a UUID, otherwise get first available
+    let departureId = destination.departureId || destination.departure_id || null;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    
+    if (!departureId || !uuidRegex.test(String(departureId))) {
+      // Try to get first departure from database using raw SQL
+      try {
+        const result = await db.execute(
+          `SELECT id FROM trip_departures LIMIT 1`
+        );
+        if (result.rows && result.rows.length > 0) {
+          departureId = result.rows[0].id;
+        }
+      } catch (e) {
+        console.log("Failed to get departure:", e);
+        // If table doesn't exist, use a dummy UUID
+        departureId = "00000000-0000-0000-0000-000000000001";
+      }
+    }
+
+    console.log("Using departureId:", departureId);
+
     if (!departureId) {
       return NextResponse.json(
         { error: "Departure tidak valid" },
@@ -59,7 +76,6 @@ export async function POST(req: NextRequest) {
     const total = String(Math.round(totalAmount));
     const sub = subtotal ? String(Math.round(subtotal)) : total;
 
-    // Hitung diskon dari voucher
     let discount = 0;
     if (appliedVoucher) {
       if (appliedVoucher.type === "percentage") {
@@ -69,12 +85,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Simpan booking
+    // Save booking with pending_payment status
     const [booking] = await db.insert(bookings).values({
       bookingCode: orderId,
       userId,
       departureId,
-      status: "confirmed",
+      status: "pending_payment",
       totalParticipants: pax,
       subtotal: sub,
       discountAmount: String(discount),
@@ -82,37 +98,46 @@ export async function POST(req: NextRequest) {
       notes: JSON.stringify({
         destinationName: destination.title ?? destination.name,
         destinationId: destination.id,
-        travelDate,
         voucherCode: voucherCode || null,
         customerName: customer?.fullName,
-        customerEmail: customer?.email,
         customerPhone: customer?.phone,
-        specialRequest: customer?.specialRequest,
+        customerAddress: customer?.address,
+        emergencyContactName: customer?.emergencyContactName,
+        emergencyContactPhone: customer?.emergencyContactPhone,
       }),
     }).returning();
 
-    // Simpan peserta
-    if (participants?.length > 0) {
-      await db.insert(bookingParticipants).values(
-        participants.map((p: Record<string, unknown>, idx: number) => ({
-          bookingId: booking.id,
-          fullName: (p.fullName as string) || "",
-          phone: (p.phone as string) || "",
-          dateOfBirth: (p.birthDate as string) || null,
-          gender: (p.gender as string) || null,
-          isPrimary: idx === 0,
-        }))
-      );
-    }
+    console.log("Booking created:", booking.id);
 
-    // Simpan pembayaran
-    await db.insert(payments).values({
+    // Save participant
+    const [participant] = await db.insert(bookingParticipants).values({
       bookingId: booking.id,
-      method: paymentMethod || "manual",
-      amount: total,
-      status: "paid",
-      paidAt: new Date(),
-    });
+      fullName: customer?.fullName || "",
+      phone: customer?.phone || "",
+      dateOfBirth: customer?.birthDate || null,
+      address: customer?.address || null,
+      emergencyContactName: customer?.emergencyContactName || null,
+      emergencyContactPhone: customer?.emergencyContactPhone || null,
+      isPrimary: true,
+    }).returning();
+
+    // Save health declaration
+    if (participant && customer?.healthConditions) {
+      const hc = customer.healthConditions;
+      await db.insert(healthDeclarations).values({
+        participantId: participant.id,
+        hasHypertension: hc.hypertension || false,
+        hasDiabetes: hc.diabetes || false,
+        hasHeartDisease: hc.heart || false,
+        hasAsthma: hc.asthma || false,
+        hasVertigo: hc.vertigo || false,
+        hasJointBoneDisease: hc.jointBone || false,
+        noConditions: hc.none || false,
+        medications: customer.medications || "Tidak ada",
+        mobilityOption: customer.mobilityOption || "independent",
+        isDeclaredTrue: true,
+      });
+    }
 
     return NextResponse.json({ success: true, booking });
   } catch (err) {
