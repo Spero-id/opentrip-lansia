@@ -401,6 +401,30 @@ function OpenTripBookingCard({ booking }) {
 
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
+          {/* Hubungi Admin via WhatsApp */}
+          {(() => {
+            const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+            if (!waNumber) return null;
+            const waMessage = encodeURIComponent(
+              `Halo Admin Jelajah Memoria, saya ingin bertanya tentang booking saya.\n\nKode Booking: ${booking.bookingCode}\nDestinasi: ${destinationName}`
+            );
+            return (
+              <a
+                href={`https://wa.me/${waNumber}?text=${waMessage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#25D366] text-white text-xs font-bold rounded-xl transition"
+              >
+                <img
+                  src="/whatsapp-logo.webp"
+                  alt="WhatsApp"
+                  className="w-6 h-6 object-contain"
+                />
+                Hubungi Admin
+              </a>
+            );
+          })()}
+
           {/* Ringkasan Biaya */}
           <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
