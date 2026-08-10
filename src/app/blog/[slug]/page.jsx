@@ -83,9 +83,10 @@ export default function BlogDetailPage({ params }) {
           </div>
 
           <div className="mt-8 border-t border-gray-100 pt-8">
-            <div className="text-sm text-gray-700 leading-7 whitespace-pre-line">
-              {post.content || "Konten artikel belum tersedia."}
-            </div>
+            <div
+              className="text-sm text-gray-700 leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
+              dangerouslySetInnerHTML={{ __html: post.content || "Konten artikel belum tersedia." }}
+            />
           </div>
         </div>
       )}

@@ -23,4 +23,16 @@ export const authService = {
   async getUser(id: string) {
     return authRepository.findById(id);
   },
+
+  async getAllUsers() {
+    return authRepository.findAll();
+  },
+
+  async updateUser(id: string, data: Parameters<typeof authRepository.update>[1]) {
+    return authRepository.update(id, data);
+  },
+
+  async deleteUser(id: string) {
+    return authRepository.delete(id);
+  },
 };

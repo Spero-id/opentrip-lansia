@@ -17,20 +17,20 @@ const FALLBACK_IMAGES = [
 const DEFAULT_RATING = 5.0;
 const PAGE_SIZE = 8;
 
-function toCard(dest, index) {
+function toCard(trip, index) {
   const image =
-    dest.image ||
-    (Array.isArray(dest.images) && dest.images[0]) ||
+    trip.image ||
+    (Array.isArray(trip.images) && trip.images[0]) ||
     FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
 
   return {
-    id: dest.id,
-    title: dest.name,
-    location: dest.location || "Indonesia",
-    rating: dest.rating || DEFAULT_RATING,
-    priceMin: dest.priceMin || 0,
-    category: dest.category || dest.categoryName || "Alam",
-    isSeniorFriendly: dest.isSeniorFriendly !== undefined ? dest.isSeniorFriendly : true,
+    id: trip.id,
+    title: trip.title,
+    location: trip.location || "Indonesia",
+    rating: trip.rating || DEFAULT_RATING,
+    priceMin: trip.priceMin || 0,
+    category: trip.categoryName || "Alam",
+    isSeniorFriendly: trip.isSeniorFriendly !== undefined ? trip.isSeniorFriendly : true,
 
     image,
   };
@@ -64,11 +64,11 @@ export default function DestinationSection() {
   }
 
   useEffect(() => {
-    fetch("/api/destinations")
+    fetch("/api/trips")
       .then((res) => res.json())
       .then((data) => {
         const active = Array.isArray(data)
-          ? data.filter((d) => d.isActive !== false)
+          ? data.filter((d) => d.status === "published")
           : [];
         setDestinations(active.map(toCard));
       })

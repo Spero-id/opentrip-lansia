@@ -18,7 +18,8 @@ export function useAdminAuth() {
           if (!cancelled) router.push("/login?redirect=" + encodeURIComponent(pathname));
           return;
         }
-        if (session.user.role !== "admin") {
+        const user = session.user as typeof session.user & { role?: string };
+        if (user.role !== "admin") {
           if (!cancelled) router.push("/forbidden");
         }
       } catch {

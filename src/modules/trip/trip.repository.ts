@@ -1,6 +1,6 @@
 import { db } from "@/shared/db";
 import {
-  trips, tripDepartures, tripPrices, tripDestinations,
+  trips, tripDepartures, tripPrices,
   itineraryItems, tripGalleries,
 } from "./trip.schema";
 import { eq, and, asc, desc, sql } from "drizzle-orm";
@@ -33,10 +33,6 @@ export interface ITripRepository {
   findItineraryByTripId(tripId: UUID): Promise<(typeof itineraryItems.$inferSelect)[]>;
   saveItinerary(tripId: UUID, items: ItineraryInput[]): Promise<void>;
 
-  // Trip destinations
-  findTripDestinations(tripId: UUID): Promise<(typeof tripDestinations.$inferSelect)[]>;
-  saveTripDestinations(tripId: UUID, dests: DestinationInput[]): Promise<void>;
-
   // Galleries
   findAllGalleries(): Promise<(typeof tripGalleries.$inferSelect)[]>;
   findGalleryById(id: UUID): Promise<typeof tripGalleries.$inferSelect | null>;
@@ -51,14 +47,6 @@ export interface ItineraryInput {
   endTime?: string | null;
   title: string;
   description?: string | null;
-  destinationId?: string | null;
-}
-
-export interface DestinationInput {
-  destinationId: string;
-  dayOrder: number;
-  durationHours?: number | null;
-  notes?: string | null;
 }
 
 export const tripRepository: ITripRepository = {
@@ -143,21 +131,16 @@ export const tripRepository: ITripRepository = {
   async saveItinerary(tripId, items) {
     await db.delete(itineraryItems).where(eq(itineraryItems.tripId, tripId));
     if (items.length === 0) return;
-    await db.insert(itineraryItems).values(items.map((item) => ({ ...item, tripId })));
-  },
-
-  async findTripDestinations(tripId) {
-    return db
-      .select()
-      .from(tripDestinations)
-      .where(eq(tripDestinations.tripId, tripId))
-      .orderBy(asc(tripDestinations.dayOrder));
-  },
-
-  async saveTripDestinations(tripId, dests) {
-    await db.delete(tripDestinations).where(eq(tripDestinations.tripId, tripId));
-    if (dests.length === 0) return;
-    await db.insert(tripDestinations).values(dests.map((d) => ({ ...d, tripId })));
+    await db.insert(itineraryItems).values(
+      items.map((item) => ({
+        tripId,
+        dayNumber: Number(item.dayNumber) || 1,
+        title: item.title || `Hari ${item.dayNumber || 1}`,
+        description: item.description || null,
+        startTime: item.startTime || null,
+        endTime: item.endTime || null,
+      }))
+    );
   },
 
   // Galleries

@@ -2,7 +2,7 @@ import "dotenv/config";
 import crypto from "crypto";
 import { db } from "../shared/db";
 import {
-  destinationCategories, destinations, horecaTypes, horeca,
+  destinationCategories, horecaTypes, horeca,
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
   blogs, blogCategories, contactMessages, promotions
 } from "../db/schema";
@@ -42,20 +42,8 @@ async function seed() {
   const [katAlam] = await db.insert(destinationCategories).values({ name: "Alam", slug: "alam", isActive: true }).returning();
   const [katBudaya] = await db.insert(destinationCategories).values({ name: "Budaya", slug: "budaya", isActive: true }).returning();
   const [katReligi] = await db.insert(destinationCategories).values({ name: "Religi", slug: "religi", isActive: true }).returning();
-  const [katKuliner] = await db.insert(destinationCategories).values({ name: "Kuliner", slug: "kuliner", isActive: true }).returning();
+  await db.insert(destinationCategories).values({ name: "Kuliner", slug: "kuliner", isActive: true });
   console.log("  Categories: alam, budaya, religi, kuliner");
-
-  const dests = await db.insert(destinations).values([
-    { name: "Candi Borobudur", slug: "candi-borobudur", description: "Candi Buddha terbesar di dunia, akses kursi roda tersedia.", categoryId: katBudaya.id, isSeniorFriendly: true, isActive: true, visitEstimateMinutes: 180, accessibilityInfo: "Tersedia jalur kursi roda, area istirahat setiap 100m" },
-    { name: "Pantai Parangtritis", slug: "pantai-parangtritis", description: "Pantai pasir hitam yang legendaris. Medan landai cocok untuk lansia.", categoryId: katAlam.id, isSeniorFriendly: true, isActive: true, visitEstimateMinutes: 120, accessibilityInfo: "Area parkir dekat, jalur pejalan kaki rata" },
-    { name: "Malioboro", slug: "malioboro", description: "Kawasan perbelanjaan dan kuliner ikonik Yogyakarta.", categoryId: katKuliner.id, isSeniorFriendly: true, isActive: true, visitEstimateMinutes: 150 },
-    { name: "Masjid Istiqlal", slug: "masjid-istiqlal", description: "Masjid terbesar di Asia Tenggara.", categoryId: katReligi.id, isSeniorFriendly: true, isActive: true, visitEstimateMinutes: 90 },
-    { name: "Taman Mini Indonesia Indah", slug: "tmii", description: "Taman budaya dengan anjungan daerah dari seluruh Indonesia.", categoryId: katBudaya.id, isSeniorFriendly: true, isActive: true, visitEstimateMinutes: 240, accessibilityInfo: "Tersedia kereta keliling, jalur khusus lansia" },
-    { name: "Gunung Bromo", slug: "gunung-bromo", description: "Gunung berapi aktif dengan pemandangan matahari terbit yang spektakuler.", categoryId: katAlam.id, isSeniorFriendly: false, isActive: true, visitEstimateMinutes: 300, accessibilityInfo: "Medan berbatu, butuh kendaraan 4x4, tidak disarankan bagi lansia dengan masalah jantung" },
-    { name: "Pulau Komodo", slug: "pulau-komodo", description: "Taman Nasional Komodo, habitat asli komodo.", categoryId: katAlam.id, isSeniorFriendly: false, isActive: true, visitEstimateMinutes: 360 },
-    { name: "Danau Toba", slug: "danau-toba", description: "Danau vulkanik terbesar di Indonesia. Udara sejuk dan pemandangan memukau.", categoryId: katAlam.id, isSeniorFriendly: true, isActive: true, visitEstimateMinutes: 200, accessibilityInfo: "Akses mobil sampai pinggir danau, area duduk tersedia" },
-  ]).returning();
-  console.log(`  Destinations: ${dests.length} created`);
 
   const [htHotel] = await db.insert(horecaTypes).values({ name: "Hotel", slug: "hotel", isActive: true }).returning();
   const [htResto] = await db.insert(horecaTypes).values({ name: "Restaurant", slug: "restaurant", isActive: true }).returning();
@@ -82,14 +70,78 @@ async function seed() {
   ]);
   console.log("  Vendors: 4 created");
 
-  const tripData = [
-    { title: "Wisata Religi Yogyakarta 3 Hari", slug: "wisata-religi-yogya-3h", description: "Paket wisata religi ke Candi Borobudur, Malioboro, dan Keraton. Khusus lansia dengan akomodasi bintang 4.", durationDays: 3, type: "open_trip", status: "published", isFeatured: true },
-    { title: "Eksplorasi Danau Toba", slug: "eksplorasi-danau-toba", description: "Nikmati keindahan Danau Toba dengan medan ramah lansia. Termasuk homestay dan makan khas Batak.", durationDays: 4, type: "open_trip", status: "published", isFeatured: true },
-    { title: "Jakarta Heritage Trail", slug: "jakarta-heritage-trail", description: "Jelajahi bangunan bersejarah Jakarta dengan tour guide khusus lansia.", durationDays: 2, type: "open_trip", status: "published", isFeatured: true },
-    { title: "Private Trip Bromo", slug: "private-trip-bromo", description: "Private trip khusus, cocok untuk rombongan keluarga lansia.", durationDays: 3, type: "private_trip", status: "published" },
-    { title: "Pulau Komodo Ramah Lansia", slug: "pulau-komodo-ramah-lansia", description: "Paket khusus lansia ke Pulau Komodo dengan fasilitas kesehatan lengkap.", durationDays: 5, type: "open_trip", status: "draft" },
-  ];
-  const tripList = await db.insert(trips).values(tripData).returning();
+  const tripList = await db.insert(trips).values([
+    {
+      title: "Wisata Religi Yogyakarta 3 Hari", slug: "wisata-religi-yogya-3h",
+      description: "Paket wisata religi ke Candi Borobudur, Malioboro, dan Keraton. Khusus lansia dengan akomodasi bintang 4.",
+      durationDays: 3, type: "open_trip", status: "published", isFeatured: true,
+      categoryId: katReligi.id, location: "Yogyakarta", isSeniorFriendly: true,
+      visitEstimateMinutes: 180, accessibilityInfo: "Tersedia jalur kursi roda, area istirahat setiap 100m",
+      priceMin: 1750000, priceMax: 2700000,
+      highlights: ["Candi Borobudur", "Malioboro", "Keraton Yogyakarta"],
+      facilities: ["Bus AC", "Tour Guide", "Makan 3x", "Hotel Bintang 4"],
+      itinerary: [
+        { day: 1, title: "Sarapan & Wisata Borobudur", description: "Sarapan di hotel lalu tur Candi Borobudur dengan pemandu khusus lansia" },
+        { day: 1, title: "Malioboro", description: "Belanja oleh-oleh di kawasan Malioboro" },
+        { day: 2, title: "Keraton Yogyakarta", description: "Tur Keraton dan bangunan bersejarah" },
+        { day: 3, title: "Check Out & Pulang", description: "Persiapan pulang" },
+      ],
+      meetingPointsJson: [
+        { time: "06:00", location: "Bandara Adisucipto", description: "Berkumpul di pintu kedatangan" },
+        { time: "07:00", location: "Lobi Hotel", description: "Bagi yang sudah di lokasi" },
+      ],
+    },
+    {
+      title: "Eksplorasi Danau Toba", slug: "eksplorasi-danau-toba",
+      description: "Nikmati keindahan Danau Toba dengan medan ramah lansia. Termasuk homestay dan makan khas Batak.",
+      durationDays: 4, type: "open_trip", status: "published", isFeatured: true,
+      categoryId: katAlam.id, location: "Sumatera Utara", isSeniorFriendly: true,
+      visitEstimateMinutes: 200, accessibilityInfo: "Akses mobil sampai pinggir danau, area duduk tersedia",
+      priceMin: 2200000, priceMax: 3200000,
+      highlights: ["Danau Toba", "Pulau Samosir", "Budaya Batak"],
+      facilities: ["Bus AC", "Homestay", "Makan 3x", "Perahu"],
+      itinerary: [
+        { day: 1, title: "Perjalanan ke Toba", description: "Perjalanan dari Medan ke Danau Toba" },
+        { day: 2, title: "Eksplorasi Danau", description: "Tour danau dan Pulau Samosir" },
+        { day: 3, title: "Budaya Batak", description: "Kunjungan desa adat Batak" },
+        { day: 4, title: "Kepulangan", description: "Kembali ke Medan" },
+      ],
+    },
+    {
+      title: "Jakarta Heritage Trail", slug: "jakarta-heritage-trail",
+      description: "Jelajahi bangunan bersejarah Jakarta dengan tour guide khusus lansia.",
+      durationDays: 2, type: "open_trip", status: "published", isFeatured: true,
+      categoryId: katBudaya.id, location: "Jakarta", isSeniorFriendly: true,
+      visitEstimateMinutes: 150, accessibilityInfo: "Jalan kaki datar, area istirahat tersedia",
+      priceMin: 1000000, priceMax: 1500000,
+      highlights: ["Kota Tua", "Monas", "Museum Nasional"],
+      facilities: ["Bus AC", "Tour Guide", "Makan 2x"],
+      itinerary: [
+        { day: 1, title: "Kota Tua & Monas", description: "Jelajahi Kota Tua dan Monumen Nasional" },
+        { day: 2, title: "Museum & Kuliner", description: "Kunjungan museum dan kuliner khas Jakarta" },
+      ],
+    },
+    {
+      title: "Private Trip Bromo", slug: "private-trip-bromo",
+      description: "Private trip khusus, cocok untuk rombongan keluarga lansia.",
+      durationDays: 3, type: "private_trip", status: "published",
+      categoryId: katAlam.id, location: "Jawa Timur", isSeniorFriendly: false,
+      visitEstimateMinutes: 300, accessibilityInfo: "Medan berbatu, butuh kendaraan 4x4",
+      priceMin: 3500000, priceMax: 4500000,
+      highlights: ["Sunrise Bromo", "Savanna", "Lautan Pasir"],
+      facilities: ["Jeep 4x4", "Guide", "Makan 3x", "Penginapan"],
+    },
+    {
+      title: "Pulau Komodo Ramah Lansia", slug: "pulau-komodo-ramah-lansia",
+      description: "Paket khusus lansia ke Pulau Komodo dengan fasilitas kesehatan lengkap.",
+      durationDays: 5, type: "open_trip", status: "draft",
+      categoryId: katAlam.id, location: "NTT", isSeniorFriendly: false,
+      visitEstimateMinutes: 360, accessibilityInfo: "Medan trekking, tidak disarankan bagi lansia dengan masalah jantung",
+      priceMin: 4500000, priceMax: 6000000,
+      highlights: ["Komodo", "Pink Beach", "Manta Point"],
+      facilities: ["Kapal", "Guide", "Makan 3x", "Tenaga Medis"],
+    },
+  ]).returning();
   console.log(`  Trips: ${tripList.length} created`);
 
   const departList = await db.insert(tripDepartures).values([
@@ -117,9 +169,9 @@ async function seed() {
 
   await db.insert(itineraryItems).values([
     { tripId: tripList[0].id, dayNumber: 1, startTime: "07:00", endTime: "08:00", title: "Sarapan di Hotel", description: "Sarapan prasmanan" },
-    { tripId: tripList[0].id, dayNumber: 1, startTime: "08:30", endTime: "11:30", title: "Wisata Candi Borobudur", description: "Tur dengan pemandu khusus lansia", destinationId: dests[0].id },
+    { tripId: tripList[0].id, dayNumber: 1, startTime: "08:30", endTime: "11:30", title: "Wisata Candi Borobudur", description: "Tur dengan pemandu khusus lansia" },
     { tripId: tripList[0].id, dayNumber: 1, startTime: "12:00", endTime: "13:00", title: "Makan Siang", horecaId: horecaList[2].id },
-    { tripId: tripList[0].id, dayNumber: 1, startTime: "14:00", endTime: "17:00", title: "Malioboro", description: "Belanja oleh-oleh", destinationId: dests[2].id },
+    { tripId: tripList[0].id, dayNumber: 1, startTime: "14:00", endTime: "17:00", title: "Malioboro", description: "Belanja oleh-oleh" },
     { tripId: tripList[0].id, dayNumber: 2, startTime: "07:00", endTime: "08:00", title: "Sarapan" },
     { tripId: tripList[0].id, dayNumber: 2, startTime: "08:30", endTime: "11:00", title: "Keraton Yogyakarta", description: "Tur Keraton" },
     { tripId: tripList[0].id, dayNumber: 2, startTime: "13:00", endTime: "15:00", title: "Istirahat & Bebas" },

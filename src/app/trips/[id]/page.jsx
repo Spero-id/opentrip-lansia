@@ -36,12 +36,12 @@ export default function DestinationDetailPage({ params }) {
           setStatus("found");
           return null;
         }
-        return fetch("/api/destinations").then((res) => res.json());
+        return fetch("/api/trips").then((res) => res.json());
       })
       .then((data) => {
         if (cancelled || !data) return;
         const found = Array.isArray(data)
-          ? data.find((d) => d.id === rawId && d.isActive !== false)
+          ? data.find((d) => d.id === rawId && d.status === "published")
           : undefined;
         setDest(found ? toDetail(found) : null);
         setStatus(found ? "found" : "notfound");

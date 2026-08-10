@@ -3,8 +3,6 @@ import { test, expect } from "@playwright/test";
 test.describe("API Endpoints", () => {
   const endpoints = [
     { path: "/api/trips", method: "GET", status: 200 },
-    { path: "/api/destinations", method: "GET", status: 200 },
-    { path: "/api/destinations/categories", method: "GET", status: 200 },
     { path: "/api/blogs", method: "GET", status: 200 },
     { path: "/api/horeca", method: "GET", status: 200 },
     { path: "/api/horeca-types", method: "GET", status: 200 },
@@ -30,11 +28,6 @@ test.describe("API Endpoints", () => {
   test("POST /api/checkout returns 401 without auth (login required)", async ({ request }) => {
     const res = await request.post("/api/checkout");
     expect(res.status()).toBe(401);
-  });
-
-  test("POST /api/destinations returns 400 without valid body", async ({ request }) => {
-    const res = await request.post("/api/destinations", { data: {} });
-    expect([400, 500]).toContain(res.status());
   });
 
   test("POST /api/blogs returns 400 without valid body", async ({ request }) => {
