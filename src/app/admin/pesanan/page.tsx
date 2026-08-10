@@ -104,6 +104,16 @@ function getPendingPayment(payments: Payment[] | undefined): Payment | undefined
   return payments?.find(p => p.status === "pending");
 }
 
+function parseAdminMessage(notes: string | null): string {
+  if (!notes) return "";
+  try {
+    const parsed = JSON.parse(notes);
+    return typeof parsed?.adminMessage === "string" ? parsed.adminMessage : "";
+  } catch {
+    return "";
+  }
+}
+
 export default function AdminPesanan() {
   const [rows, setRows] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,6 +128,8 @@ export default function AdminPesanan() {
   const [rejecting, setRejecting] = useState(false);
   const [rejectNote, setRejectNote] = useState("");
   const [rejectPaymentId, setRejectPaymentId] = useState<string | null>(null);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackSending, setFeedbackSending] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -154,16 +166,44 @@ export default function AdminPesanan() {
     setDetailData(null);
     setRejectNote("");
     setRejectPaymentId(null);
+    setFeedbackText("");
     try {
       const res = await fetch(`/api/bookings/${item.id}`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         setDetailData(data);
+        setFeedbackText(parseAdminMessage(data.notes) || "");
       }
     } catch {
       // silently fail, will show basic data from selected
     } finally {
       setDetailLoading(false);
+    }
+  }
+
+  async function handleSendFeedback() {
+    const target = selected?.id;
+    if (!target) return;
+    setFeedbackSending(true);
+    try {
+      const res = await fetch(`/api/bookings/${target}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ adminMessage: feedbackText }),
+      });
+      if (res.ok) {
+        const detail = await fetch(`/api/bookings/${target}`, { credentials: "include" });
+        if (detail.ok) setDetailData(await detail.json());
+        setError(null);
+      } else {
+        const data = await res.json();
+        setError(data?.error || "Gagal mengirim pesan.");
+      }
+    } catch {
+      setError("Terjadi kesalahan jaringan. Silakan coba lagi.");
+    } finally {
+      setFeedbackSending(false);
     }
   }
 
@@ -460,6 +500,38 @@ export default function AdminPesanan() {
                 </p>
               </div>
             )}
+
+            {/* Feedback / Pesan ke Pengguna */}
+            <div className="border-t border-slate-100 pt-4">
+              <p className="text-slate-500 font-medium mb-1">
+                Feedback / Pesan ke Pengguna
+              </p>
+              <p className="text-xs text-slate-400 mb-2">
+                Pesan ini akan tampil di halaman &quot;Perjalanan Saya&quot; milik pengguna.
+              </p>
+              {parseAdminMessage(displayData.notes) && (
+                <p className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-slate-700 mb-2">
+                  {parseAdminMessage(displayData.notes)}
+                </p>
+              )}
+              <div className="space-y-2">
+                <textarea
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  placeholder="Tulis pesan/feedback untuk pengguna..."
+                  rows={3}
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/40"
+                />
+                <button
+                  onClick={handleSendFeedback}
+                  disabled={feedbackSending || !feedbackText.trim()}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-[#F49D1A] text-white text-sm font-bold rounded-xl hover:bg-[#E08A0E] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {feedbackSending ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  {feedbackSending ? "Mengirim..." : "Kirim Pesan"}
+                </button>
+              </div>
+            </div>
 
             {(displayData.status === "pending" || displayData.status === "awaiting_verification") && detailPendingPayment && (
               <div className="border-t border-slate-100 pt-4 space-y-3">

@@ -313,6 +313,7 @@ function OpenTripBookingCard({ booking }) {
   const customerEmail = notesObj.customerEmail || null;
   const customerPhone = notesObj.customerPhone || null;
   const specialRequest = notesObj.specialRequest || null;
+  const adminMessage = notesObj.adminMessage || null;
 
   const copyCode = (e) => {
     e.stopPropagation();
@@ -448,6 +449,17 @@ function OpenTripBookingCard({ booking }) {
               </p>
               <p className="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2">
                 {paymentAdminNote}
+              </p>
+            </div>
+          )}
+
+          {adminMessage && (
+            <div className="bg-white rounded-xl border border-blue-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                Pesan dari Admin
+              </p>
+              <p className="text-xs text-blue-800 bg-blue-50 rounded-lg px-3 py-2">
+                {adminMessage}
               </p>
             </div>
           )}
