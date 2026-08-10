@@ -1,5 +1,5 @@
 import { A } from "./helpers/constants";
-import { Star } from "lucide-react";
+import { Star, Heart } from "lucide-react";
 import { formatRupiah } from "./helpers/helpers";
 
 export default function DestinationCard({
@@ -13,7 +13,7 @@ export default function DestinationCard({
     <button
       type="button"
       onClick={onSelect}
-      className="flex items-center gap-3 p-3 rounded-xl border text-left transition-all hover:border-[#F49D1A] hover:bg-[#F49D1A08]"
+      className="flex items-start gap-3 p-3 rounded-xl border text-left transition-all hover:border-[#F49D1A] hover:bg-[#F49D1A08]"
       style={{
         borderColor: "#e5e7eb",
         backgroundColor: "#f9fafb",
@@ -44,6 +44,12 @@ export default function DestinationCard({
         >
           <Star className="w-3 h-3 fill-current inline" /> {rating} · {formatRupiah(dest.priceMin)}
         </p>
+        {dest.isSeniorFriendly && (
+          <span className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold text-teal-700 bg-teal-50 border border-teal-100">
+            <Heart size={8} className="fill-teal-600 text-teal-600" />
+            Ramah Lansia
+          </span>
+        )}
       </div>
     </button>
   );
