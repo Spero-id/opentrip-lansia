@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { OrderDomain, AVAILABLE_VOUCHERS } from "../Order";
+import { useState, useCallback, useEffect } from "react";
+import { OrderDomain } from "../Order";
 
 const initialCustomer = {
   fullName: "",
@@ -42,6 +42,20 @@ export function useCheckout(initialDestination) {
     agreeToTerms: false,
     bookingId: null,
   });
+
+  const [dbVouchers, setDbVouchers] = useState([]);
+
+  // Fetch vouchers from DB on mount
+  useEffect(() => {
+    fetch("/api/promotions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setDbVouchers(data.filter((v) => v.isActive));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const setDestination = useCallback((dest) => {
     setState((prev) => ({ ...prev, destination: dest }));
@@ -93,21 +107,64 @@ export function useCheckout(initialDestination) {
   const applyVoucher = useCallback(() => {
     setState((prev) => {
       const code = prev.voucherCode.trim().toUpperCase();
-      const found = AVAILABLE_VOUCHERS.find((v) => v.code === code);
       const subtotal = (prev.destination?.priceMin ?? 0) * prev.pax;
+
+      // Look up in DB vouchers
+      const found = dbVouchers.find((v) => v.code?.toUpperCase() === code);
       if (!found) {
         return { ...prev, voucherError: "Kode voucher tidak valid.", appliedVoucher: null };
       }
-      if (subtotal < found.minOrder) {
+
+      // Check min purchase
+      const minPurchase = Number(found.minPurchase) || 0;
+      if (minPurchase > 0 && subtotal < minPurchase) {
         return {
           ...prev,
-          voucherError: `Minimal order ${OrderDomain.formatPrice(found.minOrder)} untuk voucher ini.`,
+          voucherError: `Minimal order ${OrderDomain.formatPrice(minPurchase)} untuk voucher ini.`,
           appliedVoucher: null,
         };
       }
-      return { ...prev, appliedVoucher: found, voucherError: "" };
+
+      // Check usage limit
+      if (found.usageLimit && found.usageCount >= found.usageLimit) {
+        return { ...prev, voucherError: "Voucher sudah mencapai batas pemakaian.", appliedVoucher: null };
+      }
+
+      // Check validity period
+      const now = new Date();
+      if (found.validFrom && new Date(found.validFrom) > now) {
+        return { ...prev, voucherError: "Voucher belum aktif.", appliedVoucher: null };
+      }
+      if (found.validUntil && new Date(found.validUntil) < now) {
+        return { ...prev, voucherError: "Voucher sudah kedaluwarsa.", appliedVoucher: null };
+      }
+
+      // Calculate discount
+      const value = Number(found.value) || 0;
+      let discount = 0;
+      if (found.type === "percentage") {
+        discount = Math.round(subtotal * (value / 100));
+        const maxDiscount = Number(found.maxDiscount) || 0;
+        if (maxDiscount > 0) discount = Math.min(discount, maxDiscount);
+      } else {
+        discount = value;
+      }
+      discount = Math.min(discount, subtotal);
+
+      return {
+        ...prev,
+        appliedVoucher: {
+          code: found.code,
+          label: found.title || found.code,
+          discount,
+          type: found.type,
+          value,
+          percentageValue: found.type === "percentage" ? value : 0,
+        },
+        voucherError: "",
+      };
     });
-  }, []);
+  }, [dbVouchers]);
 
   const removeVoucher = useCallback(() => {
     setState((prev) => ({ ...prev, appliedVoucher: null, voucherCode: "" }));

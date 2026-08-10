@@ -209,7 +209,7 @@ export default function IconPicker({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           title={hasIcon ? `Ganti Ikon (${selectedIcon})` : "Pilih Ikon"}
-          className={`relative group h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center transition-all shadow-xs border shrink-0 ${
+          className={`relative group h-10 w-10 rounded-xl flex items-center justify-center transition-all shadow-xs border shrink-0 ${
             isOpen
               ? hasIcon
                 ? "bg-[#F49D1A] text-white border-[#F49D1A] ring-2 ring-[#F49D1A]/30 scale-105"

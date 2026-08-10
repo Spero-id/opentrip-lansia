@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   Bell,
   Route,
+  MapPin,
   ShoppingCart,
   Menu,
   X,
@@ -89,6 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       items: [
         { name: "Paket Trip", href: "/admin/trips", icon: Compass },
         { name: "Private Trip", href: "/admin/private-trips", icon: Route },
+        { name: "Meeting Point", href: "/admin/meeting-points", icon: MapPin },
       ],
     },
     {

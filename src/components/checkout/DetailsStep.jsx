@@ -36,12 +36,12 @@ export default function DetailsStep({ checkout, onNext }) {
         <MeetingPointInfo destination={checkout.destination} />
 
         <VoucherCard
-          code={checkout.voucherCode}
-          setCode={checkout.setVoucherCode}
+          voucherCode={checkout.voucherCode}
+          setVoucherCode={checkout.setVoucherCode}
           onApply={checkout.applyVoucher}
           onRemove={checkout.removeVoucher}
-          applied={checkout.appliedVoucher}
-          error={checkout.voucherError}
+          appliedVoucher={checkout.appliedVoucher}
+          voucherError={checkout.voucherError}
         />
       </div>
 

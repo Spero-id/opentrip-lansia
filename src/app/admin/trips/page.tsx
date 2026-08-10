@@ -113,6 +113,7 @@ interface TripForm {
   accessibilityInfo: string;
   image: string;
   price: number;
+  meetingPoint: string;
 }
 
 const emptyForm: TripForm = {
@@ -131,6 +132,7 @@ const emptyForm: TripForm = {
   accessibilityInfo: "",
   image: "",
   price: 0,
+  meetingPoint: "",
 };
 
 export default function AdminTrips() {
@@ -221,6 +223,11 @@ export default function AdminTrips() {
       accessibilityInfo: item.accessibilityInfo || "",
       image: item.image || "",
       price: item.priceMin || item.priceMax || 0,
+      meetingPoint: (() => {
+        const mp = (item as Record<string, unknown>).meetingPointsJson;
+        if (Array.isArray(mp) && mp.length > 0) return (mp[0] as { location?: string })?.location || "";
+        return "";
+      })(),
     });
     setImages(item.images || []);
 
@@ -290,6 +297,9 @@ export default function AdminTrips() {
         title: item.title || `Hari ${item.dayNumber || 1}`,
         description: item.description,
       })),
+      meetingPointsJson: form.meetingPoint.trim()
+        ? [{ time: "08.00", location: form.meetingPoint.trim(), description: "Titik kumpul utama penjemputan. Silakan hadir 15 menit sebelum waktu tersebut." }]
+        : [],
     };
 
     try {
@@ -717,7 +727,7 @@ export default function AdminTrips() {
                     className="flex items-center gap-2.5 bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
                   >
                     {/* Index Badge */}
-                    <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-500 text-[11px] font-bold flex items-center justify-center shrink-0">
+                    <span className="h-10 w-10 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
                       {index + 1}
                     </span>
 
@@ -737,27 +747,15 @@ export default function AdminTrips() {
                         value={item.name}
                         onChange={(e) => handleFacilityChange(index, "name", e.target.value)}
                         placeholder="Nama Fasilitas (cth: Bus AC Executive, Tour Guide, Medis)"
-                        className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] font-medium transition"
+                        className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-xs text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] font-medium transition flex items-center"
                       />
-                    </div>
-
-                    {/* Icon Label Tag */}
-                    <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 text-[10px] font-semibold uppercase tracking-wider shrink-0">
-                      {item.icon ? (
-                        <>
-                          <DynamicLucideIcon name={item.icon} className="w-3 h-3 text-[#F49D1A]" />
-                          <span>{item.icon}</span>
-                        </>
-                      ) : (
-                        <span className="text-slate-400 italic font-normal lowercase">tanpa ikon</span>
-                      )}
                     </div>
 
                     {/* Delete Action Button */}
                     <button
                       type="button"
                       onClick={() => removeFacilityItem(index)}
-                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0"
+                      className="h-10 w-10 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0"
                       title="Hapus Fasilitas"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -766,6 +764,17 @@ export default function AdminTrips() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="border-t border-slate-200 pt-4">
+            <h3 className="text-sm font-bold text-slate-900 mb-3">Meeting Point</h3>
+            <div>
+              <label className="block text-sm font-medium text-slate-700">Lokasi Kumpul *</label>
+              <textarea name="meetingPoint" value={form.meetingPoint} onChange={handleChange} rows={2}
+                placeholder="Contoh: Bandara Soekarno-Hatta Terminal 3, depan pintu kedatangan"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] resize-none" />
+              <p className="text-xs text-slate-400 mt-1">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
+            </div>
           </div>
 
           <div className="border-t border-slate-200 pt-4">
