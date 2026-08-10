@@ -137,23 +137,23 @@ function PayContent() {
   }
 
   // Custom initiatePayment that uses bookingId from the fetched booking
-  const handlePay = async (paymentProofFile) => {
-    if (!booking || !paymentProofFile) return;
+  const handlePay = async () => {
+    if (!booking || !checkout.proofUrl) {
+      alert("Silakan unggah bukti transfer terlebih dahulu.");
+      return;
+    }
 
     checkout.setCustomer("_isLoading", true);
 
     try {
-      const formData = new FormData();
-      formData.append("bookingId", booking.id);
-      formData.append("paymentMethod", checkout.paymentMethod || "manual");
-      formData.append("totalAmount", booking.totalAmount);
-      if (paymentProofFile) {
-        formData.append("paymentProof", paymentProofFile);
-      }
-
-      const res = await fetch("/api/payment", {
+      const res = await fetch("/api/payments", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId: booking.id,
+          paymentMethod: checkout.paymentMethod || "manual",
+          proofUrl: checkout.proofUrl,
+        }),
       });
 
       if (!res.ok) {

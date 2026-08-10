@@ -617,3 +617,24 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 
 
 
+
+## Session 23 - Payment & Booking Security Hardening
+
+**Goal:** Fix broken manual-transfer payment flow (legacy /api/payment returned 401 without auth) and close critical security holes.
+
+**Completed:**
+- New POST /api/payments route: session-auth required, owner-only (403 otherwise), validates payment method + proof URL (must start with /payments/, no ..), amount sourced from booking.totalAmount server-side, creates payment with status pending and flips booking to pending. Idempotent for existing pending payment.
+- Deleted legacy src/app/api/payment/route.ts (unauthenticated, form-data only).
+- useCheckout.initiatePayment and /checkout/pay/[id] now POST JSON to /api/payments using checkout.proofUrl from ProofUploader.
+- Proof upload hardened with magic-byte validation (JPEG/PNG/GIF/WEBP/AVIF) in addition to MIME check.
+- IDOR fix: GET /api/bookings/[id] now requires session + owner or admin (was fully public, leaking PII + proof images).
+- POST /api/bookings no longer trusts spoofable x-user-id header; uses session.user.id.
+- /api/checkout now validates server-side: pax integer bounds, positive prices, subtotal recomputed from trip.priceMin x pax (DB lookup), total recomputed as subtotal + 15000 - discount.
+- Admin /admin/pesanan: approve/reject via /api/payments/[id]/review (reject requires note), shows proofUrl image + admin note; pending_payment badge added.
+- /my-trips: payment status labels, proof image + admin note display, re-pay link now points to /checkout/pay/[id].
+
+**Verification:**
+- 
+px tsc --noEmit passes (only pre-existing e2e/api/endpoints.spec.ts error remains).
+- 
+pm run lint: no new errors; only warnings in touched files.

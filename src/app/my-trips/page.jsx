@@ -48,7 +48,8 @@ const PROPOSAL_COLOR = {
 const OPEN_TRIP_STATUS_LABEL = {
   pending_payment: "Menunggu Pembayaran",
   confirmed: "Terkonfirmasi",
-  pending: "Menunggu",
+  pending: "Menunggu Verifikasi",
+  awaiting_verification: "Menunggu Verifikasi",
   cancelled: "Dibatalkan",
   completed: "Selesai",
 };
@@ -57,8 +58,25 @@ const OPEN_TRIP_STATUS_COLOR = {
   pending_payment: "bg-amber-100 text-amber-700",
   confirmed: "bg-emerald-100 text-emerald-700",
   pending: "bg-blue-100 text-blue-700",
+  awaiting_verification: "bg-orange-100 text-orange-700",
   cancelled: "bg-red-100 text-red-700",
   completed: "bg-gray-100 text-gray-600",
+};
+
+const PAYMENT_STATUS_LABEL = {
+  pending: "Menunggu Verifikasi",
+  paid: "Lunas",
+  rejected: "Ditolak",
+  awaiting_verification: "Menunggu Verifikasi",
+  pending_payment: "Menunggu Pembayaran",
+};
+
+const PAYMENT_STATUS_COLOR = {
+  pending: "text-blue-700",
+  paid: "text-emerald-700",
+  rejected: "text-red-700",
+  awaiting_verification: "text-orange-700",
+  pending_payment: "text-amber-700",
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -295,6 +313,7 @@ function OpenTripBookingCard({ booking }) {
   const customerEmail = notesObj.customerEmail || null;
   const customerPhone = notesObj.customerPhone || null;
   const specialRequest = notesObj.specialRequest || null;
+  const adminMessage = notesObj.adminMessage || null;
 
   const copyCode = (e) => {
     e.stopPropagation();
@@ -307,6 +326,8 @@ function OpenTripBookingCard({ booking }) {
 
   const paymentStatus = booking.payments?.[0]?.status || booking.status || "confirmed";
   const paymentMethod = booking.payments?.[0]?.method || "online";
+  const paymentProof = booking.payments?.[0]?.proofUrl || booking.payments?.[0]?.gatewayResponse?.proofUrl || null;
+  const paymentAdminNote = booking.payments?.[0]?.adminNote || null;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
@@ -365,7 +386,7 @@ function OpenTripBookingCard({ booking }) {
           </div>
           {booking.status === "pending_payment" && (
             <a
-              href={`/checkout?destination=${notesObj.destinationId || booking.departureId}&booking=${booking.id}`}
+              href={`/checkout/pay/${booking.id}`}
               className="px-4 py-2 bg-[#F49D1A] text-white text-xs font-bold rounded-lg hover:bg-[#c47d12] transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
@@ -401,9 +422,47 @@ function OpenTripBookingCard({ booking }) {
             </div>
             <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500">
               <span>Metode: <strong className="uppercase">{paymentMethod}</strong></span>
-              <span>Status Pembayaran: <strong className="capitalize text-teal-700">{paymentStatus}</strong></span>
+              <span>Status Pembayaran: <strong className={`capitalize ${PAYMENT_STATUS_COLOR[paymentStatus] || "text-gray-700"}`}>{PAYMENT_STATUS_LABEL[paymentStatus] || paymentStatus}</strong></span>
             </div>
           </div>
+
+          {/* Bukti Pembayaran */}
+          {paymentProof && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                Bukti Pembayaran
+              </p>
+              <a href={paymentProof} target="_blank" rel="noopener noreferrer" className="block">
+                <img
+                  src={paymentProof}
+                  alt="Bukti pembayaran"
+                  className="w-full max-h-64 object-contain bg-gray-50 rounded-lg border border-gray-200"
+                />
+              </a>
+            </div>
+          )}
+
+          {paymentAdminNote && (
+            <div className="bg-white rounded-xl border border-amber-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                Catatan Admin
+              </p>
+              <p className="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2">
+                {paymentAdminNote}
+              </p>
+            </div>
+          )}
+
+          {adminMessage && (
+            <div className="bg-white rounded-xl border border-blue-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                Pesan dari Admin
+              </p>
+              <p className="text-xs text-blue-800 bg-blue-50 rounded-lg px-3 py-2">
+                {adminMessage}
+              </p>
+            </div>
+          )}
 
           {/* Pemesan Utama */}
           {(customerName || customerEmail || customerPhone) && (
