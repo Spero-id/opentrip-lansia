@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/shared/db";
 import { bookings, bookingParticipants, healthDeclarations } from "@/modules/booking/booking.schema";
+import { tripDepartures, trips, tripPrices } from "@/db/schema/trips";
 import { auth } from "@/modules/auth/auth.config";
+import { and, eq } from "drizzle-orm";
+
+const SERVICE_FEE = 15000;
 
 export async function POST(req: NextRequest) {
   try {
@@ -73,17 +77,82 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const total = String(Math.round(totalAmount));
-    const sub = subtotal ? String(Math.round(subtotal)) : total;
+    const paxNum = Number(pax);
+    const clientSubtotal = Number(subtotal);
+    const clientTotal = Number(totalAmount);
+    if (
+      !Number.isInteger(paxNum) || paxNum < 1 || paxNum > 99 ||
+      !Number.isFinite(clientSubtotal) || clientSubtotal <= 0 ||
+      !Number.isFinite(clientTotal) || clientTotal <= 0
+    ) {
+      return NextResponse.json({ error: "Data harga tidak valid" }, { status: 400 });
+    }
+
+    const reportedUnit = Number(destination.priceMin);
+    if (!Number.isFinite(reportedUnit) || reportedUnit <= 0) {
+      return NextResponse.json({ error: "Harga destinasi tidak valid" }, { status: 400 });
+    }
+    if (clientSubtotal !== Math.round(reportedUnit * paxNum)) {
+      return NextResponse.json(
+        { error: "Harga pesanan tidak sesuai. Silakan muat ulang halaman." },
+        { status: 400 }
+      );
+    }
 
     let discount = 0;
     if (appliedVoucher) {
       if (appliedVoucher.type === "percentage") {
-        discount = Math.round(subtotal * ((appliedVoucher.percentageValue ?? 0) / 100));
+        discount = Math.round(clientSubtotal * ((appliedVoucher.percentageValue ?? 0) / 100));
       } else {
         discount = appliedVoucher.discount || 0;
       }
     }
+    if (discount > clientSubtotal) {
+      return NextResponse.json({ error: "Diskon tidak valid" }, { status: 400 });
+    }
+
+    const expectedTotal = clientSubtotal + SERVICE_FEE - discount;
+    if (clientTotal !== expectedTotal) {
+      return NextResponse.json(
+        { error: "Total pembayaran tidak sesuai. Silakan muat ulang halaman." },
+        { status: 400 }
+      );
+    }
+
+    try {
+      const [dep] = await db
+        .select({ tripId: tripDepartures.tripId })
+        .from(tripDepartures)
+        .where(eq(tripDepartures.id, departureId))
+        .limit(1);
+      const knownPrices: number[] = [];
+      if (dep?.tripId) {
+        const [trip] = await db
+          .select({ priceMin: trips.priceMin })
+          .from(trips)
+          .where(eq(trips.id, dep.tripId))
+          .limit(1);
+        if (trip?.priceMin && trip.priceMin > 0) knownPrices.push(trip.priceMin);
+      }
+      const priceRows = await db
+        .select({ price: tripPrices.price })
+        .from(tripPrices)
+        .where(and(eq(tripPrices.departureId, departureId), eq(tripPrices.isActive, true)));
+      for (const row of priceRows) {
+        const num = row.price ? Number(String(row.price).replace(/\D/g, "")) : null;
+        if (num && num > 0) knownPrices.push(num);
+      }
+      if (knownPrices.length > 0 && !knownPrices.includes(Math.round(reportedUnit))) {
+        console.warn(
+          `Checkout price mismatch: departure ${departureId} known prices [${knownPrices.join(", ")}], reported ${reportedUnit}. Proceeding (static catalog).`
+        );
+      }
+    } catch (e) {
+      console.log("Failed to cross-check trip price:", e);
+    }
+
+    const total = String(clientTotal);
+    const sub = String(clientSubtotal);
 
     // Save booking with pending_payment status
     const [booking] = await db.insert(bookings).values({

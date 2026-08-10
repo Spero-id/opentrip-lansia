@@ -12,6 +12,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
 
     // Fetch booking with participants and payments
@@ -26,6 +31,10 @@ export async function GET(
         { error: "Booking tidak ditemukan" },
         { status: 404 }
       );
+    }
+
+    if (booking.userId !== session.user.id && session.user.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Fetch participants

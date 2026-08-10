@@ -1,6 +1,6 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-08-09",
+  "last_updated": "2026-08-10",
   "summary": {
     "total_features": 52,
     "in_review": 19,
@@ -132,7 +132,7 @@
           "priority": 31,
           "depends_on": ["feat-030"],
           "verification": ["npm run lint"],
-          "evidence": "/booking/[id]/payment page, PaymentForm, payment module with idempotency"
+          "evidence": "POST /api/payments (auth+owner+method/proof validation, amount dari server), upload dengan magic-byte check, admin review approve/reject + note, /checkout/pay/[id], bukti+catatan admin di /my-trips"
         },
         {
           "id": "feat-032",
@@ -412,12 +412,12 @@
         {
           "id": "feat-080",
           "title": "API auth middleware & RBAC",
-          "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL — saat ini 57 endpoint 100% public.",
+          "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL �?" saat ini 57 endpoint 100% public.",
           "status": "to_do",
           "priority": 2,
           "depends_on": ["feat-001"],
           "verification": ["npm run lint"],
-          "evidence": "Semua route handler tanpa auth middleware — perlu segera diperbaiki",
+          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Endpoint lain masih perlu diaudit.",
           "critical": true
         },
         {

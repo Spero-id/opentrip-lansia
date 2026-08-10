@@ -274,24 +274,28 @@ export function useCheckout(initialDestination) {
     }
   }, [getTotal]);
 
-  // Upload payment proof and update booking
-  const initiatePayment = useCallback(async (paymentProofFile) => {
-    if (!state.bookingId || !paymentProofFile) return;
+  // Submit payment proof to create a payment record
+  const initiatePayment = useCallback(async () => {
+    if (!state.bookingId || !state.proofUrl) {
+      setState((prev) => ({
+        ...prev,
+        error: "Silakan unggah bukti transfer terlebih dahulu.",
+        isLoading: false,
+      }));
+      return;
+    }
 
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const formData = new FormData();
-      formData.append("bookingId", state.bookingId);
-      formData.append("paymentMethod", state.paymentMethod || "manual");
-      formData.append("totalAmount", String(state.totalAmount));
-      if (paymentProofFile) {
-        formData.append("paymentProof", paymentProofFile);
-      }
-
-      const res = await fetch("/api/payment", {
+      const res = await fetch("/api/payments", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId: state.bookingId,
+          paymentMethod: state.paymentMethod || "manual",
+          proofUrl: state.proofUrl,
+        }),
       });
 
       if (!res.ok) {
@@ -313,7 +317,7 @@ export function useCheckout(initialDestination) {
         isLoading: false,
       }));
     }
-  }, [state.bookingId, state.paymentMethod, state.totalAmount]);
+  }, [state.bookingId, state.paymentMethod, state.proofUrl]);
 
   const reset = useCallback(() => {
     setState({

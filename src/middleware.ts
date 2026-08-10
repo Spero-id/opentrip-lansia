@@ -1,8 +1,8 @@
-import { auth } from "@/modules/auth/auth.config";
+import { getSessionCookie } from "better-auth/cookies";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Only protect /admin/* routes
@@ -15,25 +15,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  try {
-    const session = await auth.api.getSession({ headers: request.headers });
-
-    if (!session?.user) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("redirect", "/");
-      return NextResponse.redirect(loginUrl);
-    }
-
-    if (session.user.role !== "admin") {
-      return NextResponse.redirect(new URL("/forbidden", request.url));
-    }
-
-    return NextResponse.next();
-  } catch {
+  // Edge-safe session check (cookie only). Role is enforced client-side
+  // via useAdminAuth and server-side by every admin API route.
+  const sessionCookie = getSessionCookie(request);
+  if (!sessionCookie) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", "/");
     return NextResponse.redirect(loginUrl);
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
