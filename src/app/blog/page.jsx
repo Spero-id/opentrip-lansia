@@ -6,6 +6,7 @@ import { Newspaper, ArrowRight } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
+import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 
 const dateLabel = (dateStr) =>
   new Date(dateStr).toLocaleDateString("id-ID", {
@@ -89,6 +90,7 @@ export default function BlogPage() {
       </div>
         <Subs />
       <Footer />
+      <WhatsAppFloat />
     </div>
   );
 }

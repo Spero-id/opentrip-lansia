@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCheckout } from "../../lib/hooks/useCheckout";
-import { destinationsData } from "../../lib/destinationsData";
 import StepProgress from "../../components/checkout/StepProgress";
 import DetailsStep from "../../components/checkout/DetailsStep";
 import PaymentStep from "../../components/checkout/PaymentStep";
@@ -19,19 +18,13 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const destId = searchParams.get("destination");
 
-  const staticDest = destId
-    ? destinationsData.find((d) => d.id === Number(destId)) ?? null
-    : null;
-
-  const checkout = useCheckout(staticDest);
+  const checkout = useCheckout(null);
   const setDestination = checkout.setDestination;
 
-  const [status, setStatus] = useState(
-    staticDest ? "found" : destId ? "loading" : "empty"
-  );
+  const [status, setStatus] = useState(destId ? "loading" : "empty");
 
   useEffect(() => {
-    if (staticDest || !destId) return;
+    if (!destId) return;
     let cancelled = false;
 
     fetch("/api/trips")
@@ -55,7 +48,7 @@ function CheckoutContent() {
     return () => {
       cancelled = true;
     };
-  }, [destId, staticDest, setDestination]);
+  }, [destId, setDestination]);
 
   useEffect(() => {
     const snapUrl =

@@ -65,17 +65,18 @@ export const tripRepository: ITripRepository = {
       })
       .from(trips)
       .leftJoin(tripDepartures, eq(trips.id, tripDepartures.tripId))
-      .leftJoin(tripPrices, eq(tripDepartures.id, tripPrices.departureId))
-      .where(and(eq(trips.status, "published"), eq(tripPrices.isActive, true)))
+      .leftJoin(tripPrices, and(eq(tripDepartures.id, tripPrices.departureId), eq(tripPrices.isActive, true)))
+      .where(eq(trips.status, "published"))
       .orderBy(asc(tripDepartures.startDate));
 
     const byTrip = new Map<string, TripWithPrice>();
     const pricesByDeparture = new Map<string, { name: string; price: string }[]>();
 
     for (const r of rows) {
-      if (!r.departureId) continue;
-      if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
-      pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
+      if (r.departureId) {
+        if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
+        pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
+      }
       if (!byTrip.has(r.id)) {
         byTrip.set(r.id, {
           ...r,

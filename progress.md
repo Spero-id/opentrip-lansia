@@ -668,3 +668,35 @@ pm run lint: no new errors; only warnings in touched files.
 - Test booking & usage promo dibersihkan (LANSIA10 usageCount dikembalikan ke 5).
 
 **Risks/Blocker:** `/api/trips` publik sekarang hanya trip published (draft tidak tampil di listing — behavior lama sama karena filter client-side). Trip tanpa departure/price aktif otomatis tidak muncul di publik. Belum ada transaksi DB atomik (neon-http tidak support `db.transaction`) — promo usage dicatat best-effort. Bug kritikal lain belum dikerjakan: SHA-256 tanpa salt, route admin tanpa auth (trips/promotions/horeca/vendors/galleries/commissions, users, admin dashboard), AVIF magic-byte lemah, rate limiting.
+
+## Session 25 — Hapus Data Statis Destinasi + Gambar Hanya dari DB
+
+**Goal:** (1) Hapus seluruh data destinasi statis, (2) trip published tetap tampil meski tanpa harga/jadwal (biar trip ber-gambar DB seperti "TES mantap" muncul di landing), (3) semua gambar hanya dari DB — tanpa fallback foto stok; kalau kosong tampil placeholder "Gambar tidak tersedia".
+
+**Completed:**
+- **Hapus data statis:** `src/lib/destinationsData.js` & `src/infrastructure/data/destinationsData.js` dihapus. Semua import/usage dibersihkan: `checkout/page.jsx` (staticDest dihapus, selalu fetch `/api/trips`, status awal `loading`/`empty`), `trips/page.jsx` & `private/page.jsx` (initial state `[]`), `trips/[id]/page.jsx` (lookup statis dihapus, selalu fetch DB).
+- **`findAllPublished` (trip.repository.ts):** filter `tripPrices.isActive` dipindah ke kondisi JOIN (`on`), bukan `WHERE`, dan loop tak lagi `continue` saat `departureId` null → semua trip published ikut muncul, termasuk tanpa departure/harga aktif (price null). Harga kanonikal tetap hanya dari harga aktif.
+- **Gambar tanpa fallback stok:** `FALLBACK_IMAGES` dihapus dari `Destination.js` (toDetail → `image` null / `images` [] saat DB kosong) dan `DestinationSection.jsx` (toCard → null). `DestinationCard.jsx` (publik) & `DestinationGallery.jsx` (detail) menampilkan placeholder "Gambar tidak tersedia" saat tidak ada gambar.
+
+**Verification (live, dev server :3000):**
+- `GET /api/trips` → 6 trip published; "TES mantap" (gambar, tanpa harga/departure) dan "Trip Senin" (tanpa gambar/harga) kini tampil ✅
+- Playwright (channel chrome): landing menampilkan kartu TES mantap; `/trips` render 5 placeholder "Gambar tidak tersedia" + kartu bergambar; `/trips/{uuid TES}` h1 = "TES mantap"; `/checkout?destination={uuid TES}` tetap berjalan (status found/memuat, server akan 400 saat submit karena tanpa departure — ekspektasi) ✅
+- `npm run lint`: 0 error baru di semua file yang diubah (error repo pre-existing di icon-picker/my-trips/useNotifications/bundle minified); `tsc --noEmit`: hanya error pre-existing e2e/api/endpoints.spec.ts ✅
+
+**Catatan/risiko:**
+- Trip published tanpa harga tetap tampil di publik dengan harga Rp0 — belum ada penanda "Harga menyusul"; checkout ke trip tanpa departure akan 400 di server.
+- Perubahan belum di-commit.
+
+## Session 26 — Tombol Melayang "Hubungi Kami" Jadi Komponen
+
+**Goal:** Ekstrak tombol WhatsApp melayang (kanan bawah) menjadi komponen reusable dan tampilkan di landing, `/trips`, `/private`, `/blog`, dan `/trips/[id]`.
+
+**Completed:**
+- `src/components/layout/WhatsAppFloat.jsx` (baru) — komponen server tanpa hooks: `wa.me/{NEXT_PUBLIC_WHATSAPP_NUMBER}?text={NEXT_PUBLIC_WHATSAPP_MESSAGE}`, gaya sama persis dengan versi inline lama (ikon bulat di mobile, pill "Hubungi Kami" di desktop).
+- Landing `src/app/page.jsx` — blok inline diganti `<WhatsAppFloat />` (import `Link` & konstanta WHATSAPP_* dihapus).
+- `src/app/trips/page.jsx`, `src/app/trips/[id]/page.jsx`, `src/app/private/page.jsx`, `src/app/blog/page.jsx` — import + render `<WhatsAppFloat />` sebelum `</div>` penutup.
+
+**Verifikasi:**
+- Targeted eslint 6 file: 0 error (2 warning pre-existing: `Newspaper` tak terpakai di blog, `<img>` di WhatsAppFloat sesuai pola repo).
+- Playwright (channel chrome, dev server :3000): tombol `a[aria-label="WhatsApp"]` muncul dengan label "Hubungi Kami" di kelima halaman ✅
+- Perubahan belum di-commit.
