@@ -54,13 +54,16 @@ function buildDestinationPreferences(form) {
 function buildPayload(form, budgetValue) {
   const title =
     form.tripType === "custom"
-      ? form.customTripName.trim()
-      : form.selectedDestinasi?.name || form.selectedDestinasi?.title || "Trip Explorer";
+      ? (form.customTripName.trim() || "Custom Trip")
+      : (form.selectedDestinasi?.name || form.selectedDestinasi?.title || "Trip Explorer");
+
+  const participantsCount = parseInt(form.jumlahPeserta, 10);
+  const durationDays = parseInt(form.durasi, 10);
 
   return {
     title,
-    durationDays: parseInt(form.durasi, 10) || 1,
-    participantsCount: parseInt(form.jumlahPeserta, 10) || 1,
+    durationDays: isNaN(durationDays) || durationDays < 1 ? 1 : durationDays,
+    participantsCount: isNaN(participantsCount) ? 6 : participantsCount,
     destinationPreferences: buildDestinationPreferences(form),
     specialRequirements: form.catatan?.trim() || undefined,
     budgetEstimate: budgetValue ? String(budgetValue) : undefined,
