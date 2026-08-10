@@ -1,32 +1,45 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 export function useAdminAuth() {
   const router = useRouter();
   const pathname = usePathname();
+  const verified = useRef(false);
 
   useEffect(() => {
+    if (verified.current) return;
+
     let cancelled = false;
 
     async function checkAdmin() {
       try {
         const { data: session } = await authClient.getSession();
+
+        if (cancelled) return;
+
         if (!session?.user) {
-          if (!cancelled) router.push("/login?redirect=" + encodeURIComponent(pathname));
+          router.push("/login?redirect=" + encodeURIComponent(pathname));
           return;
         }
+
         if (session.user.role !== "admin") {
-          if (!cancelled) router.push("/forbidden");
+          router.push("/forbidden");
+          return;
         }
+
+        verified.current = true;
       } catch {
-        if (!cancelled) router.push("/login?redirect=" + encodeURIComponent(pathname));
+        if (!cancelled) {
+          router.push("/login?redirect=" + encodeURIComponent(pathname));
+        }
       }
     }
 
     checkAdmin();
     return () => { cancelled = true; };
-  }, [router, pathname]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }
