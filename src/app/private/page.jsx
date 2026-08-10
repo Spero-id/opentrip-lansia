@@ -86,9 +86,16 @@ export default function PrivateTripPage() {
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            const normalized = data.map((item) => ({
+            const active = data.filter((item) => item.status === "published");
+            const normalized = active.map((item) => ({
               ...item,
-              title: item.name || item.title,
+              title: item.title || item.name,
+              image: item.image || null,
+              isSeniorFriendly: item.isSeniorFriendly ?? false,
+              priceMin: item.priceMin ?? 0,
+              priceMax: item.priceMax ?? 0,
+              location: item.location || "Indonesia",
+              rating: item.rating ?? 5.0,
             }));
             setDestinations(normalized);
           }
