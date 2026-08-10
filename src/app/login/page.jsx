@@ -34,6 +34,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
   async function handleSubmit(e) {
     e.preventDefault();
