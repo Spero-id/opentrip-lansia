@@ -1,48 +1,27 @@
 import { db } from "@/shared/db";
-import { destinations, destinationCategories, horeca, vendors, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
-import { eq, desc } from "drizzle-orm";
+import { destinationCategories, horeca, vendors, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
+import { eq } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
-
-type DestinationInsert = typeof destinations.$inferInsert;
+import { slugify } from "@/shared/utils/helpers";
 
 export const masterRepository = {
-  async getDestinations() {
-    const results = await db
-      .select({
-        dest: destinations,
-        categoryName: destinationCategories.name,
-      })
-      .from(destinations)
-      .leftJoin(destinationCategories, eq(destinations.categoryId, destinationCategories.id))
-      .orderBy(desc(destinations.createdAt));
-    
-    return results.map((r) => ({
-      ...r.dest,
-      categoryName: r.categoryName,
-    }));
-  },
-
-  async getDestinationById(id: UUID) {
-    const [dest] = await db.select().from(destinations).where(eq(destinations.id, id)).limit(1);
-    return dest ?? null;
-  },
-
-  async createDestination(data: DestinationInsert) {
-    const [dest] = await db.insert(destinations).values(data).returning();
-    return dest;
-  },
-
-  async updateDestination(id: UUID, data: Partial<DestinationInsert>) {
-    const [dest] = await db.update(destinations).set(data).where(eq(destinations.id, id)).returning();
-    return dest ?? null;
-  },
-
-  async deleteDestination(id: UUID) {
-    await db.delete(destinations).where(eq(destinations.id, id));
-  },
-
   async getDestinationCategories() {
     return db.select().from(destinationCategories);
+  },
+
+  async createDestinationCategory(name: string) {
+    const slug = slugify(name);
+    const [existing] = await db
+      .select()
+      .from(destinationCategories)
+      .where(eq(destinationCategories.name, name))
+      .limit(1);
+    if (existing) return existing;
+    const [item] = await db
+      .insert(destinationCategories)
+      .values({ name, slug, isActive: true })
+      .returning();
+    return item;
   },
 
   async getHorecaTypes() {
@@ -54,11 +33,11 @@ export const masterRepository = {
   },
 
   async getHorecaList() {
-    return db.select().from(horeca).orderBy(desc(horeca.createdAt));
+    return db.select().from(horeca);
   },
 
   async getVendors() {
-    return db.select().from(vendors).orderBy(desc(vendors.createdAt));
+    return db.select().from(vendors);
   },
 
   // HORECA
@@ -103,7 +82,7 @@ export const masterRepository = {
 
   // Meeting Points
   async getMeetingPoints() {
-    return db.select().from(meetingPoints).orderBy(desc(meetingPoints.createdAt));
+    return db.select().from(meetingPoints).orderBy(meetingPoints.name);
   },
 
   async getMeetingPointById(id: UUID) {

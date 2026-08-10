@@ -56,7 +56,7 @@ export function toDetail(dest) {
     highlights: Array.isArray(dest.highlights) && dest.highlights.length ? dest.highlights : [],
     facilities: Array.isArray(dest.facilities) ? dest.facilities : [],
     itinerary: Array.isArray(dest.itinerary) ? dest.itinerary : [],
-    meetingPoints: Array.isArray(dest.meetingPoints) ? dest.meetingPoints : [],
+    meetingPoints: Array.isArray(dest.meetingPoints) ? dest.meetingPoints : Array.isArray(dest.meetingPointsJson) ? dest.meetingPointsJson : [],
     reviewsList: dest.reviewsList || [],
     bookedCount: dest.bookedCount ?? null,
   };

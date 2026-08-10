@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Eye, CheckCircle, Loader2, ExternalLink } from "lucide-react";
 import Modal from "../components/modal";
 
 interface Booking {
@@ -14,20 +14,20 @@ interface Booking {
   currency: string;
   bookingDate: string;
   notes: string | null;
-  payments?: Payment[];
 }
 
 interface Payment {
   id: string;
+  bookingId: string;
   method: string | null;
-  status: string;
   amount: string;
-  proofUrl: string | null;
-  bankName: string | null;
-  accountNumber: string | null;
-  accountHolder: string | null;
-  adminNote: string | null;
-  reviewedAt: string | null;
+  status: string;
+  gatewayResponse: { proofUrl?: string } | null;
+  paidAt: string | null;
+}
+
+interface BookingDetail extends Booking {
+  payments: Payment[];
 }
 
 interface NotesInfo {
@@ -46,6 +46,10 @@ const statusBadge: Record<string, { label: string; className: string }> = {
     label: "Pending",
     className: "bg-amber-100 text-amber-800",
   },
+  awaiting_verification: {
+    label: "Menunggu Verifikasi",
+    className: "bg-orange-100 text-orange-800",
+  },
   confirmed: {
     label: "Dikonfirmasi",
     className: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
@@ -57,25 +61,6 @@ const statusBadge: Record<string, { label: string; className: string }> = {
   completed: {
     label: "Selesai",
     className: "bg-blue-100 text-blue-800",
-  },
-};
-
-const paymentBadge: Record<string, { label: string; className: string }> = {
-  pending: {
-    label: "Menunggu Tinjauan",
-    className: "bg-amber-100 text-amber-800",
-  },
-  paid: {
-    label: "Diterima",
-    className: "bg-emerald-100 text-emerald-800",
-  },
-  rejected: {
-    label: "Ditolak",
-    className: "bg-red-100 text-red-800",
-  },
-  failed: {
-    label: "Ditolak",
-    className: "bg-red-100 text-red-800",
   },
 };
 
@@ -110,73 +95,85 @@ export default function AdminPesanan() {
 
   const [detailOpen, setDetailOpen] = useState(false);
   const [selected, setSelected] = useState<Booking | null>(null);
-
-  const [reviewNote, setReviewNote] = useState("");
-  const [reviewing, setReviewing] = useState(false);
-  const [reviewError, setReviewError] = useState("");
-
-  const applyRows = useCallback(async () => {
-    try {
-      const res = await fetch("/api/bookings", { credentials: "include" });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data?.error || "Gagal memuat data pesanan.");
-        setRows([]);
-      } else {
-        setError(null);
-        setRows(Array.isArray(data) ? data : []);
-      }
-    } catch {
-      setError("Gagal memuat data pesanan.");
-      setRows([]);
-    }
-  }, []);
+  const [detailData, setDetailData] = useState<BookingDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [approvingRowId, setApprovingRowId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     async function run() {
-      await applyRows();
+      setLoading(true);
+      try {
+        const res = await fetch("/api/bookings", { credentials: "include" });
+        const data = await res.json();
+        if (cancelled) return;
+        if (!res.ok) {
+          setError(data?.error || "Gagal memuat data pesanan.");
+          setRows([]);
+        } else {
+          setError(null);
+          setRows(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Gagal memuat data pesanan.");
+          setRows([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
-    run().finally(() => {
-      if (!cancelled) setLoading(false);
-    });
+    run();
     return () => { cancelled = true; };
-  }, [applyRows]);
+  }, []);
 
-  function openDetail(item: Booking) {
+  async function openDetail(item: Booking) {
     setSelected(item);
     setDetailOpen(true);
+    setDetailLoading(true);
+    setDetailData(null);
+    try {
+      const res = await fetch(`/api/bookings/${item.id}`, { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setDetailData(data);
+      }
+    } catch {
+      // silently fail, will show basic data from selected
+    } finally {
+      setDetailLoading(false);
+    }
   }
 
-  async function review(action: "approve" | "reject") {
-    const payment = selected?.payments?.[0];
-    if (!payment) return;
-    if (action === "reject" && !reviewNote.trim()) {
-      setReviewError("Alasan wajib diisi saat menolak pembayaran.");
-      return;
-    }
-    setReviewing(true);
-    setReviewError("");
+  async function handleApprove(bookingId: string, setRow?: boolean) {
+    if (setRow) setApprovingRowId(bookingId);
+    else setApproving(true);
     try {
-      const res = await fetch(`/api/payments/${payment.id}/review`, {
-        method: "POST",
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, note: reviewNote.trim() }),
+        credentials: "include",
+        body: JSON.stringify({ status: "confirmed" }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setReviewError(data?.error || "Gagal memproses verifikasi.");
-        return;
+      if (res.ok) {
+        setRows(prev => prev.map(r => r.id === bookingId ? { ...r, status: "confirmed" } : r));
+        if (selected?.id === bookingId) {
+          setSelected(prev => prev ? { ...prev, status: "confirmed" } : prev);
+          setDetailData(prev => prev ? { ...prev, status: "confirmed" } : prev);
+        }
       }
-      setReviewNote("");
-      setDetailOpen(false);
-      await applyRows();
     } catch {
-      setReviewError("Terjadi kesalahan jaringan.");
+      // silently fail
     } finally {
-      setReviewing(false);
+      if (setRow) setApprovingRowId(null);
+      else setApproving(false);
     }
   }
+
+  const displayData = detailData ?? selected;
+  const payments = detailData?.payments ?? [];
+  const proofPayments = payments.filter(p => p.gatewayResponse?.proofUrl);
 
   return (
     <div className="space-y-6">
@@ -200,7 +197,6 @@ export default function AdminPesanan() {
                 <th className="px-6 py-4">Peserta</th>
                 <th className="px-6 py-4">Total</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Pembayaran</th>
                 <th className="px-6 py-4">Tanggal Booking</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
@@ -209,7 +205,7 @@ export default function AdminPesanan() {
               {loading ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="px-6 py-12 text-center text-slate-400"
                   >
                     Memuat data...
@@ -218,7 +214,7 @@ export default function AdminPesanan() {
               ) : error ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="px-6 py-12 text-center text-red-500"
                   >
                     {error}
@@ -227,7 +223,7 @@ export default function AdminPesanan() {
               ) : rows.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="px-6 py-12 text-center text-slate-400"
                   >
                     Belum ada data pesanan.
@@ -239,13 +235,6 @@ export default function AdminPesanan() {
                     label: b.status,
                     className: "bg-slate-100 text-slate-600",
                   };
-                  const payment = b.payments?.[0];
-                  const payBadge = payment
-                    ? (paymentBadge[payment.status] ?? {
-                        label: payment.status,
-                        className: "bg-slate-100 text-slate-600",
-                      })
-                    : null;
                   return (
                     <tr
                       key={b.id}
@@ -269,28 +258,33 @@ export default function AdminPesanan() {
                           {badge.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        {payBadge ? (
-                          <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${payBadge.className}`}
-                          >
-                            {payBadge.label}
-                          </span>
-                        ) : (
-                          <span className="text-slate-400">-</span>
-                        )}
-                      </td>
                       <td className="px-6 py-4 text-slate-500">
                         {formatDate(b.bookingDate)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => openDetail(b)}
-                          className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
-                          title="Lihat Detail"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          {(b.status === "pending" || b.status === "awaiting_verification") && (
+                            <button
+                              onClick={() => handleApprove(b.id, true)}
+                              disabled={approvingRowId === b.id}
+                              className="p-2 text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition disabled:opacity-50"
+                              title="Approve"
+                            >
+                              {approvingRowId === b.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <CheckCircle className="w-4 h-4" />
+                              )}
+                            </button>
+                          )}
+                          <button
+                            onClick={() => openDetail(b)}
+                            className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                            title="Lihat Detail"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -303,26 +297,25 @@ export default function AdminPesanan() {
 
       <Modal
         open={detailOpen}
-        onClose={() => setDetailOpen(false)}
+        onClose={() => { setDetailOpen(false); setSelected(null); setDetailData(null); }}
         title="Detail Pesanan"
         size="lg"
       >
-        {selected && (() => {
-          const notesInfo = parseNotes(selected.notes);
-          const payment = selected.payments?.[0] ?? null;
-          const payBadge = payment
-            ? (paymentBadge[payment.status] ?? {
-                label: payment.status,
-                className: "bg-slate-100 text-slate-600",
-              })
-            : null;
+        {displayData && (() => {
+          const notesInfo = parseNotes(displayData.notes);
           return (
           <div className="space-y-4 text-sm">
+            {detailLoading && (
+              <div className="flex items-center gap-2 text-slate-400 text-xs">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Memuat detail...
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-slate-500 font-medium">Kode Booking</p>
                 <p className="font-mono font-bold text-[#F49D1A] text-base">
-                  {selected.bookingCode}
+                  {displayData.bookingCode}
                 </p>
               </div>
               <div>
@@ -330,11 +323,11 @@ export default function AdminPesanan() {
                 <p>
                   <span
                     className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                      statusBadge[selected.status]?.className ??
+                      statusBadge[displayData.status]?.className ??
                       "bg-slate-100 text-slate-600"
                     }`}
                   >
-                    {statusBadge[selected.status]?.label ?? selected.status}
+                    {statusBadge[displayData.status]?.label ?? displayData.status}
                   </span>
                 </p>
               </div>
@@ -352,19 +345,19 @@ export default function AdminPesanan() {
               <div>
                 <p className="text-slate-500 font-medium">Jumlah Peserta</p>
                 <p className="font-semibold">
-                  {selected.totalParticipants} orang
+                  {displayData.totalParticipants} orang
                 </p>
               </div>
               <div>
                 <p className="text-slate-500 font-medium">Total Pembayaran</p>
                 <p className="font-bold text-slate-900">
                   Rp{" "}
-                  {Number(selected.totalAmount).toLocaleString("id-ID")}
+                  {Number(displayData.totalAmount).toLocaleString("id-ID")}
                 </p>
               </div>
               <div>
                 <p className="text-slate-500 font-medium">Tanggal Booking</p>
-                <p>{formatDate(selected.bookingDate)}</p>
+                <p>{formatDate(displayData.bookingDate)}</p>
               </div>
               {notesInfo?.customerName && (
                 <div>
@@ -381,97 +374,42 @@ export default function AdminPesanan() {
               <div>
                 <p className="text-slate-500 font-medium">ID Pengguna</p>
                 <p className="font-mono text-xs truncate">
-                  {selected.userId}
+                  {displayData.userId}
                 </p>
               </div>
             </div>
 
-            {payment && (
-              <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4 space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-bold text-slate-800">Informasi Pembayaran</p>
-                  {payBadge && (
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${payBadge.className}`}
-                    >
-                      {payBadge.label}
-                    </span>
-                  )}
-                </div>
+            {/* Payment Proof Section */}
+            {proofPayments.length > 0 && (
+              <div className="border-t border-slate-100 pt-4">
+                <p className="text-slate-500 font-medium mb-3">Bukti Pembayaran</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-slate-500 font-medium text-xs">Metode</p>
-                    <p className="font-semibold uppercase">{payment.method ?? "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-slate-500 font-medium text-xs">Nominal</p>
-                    <p className="font-bold text-slate-900">
-                      Rp {Number(payment.amount).toLocaleString("id-ID")}
-                    </p>
-                  </div>
-                  {payment.bankName && (
-                    <div className="sm:col-span-2">
-                      <p className="text-slate-500 font-medium text-xs">Rekening Tujuan</p>
-                      <p className="font-semibold">{payment.bankName}</p>
-                      <p className="text-xs text-slate-400">
-                        {payment.accountHolder} ·{" "}
-                        <span className="font-mono">{payment.accountNumber}</span>
-                      </p>
-                    </div>
-                  )}
-                </div>
-                {payment.proofUrl && (
-                  <div>
-                    <p className="text-slate-500 font-medium text-xs mb-1.5">Bukti Transfer</p>
-                    <a href={payment.proofUrl} target="_blank" rel="noreferrer">
+                  {proofPayments.map((payment) => (
+                    <div
+                      key={payment.id}
+                      className="relative group rounded-xl border border-slate-200 overflow-hidden bg-slate-50"
+                    >
                       <img
-                        src={payment.proofUrl}
-                        alt="Bukti transfer"
-                        className="max-h-56 rounded-xl border border-slate-200 bg-white object-contain"
+                        src={payment.gatewayResponse!.proofUrl!}
+                        alt="Bukti pembayaran"
+                        className="w-full h-48 object-contain"
                       />
-                    </a>
-                  </div>
-                )}
-                {payment.adminNote && (
-                  <div>
-                    <p className="text-slate-500 font-medium text-xs mb-1">Catatan Admin</p>
-                    <p className="bg-white rounded-xl p-3 text-slate-700">
-                      {payment.adminNote}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {payment?.status === "pending" && (
-              <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4 space-y-3">
-                <p className="text-sm font-bold text-amber-800">Verifikasi Pembayaran</p>
-                <textarea
-                  value={reviewNote}
-                  onChange={(e) => setReviewNote(e.target.value)}
-                  rows={3}
-                  maxLength={1000}
-                  placeholder="Alasan (wajib diisi saat menolak pembayaran)"
-                  className="w-full rounded-xl border border-amber-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 resize-none"
-                />
-                {reviewError && (
-                  <p className="text-xs font-semibold text-red-600">{reviewError}</p>
-                )}
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => review("approve")}
-                    disabled={reviewing}
-                    className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-                  >
-                    Terima Pembayaran
-                  </button>
-                  <button
-                    onClick={() => review("reject")}
-                    disabled={reviewing}
-                    className="rounded-xl bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-xs font-bold transition disabled:opacity-50"
-                  >
-                    Tolak Pembayaran
-                  </button>
+                      <div className="p-2 flex items-center justify-between text-xs">
+                        <span className="text-slate-500">
+                          {payment.method ?? "Transfer"}
+                        </span>
+                        <a
+                          href={payment.gatewayResponse!.proofUrl!}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#1CA6B7] hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Buka
+                        </a>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -482,6 +420,24 @@ export default function AdminPesanan() {
                 <p className="bg-slate-50 rounded-xl p-3 text-slate-700">
                   {notesInfo.specialRequest}
                 </p>
+              </div>
+            )}
+
+            {/* Approve Button - Full Width at Bottom */}
+            {(displayData.status === "pending" || displayData.status === "awaiting_verification") && (
+              <div className="border-t border-slate-100 pt-4">
+                <button
+                  onClick={() => handleApprove(displayData.id)}
+                  disabled={approving}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-[#1CA6B7] text-white text-sm font-bold rounded-xl hover:bg-[#1CA6B7]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {approving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4" />
+                  )}
+                  {approving ? "Memproses..." : "Approve Pesanan"}
+                </button>
               </div>
             )}
           </div>

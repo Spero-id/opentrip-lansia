@@ -21,11 +21,11 @@ export default function DestisasiPage() {
   const [isSeniorFriendlyOnly, setIsSeniorFriendlyOnly] = useState(false);
 
   useEffect(() => {
-    fetch("/api/destinations")
+    fetch("/api/trips")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          const active = data.filter((d) => d.isActive !== false);
+          const active = data.filter((d) => d.status === "published");
           const mapped = active.map((d) => toDetail(d));
           setDestinations(mapped);
         }

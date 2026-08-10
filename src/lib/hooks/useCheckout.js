@@ -1,37 +1,36 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { OrderDomain, AVAILABLE_VOUCHERS } from "../Order";
+import { useState, useCallback, useEffect } from "react";
+import { OrderDomain } from "../Order";
 
 const initialCustomer = {
   fullName: "",
-  email: "",
+  birthDate: "",
   phone: "",
-  specialRequest: "",
+  address: "",
+  emergencyContactName: "",
+  emergencyContactPhone: "",
+  healthConditions: {
+    hypertension: false,
+    diabetes: false,
+    heart: false,
+    asthma: false,
+    vertigo: false,
+    jointBone: false,
+    none: false,
+  },
+  medications: "",
+  mobilityOption: "independent",
 };
 
 const SERVICE_FEE = 15000;
-
-function createEmptyParticipant() {
-  return {
-    id: OrderDomain.generateParticipantId(),
-    fullName: "",
-    birthDate: "",
-    gender: "",
-    phone: "",
-    email: "",
-    relationship: "",
-  };
-}
 
 export function useCheckout(initialDestination) {
   const [state, setState] = useState({
     step: "details",
     destination: initialDestination ?? null,
     pax: 1,
-    travelDate: "",
     customer: { ...initialCustomer },
-    participants: [createEmptyParticipant()],
     voucherCode: "",
     appliedVoucher: null,
     voucherError: "",
@@ -42,38 +41,38 @@ export function useCheckout(initialDestination) {
     isLoading: false,
     error: null,
     agreeToTerms: false,
+    bookingId: null,
   });
+
+  const [dbVouchers, setDbVouchers] = useState([]);
+
+  // Fetch vouchers from DB on mount
+  useEffect(() => {
+    fetch("/api/promotions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setDbVouchers(data.filter((v) => v.isActive));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const setDestination = useCallback((dest) => {
     setState((prev) => ({ ...prev, destination: dest }));
   }, []);
 
   const setPax = useCallback((pax) => {
-    setState((prev) => {
-      const current = prev.participants.length;
-      if (pax === current) return { ...prev, pax };
-      if (pax > current) {
-        const participants = [...prev.participants];
-        for (let i = current; i < pax; i++) {
-          participants.push(createEmptyParticipant());
-        }
-        return { ...prev, pax, participants };
-      }
-      return { ...prev, pax, participants: prev.participants.slice(0, pax) };
-    });
-  }, []);
-
-  const setTravelDate = useCallback((date) => {
-    setState((prev) => ({ ...prev, travelDate: date }));
+    setState((prev) => ({
+      ...prev,
+      pax: Math.max(1, Math.min(pax, 10)),
+    }));
   }, []);
 
   const setCustomer = useCallback((field, value) => {
     setState((prev) => ({
       ...prev,
       customer: { ...prev.customer, [field]: value },
-      participants: ["fullName", "email", "phone"].includes(field)
-        ? prev.participants.map((p, i) => (i === 0 ? { ...p, [field]: value } : p))
-        : prev.participants,
     }));
   }, []);
 
@@ -82,50 +81,23 @@ export function useCheckout(initialDestination) {
       ...prev,
       customer: {
         fullName: "Budi Santoso",
-        email: "budi.santoso@email.com",
+        birthDate: "1955-03-15",
         phone: "081234567890",
-        specialRequest: prev.customer.specialRequest,
+        address: "Jl. Sudirman No. 123, Jakarta Selatan",
+        emergencyContactName: "Rina Santoso",
+        emergencyContactPhone: "081987654321",
+        healthConditions: {
+          hypertension: true,
+          diabetes: false,
+          heart: false,
+          asthma: false,
+          vertigo: false,
+          jointBone: false,
+          none: false,
+        },
+        medications: "Amlodipine 5mg",
+        mobilityOption: "independent",
       },
-      participants: prev.participants.map((p, i) =>
-        i === 0
-          ? { ...p, fullName: "Budi Santoso", email: "budi.santoso@email.com", phone: "081234567890" }
-          : p
-      ),
-    }));
-  }, []);
-
-  const addParticipant = useCallback(() => {
-    const newP = {
-      id: OrderDomain.generateParticipantId(),
-      fullName: "",
-      birthDate: "",
-      gender: "",
-      phone: "",
-      email: "",
-      relationship: "",
-    };
-    setState((prev) => ({
-      ...prev,
-      participants: [...prev.participants, newP],
-    }));
-  }, []);
-
-  const updateParticipant = useCallback(
-    (id, field, value) => {
-      setState((prev) => ({
-        ...prev,
-        participants: prev.participants.map((p) =>
-          p.id === id ? { ...p, [field]: value } : p
-        ),
-      }));
-    },
-    []
-  );
-
-  const removeParticipant = useCallback((id) => {
-    setState((prev) => ({
-      ...prev,
-      participants: prev.participants.filter((p) => p.id !== id),
     }));
   }, []);
 
@@ -136,21 +108,64 @@ export function useCheckout(initialDestination) {
   const applyVoucher = useCallback(() => {
     setState((prev) => {
       const code = prev.voucherCode.trim().toUpperCase();
-      const found = AVAILABLE_VOUCHERS.find((v) => v.code === code);
       const subtotal = (prev.destination?.priceMin ?? 0) * prev.pax;
+
+      // Look up in DB vouchers
+      const found = dbVouchers.find((v) => v.code?.toUpperCase() === code);
       if (!found) {
         return { ...prev, voucherError: "Kode voucher tidak valid.", appliedVoucher: null };
       }
-      if (subtotal < found.minOrder) {
+
+      // Check min purchase
+      const minPurchase = Number(found.minPurchase) || 0;
+      if (minPurchase > 0 && subtotal < minPurchase) {
         return {
           ...prev,
-          voucherError: `Minimal order ${OrderDomain.formatPrice(found.minOrder)} untuk voucher ini.`,
+          voucherError: `Minimal order ${OrderDomain.formatPrice(minPurchase)} untuk voucher ini.`,
           appliedVoucher: null,
         };
       }
-      return { ...prev, appliedVoucher: found, voucherError: "" };
+
+      // Check usage limit
+      if (found.usageLimit && found.usageCount >= found.usageLimit) {
+        return { ...prev, voucherError: "Voucher sudah mencapai batas pemakaian.", appliedVoucher: null };
+      }
+
+      // Check validity period
+      const now = new Date();
+      if (found.validFrom && new Date(found.validFrom) > now) {
+        return { ...prev, voucherError: "Voucher belum aktif.", appliedVoucher: null };
+      }
+      if (found.validUntil && new Date(found.validUntil) < now) {
+        return { ...prev, voucherError: "Voucher sudah kedaluwarsa.", appliedVoucher: null };
+      }
+
+      // Calculate discount
+      const value = Number(found.value) || 0;
+      let discount = 0;
+      if (found.type === "percentage") {
+        discount = Math.round(subtotal * (value / 100));
+        const maxDiscount = Number(found.maxDiscount) || 0;
+        if (maxDiscount > 0) discount = Math.min(discount, maxDiscount);
+      } else {
+        discount = value;
+      }
+      discount = Math.min(discount, subtotal);
+
+      return {
+        ...prev,
+        appliedVoucher: {
+          code: found.code,
+          label: found.title || found.code,
+          discount,
+          type: found.type,
+          value,
+          percentageValue: found.type === "percentage" ? value : 0,
+        },
+        voucherError: "",
+      };
     });
-  }, []);
+  }, [dbVouchers]);
 
   const removeVoucher = useCallback(() => {
     setState((prev) => ({ ...prev, appliedVoucher: null, voucherCode: "" }));
@@ -172,56 +187,49 @@ export function useCheckout(initialDestination) {
     return (s.destination?.priceMin ?? 0) * s.pax;
   }, []);
 
-  const getDiscount = useCallback((s) => {
-    if (!s.appliedVoucher) return 0;
-    const subtotal = getTicketSubtotal(s);
-    if (s.appliedVoucher.type === "percentage") {
-      return Math.round(subtotal * ((s.appliedVoucher.percentageValue ?? 0) / 100));
-    }
-    return s.appliedVoucher.discount;
-  }, [getTicketSubtotal]);
+  const getDiscount = useCallback(
+    (s) => {
+      if (!s.appliedVoucher) return 0;
+      const subtotal = getTicketSubtotal(s);
+      if (s.appliedVoucher.type === "percentage") {
+        return Math.round(subtotal * ((s.appliedVoucher.percentageValue ?? 0) / 100));
+      }
+      return s.appliedVoucher.discount;
+    },
+    [getTicketSubtotal]
+  );
 
-  const getTotal = useCallback((s) => {
-    const sub = getTicketSubtotal(s);
-    const disc = getDiscount(s);
-    return Math.max(0, sub + SERVICE_FEE - disc);
-  }, [getTicketSubtotal, getDiscount]);
+  const getTotal = useCallback(
+    (s) => {
+      const sub = getTicketSubtotal(s);
+      const disc = getDiscount(s);
+      return Math.max(0, sub + SERVICE_FEE - disc);
+    },
+    [getTicketSubtotal, getDiscount]
+  );
 
-  const goToPayment = useCallback(() => {
-    setState((prev) => {
-      if (!prev.destination || !prev.travelDate) return prev;
-      const orderId = OrderDomain.generateOrderId();
-      const total = getTotal(prev);
-      return { ...prev, step: "payment", orderId, totalAmount: total };
-    });
-  }, [getTotal]);
-
-  const initiatePayment = useCallback(async () => {
+  // Save booking to DB when clicking "Lanjut ke Pembayaran"
+  const goToPayment = useCallback(async () => {
     let snapshot = null;
 
     setState((prev) => {
       if (!prev.destination) return prev;
       snapshot = {
-        orderId: prev.orderId,
+        orderId: OrderDomain.generateOrderId(),
         destination: prev.destination,
         pax: prev.pax,
-        travelDate: prev.travelDate,
         customer: prev.customer,
-        participants: prev.participants,
         voucherCode: prev.voucherCode,
         appliedVoucher: prev.appliedVoucher,
         paymentMethod: prev.paymentMethod,
         proofUrl: prev.proofUrl,
         subtotal: (prev.destination?.priceMin ?? 0) * prev.pax,
-        totalAmount: prev.totalAmount,
+        totalAmount: getTotal(prev),
       };
-      return { ...prev, isLoading: true, error: null };
+      return { ...prev, isLoading: true, error: null, orderId: snapshot.orderId };
     });
 
     if (!snapshot) return;
-
-    // Simulasi proses payment 1 detik
-    await new Promise((r) => setTimeout(r, 1000));
 
     try {
       const res = await fetch("/api/checkout", {
@@ -231,13 +239,11 @@ export function useCheckout(initialDestination) {
       });
 
       if (!res.ok) {
-        let message = "Gagal memproses pesanan. Silakan coba lagi.";
+        let message = "Gagal menyimpan pesanan. Silakan coba lagi.";
         try {
           const data = await res.json();
           if (data?.error) message = data.error;
-        } catch {
-          // ignore parse error, pakai pesan default
-        }
+        } catch {}
 
         if (res.status === 401) {
           const redirect = encodeURIComponent(
@@ -251,7 +257,13 @@ export function useCheckout(initialDestination) {
         return;
       }
 
-      setState((prev) => ({ ...prev, step: "confirmation", isLoading: false }));
+      const data = await res.json();
+      setState((prev) => ({
+        ...prev,
+        step: "payment",
+        isLoading: false,
+        bookingId: data.booking?.id,
+      }));
     } catch (err) {
       console.error("Gagal menyimpan pesanan:", err);
       setState((prev) => ({
@@ -260,16 +272,55 @@ export function useCheckout(initialDestination) {
         isLoading: false,
       }));
     }
-  }, []);
+  }, [getTotal]);
+
+  // Upload payment proof and update booking
+  const initiatePayment = useCallback(async (paymentProofFile) => {
+    if (!state.bookingId || !paymentProofFile) return;
+
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
+    try {
+      const formData = new FormData();
+      formData.append("bookingId", state.bookingId);
+      formData.append("paymentMethod", state.paymentMethod || "manual");
+      formData.append("totalAmount", String(state.totalAmount));
+      if (paymentProofFile) {
+        formData.append("paymentProof", paymentProofFile);
+      }
+
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        let message = "Gagal memproses pembayaran. Silakan coba lagi.";
+        try {
+          const data = await res.json();
+          if (data?.error) message = data.error;
+        } catch {}
+        setState((prev) => ({ ...prev, error: message, isLoading: false }));
+        return;
+      }
+
+      setState((prev) => ({ ...prev, step: "confirmation", isLoading: false }));
+    } catch (err) {
+      console.error("Gagal memproses pembayaran:", err);
+      setState((prev) => ({
+        ...prev,
+        error: "Terjadi kesalahan jaringan. Silakan coba lagi.",
+        isLoading: false,
+      }));
+    }
+  }, [state.bookingId, state.paymentMethod, state.totalAmount]);
 
   const reset = useCallback(() => {
     setState({
       step: "details",
       destination: null,
       pax: 1,
-      travelDate: "",
       customer: { ...initialCustomer },
-      participants: [createEmptyParticipant()],
       voucherCode: "",
       appliedVoucher: null,
       voucherError: "",
@@ -280,15 +331,15 @@ export function useCheckout(initialDestination) {
       isLoading: false,
       error: null,
       agreeToTerms: false,
+      bookingId: null,
     });
   }, []);
 
   const goBack = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      step: "details",
-      error: null,
-    }));
+    setState((prev) => {
+      if (prev.step === "payment") return { ...prev, step: "details", error: null };
+      return prev;
+    });
   }, []);
 
   const ticketSubtotal = getTicketSubtotal(state);
@@ -303,12 +354,8 @@ export function useCheckout(initialDestination) {
     total,
     setDestination,
     setPax,
-    setTravelDate,
     setCustomer,
     autofillProfile,
-    addParticipant,
-    updateParticipant,
-    removeParticipant,
     setVoucherCode,
     applyVoucher,
     removeVoucher,

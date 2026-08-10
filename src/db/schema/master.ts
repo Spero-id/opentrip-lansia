@@ -1,33 +1,10 @@
-import { pgTable, uuid, varchar, text, integer, boolean, timestamp, jsonb, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 
 export const destinationCategories = pgTable("destination_categories", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   isActive: boolean("is_active").default(true),
-});
-
-export const destinations = pgTable("destinations", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 255 }).notNull(),
-  slug: varchar("slug", { length: 255 }).notNull().unique(),
-  description: text("description"),
-  location: text("location"),
-  geoPoint: text("geo_point"),
-  categoryId: uuid("category_id").references(() => destinationCategories.id),
-  isSeniorFriendly: boolean("is_senior_friendly").default(false),
-  accessibilityInfo: text("accessibility_info"),
-  isActive: boolean("is_active").default(true),
-  visitEstimateMinutes: integer("visit_estimate_minutes"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  image: text("image"),
-  rating: doublePrecision("rating"),
-  images: jsonb("images").$type<string[]>(),
-  reviewCount: integer("review_count"),
-  priceMin: integer("price_min"),
-  priceMax: integer("price_max"),
-  highlights: jsonb("highlights").$type<string[]>(),
-  facilities: jsonb("facilities").$type<string[]>(),
 });
 
 export const horecaTypes = pgTable("horeca_types", {
@@ -72,6 +49,16 @@ export const vendors = pgTable("vendors", {
   rating: integer("rating").default(0),
   pricePerDay: varchar("price_per_day", { length: 50 }),
   currency: varchar("currency", { length: 3 }).default("IDR"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const meetingPoints = pgTable("meeting_points", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+  address: text("address"),
+  geoPoint: text("geo_point"),
+  description: text("description"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

@@ -1,97 +1,13 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { MapPin, Calendar, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
-
-interface Stats {
-  totalTrips: number;
-  bookingThisMonth: number;
-  bookingChange: number | null;
-  revenue: string;
-  activePromos: number;
-}
-
-interface RecentBooking {
-  id: string;
-  bookingCode: string;
-  status: string;
-  totalAmount: string;
-  currency: string;
-  bookingDate: string;
-  customerName: string;
-  tripName: string;
-}
-
-const STATUS_LABEL: Record<string, string> = {
-  pending: "Pending",
-  confirmed: "Terkonfirmasi",
-  completed: "Selesai",
-  cancelled: "Dibatalkan",
-};
+import { Compass, Calendar, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/admin/dashboard")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.stats) setStats(data.stats);
-        if (data.recentBookings) setRecentBookings(data.recentBookings);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  const statCards = stats
-    ? [
-        {
-          label: "Total Paket Trip",
-          value: String(stats.totalTrips),
-          change: "Semua status",
-          icon: MapPin,
-          color: "text-[#F49D1A]",
-          bg: "bg-[#FEF6E7]",
-        },
-        {
-          label: "Pemesanan Bulan Ini",
-          value: String(stats.bookingThisMonth),
-          change:
-            stats.bookingChange === null
-              ? "Bulan pertama"
-              : stats.bookingChange >= 0
-              ? `+${stats.bookingChange}% vs bln lalu`
-              : `${stats.bookingChange}% vs bln lalu`,
-          icon: Calendar,
-          color: "text-[#1CA6B7]",
-          bg: "bg-[#1CA6B7]/10",
-        },
-        {
-          label: "Total Pendapatan",
-          value: stats.revenue,
-          change: "Confirmed & selesai",
-          icon: DollarSign,
-          color: "text-blue-600",
-          bg: "bg-blue-50",
-        },
-        {
-          label: "Promo Aktif",
-          value: String(stats.activePromos),
-          change: "Saat ini",
-          icon: TrendingUp,
-          color: "text-purple-600",
-          bg: "bg-purple-50",
-        },
-      ]
-    : [
-        { label: "Total Paket Trip", value: "—", change: "", icon: MapPin, color: "text-[#F49D1A]", bg: "bg-[#FEF6E7]" },
-        { label: "Pemesanan Bulan Ini", value: "—", change: "", icon: Calendar, color: "text-[#1CA6B7]", bg: "bg-[#1CA6B7]/10" },
-        { label: "Total Pendapatan", value: "—", change: "", icon: DollarSign, color: "text-blue-600", bg: "bg-blue-50" },
-        { label: "Promo Aktif", value: "—", change: "", icon: TrendingUp, color: "text-purple-600", bg: "bg-purple-50" },
-      ];
+  const stats = [
+    { label: "Total Destinasi & Trip", value: "24", change: "+12% bln ini", icon: Compass, color: "text-[#F49D1A]", bg: "bg-[#FEF6E7]" },
+    { label: "Pemesanan Bulan Ini", value: "148", change: "+24% vs lalu", icon: Calendar, color: "text-[#1CA6B7]", bg: "bg-[#1CA6B7]/10" },
+    { label: "Total Pendapatan", value: "Rp 128.5M", change: "+18.4%", icon: DollarSign, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Promo Aktif", value: "6", change: "2 Berakhir", icon: TrendingUp, color: "text-purple-600", bg: "bg-purple-50" },
+  ];
 
   return (
     <div className="space-y-8">
@@ -113,7 +29,7 @@ export default function AdminDashboard() {
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {statCards.map((stat, idx) => {
+        {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
             <div key={idx} className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
@@ -124,12 +40,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div>
-                <span className={`text-2xl font-extrabold text-slate-900 ${loading ? "animate-pulse text-slate-300" : ""}`}>
-                  {stat.value}
-                </span>
-                {stat.change && (
-                  <span className="block text-[11px] font-semibold text-[#1CA6B7] mt-1">{stat.change}</span>
-                )}
+                <span className="text-2xl font-extrabold text-slate-900">{stat.value}</span>
+                <span className="block text-[11px] font-semibold text-[#1CA6B7] mt-1">{stat.change}</span>
               </div>
             </div>
           );
@@ -138,12 +50,12 @@ export default function AdminDashboard() {
 
       {/* Recent Bookings & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
+        
         {/* Table Recent Bookings */}
         <div className="lg:col-span-8 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Pemesanan Terbaru</h2>
-            <Link href="/admin/pesanan" className="text-xs font-semibold text-[#F49D1A] hover:underline flex items-center gap-1">
+            <Link href="/admin/trips" className="text-xs font-semibold text-[#F49D1A] hover:underline flex items-center gap-1">
               <span>Lihat Semua</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
@@ -161,43 +73,25 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {loading ? (
-                  <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-slate-400">Memuat data...</td>
+                {[
+                  { code: "OTP-8821", name: "Budi Santoso", trip: "Labuan Bajo Phinisi", total: "Rp 1.800.000", status: "Terkonfirmasi" },
+                  { code: "OTP-8822", name: "Siti Rahmawati", trip: "Kawah Ijen Blue Fire", total: "Rp 500.000", status: "Pending" },
+                  { code: "OTP-8823", name: "Aditya Pratama", trip: "Nusa Penida Island", total: "Rp 750.000", status: "Terkonfirmasi" },
+                ].map((row, i) => (
+                  <tr key={i} className="hover:bg-slate-50/60 transition">
+                    <td className="px-4 py-3 font-mono font-bold text-slate-900">{row.code}</td>
+                    <td className="px-4 py-3 font-medium">{row.name}</td>
+                    <td className="px-4 py-3 text-slate-500">{row.trip}</td>
+                    <td className="px-4 py-3 font-bold text-[#F49D1A]">{row.total}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                        row.status === "Terkonfirmasi" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : "bg-amber-100 text-amber-800"
+                      }`}>
+                        {row.status}
+                      </span>
+                    </td>
                   </tr>
-                ) : recentBookings.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-slate-400">Belum ada pemesanan.</td>
-                  </tr>
-                ) : (
-                  recentBookings.map((row) => {
-                    const statusLabel = STATUS_LABEL[row.status] ?? row.status;
-                    const isConfirmed = row.status === "confirmed";
-                    return (
-                      <tr key={row.id} className="hover:bg-slate-50/60 transition">
-                        <td className="px-4 py-3 font-mono font-bold text-slate-900">{row.bookingCode}</td>
-                        <td className="px-4 py-3 font-medium">{row.customerName}</td>
-                        <td className="px-4 py-3 text-slate-500">{row.tripName}</td>
-                        <td className="px-4 py-3 font-bold text-[#F49D1A]">
-                          Rp {Number(row.totalAmount).toLocaleString("id-ID")}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                            isConfirmed
-                              ? "bg-[#1CA6B7]/15 text-[#1CA6B7]"
-                              : row.status === "cancelled"
-                              ? "bg-red-100 text-red-700"
-                              : row.status === "completed"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-amber-100 text-amber-800"
-                          }`}>
-                            {statusLabel}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
+                ))}
               </tbody>
             </table>
           </div>
@@ -206,7 +100,7 @@ export default function AdminDashboard() {
         {/* Quick Shortcuts */}
         <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <h2 className="text-lg font-bold text-slate-900">Aksi Cepat</h2>
-
+          
           <div className="space-y-3 text-xs">
             <Link
               href="/admin/trips"
@@ -216,10 +110,10 @@ export default function AdminDashboard() {
               <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
             </Link>
             <Link
-              href="/admin/destinations"
+              href="/admin/trips/new"
               className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Tambah Destinasi Baru</span>
+              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Tambah Trip Baru</span>
               <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
             </Link>
             <Link

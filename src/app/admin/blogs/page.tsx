@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import WysiwygEditor from "../components/wysiwyg-editor";
 
 interface Blog {
   id: string;
@@ -197,9 +198,11 @@ export default function AdminBlogs() {
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Konten</label>
-            <textarea name="content" value={form.content} onChange={handleChange} rows={6}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+            <label className="block text-sm font-medium text-slate-700 mb-1">Konten</label>
+            <WysiwygEditor
+              value={form.content}
+              onChange={(content) => setForm((prev) => ({ ...prev, content }))}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>

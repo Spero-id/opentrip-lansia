@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, CheckCircle2, XCircle, MapPin } from "lucide-react";
+import { Plus, Edit, Trash2, MapPin, Clock, CheckCircle2, XCircle } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 
@@ -11,18 +11,18 @@ interface MeetingPoint {
   address: string | null;
   geoPoint: string | null;
   description: string | null;
-  isActive: boolean | null;
+  isActive: boolean;
+  createdAt: string;
 }
 
 interface MeetingPointForm {
   name: string;
   address: string;
-  geoPoint: string;
   description: string;
   isActive: boolean;
 }
 
-const emptyForm: MeetingPointForm = { name: "", address: "", geoPoint: "", description: "", isActive: true };
+const emptyForm: MeetingPointForm = { name: "", address: "", description: "", isActive: true };
 
 export default function AdminMeetingPoints() {
   const [rows, setRows] = useState<MeetingPoint[]>([]);
@@ -44,9 +44,7 @@ export default function AdminMeetingPoints() {
       const res = await fetch("/api/meeting-points");
       const data = await res.json();
       setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
+    } catch { setRows([]); }
     setLoading(false);
   }
 
@@ -61,9 +59,8 @@ export default function AdminMeetingPoints() {
     setForm({
       name: item.name,
       address: item.address || "",
-      geoPoint: item.geoPoint || "",
       description: item.description || "",
-      isActive: item.isActive ?? true,
+      isActive: item.isActive,
     });
     setModalOpen(true);
   }
@@ -71,23 +68,44 @@ export default function AdminMeetingPoints() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const url = editing ? `/api/meeting-points/${editing.id}` : "/api/meeting-points";
-    await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const payload = {
+        name: form.name,
+        address: form.address || null,
+        description: form.description || null,
+        isActive: form.isActive,
+      };
+
+      if (editing) {
+        await fetch(`/api/meeting-points/${editing.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        await fetch("/api/meeting-points", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+      setModalOpen(false);
+      fetchData();
+    } catch (err) {
+      console.error("Gagal menyimpan meeting point:", err);
+    }
     setSaving(false);
-    setModalOpen(false);
-    fetchData();
   }
 
   async function handleDelete() {
     if (!deleting) return;
-    await fetch(`/api/meeting-points/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
+    try {
+      await fetch(`/api/meeting-points/${deleting}`, { method: "DELETE" });
+      setDeleteOpen(false);
+      fetchData();
+    } catch (err) {
+      console.error("Gagal menghapus meeting point:", err);
+    }
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -101,7 +119,7 @@ export default function AdminMeetingPoints() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Meeting Point</h1>
-          <p className="text-sm text-slate-500 mt-1">Daftar lokasi titik kumpul keberangkatan untuk paket trip.</p>
+          <p className="text-sm text-slate-500 mt-1">Kelola titik kumpul penjemputan peserta sebelum keberangkatan trip.</p>
         </div>
         <button
           onClick={openCreate}
@@ -130,16 +148,20 @@ export default function AdminMeetingPoints() {
               ) : rows.length === 0 ? (
                 <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Belum ada data meeting point.</td></tr>
               ) : (
-                rows.map((m) => (
-                  <tr key={m.id} className="hover:bg-slate-50/60 transition">
-                    <td className="px-6 py-4 font-bold text-slate-900 inline-flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#F49D1A]" />
-                      {m.name}
-                    </td>
-                    <td className="px-6 py-4 text-slate-500">{m.address || "-"}</td>
-                    <td className="px-6 py-4 text-slate-500 max-w-xs truncate">{m.description || "-"}</td>
+                rows.map((mp) => (
+                  <tr key={mp.id} className="hover:bg-slate-50/60 transition">
                     <td className="px-6 py-4">
-                      {m.isActive ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-[#F49D1A]/15 flex items-center justify-center">
+                          <MapPin className="w-4 h-4 text-[#F49D1A]" />
+                        </div>
+                        <span className="font-bold text-slate-900">{mp.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-500 max-w-[200px] truncate">{mp.address || "-"}</td>
+                    <td className="px-6 py-4 text-slate-500 max-w-[200px] truncate">{mp.description || "-"}</td>
+                    <td className="px-6 py-4">
+                      {mp.isActive ? (
                         <span className="inline-flex items-center gap-1 bg-[#1CA6B7]/15 text-[#1CA6B7] px-2.5 py-1 rounded-full text-[10px] font-bold">
                           <CheckCircle2 className="w-3 h-3" /> Aktif
                         </span>
@@ -151,10 +173,10 @@ export default function AdminMeetingPoints() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(m)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
+                        <button onClick={() => openEdit(mp)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(m.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => { setDeleting(mp.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -170,32 +192,22 @@ export default function AdminMeetingPoints() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Meeting Point" : "Tambah Meeting Point"} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700">Nama Lokasi</label>
+            <label className="block text-sm font-medium text-slate-700">Nama Meeting Point *</label>
             <input name="name" value={form.name} onChange={handleChange} required
+              placeholder="Contoh: Bandara Soekarno-Hatta, Stasiun Bandung"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Alamat</label>
-            <textarea name="address" value={form.address} onChange={handleChange} rows={2}
+            <label className="block text-sm font-medium text-slate-700">Alamat / Lokasi</label>
+            <input name="address" value={form.address} onChange={handleChange}
+              placeholder="Contoh: Terminal 3, Soekarno-Hatta, Tangerang"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Latitude</label>
-              <input name="geoPoint" value={form.geoPoint} onChange={handleChange} placeholder="-8.12345"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Longitude</label>
-              <input name="geoPoint" value="" onChange={() => {}}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] disabled:opacity-50"
-                disabled placeholder="Gabung dengan latitude" />
-            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+            <textarea name="description" value={form.description} onChange={handleChange} rows={3}
+              placeholder="Contoh: Titik kumpul di depan pintu kedatangan. Silakan hadir 15 menit sebelum waktu kumpul."
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] resize-none" />
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isActive" type="checkbox" checked={form.isActive} onChange={handleChange}

@@ -36,6 +36,8 @@ export const bookingParticipants = pgTable("booking_participants", {
   dateOfBirth: date("date_of_birth"),
   gender: varchar("gender", { length: 1 }),
   address: text("address"),
+  emergencyContactName: varchar("emergency_contact_name", { length: 255 }),
+  emergencyContactPhone: varchar("emergency_contact_phone", { length: 50 }),
   isPrimary: boolean("is_primary").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -43,22 +45,20 @@ export const bookingParticipants = pgTable("booking_participants", {
 export const healthDeclarations = pgTable("health_declarations", {
   id: uuid("id").primaryKey().defaultRandom(),
   participantId: uuid("participant_id").notNull().unique().references(() => bookingParticipants.id),
-  hasHeartDisease: boolean("has_heart_disease").default(false),
   hasHypertension: boolean("has_hypertension").default(false),
   hasDiabetes: boolean("has_diabetes").default(false),
+  hasHeartDisease: boolean("has_heart_disease").default(false),
   hasAsthma: boolean("has_asthma").default(false),
-  hasAllergies: boolean("has_allergies").default(false),
-  otherConditions: text("other_conditions"),
-  needsWheelchair: boolean("needs_wheelchair").default(false),
-  needsWalkingStick: boolean("needs_walking_stick").default(false),
+  hasVertigo: boolean("has_vertigo").default(false),
+  hasJointBoneDisease: boolean("has_joint_bone_disease").default(false),
+  noConditions: boolean("no_conditions").default(false),
   medications: text("medications"),
+  mobilityOption: varchar("mobility_option", { length: 50 }).default("independent"),
   isDeclaredTrue: boolean("is_declared_true").default(false),
   signedAt: timestamp("signed_at").defaultNow().notNull(),
 });
 
 export const termsAcceptances = pgTable("terms_acceptances", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  bookingId: uuid("booking_id").notNull().references(() => bookings.id),
   participantId: uuid("participant_id").notNull(),
   termsVersion: varchar("terms_version", { length: 50 }),
   isAccepted: boolean("is_accepted").default(false),

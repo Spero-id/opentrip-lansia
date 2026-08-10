@@ -1,10 +1,10 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-08-07",
+  "last_updated": "2026-08-09",
   "summary": {
-    "total_features": 51,
-    "in_review": 20,
-    "completed": 17,
+    "total_features": 52,
+    "in_review": 19,
+    "completed": 19,
     "to_do": 14,
     "not_started": 0
   },
@@ -33,12 +33,12 @@
         {
           "id": "feat-010",
           "title": "Trip CRUD admin pages + API",
-          "description": "Admin can create/edit/archive trips with title, slug, description, duration, status, thumbnail, itinerary items, and destinations. UI: List page with modal + dedicated create/edit pages. API: GET/POST/PUT/DELETE /api/trips with nested itinerary and destinations.",
+          "description": "Admin can create/edit/archive trips with all destination fields inline (location, category, accessibility, highlights, facilities, itinerary jsonb, meeting points jsonb). UI: List page with modal + dedicated create/edit pages. API: GET/POST/PUT/DELETE /api/trips with nested itinerary items.",
           "status": "in_review",
           "priority": 10,
           "depends_on": ["feat-001"],
           "verification": ["npm run lint"],
-          "evidence": "List page (/admin/trips), create/edit pages with itinerary & destination sections, API endpoints, service/repository layer for nested data"
+          "evidence": "List page (/admin/trips), create/edit pages, API endpoints, service/repository layer. Destinations merged into trips - no separate destination entity."
         },
         {
           "id": "feat-011",
@@ -63,7 +63,7 @@
         {
           "id": "feat-013",
           "title": "Itinerary management",
-          "description": "CRUD itinerary items per trip: day, time, activity, description, location, linked destination. Integrated into trip form.",
+          "description": "CRUD itinerary items per trip: day, time, activity, description, location. Integrated into trip form. No longer references separate destination entity.",
           "status": "in_review",
           "priority": 13,
           "depends_on": ["feat-010"],
@@ -79,8 +79,8 @@
       "features": [
         {
           "id": "feat-020",
-          "title": "Destinasi listing & detail public pages",
-          "description": "Public destinasi listing with search/filter at /destinasi, detail page at /destinasi/[id]. Static data from src/lib/destinationsData.js. FilterPanel, Gallery, Tabs (tentang/itinerary/meeting/ulasan), BookingCard.",
+          "title": "Trip listing & detail public pages",
+          "description": "Public trip listing with search/filter, detail page. Data from trips table (which now contains all destination fields). FilterPanel, Gallery, Tabs (tentang/itinerary/meeting/ulasan), BookingCard.",
           "status": "completed",
           "priority": 20,
           "depends_on": ["feat-001"],
@@ -127,12 +127,12 @@
         {
           "id": "feat-031",
           "title": "Payment flow (manual transfer + confirmation)",
-          "description": "Payment method selection per metode (bri/mandiri/gopay/ovo/dana/qris) menampilkan rekening tujuan dari tabel payment_accounts, upload bukti transfer wajib sebelum submit (disimpan ke public/payments), booking default pending. Admin verifikasi di /admin/pesanan (approve → paid/confirmed, reject wajib alasan → rejected/cancelled). Alur ini menggantikan konfirmasi otomatis checkout lama; schema gateway webhook tetap siap.",
+          "description": "Payment page with booking code, total amount, payment method selection (manual/Midtrans), confirmation. Schema for gateway webhook ready.",
           "status": "in_review",
           "priority": 31,
           "depends_on": ["feat-030"],
           "verification": ["npm run lint"],
-          "evidence": "PaymentStep.jsx (6 metode + account card + proof uploader), /api/payments/upload, /api/payments/accounts, /api/payments/[paymentId]/review, /api/checkout (booking pending + payment pending + snapshot rekening), admin/pesanan detail + form verifikasi, my-trips status pembayaran/bukti/catatan, payment.schema.ts (7 kolom baru + paymentAccounts)"
+          "evidence": "/booking/[id]/payment page, PaymentForm, payment module with idempotency"
         },
         {
           "id": "feat-032",
@@ -183,13 +183,13 @@
         },
         {
           "id": "feat-041",
-          "title": "Admin CRUD: Destinations",
-          "description": "CRUD for destinations with categories, difficulty level, accessibility, accessibility minutes. Both client modal and server pages.",
-          "status": "in_review",
+          "title": "Admin CRUD: Destinations (DEPRECATED)",
+          "description": "Destinations merged into trips. No separate destination entity. All destination fields (location, category, accessibility, etc.) are now inline on the trips table.",
+          "status": "completed",
           "priority": 41,
-          "depends_on": ["feat-040"],
+          "depends_on": ["feat-010"],
           "verification": ["npm run lint"],
-          "evidence": "Client page + server new/edit pages, API routes (GET/POST/PUT/DELETE at /api/destinations, /api/destinations/[id], /api/destinations/categories). Lat/lng inputs + Leaflet map picker added to both modal and dedicated form pages."
+          "evidence": "Destinations table removed, all fields merged into trips. Admin destination pages and API removed. Seeder updated."
         },
         {
           "id": "feat-042",
@@ -259,7 +259,17 @@
           "priority": 48,
           "depends_on": ["feat-040"],
           "verification": ["npm run lint"],
-          "evidence": "Admin blogs page (list + create/edit modal + delete, error feedback, slug auto dari judul), API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages. CRUD di-fe: authorId di-inject dari session (fallback admin), slug unik auto-generate, publishedAt di-set saat published, updatedAt ter-update saat edit."
+          "evidence": "Admin blogs page, API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages"
+        },
+        {
+          "id": "feat-049",
+          "title": "Admin Management: Users",
+          "description": "Registered users management page at /admin/users with search, role filter, edit role/details, and delete functionality.",
+          "status": "completed",
+          "priority": 49,
+          "depends_on": ["feat-040"],
+          "verification": ["npm run lint"],
+          "evidence": "/admin/users page, GET/PUT/DELETE /api/users endpoints, auth repository methods, e2e/admin/users.spec.ts"
         }
       ]
     },
@@ -530,7 +540,7 @@
         {
           "id": "feat-098",
           "title": "Playwright E2E Test Suite",
-          "description": "Comprehensive E2E test suite covering all features: public pages (landing, trips, auth, checkout, contact, private-trip), admin CRUD pages (dashboard, trips, destinations, blogs, commissions, galleries, horeca, meeting-points, pesanan, private-trips, promotions, reviews, vendors), and API endpoint smoke tests.",
+          "description": "Comprehensive E2E test suite covering all features: public pages (landing, trips, auth, checkout, contact, private-trip), admin CRUD pages (dashboard, trips, destinations, blogs, commissions, galleries, horeca, pesanan, private-trips, promotions, reviews, vendors), and API endpoint smoke tests.",
           "status": "completed",
           "priority": 98,
           "depends_on": ["feat-001"],

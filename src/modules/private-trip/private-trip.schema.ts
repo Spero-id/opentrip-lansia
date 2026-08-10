@@ -1,6 +1,6 @@
 import { pgTable, uuid, varchar, text, integer, timestamp, numeric, index } from "drizzle-orm/pg-core";
 import { users } from "../auth/auth.schema";
-import { destinations } from "../master/master.schema";
+import { trips } from "../trip/trip.schema";
 
 export const privateTripRequests = pgTable("private_trip_requests", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -23,7 +23,7 @@ export const privateTripRequests = pgTable("private_trip_requests", {
 export const privateTripDestinationsRequested = pgTable("private_trip_destinations_requested", {
   id: uuid("id").primaryKey().defaultRandom(),
   requestId: uuid("request_id").notNull().references(() => privateTripRequests.id),
-  destinationId: uuid("destination_id").references(() => destinations.id),
+  tripId: uuid("trip_id").references(() => trips.id),
   customDestination: varchar("custom_destination", { length: 255 }),
   dayOrder: integer("day_order").notNull(),
   notes: text("notes"),

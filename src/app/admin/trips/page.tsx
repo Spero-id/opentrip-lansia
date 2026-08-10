@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, Sparkles, Check } from "lucide-react";
 import CreatableSelect from "react-select/creatable";
 import { slugify } from "@/shared/utils/helpers";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 import ImageManager from "./image-manager";
+import IconPicker, { DynamicLucideIcon } from "../components/icon-picker";
 
 const PROVINCES = [
   "Aceh",
@@ -78,6 +79,7 @@ interface Trip {
   accessibilityInfo: string | null;
   priceMin: number | null;
   priceMax: number | null;
+  facilities?: (string | { name: string; icon?: string })[] | null;
   itinerary?: { day: number; location?: string; title: string; description: string }[];
   itineraryItems?: { dayNumber: number; location?: string; title: string; description: string }[];
   createdAt: string;
@@ -88,6 +90,11 @@ interface ItineraryItemInput {
   location: string;
   title: string;
   description: string;
+}
+
+interface FacilityItemInput {
+  name: string;
+  icon: string;
 }
 
 interface TripForm {
@@ -106,6 +113,8 @@ interface TripForm {
   accessibilityInfo: string;
   image: string;
   price: number;
+  meetingPoint: string;
+  meetingPointTime: string;
 }
 
 const emptyForm: TripForm = {
@@ -124,6 +133,8 @@ const emptyForm: TripForm = {
   accessibilityInfo: "",
   image: "",
   price: 0,
+  meetingPoint: "",
+  meetingPointTime: "08.00",
 };
 
 export default function AdminTrips() {
@@ -136,6 +147,7 @@ export default function AdminTrips() {
   const [form, setForm] = useState<TripForm>(emptyForm);
   const [images, setImages] = useState<string[]>([]);
   const [itineraryList, setItineraryList] = useState<ItineraryItemInput[]>([]);
+  const [facilitiesList, setFacilitiesList] = useState<FacilityItemInput[]>([]);
   const [saving, setSaving] = useState(false);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -151,11 +163,174 @@ export default function AdminTrips() {
     try {
       const res = await fetch("/api/trips");
       const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
+      if (res.ok && Array.isArray(data)) {
+        setRows(data);
+      } else {
+        console.error("Failed to fetch trips:", data);
+        setRows([]);
+      }
+    } catch (err) {
+      console.error("Error fetching trips:", err);
       setRows([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  }
+
+  async function fetchCategories() {
+    const res = await fetch("/api/destinations/categories");
+    if (res.ok) {
+      const data = await res.json();
+      setCategories(data);
+    }
+  }
+
+  async function handleCreateCategory(inputValue: string) {
+    const res = await fetch("/api/destinations/categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: inputValue }),
+    });
+    if (res.ok) {
+      const newCategory = await res.json();
+      setCategories((prev) => [...prev, newCategory]);
+      setForm((prev) => ({ ...prev, categoryId: newCategory.id }));
+    }
+  }
+
+  function openCreate() {
+    setEditing(null);
+    setForm(emptyForm);
+    setImages([]);
+    setItineraryList([{ dayNumber: 1, location: "", title: "", description: "" }]);
+    setFacilitiesList([{ name: "", icon: "Check" }]);
+    setModalOpen(true);
+  }
+
+  function openEdit(item: Trip & { image?: string | null; images?: string[] | null }) {
+    setEditing(item);
+    setForm({
+      type: "open_trip",
+      title: item.title,
+      slug: item.slug,
+      description: item.description || "",
+      durationDays: item.durationDays || 1,
+      status: item.status || "draft",
+      isFeatured: item.isFeatured || false,
+      categoryId: item.categoryId || "",
+      location: item.location || "",
+      province: item.province || "",
+      geoPoint: "",
+      isSeniorFriendly: item.isSeniorFriendly ?? true,
+      accessibilityInfo: item.accessibilityInfo || "",
+      image: item.image || "",
+      price: item.priceMin || item.priceMax || 0,
+      meetingPoint: (() => {
+        const mp = (item as unknown as Record<string, unknown>).meetingPointsJson;
+        if (Array.isArray(mp) && mp.length > 0) return (mp[0] as { location?: string })?.location || "";
+        return "";
+      })(),
+      meetingPointTime: (() => {
+        const mp = (item as unknown as Record<string, unknown>).meetingPointsJson;
+        if (Array.isArray(mp) && mp.length > 0) return (mp[0] as { time?: string })?.time || "08.00";
+        return "08.00";
+      })(),
+    });
+    setImages(item.images || []);
+
+    const rawItinerary = item.itinerary || item.itineraryItems || [];
+    setItineraryList(
+      Array.isArray(rawItinerary) && rawItinerary.length > 0
+        ? rawItinerary.map((it: { dayNumber?: number; day?: number; location?: string; title?: string; description?: string }) => ({
+            dayNumber: it.dayNumber || it.day || 1,
+            location: it.location || "",
+            title: it.title || "",
+            description: it.description || "",
+          }))
+        : []
+    );
+
+    const rawFacilities = item.facilities || [];
+    setFacilitiesList(
+      Array.isArray(rawFacilities) && rawFacilities.length > 0
+        ? rawFacilities.map((f) =>
+            typeof f === "string"
+              ? { name: f, icon: "" }
+              : { name: f?.name || "", icon: f?.icon || "" }
+          )
+        : []
+    );
+
+    setModalOpen(true);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+
+    const payload: Record<string, unknown> = {
+      type: "open_trip",
+      title: form.title,
+      slug: form.slug || undefined,
+      description: form.description || undefined,
+      durationDays: Number(form.durationDays) || 1,
+      status: form.status,
+      isFeatured: form.isFeatured,
+      categoryId: form.categoryId || undefined,
+      location: form.location || undefined,
+      province: form.province || undefined,
+      geoPoint: form.geoPoint || undefined,
+      isSeniorFriendly: form.isSeniorFriendly,
+      accessibilityInfo: form.accessibilityInfo || undefined,
+      image: images.length > 0 ? images[0] : undefined,
+      images: images.length > 0 ? images : undefined,
+      priceMin: form.price || undefined,
+      priceMax: form.price || undefined,
+      facilities: facilitiesList
+        .filter((item) => item.name.trim() !== "")
+        .map((item) => ({
+          name: item.name.trim(),
+          icon: item.icon || "",
+        })),
+      itinerary: itineraryList.map((item) => ({
+        day: Number(item.dayNumber) || 1,
+        location: item.location,
+        title: item.title,
+        description: item.description,
+      })),
+      itineraryItems: itineraryList.map((item) => ({
+        dayNumber: Number(item.dayNumber) || 1,
+        location: item.location,
+        title: item.title || `Hari ${item.dayNumber || 1}`,
+        description: item.description,
+      })),
+      meetingPointsJson: form.meetingPoint.trim()
+        ? [{ time: form.meetingPointTime || "08.00", location: form.meetingPoint.trim(), description: "Titik kumpul utama penjemputan. Silakan hadir 15 menit sebelum waktu tersebut." }]
+        : [],
+    };
+
+    try {
+      const url = editing ? `/api/trips/${editing.id}` : "/api/trips";
+      const res = await fetch(url, {
+        method: editing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        alert(`Gagal menyimpan trip: ${errorData.error || res.statusText}`);
+        return;
+      }
+
+      setModalOpen(false);
+      fetchData();
+    } catch (err) {
+      console.error("Error saving trip:", err);
+      alert("Terjadi kesalahan saat menyimpan trip.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function handleDelete() {
@@ -200,6 +375,22 @@ export default function AdminTrips() {
 
   function handleItineraryChange(index: number, field: keyof ItineraryItemInput, value: string | number) {
     setItineraryList((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  }
+
+  function addFacilityItem() {
+    setFacilitiesList((prev) => [...prev, { name: "", icon: "" }]);
+  }
+
+  function removeFacilityItem(index: number) {
+    setFacilitiesList((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleFacilityChange(index: number, field: keyof FacilityItemInput, value: string) {
+    setFacilitiesList((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [field]: value };
       return copy;
@@ -487,6 +678,117 @@ export default function AdminTrips() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="border-t border-slate-200 pt-5 space-y-4">
+            {/* Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-900">Fasilitas Trip</h3>
+                  <span className="bg-amber-100 text-[#F49D1A] text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-200">
+                    {facilitiesList.length} Fasilitas
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Kelola fasilitas dan pilih ikon visual untuk mempermudah informasi ke lansia.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {facilitiesList.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setFacilitiesList([])}
+                    className="px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                  >
+                    Hapus Semua
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={addFacilityItem}
+                  className="px-3.5 py-2 text-xs font-semibold text-white bg-[#F49D1A] hover:bg-[#d68512] rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Tambah Fasilitas</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Facility Items List */}
+            {facilitiesList.length === 0 ? (
+              <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 space-y-2">
+                <div className="w-10 h-10 mx-auto rounded-full bg-amber-100/80 text-[#F49D1A] flex items-center justify-center">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <p className="text-xs font-semibold text-slate-700">Belum ada fasilitas yang ditambahkan</p>
+                <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                  Klik tombol &quot;Tambah Fasilitas&quot; untuk menambahkan item fasilitas baru.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 p-0.5">
+                {facilitiesList.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2.5 bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
+                  >
+                    {/* Index Badge */}
+                    <span className="h-10 w-10 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
+                      {index + 1}
+                    </span>
+
+                    {/* Icon Selector */}
+                    <div className="shrink-0">
+                      <IconPicker
+                        variant="icon-only"
+                        value={item.icon}
+                        onChange={(newIcon) => handleFacilityChange(index, "icon", newIcon)}
+                      />
+                    </div>
+
+                    {/* Facility Name Input */}
+                    <div className="flex-1 min-w-0">
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => handleFacilityChange(index, "name", e.target.value)}
+                        placeholder="Nama Fasilitas (cth: Bus AC Executive, Tour Guide, Medis)"
+                        className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-xs text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] font-medium transition flex items-center"
+                      />
+                    </div>
+
+                    {/* Delete Action Button */}
+                    <button
+                      type="button"
+                      onClick={() => removeFacilityItem(index)}
+                      className="h-10 w-10 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0"
+                      title="Hapus Fasilitas"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-slate-200 pt-4">
+            <h3 className="text-sm font-bold text-slate-900 mb-3">Meeting Point</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700">Jam Kumpul *</label>
+                <input name="meetingPointTime" type="time" value={form.meetingPointTime} onChange={handleChange}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-slate-700">Lokasi Kumpul *</label>
+                <input name="meetingPoint" value={form.meetingPoint} onChange={handleChange}
+                  placeholder="Contoh: Bandara Soekarno-Hatta Terminal 3"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
           </div>
 
           <div className="border-t border-slate-200 pt-4">
