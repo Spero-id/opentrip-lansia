@@ -638,3 +638,33 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 px tsc --noEmit passes (only pre-existing e2e/api/endpoints.spec.ts error remains).
 - 
 pm run lint: no new errors; only warnings in touched files.
+
+## Session 24 — Checkout Server-Authoritative Pricing & Voucher (QA Kritikal #1 & #2)
+
+**Goal:** Tutup 2 eksploitasi kritis hasil QA: (1) voucher diskon dikontrol klien (`appliedVoucher` bisa 100%), (2) harga unit dibaca dari `destination.priceMin` yang dikirim klien (bisa `priceMin=1`).
+
+**Completed:**
+- `src/modules/trip/trip.repository.ts`:
+  - `findAllPublished()` sekarang memakai `getTableColumns(trips)` (semua kolom) + `departureId`, `startDate`, `price`, `priceName`; memilih 1 departure terawal per trip dan harga kanonikal (prioritas nama "Dewasa", fallback baris pertama).
+  - Menambah `findCanonicalPriceByDepartureId()` + helper `pickCanonicalPrice()`.
+- `src/modules/trip/trip.controller.ts`: `GET /api/trips` kini menerima `?all=true` (semua trip, untuk admin) — default mengembalikan trip published + harga kanonikal + departureId. `src/app/admin/trips/page.tsx` fetch `?all=true`.
+- `src/lib/Destination.js`: `toDetail()` memakai `price` (harga kanonikal) sebagai `priceMin` dan meneruskan `departureId`.
+- `src/app/api/checkout/route.ts` (rewrite):
+  - Resolusi trip+departure dari DB (wajib UUID trip published; departureId klien hanya diterima jika milik trip, fallback ke departure terawal).
+  - Harga unit = `tripPrices` DB (Dewasa first); subtotal dihitung ulang server; mismatch -> 400.
+  - Voucher: hanya `voucherCode` dipercaya; validasi ke tabel `promotions` (aktif, tanggal, minPurchase, usageLimit, usageLimitPerUser via `promotion_usages`); diskon dihitung server; `promoId` dicatat ke kolom `bookings.promoId` + notes; `usageCount` di-increment & usage dicatat.
+  - `appliedVoucher` dari klien DIABAIKAN sepenuhnya.
+
+**Verification (live di localhost:3000, dev server):**
+- `priceMin=1` -> 400 "Harga pesanan tidak sesuai" ✅
+- voucher palsu 100% via `appliedVoucher` -> 400 ✅
+- kode voucher tidak valid -> 400 ✅
+- checkout normal -> 200 (subtotal 1.500.000, total 1.515.000) ✅
+- voucher asli `LANSIA10` -> 200 (diskon 150.000, total 1.365.000, promoId terisi) ✅
+- total dipaksa kecil meski pakai voucher -> 400 ✅
+- pax 2 + LANSIA10 -> 200 (diskon 300.000) ✅
+- `GET /api/trips` mengembalikan harga kanonikal + departureId; `?all=true` = 7 trip ✅
+- `npx tsc --noEmit` hanya error e2e pra-ada; `eslint` file diubah: 0 error ✅
+- Test booking & usage promo dibersihkan (LANSIA10 usageCount dikembalikan ke 5).
+
+**Risks/Blocker:** `/api/trips` publik sekarang hanya trip published (draft tidak tampil di listing — behavior lama sama karena filter client-side). Trip tanpa departure/price aktif otomatis tidak muncul di publik. Belum ada transaksi DB atomik (neon-http tidak support `db.transaction`) — promo usage dicatat best-effort. Bug kritikal lain belum dikerjakan: SHA-256 tanpa salt, route admin tanpa auth (trips/promotions/horeca/vendors/galleries/commissions, users, admin dashboard), AVIF magic-byte lemah, rate limiting.

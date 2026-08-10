@@ -161,7 +161,7 @@ export default function AdminTrips() {
   async function fetchData() {
     setLoading(true);
     try {
-      const res = await fetch("/api/trips");
+      const res = await fetch("/api/trips?all=true");
       const data = await res.json();
       if (res.ok && Array.isArray(data)) {
         setRows(data);
