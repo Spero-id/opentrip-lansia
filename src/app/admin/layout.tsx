@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Compass,
   LayoutDashboard,
@@ -19,13 +19,65 @@ import {
   ShoppingCart,
   Menu,
   X,
+  Check,
+  Clock,
+  AlertCircle,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   useAdminAuth();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(15000);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case "new_booking":
+        return <ShoppingCart className="w-4 h-4 text-blue-500" />;
+      case "payment_proof":
+        return <Check className="w-4 h-4 text-green-500" />;
+      case "booking_confirmed":
+        return <Check className="w-4 h-4 text-green-600" />;
+      case "booking_cancelled":
+        return <X className="w-4 h-4 text-red-500" />;
+      default:
+        return <AlertCircle className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return "Baru saja";
+    if (diffMins < 60) return `${diffMins} menit lalu`;
+    if (diffHours < 24) return `${diffHours} jam lalu`;
+    return `${diffDays} hari lalu`;
+  };
+
+  const formatRupiah = (amount: string) => {
+    const num = parseInt(amount);
+    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(num);
+  };
 
   const navGroups = [
     {
@@ -146,10 +198,99 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className="bg-white border-b border-slate-200/80 pl-14 lg:pl-6 pr-3 sm:pr-6 py-3.5 flex items-center justify-end sticky top-0 z-30">
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition relative">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#F49D1A]" />
-            </button>
+            {/* Notification Bell */}
+            <div className="relative" ref={notificationRef}>
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition relative"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50">
+                  {/* Header */}
+                  <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-slate-900">Notifikasi</h3>
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={markAllAsRead}
+                        className="text-xs text-[#F49D1A] hover:text-[#E08A0E] font-medium"
+                      >
+                        Tandai semua dibaca
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Notification List */}
+                  <div className="max-h-[400px] overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="px-4 py-8 text-center">
+                        <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                        <p className="text-sm text-slate-500">Belum ada notifikasi</p>
+                      </div>
+                    ) : (
+                      notifications.slice(0, 10).map((notification) => (
+                        <div
+                          key={notification.id}
+                          onClick={() => markAsRead(notification.id)}
+                          className={`px-4 py-3 border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition ${
+                            !notification.isRead ? "bg-[#F49D1A]/5" : ""
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5">
+                              {getNotificationIcon(notification.type)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-semibold text-slate-900 truncate">
+                                  {notification.title}
+                                </p>
+                                {!notification.isRead && (
+                                  <span className="w-2 h-2 rounded-full bg-[#F49D1A] shrink-0" />
+                                )}
+                              </div>
+                              <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">
+                                {notification.message}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1.5">
+                                <span className="text-[10px] text-slate-400">
+                                  {formatTimeAgo(notification.createdAt)}
+                                </span>
+                                <span className="text-[10px] text-slate-400">•</span>
+                                <span className="text-[10px] font-medium text-slate-600">
+                                  {formatRupiah(notification.amount)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Footer */}
+                  {notifications.length > 0 && (
+                    <div className="px-4 py-2 border-t border-slate-100 bg-slate-50">
+                      <Link
+                        href="/admin/pesanan"
+                        onClick={() => setShowNotifications(false)}
+                        className="text-xs text-[#F49D1A] hover:text-[#E08A0E] font-medium text-center block"
+                      >
+                        Lihat semua pesanan →
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             <div className="h-6 w-[1px] bg-slate-200" />
 
