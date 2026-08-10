@@ -321,7 +321,7 @@ export default function AdminPrivateTripDetail() {
               </>
             )}
             {/* Kirim/Perbarui Proposal & Tolak untuk status reviewed/revision — HIDDEN sementara */}
-            {false && (data.status === "reviewed" || data.status === "revision") && (
+            {false && (data?.status === "reviewed" || data?.status === "revision") && (
               <>
                 <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
