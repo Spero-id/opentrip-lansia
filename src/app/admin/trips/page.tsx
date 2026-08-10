@@ -114,6 +114,7 @@ interface TripForm {
   image: string;
   price: number;
   meetingPoint: string;
+  meetingPointTime: string;
 }
 
 const emptyForm: TripForm = {
@@ -133,6 +134,7 @@ const emptyForm: TripForm = {
   image: "",
   price: 0,
   meetingPoint: "",
+  meetingPointTime: "08.00",
 };
 
 export default function AdminTrips() {
@@ -224,9 +226,14 @@ export default function AdminTrips() {
       image: item.image || "",
       price: item.priceMin || item.priceMax || 0,
       meetingPoint: (() => {
-        const mp = (item as Record<string, unknown>).meetingPointsJson;
+        const mp = (item as unknown as Record<string, unknown>).meetingPointsJson;
         if (Array.isArray(mp) && mp.length > 0) return (mp[0] as { location?: string })?.location || "";
         return "";
+      })(),
+      meetingPointTime: (() => {
+        const mp = (item as unknown as Record<string, unknown>).meetingPointsJson;
+        if (Array.isArray(mp) && mp.length > 0) return (mp[0] as { time?: string })?.time || "08.00";
+        return "08.00";
       })(),
     });
     setImages(item.images || []);
@@ -298,7 +305,7 @@ export default function AdminTrips() {
         description: item.description,
       })),
       meetingPointsJson: form.meetingPoint.trim()
-        ? [{ time: "08.00", location: form.meetingPoint.trim(), description: "Titik kumpul utama penjemputan. Silakan hadir 15 menit sebelum waktu tersebut." }]
+        ? [{ time: form.meetingPointTime || "08.00", location: form.meetingPoint.trim(), description: "Titik kumpul utama penjemputan. Silakan hadir 15 menit sebelum waktu tersebut." }]
         : [],
     };
 
@@ -768,13 +775,20 @@ export default function AdminTrips() {
 
           <div className="border-t border-slate-200 pt-4">
             <h3 className="text-sm font-bold text-slate-900 mb-3">Meeting Point</h3>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Lokasi Kumpul *</label>
-              <textarea name="meetingPoint" value={form.meetingPoint} onChange={handleChange} rows={2}
-                placeholder="Contoh: Bandara Soekarno-Hatta Terminal 3, depan pintu kedatangan"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] resize-none" />
-              <p className="text-xs text-slate-400 mt-1">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700">Jam Kumpul *</label>
+                <input name="meetingPointTime" type="time" value={form.meetingPointTime} onChange={handleChange}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-slate-700">Lokasi Kumpul *</label>
+                <input name="meetingPoint" value={form.meetingPoint} onChange={handleChange}
+                  placeholder="Contoh: Bandara Soekarno-Hatta Terminal 3"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              </div>
             </div>
+            <p className="text-xs text-slate-400 mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
           </div>
 
           <div className="border-t border-slate-200 pt-4">
