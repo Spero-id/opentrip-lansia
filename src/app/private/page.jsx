@@ -12,9 +12,9 @@ import SuccessState from "@/components/private/SuccessState";
 import SubmitBar from "@/components/private/SubmitBar";
 import TermsModal from "@/components/private/TermsModal";
 import Subs from "@/components/landing/Subs";
+import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { initialForm } from "@/components/private/helpers/initialState";
 import { validate } from "@/components/private/helpers/validation";
-import { destinationsData } from "@/infrastructure/data/destinationsData";
 
 /**
  * Builds the `destinationPreferences` text field from all form fields that
@@ -77,7 +77,7 @@ export default function PrivateTripPage() {
   const [showTerms, setShowTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [destinations, setDestinations] = useState(destinationsData);
+  const [destinations, setDestinations] = useState([]);
 
   useEffect(() => {
     async function fetchDestinations() {
@@ -252,6 +252,7 @@ export default function PrivateTripPage() {
       </main>
       <Subs />
       <Footer />
+      <WhatsAppFloat />
     </div>
   );
 }

@@ -14,11 +14,17 @@ export default function DestinationCard({ dest, onClick, className = "" }) {
       className={`group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200 ${className}`}
     >
       <div className="relative h-44 overflow-hidden">
-        <img
-          src={dest.image}
-          alt={dest.title}
-          className="w-full h-full object-cover"
-        />
+        {dest.image ? (
+          <img
+            src={dest.image}
+            alt={dest.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-xs font-medium px-4 text-center">
+            Gambar tidak tersedia
+          </div>
+        )}
         <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-xs">
           <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
           <span className="text-xs font-semibold text-gray-900">

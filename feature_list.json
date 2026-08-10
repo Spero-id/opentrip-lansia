@@ -412,7 +412,7 @@
         {
           "id": "feat-080",
           "title": "API auth middleware & RBAC",
-          "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL �?" saat ini 57 endpoint 100% public.",
+          "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL : saat ini 57 endpoint 100% public.",
           "status": "to_do",
           "priority": 2,
           "depends_on": ["feat-001"],

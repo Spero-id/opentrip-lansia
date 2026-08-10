@@ -7,11 +7,11 @@ import Subs from "@/components/landing/Subs";
 import FilterPanel from "@/components/destinasi/FilterPanel";
 import DestinasiHeader from "@/components/destinasi/DestinasiHeader";
 import DestinationGrid from "@/components/destinasi/DestinationGrid";
-import { destinationsData } from "@/lib/destinationsData";
+import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { toDetail } from "@/lib/Destination";
 
 export default function DestisasiPage() {
-  const [destinations, setDestinations] = useState(destinationsData);
+  const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
@@ -134,6 +134,7 @@ export default function DestisasiPage() {
 
       <Subs />
       <Footer />
+      <WhatsAppFloat />
     </div>
   );
 }
