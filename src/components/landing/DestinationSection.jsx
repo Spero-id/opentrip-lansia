@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
@@ -118,9 +118,20 @@ export default function DestinationSection() {
       </div>
 
       {!loading && destinations.length === 0 && (
-        <p className="text-center text-sm text-gray-400 pt-2 pb-6">
-          Belum ada destinasi. Tambahkan dulu lewat halaman admin.
-        </p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6">
+          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-gray-200 bg-white">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+              style={{ backgroundColor: "rgba(223,114,36,0.08)" }}
+            >
+              <MapPin size={24} style={{ color: "#F49D1A" }} />
+            </div>
+            <p className="text-sm font-semibold text-gray-700 mb-1">Belum ada destinasi</p>
+            <p className="text-xs text-gray-400 max-w-xs">
+              Destinasi menarik akan segera hadir. Pantau terus ya!
+            </p>
+          </div>
+        </div>
       )}
 
       {destinations.length > PAGE_SIZE && (

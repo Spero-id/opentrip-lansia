@@ -15,8 +15,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Edge-safe session check (cookie only). Role is enforced client-side
-  // via useAdminAuth and server-side by every admin API route.
+  // Edge-safe session check (cookie only). Role is enforced server-side
+  // in src/app/admin/layout.tsx (redirects non-admins to /forbidden).
   const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
     const loginUrl = new URL("/login", request.url);

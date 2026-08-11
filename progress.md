@@ -778,3 +778,13 @@ ON CONFLICT (method) DO UPDATE SET
 
 **Tambahan (revisi user, sesi sama):** `src/components/layout/Navbar.jsx` — avatar dropdown kini menampilkan nama + role di sampingnya (desktop; tersembunyi di mobile `hidden sm:flex`). Role diambil dari `session.user.role` (additionalFields auth.config.ts), label: admin → "Admin", agent → "Agen", selain itu "Member" (konsisten dengan ProfileInfoCard). Warna teks mengikuti `isScrolled` (putih di navbar gelap, hitam di transparan). Eslint file: 0 error, 2 warning `<img>` pre-existing.
 
+**Tambahan (revisi user — admin pages secure):**
+- `src/app/admin/layout.tsx` diubah menjadi **server component guard**: `auth.api.getSession({ headers: await headers() })` → tidak login di-redirect ke `/login`, role bukan `admin` di-redirect ke `/forbidden`, baru render shell. Konten admin tidak pernah ter-render untuk non-admin (sebelumnya hanya client-side `useAdminAuth` yang menyebabkan flash konten).
+- Shell client (sidebar/topbar/notifikasi) dipindah ke `src/app/admin/AdminShell.tsx` (client component, tanpa `useAdminAuth`).
+- `src/middleware.ts` — komentar diperbarui (role kini di-enforce server-side di layout).
+- `useAdminAuth` (`src/hooks/useAdminAuth.ts`) kini tidak terpakai (dibiarkan sebagai fallback client-side).
+- Verifikasi: `eslint` 2 file 0 error (1 warning `<img>` pre-existing); `tsc --noEmit` hanya error e2e pre-existing.
+- **Risk (belum dikerjakan):** API admin (mis. `/api/trips?all=true`, `/api/promotions`, dsb) masih publik — non-admin masih bisa baca data via endpoint langsung. Ini scope feat-080 (RBAC API).
+
+**Tambahan (revisi user — empty state landing):** `src/components/landing/DestinationSection.jsx` — saat tidak ada destinasi, tulisan "Belum ada destinasi. Tambahkan dulu lewat halaman admin." diganti kartu empty state bergaya `Emptystate.jsx` di halaman /trips (border dashed, ikon MapPin di kotak oranye muda, judul "Belum ada destinasi" + subteks "Destinasi menarik akan segera hadir. Pantau terus ya!"). Eslint file: 0 error.
+
