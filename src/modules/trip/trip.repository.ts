@@ -31,6 +31,12 @@ export interface ITripRepository {
   delete(id: UUID): Promise<void>;
   updateQuota(priceId: UUID, qty: number): Promise<boolean>;
 
+  // Departure & price
+  saveTripSchedules(
+    tripId: UUID,
+    schedules: { startDate: string; endDate: string; maxParticipants: number; price: number }[]
+  ): Promise<void>;
+
   // Itinerary
   findItineraryByTripId(tripId: UUID): Promise<(typeof itineraryItems.$inferSelect)[]>;
   saveItinerary(tripId: UUID, items: ItineraryInput[]): Promise<void>;
@@ -158,13 +164,22 @@ export const tripRepository: ITripRepository = {
         facilities: trips.facilities,
         itinerary: trips.itinerary,
         meetingPointsJson: trips.meetingPointsJson,
+        startDate: tripDepartures.startDate,
+        departureId: tripDepartures.id,
         createdAt: trips.createdAt,
         updatedAt: trips.updatedAt,
       })
       .from(trips)
       .leftJoin(destinationCategories, eq(trips.categoryId, destinationCategories.id))
-      .orderBy(desc(trips.createdAt));
-    return rows;
+      .leftJoin(tripDepartures, eq(trips.id, tripDepartures.tripId))
+      .orderBy(desc(trips.createdAt), asc(tripDepartures.startDate));
+
+    const seen = new Set<string>();
+    return rows.filter((r) => {
+      if (seen.has(r.id)) return false;
+      seen.add(r.id);
+      return true;
+    });
   },
 
   async create(data) {
@@ -221,6 +236,39 @@ export const tripRepository: ITripRepository = {
         eq(tripPrices.isActive, true),
       ));
     return (result.rowCount ?? 0) > 0;
+  },
+
+  async saveTripSchedules(tripId, schedules) {
+    const existing = await db
+      .select({ id: tripDepartures.id })
+      .from(tripDepartures)
+      .where(eq(tripDepartures.tripId, tripId));
+    const existingIds = existing.map((d) => d.id);
+    if (existingIds.length > 0) {
+      await db.delete(tripPrices).where(inArray(tripPrices.departureId, existingIds));
+      await db.delete(tripDepartures).where(inArray(tripDepartures.id, existingIds));
+    }
+
+    for (const s of schedules) {
+      const [dep] = await db
+        .insert(tripDepartures)
+        .values({
+          tripId,
+          startDate: s.startDate,
+          endDate: s.endDate,
+          maxParticipants: s.maxParticipants,
+          minParticipants: 1,
+          status: "scheduled",
+        })
+        .returning();
+      await db.insert(tripPrices).values({
+        departureId: dep.id,
+        name: "Dewasa",
+        price: String(s.price),
+        quota: s.maxParticipants,
+        isActive: true,
+      });
+    }
   },
 
   async findItineraryByTripId(tripId) {

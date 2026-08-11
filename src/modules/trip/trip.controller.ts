@@ -15,6 +15,20 @@ export async function GET(req: NextRequest) {
   }
 }
 
+export async function GETById(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const trip = await tripService.getTripWithDepartures(id);
+    if (!trip) {
+      return NextResponse.json({ error: "Trip tidak ditemukan" }, { status: 404 });
+    }
+    return NextResponse.json(trip);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -55,4 +69,4 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
 // --- Object-style export for compatibility ---
 
-export const tripController = { GET, POST, PUT, DELETE };
+export const tripController = { GET, GETById, POST, PUT, DELETE };

@@ -60,6 +60,7 @@ export default function DetailsStep({ checkout, onNext }) {
           canProceed={canProceed}
           onNext={onNext}
           isLoading={checkout.isLoading}
+          error={checkout.error}
         />
       </div>
     </div>

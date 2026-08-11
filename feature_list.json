@@ -1,10 +1,10 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-08-10",
+  "last_updated": "2026-08-11",
   "summary": {
-    "total_features": 52,
+    "total_features": 53,
     "in_review": 19,
-    "completed": 19,
+    "completed": 20,
     "to_do": 14,
     "not_started": 0
   },
@@ -417,7 +417,7 @@
           "priority": 2,
           "depends_on": ["feat-001"],
           "verification": ["npm run lint"],
-          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Endpoint lain masih perlu diaudit.",
+          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Admin PAGES kini server-side guard di /admin/layout.tsx (non-admin → /forbidden). Endpoint API admin lain masih perlu diaudit/dilindungi.",
           "critical": true
         },
         {
@@ -573,6 +573,16 @@
           "depends_on": [],
           "verification": ["npm run lint", "GET /api/blogs?published=1"],
           "evidence": "GET /api/blogs?published=1 hanya mengembalikan published; /blog dan /blog/[slug] merespons 200"
+        },
+        {
+          "id": "feat-101",
+          "title": "Metode Pembayaran Hanya BCA",
+          "description": "Halaman pembayaran hanya menampilkan BCA (satu kartu, auto-selected, layout disesuaikan). Backend /api/payments menerima method BCA. Kartu rekening BCA diambil dari payment_accounts (user insert manual via SQL).",
+          "status": "in_review",
+          "priority": 101,
+          "depends_on": [],
+          "verification": ["npm run lint"],
+          "evidence": "PaymentSelector (PaymentStep.jsx) satu kartu BCA + auto-select; ALLOWED_METHODS berisi BCA; query SQL INSERT/upsert payment_accounts diserahkan ke user"
         }
       ]
     }
