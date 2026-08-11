@@ -1,10 +1,10 @@
 import { db } from "@/shared/db";
 import {
   trips, tripDepartures, tripPrices,
-  itineraryItems, tripGalleries,
+  itineraryItems, tripGalleries, tripHoreca, tripVendors, tripMedia, galleryMedia,
 } from "./trip.schema";
 import { destinationCategories } from "../master/master.schema";
-import { eq, and, asc, desc, sql, getTableColumns } from "drizzle-orm";
+import { eq, and, asc, desc, sql, inArray, getTableColumns } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin" | "priceMax"> {
@@ -29,6 +29,12 @@ export interface ITripRepository {
   update(id: UUID, data: Partial<typeof trips.$inferInsert>): Promise<typeof trips.$inferSelect | null>;
   delete(id: UUID): Promise<void>;
   updateQuota(priceId: UUID, qty: number): Promise<boolean>;
+
+  // Departure & price
+  saveTripSchedules(
+    tripId: UUID,
+    schedules: { startDate: string; endDate: string; maxParticipants: number; price: number }[]
+  ): Promise<void>;
 
   // Itinerary
   findItineraryByTripId(tripId: UUID): Promise<(typeof itineraryItems.$inferSelect)[]>;
@@ -157,13 +163,22 @@ export const tripRepository: ITripRepository = {
         facilities: trips.facilities,
         itinerary: trips.itinerary,
         meetingPointsJson: trips.meetingPointsJson,
+        startDate: tripDepartures.startDate,
+        departureId: tripDepartures.id,
         createdAt: trips.createdAt,
         updatedAt: trips.updatedAt,
       })
       .from(trips)
       .leftJoin(destinationCategories, eq(trips.categoryId, destinationCategories.id))
-      .orderBy(desc(trips.createdAt));
-    return rows;
+      .leftJoin(tripDepartures, eq(trips.id, tripDepartures.tripId))
+      .orderBy(desc(trips.createdAt), asc(tripDepartures.startDate));
+
+    const seen = new Set<string>();
+    return rows.filter((r) => {
+      if (seen.has(r.id)) return false;
+      seen.add(r.id);
+      return true;
+    });
   },
 
   async create(data) {
@@ -177,6 +192,30 @@ export const tripRepository: ITripRepository = {
   },
 
   async delete(id) {
+    const departureIds = await db
+      .select({ id: tripDepartures.id })
+      .from(tripDepartures)
+      .where(eq(tripDepartures.tripId, id));
+    const depIdList = departureIds.map((d) => d.id);
+    if (depIdList.length > 0) {
+      await db.delete(tripPrices).where(inArray(tripPrices.departureId, depIdList));
+      await db.delete(tripDepartures).where(inArray(tripDepartures.id, depIdList));
+    }
+
+    const galleryIds = await db
+      .select({ id: tripGalleries.id })
+      .from(tripGalleries)
+      .where(eq(tripGalleries.tripId, id));
+    const galIdList = galleryIds.map((g) => g.id);
+    if (galIdList.length > 0) {
+      await db.delete(galleryMedia).where(inArray(galleryMedia.galleryId, galIdList));
+      await db.delete(tripGalleries).where(inArray(tripGalleries.id, galIdList));
+    }
+
+    await db.delete(itineraryItems).where(eq(itineraryItems.tripId, id));
+    await db.delete(tripHoreca).where(eq(tripHoreca.tripId, id));
+    await db.delete(tripVendors).where(eq(tripVendors.tripId, id));
+    await db.delete(tripMedia).where(eq(tripMedia.tripId, id));
     await db.delete(trips).where(eq(trips.id, id));
   },
 
@@ -189,6 +228,39 @@ export const tripRepository: ITripRepository = {
         eq(tripPrices.isActive, true),
       ));
     return (result.rowCount ?? 0) > 0;
+  },
+
+  async saveTripSchedules(tripId, schedules) {
+    const existing = await db
+      .select({ id: tripDepartures.id })
+      .from(tripDepartures)
+      .where(eq(tripDepartures.tripId, tripId));
+    const existingIds = existing.map((d) => d.id);
+    if (existingIds.length > 0) {
+      await db.delete(tripPrices).where(inArray(tripPrices.departureId, existingIds));
+      await db.delete(tripDepartures).where(inArray(tripDepartures.id, existingIds));
+    }
+
+    for (const s of schedules) {
+      const [dep] = await db
+        .insert(tripDepartures)
+        .values({
+          tripId,
+          startDate: s.startDate,
+          endDate: s.endDate,
+          maxParticipants: s.maxParticipants,
+          minParticipants: 1,
+          status: "scheduled",
+        })
+        .returning();
+      await db.insert(tripPrices).values({
+        departureId: dep.id,
+        name: "Dewasa",
+        price: String(s.price),
+        quota: s.maxParticipants,
+        isActive: true,
+      });
+    }
   },
 
   async findItineraryByTripId(tripId) {
