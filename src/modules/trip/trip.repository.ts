@@ -1,10 +1,11 @@
 import { db } from "@/shared/db";
 import {
   trips, tripDepartures, tripPrices,
-  itineraryItems, tripGalleries, tripHoreca, tripVendors, tripMedia, galleryMedia,
+  itineraryItems, tripGalleries, galleryMedia,
+  tripHoreca, tripVendors, tripMedia,
 } from "./trip.schema";
 import { destinationCategories } from "../master/master.schema";
-import { eq, and, asc, desc, sql, inArray, getTableColumns } from "drizzle-orm";
+import { eq, and, asc, desc, sql, getTableColumns, inArray } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin" | "priceMax"> {
@@ -192,30 +193,37 @@ export const tripRepository: ITripRepository = {
   },
 
   async delete(id) {
-    const departureIds = await db
+    const [trip] = await db.select().from(trips).where(eq(trips.id, id)).limit(1);
+    if (!trip) return;
+
+    const departures = await db
       .select({ id: tripDepartures.id })
       .from(tripDepartures)
       .where(eq(tripDepartures.tripId, id));
-    const depIdList = departureIds.map((d) => d.id);
-    if (depIdList.length > 0) {
-      await db.delete(tripPrices).where(inArray(tripPrices.departureId, depIdList));
-      await db.delete(tripDepartures).where(inArray(tripDepartures.id, depIdList));
-    }
+    const departureIds = departures.map((d) => d.id);
 
-    const galleryIds = await db
+    const galleries = await db
       .select({ id: tripGalleries.id })
       .from(tripGalleries)
       .where(eq(tripGalleries.tripId, id));
-    const galIdList = galleryIds.map((g) => g.id);
-    if (galIdList.length > 0) {
-      await db.delete(galleryMedia).where(inArray(galleryMedia.galleryId, galIdList));
-      await db.delete(tripGalleries).where(inArray(tripGalleries.id, galIdList));
-    }
+    const galleryIds = galleries.map((g) => g.id);
 
+    if (departureIds.length > 0) {
+      await db.delete(tripPrices).where(inArray(tripPrices.departureId, departureIds));
+    }
+    if (galleryIds.length > 0) {
+      await db.delete(galleryMedia).where(inArray(galleryMedia.galleryId, galleryIds));
+    }
     await db.delete(itineraryItems).where(eq(itineraryItems.tripId, id));
     await db.delete(tripHoreca).where(eq(tripHoreca.tripId, id));
     await db.delete(tripVendors).where(eq(tripVendors.tripId, id));
     await db.delete(tripMedia).where(eq(tripMedia.tripId, id));
+    if (galleryIds.length > 0) {
+      await db.delete(tripGalleries).where(inArray(tripGalleries.id, galleryIds));
+    }
+    if (departureIds.length > 0) {
+      await db.delete(tripDepartures).where(inArray(tripDepartures.id, departureIds));
+    }
     await db.delete(trips).where(eq(trips.id, id));
   },
 

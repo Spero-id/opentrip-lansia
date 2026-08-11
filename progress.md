@@ -700,91 +700,79 @@ pm run lint: no new errors; only warnings in touched files.
 - Targeted eslint 6 file: 0 error (2 warning pre-existing: `Newspaper` tak terpakai di blog, `<img>` di WhatsAppFloat sesuai pola repo).
 - Playwright (channel chrome, dev server :3000): tombol `a[aria-label="WhatsApp"]` muncul dengan label "Hubungi Kami" di kelima halaman ✅
 - Perubahan belum di-commit.
+## Session 27 - ShadCN Sidebar untuk Admin
 
-## Session 27 — Bugfix Delete Trip + Validasi Form Admin Trips
-
-**Goal:** (1) Hapus paket trip yang tadinya "tidak berfungsi" (gagal senyap karena FK constraint), (2) tambah validasi form tambah/edit trip — field wajib tidak boleh kosong, kalau kosong tidak bisa submit dan muncul peringatan.
-
-**Completed — Delete trip:**
-- `src/modules/trip/trip.repository.ts` — `delete(id)` kini menghapus data anak berurutan sebelum trip utama (dulu `DELETE FROM trips` langsung gagal karena FK): `trip_prices`+`trip_departures` (via departure ids), `gallery_media`+`trip_galleries` (via gallery ids), lalu `itinerary_items`, `trip_horeca`, `trip_vendors`, `trip_media`, dan `trips`. Import `inArray` + tabel anak.
-- `src/app/admin/trips/page.tsx` — `handleDelete` sekarang cek `res.ok`; kalau gagal tampil `alert` dengan pesan error dari API dan modal tidak ditutup (dulu selalu ditutup tanpa feedback).
-
-**Completed — Validasi form trip:**
-- State `errors` + `validateForm()` mewajibkan: judul, slug, durasi ≥1, kategori, lokasi utama, provinsi, harga >0, lokasi kumpul, jam kumpul.
-- `handleSubmit` diblokir jika ada error (tidak hit API), menampilkan banner merah ringkasan + pesan per-field (border merah + teks di bawah input).
-- Error per-field otomatis hilang saat field diisi/diubah (handleChange/handlePriceChange/handleCreateCategory), di-reset saat buka modal create/edit.
-
-**Verifikasi:**
-- Targeted eslint 0 error (2 warning pre-existing: unused `Check` & `DynamicLucideIcon` di `page.tsx`).
-- `tsc --noEmit`: 0 error di kedua file yang diubah.
-- Perubahan belum di-commit.
-
-**Bugfix setelah smoke test — trip tidak tampil di user (2026-08-11):**
-- Gejala: `/api/trips` (publik) mengembalikan `[]` padahal `/api/trips?all=true` (admin) menampilkan 1 trip published.
-- Akar: filter `findAllPublished` yang baru ditambahkan (working tree, belum di-commit) hanya mengembalikan trip dengan `departureId != null && price != null`. Form admin trips tidak membuat record `trip_departures`/`trip_prices`, sehingga trip yang dibuat admin tidak pernah lolos filter.
-- Fix: hapus `.filter(...)` di `trip.repository.ts` → `return [...byTrip.values()]`. Kembali ke perilaku Session 25 (trip published tetap tampil meski tanpa harga/jadwal departure). Harga tampil dari `trips.priceMin` via `toDetail` (`price ?? priceMin`).
-- Verifikasi live: `GET /api/trips` kini mengembalikan trip "Jalan Jalan Dengan Sepatu Roda Ku" dengan `priceMin: 2000000`; `/trips` & `/` 200; eslint trip.repository.ts 0 error.
-
-## Session 28 — Jadwal Keberangkatan (Departure) di Admin Trip
-
-**Goal:** Trip yang dibuat admin bisa dibooking oleh user. Akar masalah: `/api/checkout` mewajibkan record `trip_departures` + `trip_prices` (canonical price "Dewasa") untuk trip, tapi form admin trips tidak pernah membuatnya → checkout gagal dengan "Jadwal keberangkatan tidak tersedia".
-
-**Keputusan (dengan user):** Mengelola **daftar beberapa jadwal keberangkatan** per trip (sesuai schema `trips → trip_departures → trip_prices`), harga otomatis mengikuti input Harga, checkout memakai jadwal terawal. (Opsi full tier harga Dewasa/Anak/Early Bird ditunda.)
-
-**Backend:**
-- `trip.repository.ts` — `saveTripSchedules(tripId, schedules[])`: hapus departure+prices lama, lalu insert tiap jadwal (startDate, endDate = start + durasi - 1, maxParticipants, minParticipants 1, status scheduled) + price tier "Dewasa" (price = input Harga, quota = maxParticipants). `findAll()` (admin) kini leftJoin `trip_departures` → menyertakan `startDate`/`departureId` (dedupe per trip, jadwal terawal).
-- `trip.service.ts` — `createTrip`/`updateTrip` menerima `departures[]` + `price`, memanggil `saveTripSchedules`; tambah `getTripWithDepartures(id)` → trip + daftar jadwal untuk isi ulang saat edit.
-- `trip.controller.ts` + `api/trips/[id]/route.ts` — tambah `GET` (detail + departures).
-
-**Frontend (`admin/trips/page.tsx`):**
-- State `departuresList[]` (startDate + maxParticipants), section "Jadwal Keberangkatan" di form (tambah/hapus beberapa jadwal, input tanggal + kuota).
-- `openEdit` async — ambil `/api/trips/[id]` untuk mengisi ulang jadwal.
-- Validasi: minimal 1 jadwal dengan tanggal wajib diisi (selain field wajib sebelumnya).
-- Kolom "Jadwal" di tabel list (tanggal terawal, format DD-MM-YYYY).
-
-**Verifikasi (live :3000, trip uji lalu dihapus):**
-- POST trip published + 2 departures → 201; `GET /api/trips` mengembalikan trip dengan `departureId`, `startDate` (terawal 2026-09-15), `price` 1500000; `GET /api/trips/[id]` → 2 jadwal (kuota 10 & 8); DELETE → 200, GET sesudah → 404 (cascade delete jalan).
-- eslint 0 error (2 warning pre-existing `Check`/`DynamicLucideIcon`); tsc 0 error di file diubah.
-- Perubahan belum di-commit.
-
-**Aksi yang diperlukan user:** trip "Jalan Jalan Dengan Sepatu Roda Ku" (dan trip lain yang sudah ada) belum punya jadwal — edit di admin, isi section "Jadwal Keberangkatan", simpan. Setelah itu bisa dibooking (checkout memakai jadwal terawal).
-
-## Session 29 — Metode Pembayaran Hanya BCA
-
-**Goal:** Halaman pembayaran hanya menampilkan BCA sebagai metode pembayaran, dengan layout disesuaikan (satu kartu BCA, auto-selected).
-
-**Temuan:** BCA sudah ada di daftar UI (static list), tapi BELUM ada di tabel `payment_accounts` (DB) dan belum masuk `ALLOWED_METHODS` di `/api/payments` → kartu rekening tidak tampil & pembayaran ditolak.
+**Goal:** Mengganti struktur sidebar admin yang dibuat manual (custom aside) dengan sidebar ShadCN yang sudah terpasang di project, disesuaikan dengan navigasi admin OpenTrip Lansia. Topbar (notifikasi + profil) dipertahankan.
 
 **Completed:**
-- `src/app/api/payments/route.ts` — `ALLOWED_METHODS` ditambah `"BCA"`.
-- `src/components/checkout/PaymentStep.jsx` — `PaymentSelector` dirombak jadi satu kartu BCA (logo + centang aktif), BCA auto-set via `useEffect` di `PaymentStep`; `AccountCard` ditampilkan langsung di bawahnya (lookup case-insensitive ke `payment_accounts.method`), dengan fallback banner "Rekening BCA belum diatur" bila DB belum berisi BCA.
+- `src/app/admin/components/nav-data.ts` (baru) - ekstraksi array `navGroups` (Dashboard, Trip & Tempat, Pengguna & Partner, Marketing, Order, Konten) dari layout.tsx menjadi modul bertipe (`AdminNavGroup`/`AdminNavItem`, ikon lucide).
+- `src/app/admin/components/admin-sidebar.tsx` (baru) - komponen ShadCN: `Sidebar` (collapsible="icon") + `SidebarHeader` (logo brand) + `SidebarContent` (SidebarGroup/GroupLabel/Menu/MenuButton dari nav-data, active state via usePathname: exact match /admin, startsWith selainnya, `render={<Link/>}` untuk navigasi) + `SidebarFooter` ("Kembali ke Website Utama") + `SidebarRail`. Item aktif di-warnai oranye #F49D1A via `data-active:bg-[#F49D1A]`.
+- `src/app/globals.css` - blok variabel `--sidebar-*` dark scoped `.admin-sidebar-dark` + `[data-mobile="true"][data-sidebar="sidebar"]` (mobile sheet portaled) agar sidebar admin ikut dark mode tanpa memengaruhi area konten/dashboard.
+- `src/app/admin/layout.tsx` - rombak total: hapus custom aside, mobile overlay/hamburger manual, dan state sidebarOpen; kini `SidebarProvider` + `<AdminSidebar />` + `SidebarInset` (bg-slate-100/70); topbar notifikasi + profil dipindah jadi header di dalam SidebarInset dengan `SidebarTrigger` menggantikan hamburger. `useAdminAuth()` tetap.
 
-**Aksi user (DB, sesuai permintaan user — di-exec manual):**
-```sql
-INSERT INTO payment_accounts (method, bank_name, account_number, account_holder, is_active, created_at, updated_at)
-VALUES ('BCA', 'BCA', '<NOMOR_REKENING>', 'PT OpenTrip Lansia', true, NOW(), NOW())
-ON CONFLICT (method) DO UPDATE SET
-  bank_name      = EXCLUDED.bank_name,
-  account_number = EXCLUDED.account_number,
-  account_holder = EXCLUDED.account_holder,
-  is_active      = true,
-  updated_at     = NOW();
-```
-
-**Verifikasi:**
-- `npm run lint` — PaymentStep hanya warning pre-existing `<img>` (line 209); route.ts tidak ada error. Error repo lain (302) pre-existing (icon-picker, my-trips, useNotifications, bundle minified).
-- Alur terkonfirmasi: `initiatePayment` (useCheckout.js:292) mengirim `state.paymentMethod` → `"BCA"`, diterima backend.
+**Verification:**
+- Targeted eslint (3 file diubah): 0 error, 1 warning `<img>` (pola sama dengan kode asli).
+- `npm run lint` penuh: error/warning hanya pre-existing (use-mobile.ts set-state-in-effect, useNotifications.ts, icon-picker, my-trips, dll.) - tidak ada dari file yang diubah.
+- `tsc --noEmit`: error hanya pre-existing di `e2e/api/endpoints.spec.ts`.
 - Perubahan belum di-commit.
 
-**Tambahan (revisi user, sesi sama):** `src/components/layout/Navbar.jsx` — avatar dropdown kini menampilkan nama + role di sampingnya (desktop; tersembunyi di mobile `hidden sm:flex`). Role diambil dari `session.user.role` (additionalFields auth.config.ts), label: admin → "Admin", agent → "Agen", selain itu "Member" (konsisten dengan ProfileInfoCard). Warna teks mengikuti `isScrolled` (putih di navbar gelap, hitam di transparan). Eslint file: 0 error, 2 warning `<img>` pre-existing.
+**Risiko:** dark mode hanya di-scope ke sidebar; jika ingin seluruh halaman admin ikut dark, perlu refactor terpisah. `h-15` (Tailwind v4 dynamic spacing) digunakan untuk logo.
+## Session 27b - Softkan Kontras Aktif + Fix Hover Sidebar Admin
 
-**Tambahan (revisi user — admin pages secure):**
-- `src/app/admin/layout.tsx` diubah menjadi **server component guard**: `auth.api.getSession({ headers: await headers() })` → tidak login di-redirect ke `/login`, role bukan `admin` di-redirect ke `/forbidden`, baru render shell. Konten admin tidak pernah ter-render untuk non-admin (sebelumnya hanya client-side `useAdminAuth` yang menyebabkan flash konten).
-- Shell client (sidebar/topbar/notifikasi) dipindah ke `src/app/admin/AdminShell.tsx` (client component, tanpa `useAdminAuth`).
-- `src/middleware.ts` — komentar diperbarui (role kini di-enforce server-side di layout).
-- `useAdminAuth` (`src/hooks/useAdminAuth.ts`) kini tidak terpakai (dibiarkan sebagai fallback client-side).
-- Verifikasi: `eslint` 2 file 0 error (1 warning `<img>` pre-existing); `tsc --noEmit` hanya error e2e pre-existing.
-- **Risk (belum dikerjakan):** API admin (mis. `/api/trips?all=true`, `/api/promotions`, dsb) masih publik — non-admin masih bisa baca data via endpoint langsung. Ini scope feat-080 (RBAC API).
+**Goal:** (1) Menurunkan kontras item aktif sidebar admin (solid oranye -> tint), (2) memperbaiki bug: hover pada item aktif menimpa warna aktif dengan slate abu-abu.
 
-**Tambahan (revisi user — empty state landing):** `src/components/landing/DestinationSection.jsx` — saat tidak ada destinasi, tulisan "Belum ada destinasi. Tambahkan dulu lewat halaman admin." diganti kartu empty state bergaya `Emptystate.jsx` di halaman /trips (border dashed, ikon MapPin di kotak oranye muda, judul "Belum ada destinasi" + subteks "Destinasi menarik akan segera hadir. Pantau terus ya!"). Eslint file: 0 error.
+**Analisis (dikonfirmasi via kompilasi CSS `npx @tailwindcss/cli`):**
+- `.hover\:bg-sidebar-accent:hover` = spesifisitas (0,2,0); `.data-active\:bg-[\#F49D1A]:where(...)` = (0,1,0) karena `:where()` bernilai 0. Hover menang walau posisinya di atas.
+- Fix = stacked variant `data-active:hover:*` yang menghasilkan selector (0,2,0) namun muncul lebih belakang di stylesheet.
 
+**Completed:**
+- `src/app/admin/components/admin-sidebar.tsx` (baris 53) - className `SidebarMenuButton` diubah:
+  - Sebelum: `data-active:bg-[#F49D1A] data-active:text-white data-active:font-semibold`
+  - Sesudah: `data-active:bg-[#F49D1A]/15 data-active:text-[#F49D1A] data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]`
+  - `font-medium` (bukan `font-semibold`) karena warna sudah jadi penanda utama dan konsisten dengan default shadcn.
+  - Hover item aktif menaikkan tint 15%->20%, teks tetap oranye; item non-aktif tetap hover slate normal.
+
+**Verification:**
+- `npx eslint`: 0 error (1 warning `<img>` pre-existing).
+- Kompilasi CSS: `.data-active\:bg-[\#F49D1A]/15` (ln 4906), `.data-active\:text-[\#F49D1A]` (ln 4916), `.data-active\:hover\:bg-[\#F49D1A]/20` (ln 4923) dan `.data-active\:hover\:text-[\#F49D1A]` (ln 4926) semua muncul SETELAH `.hover\:bg-sidebar-accent:hover` (ln 3610) -> stacked variant menang.
+- Perubahan belum di-commit.
+## Session 27c - Breadcrumb Header Admin + Penerapan Ulang Hapus Ikon
+
+**Goal:** (1) Menambahkan breadcrumb di header admin dengan format "Label > Menu", pengecualian Dashboard cukup "Dashboard". (2) Menerapkan ulang penghapusan ikon menu sidebar yang sempat kerevert.
+
+**Completed - Breadcrumb:**
+- `src/app/admin/components/nav-data.ts` - tambah helper `getActiveMenu(pathname)` yang mengembalikan grup + item aktif (logika sama dengan isActive sidebar: exact match /admin, startsWith selainnya).
+- `src/app/admin/layout.tsx` - header kini berisi `SidebarTrigger` + `Separator` vertikal + `Breadcrumb`:
+  - Format: `{label} > {menu}` (mis. "Trip & Tempat > Paket Trip") via `BreadcrumbPage` + `BreadcrumbSeparator` (chevron).
+  - Dashboard (`/admin`): label null -> hanya menampilkan "Dashboard" tanpa separator.
+  - Breadcrumb disembunyikan di mobile (`hidden md:flex`) mengikuti pola halaman dashboard contoh.
+
+**Completed - Re-apply hapus ikon (file sempat kerevert):**
+- `src/app/admin/components/admin-sidebar.tsx` - `<Icon />` dan `const Icon = item.icon` dihapus lagi; `collapsible="icon"` -> `collapsible="offcanvas"` (mode collapse-ikon tak relevan tanpa ikon); class `group-data-[collapsible=icon]:hidden` di logo dihapus.
+- `src/app/admin/components/nav-data.ts` - import lucide + field `icon` dibersihkan ulang dari tipe & data.
+
+**Catatan:** Di antara tugas, `admin-sidebar.tsx` dan `nav-data.ts` kembali ke versi berikon (kemungkinan revert/kembali-commit oleh user); seluruh perubahan diterapkan ulang dan terverifikasi.
+
+**Verification:**
+- `npx eslint` (3 file): 0 error, 1 warning `<img>` pre-existing.
+- `npx tsc --noEmit`: error hanya pre-existing `e2e/api/endpoints.spec.ts`.
+- Perubahan belum di-commit.
+## Session 27d - Fix Error Hidrasi Breadcrumb Admin
+
+**Goal:** Perbaiki hydration error yang muncul di semua halaman `/admin` (dikonfirmasi via Playwright console capture saat login admin).
+
+**Akar masalah:**
+- `src/app/admin/layout.tsx` breadcrumb menaruh `<BreadcrumbSeparator />` (renders `<li>`) DI DALAM `<BreadcrumbItem />` (renders `<li>`) -> HTML invalid `<li>` bersarang `<li>` -> React "Hydration failed ... <li> cannot be a descendant of <li>".
+- Terkonfirmasi: 6 console error + 3 pageerror "Hydration failed" di `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`.
+
+**Solusi (applied):**
+- `src/app/admin/layout.tsx` - susun ulang breadcrumb menjadi dua `BreadcrumbItem` terpisah dengan `BreadcrumbSeparator` sebagai sibling di antaranya (pola sama dengan `src/app/dashboard/page.tsx`). Breadcrumb kini tampil di semua ukuran layar (tidak lagi `hidden md:flex`).
+
+**Catatan selidik (temuan sekunder, tidak diubah):**
+- `src/middleware.ts:23` - redirect login untuk `/admin/*` tanpa session memakai `redirect="/"` bukan path asli (`/login?redirect=/`), sehingga redirect balik ke beranda bukan ke halaman admin yang diminta.
+
+**Verification:**
+- `npx eslint src/app/admin/layout.tsx`: 0 error.
+- Playwright (login admin@otl.id, console capture) pada `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`: 0 console error, 0 pageerror (sebelumnya 6+3).
+- Script verifikasi sementara dihapus.
+- Perubahan belum di-commit.
