@@ -335,10 +335,20 @@ export default function AdminTrips() {
 
   async function handleDelete() {
     if (!deleting) return;
-    await fetch(`/api/trips/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
+    try {
+      const res = await fetch(`/api/trips/${deleting}`, { method: "DELETE" });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        alert(`Gagal menghapus trip: ${errorData.error || res.statusText}`);
+        return;
+      }
+      setDeleteOpen(false);
+      setDeleting(null);
+      fetchData();
+    } catch (err) {
+      console.error("Error deleting trip:", err);
+      alert("Terjadi kesalahan saat menghapus trip.");
+    }
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
