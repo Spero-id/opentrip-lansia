@@ -3,6 +3,7 @@ import {
   trips, tripDepartures, tripPrices,
   itineraryItems, tripGalleries,
 } from "./trip.schema";
+import { destinationCategories } from "../master/master.schema";
 import { eq, and, asc, desc, sql, getTableColumns } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
@@ -14,9 +15,11 @@ export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin
   departureId: string | null;
 }
 
+export type TripWithCategory = typeof trips.$inferSelect & { categoryName: string | null };
+
 export interface ITripRepository {
   findAllPublished(): Promise<TripWithPrice[]>;
-  findAll(): Promise<(typeof trips.$inferSelect)[]>;
+  findAll(): Promise<TripWithCategory[]>;
   findBySlug(slug: string): Promise<typeof trips.$inferSelect | null>;
   findById(id: UUID): Promise<typeof trips.$inferSelect | null>;
   findDeparturesByTripId(tripId: UUID): Promise<(typeof tripDepartures.$inferSelect)[]>;
@@ -122,7 +125,45 @@ export const tripRepository: ITripRepository = {
   },
 
   async findAll() {
-    return db.select().from(trips).orderBy(desc(trips.createdAt));
+    const rows = await db
+      .select({
+        id: trips.id,
+        type: trips.type,
+        title: trips.title,
+        slug: trips.slug,
+        description: trips.description,
+        durationDays: trips.durationDays,
+        status: trips.status,
+        thumbnailId: trips.thumbnailId,
+        sourceRequestId: trips.sourceRequestId,
+        maxParticipants: trips.maxParticipants,
+        meetingPointId: trips.meetingPointId,
+        isFeatured: trips.isFeatured,
+        categoryId: trips.categoryId,
+        categoryName: destinationCategories.name,
+        location: trips.location,
+        province: trips.province,
+        geoPoint: trips.geoPoint,
+        isSeniorFriendly: trips.isSeniorFriendly,
+        accessibilityInfo: trips.accessibilityInfo,
+        visitEstimateMinutes: trips.visitEstimateMinutes,
+        image: trips.image,
+        rating: trips.rating,
+        images: trips.images,
+        reviewCount: trips.reviewCount,
+        priceMin: trips.priceMin,
+        priceMax: trips.priceMax,
+        highlights: trips.highlights,
+        facilities: trips.facilities,
+        itinerary: trips.itinerary,
+        meetingPointsJson: trips.meetingPointsJson,
+        createdAt: trips.createdAt,
+        updatedAt: trips.updatedAt,
+      })
+      .from(trips)
+      .leftJoin(destinationCategories, eq(trips.categoryId, destinationCategories.id))
+      .orderBy(desc(trips.createdAt));
+    return rows;
   },
 
   async create(data) {
