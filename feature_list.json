@@ -174,12 +174,12 @@
         {
           "id": "feat-040",
           "title": "Admin dashboard layout & sidebar",
-          "description": "Admin sidebar with 10 nav items, KPI cards, quick actions, recent bookings table.",
+          "description": "Admin sidebar with 10 nav items, KPI cards, quick actions, recent bookings table. Sidebar rebuilt on ShadCN (SidebarProvider/SidebarInset), dark theme scoped, orange active states.",
           "status": "in_review",
           "priority": 40,
           "depends_on": ["feat-001"],
           "verification": ["npm run lint"],
-          "evidence": "Admin layout with sidebar, dashboard page with KPI cards"
+          "evidence": "Admin layout with ShadCN sidebar (admin-sidebar.tsx), dashboard page with KPI cards"
         },
         {
           "id": "feat-041",

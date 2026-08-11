@@ -700,3 +700,79 @@ pm run lint: no new errors; only warnings in touched files.
 - Targeted eslint 6 file: 0 error (2 warning pre-existing: `Newspaper` tak terpakai di blog, `<img>` di WhatsAppFloat sesuai pola repo).
 - Playwright (channel chrome, dev server :3000): tombol `a[aria-label="WhatsApp"]` muncul dengan label "Hubungi Kami" di kelima halaman ✅
 - Perubahan belum di-commit.
+## Session 27 - ShadCN Sidebar untuk Admin
+
+**Goal:** Mengganti struktur sidebar admin yang dibuat manual (custom aside) dengan sidebar ShadCN yang sudah terpasang di project, disesuaikan dengan navigasi admin OpenTrip Lansia. Topbar (notifikasi + profil) dipertahankan.
+
+**Completed:**
+- `src/app/admin/components/nav-data.ts` (baru) - ekstraksi array `navGroups` (Dashboard, Trip & Tempat, Pengguna & Partner, Marketing, Order, Konten) dari layout.tsx menjadi modul bertipe (`AdminNavGroup`/`AdminNavItem`, ikon lucide).
+- `src/app/admin/components/admin-sidebar.tsx` (baru) - komponen ShadCN: `Sidebar` (collapsible="icon") + `SidebarHeader` (logo brand) + `SidebarContent` (SidebarGroup/GroupLabel/Menu/MenuButton dari nav-data, active state via usePathname: exact match /admin, startsWith selainnya, `render={<Link/>}` untuk navigasi) + `SidebarFooter` ("Kembali ke Website Utama") + `SidebarRail`. Item aktif di-warnai oranye #F49D1A via `data-active:bg-[#F49D1A]`.
+- `src/app/globals.css` - blok variabel `--sidebar-*` dark scoped `.admin-sidebar-dark` + `[data-mobile="true"][data-sidebar="sidebar"]` (mobile sheet portaled) agar sidebar admin ikut dark mode tanpa memengaruhi area konten/dashboard.
+- `src/app/admin/layout.tsx` - rombak total: hapus custom aside, mobile overlay/hamburger manual, dan state sidebarOpen; kini `SidebarProvider` + `<AdminSidebar />` + `SidebarInset` (bg-slate-100/70); topbar notifikasi + profil dipindah jadi header di dalam SidebarInset dengan `SidebarTrigger` menggantikan hamburger. `useAdminAuth()` tetap.
+
+**Verification:**
+- Targeted eslint (3 file diubah): 0 error, 1 warning `<img>` (pola sama dengan kode asli).
+- `npm run lint` penuh: error/warning hanya pre-existing (use-mobile.ts set-state-in-effect, useNotifications.ts, icon-picker, my-trips, dll.) - tidak ada dari file yang diubah.
+- `tsc --noEmit`: error hanya pre-existing di `e2e/api/endpoints.spec.ts`.
+- Perubahan belum di-commit.
+
+**Risiko:** dark mode hanya di-scope ke sidebar; jika ingin seluruh halaman admin ikut dark, perlu refactor terpisah. `h-15` (Tailwind v4 dynamic spacing) digunakan untuk logo.
+## Session 27b - Softkan Kontras Aktif + Fix Hover Sidebar Admin
+
+**Goal:** (1) Menurunkan kontras item aktif sidebar admin (solid oranye -> tint), (2) memperbaiki bug: hover pada item aktif menimpa warna aktif dengan slate abu-abu.
+
+**Analisis (dikonfirmasi via kompilasi CSS `npx @tailwindcss/cli`):**
+- `.hover\:bg-sidebar-accent:hover` = spesifisitas (0,2,0); `.data-active\:bg-[\#F49D1A]:where(...)` = (0,1,0) karena `:where()` bernilai 0. Hover menang walau posisinya di atas.
+- Fix = stacked variant `data-active:hover:*` yang menghasilkan selector (0,2,0) namun muncul lebih belakang di stylesheet.
+
+**Completed:**
+- `src/app/admin/components/admin-sidebar.tsx` (baris 53) - className `SidebarMenuButton` diubah:
+  - Sebelum: `data-active:bg-[#F49D1A] data-active:text-white data-active:font-semibold`
+  - Sesudah: `data-active:bg-[#F49D1A]/15 data-active:text-[#F49D1A] data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]`
+  - `font-medium` (bukan `font-semibold`) karena warna sudah jadi penanda utama dan konsisten dengan default shadcn.
+  - Hover item aktif menaikkan tint 15%->20%, teks tetap oranye; item non-aktif tetap hover slate normal.
+
+**Verification:**
+- `npx eslint`: 0 error (1 warning `<img>` pre-existing).
+- Kompilasi CSS: `.data-active\:bg-[\#F49D1A]/15` (ln 4906), `.data-active\:text-[\#F49D1A]` (ln 4916), `.data-active\:hover\:bg-[\#F49D1A]/20` (ln 4923) dan `.data-active\:hover\:text-[\#F49D1A]` (ln 4926) semua muncul SETELAH `.hover\:bg-sidebar-accent:hover` (ln 3610) -> stacked variant menang.
+- Perubahan belum di-commit.
+## Session 27c - Breadcrumb Header Admin + Penerapan Ulang Hapus Ikon
+
+**Goal:** (1) Menambahkan breadcrumb di header admin dengan format "Label > Menu", pengecualian Dashboard cukup "Dashboard". (2) Menerapkan ulang penghapusan ikon menu sidebar yang sempat kerevert.
+
+**Completed - Breadcrumb:**
+- `src/app/admin/components/nav-data.ts` - tambah helper `getActiveMenu(pathname)` yang mengembalikan grup + item aktif (logika sama dengan isActive sidebar: exact match /admin, startsWith selainnya).
+- `src/app/admin/layout.tsx` - header kini berisi `SidebarTrigger` + `Separator` vertikal + `Breadcrumb`:
+  - Format: `{label} > {menu}` (mis. "Trip & Tempat > Paket Trip") via `BreadcrumbPage` + `BreadcrumbSeparator` (chevron).
+  - Dashboard (`/admin`): label null -> hanya menampilkan "Dashboard" tanpa separator.
+  - Breadcrumb disembunyikan di mobile (`hidden md:flex`) mengikuti pola halaman dashboard contoh.
+
+**Completed - Re-apply hapus ikon (file sempat kerevert):**
+- `src/app/admin/components/admin-sidebar.tsx` - `<Icon />` dan `const Icon = item.icon` dihapus lagi; `collapsible="icon"` -> `collapsible="offcanvas"` (mode collapse-ikon tak relevan tanpa ikon); class `group-data-[collapsible=icon]:hidden` di logo dihapus.
+- `src/app/admin/components/nav-data.ts` - import lucide + field `icon` dibersihkan ulang dari tipe & data.
+
+**Catatan:** Di antara tugas, `admin-sidebar.tsx` dan `nav-data.ts` kembali ke versi berikon (kemungkinan revert/kembali-commit oleh user); seluruh perubahan diterapkan ulang dan terverifikasi.
+
+**Verification:**
+- `npx eslint` (3 file): 0 error, 1 warning `<img>` pre-existing.
+- `npx tsc --noEmit`: error hanya pre-existing `e2e/api/endpoints.spec.ts`.
+- Perubahan belum di-commit.
+## Session 27d - Fix Error Hidrasi Breadcrumb Admin
+
+**Goal:** Perbaiki hydration error yang muncul di semua halaman `/admin` (dikonfirmasi via Playwright console capture saat login admin).
+
+**Akar masalah:**
+- `src/app/admin/layout.tsx` breadcrumb menaruh `<BreadcrumbSeparator />` (renders `<li>`) DI DALAM `<BreadcrumbItem />` (renders `<li>`) -> HTML invalid `<li>` bersarang `<li>` -> React "Hydration failed ... <li> cannot be a descendant of <li>".
+- Terkonfirmasi: 6 console error + 3 pageerror "Hydration failed" di `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`.
+
+**Solusi (applied):**
+- `src/app/admin/layout.tsx` - susun ulang breadcrumb menjadi dua `BreadcrumbItem` terpisah dengan `BreadcrumbSeparator` sebagai sibling di antaranya (pola sama dengan `src/app/dashboard/page.tsx`). Breadcrumb kini tampil di semua ukuran layar (tidak lagi `hidden md:flex`).
+
+**Catatan selidik (temuan sekunder, tidak diubah):**
+- `src/middleware.ts:23` - redirect login untuk `/admin/*` tanpa session memakai `redirect="/"` bukan path asli (`/login?redirect=/`), sehingga redirect balik ke beranda bukan ke halaman admin yang diminta.
+
+**Verification:**
+- `npx eslint src/app/admin/layout.tsx`: 0 error.
+- Playwright (login admin@otl.id, console capture) pada `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`: 0 console error, 0 pageerror (sebelumnya 6+3).
+- Script verifikasi sementara dihapus.
+- Perubahan belum di-commit.
