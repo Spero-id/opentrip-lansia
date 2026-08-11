@@ -68,9 +68,9 @@ export default function MyTripsPage() {
 
   const privateFilters = [
     { value: "all", label: "Semua" },
-    { value: "submitted", label: "Menunggu Review" },
-    { value: "approved", label: "Disetujui" },
-    { value: "revision", label: "Perlu Revisi" },
+    { value: "submitted", label: "Menunggu Direview" },
+    { value: "reviewed", label: "Sedang Direview" },
+    { value: "rejected", label: "Ditolak" },
   ];
 
   const activeFilters = tab === "open" ? openFilters : privateFilters;
