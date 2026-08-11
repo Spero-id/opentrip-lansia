@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, User, ShoppingBag } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { Menu, X, User, ShoppingBag, LogOut } from "lucide-react";
+import { useSession, signOut } from "@/lib/auth-client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
 const NAV_LINKS = [
@@ -29,6 +30,7 @@ function NavbarLink({ href, children, className, onClick }) {
 }
 
 export default function Navbar() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -109,22 +111,36 @@ export default function Navbar() {
                     onClick={() => setDropdownOpen((v) => !v)}
                     aria-label="Menu akun"
                     aria-expanded={dropdownOpen}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors hover:bg-[#c47d12] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/50 focus:ring-offset-1"
+                    className={cn(
+                      "group relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors cursor-pointer hover:bg-[#c47d12] focus:outline-none overflow-hidden",
+                      dropdownOpen && "focus:ring-2 focus:ring-[#F49D1A]/50 focus:ring-offset-1 focus:ring-offset-transparent"
+                    )}
                   >
-                    <span className="text-sm font-semibold">
-                      {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
-                    </span>
+                    {session.user.image ? (
+                      <>
+                        <img
+                          src={session.user.image}
+                          alt="Foto profil"
+                          className="h-full w-full object-cover"
+                        />
+                        <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                      </>
+                    ) : (
+                      <span className="text-sm font-semibold">
+                        {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                      </span>
+                    )}
                   </button>
 
                   {/* Dropdown panel */}
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
                       {/* User info */}
-                      <div className="px-4 py-3 border-b border-slate-100">
-                        <p className="text-xs font-bold text-slate-900 truncate">
+                      <div className="px-4 py-3 border-b border-slate-200">
+                        <p className="text-sm font-medium text-slate-900 truncate">
                           {session.user.name || "Pengguna"}
                         </p>
-                        <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                        <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
                           {session.user.email}
                         </p>
                       </div>
@@ -134,7 +150,7 @@ export default function Navbar() {
                         <Link
                           href="/profile"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#F49D1A] transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
                         >
                           <User className="w-4 h-4 shrink-0" />
                           Profil Saya
@@ -142,15 +158,30 @@ export default function Navbar() {
                         <Link
                           href="/my-trips"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#F49D1A] transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
                         >
                           <ShoppingBag className="w-4 h-4 shrink-0" />
-                          Histori Trip
+                          Riwayat Trip
                         </Link>
                       </div>
 
                       {/* Logout */}
-                                          </div>
+                      <div className="border-t border-slate-200 py-1.5">
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            setDropdownOpen(false);
+                            await signOut();
+                            router.push("/login");
+                            router.refresh();
+                          }}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-slate-200 cursor-pointer"
+                        >
+                          <LogOut className="w-4 h-4 shrink-0" />
+                          Keluar dari Akun
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : (

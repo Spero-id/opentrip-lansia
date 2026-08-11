@@ -3,7 +3,6 @@
 import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { destinationsData } from "@/lib/destinationsData";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
@@ -17,6 +16,7 @@ import AboutSection from "@/components/destinasi/detail/AboutSection";
 import AccessibilitySection from "@/components/destinasi/detail/AccessibilitySection";
 import ItinerarySection from "@/components/destinasi/detail/ItinerarySection";
 import BookingCard from "@/components/destinasi/detail/BookingCard";
+import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 
 export default function DestinationDetailPage({ params }) {
   const resolvedParams = use(params);
@@ -27,19 +27,10 @@ export default function DestinationDetailPage({ params }) {
     const rawId = resolvedParams.id;
     let cancelled = false;
 
-    Promise.resolve()
-      .then(() => destinationsData.find((d) => d.id === Number(rawId)) ?? null)
-      .then((staticDest) => {
-        if (cancelled) return null;
-        if (staticDest) {
-          setDest(staticDest);
-          setStatus("found");
-          return null;
-        }
-        return fetch("/api/trips").then((res) => res.json());
-      })
+    fetch("/api/trips")
+      .then((res) => res.json())
       .then((data) => {
-        if (cancelled || !data) return;
+        if (cancelled) return;
         const found = Array.isArray(data)
           ? data.find((d) => d.id === rawId && d.status === "published")
           : undefined;
@@ -75,7 +66,7 @@ export default function DestinationDetailPage({ params }) {
     );
   }
 
-  const images = dest.images?.length ? dest.images : [dest.image];
+  const images = dest.images?.length ? dest.images : dest.image ? [dest.image] : [];
   const shortLocation = DestinationDomain.getShortLocation(dest);
 
   return (
@@ -129,6 +120,7 @@ export default function DestinationDetailPage({ params }) {
 
       <Subs />
       <Footer />
+      <WhatsAppFloat />
     </div>
   );
 }

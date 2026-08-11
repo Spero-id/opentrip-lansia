@@ -12,7 +12,7 @@ export default function BookingSummary({ destination }) {
 
   return (
     <div className="flex items-center gap-4 bg-gray-50 border border-gray-100 rounded-2xl p-4">
-      <img src={destination.image} alt={destination.title} className="w-20 h-20 rounded-xl object-cover shrink-0" />
+      <img src={destination.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10"} alt={destination.title} className="w-20 h-20 rounded-xl object-cover shrink-0" />
       <div className="min-w-0">
         <p className="text-xs text-gray-400">{destination.category}</p>
         <h3 className="font-bold text-gray-900 text-base line-clamp-1">{destination.title}</h3>

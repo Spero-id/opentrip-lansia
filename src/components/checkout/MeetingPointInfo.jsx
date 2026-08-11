@@ -2,18 +2,17 @@
 
 import { Clock, MapPin } from "lucide-react";
 
-const DEFAULT_POINT = {
-  time: "08.00",
-  location: "Bandara / Stasiun Terdekat",
-  description:
-    "Titik kumpul utama penjemputan. Silakan hadir 15 menit sebelum waktu tersebut.",
-};
-
 export default function MeetingPointInfo({ destination }) {
-  const points =
-    destination?.meetingPoints?.length > 0
-      ? destination.meetingPoints
-      : [DEFAULT_POINT];
+  const points = destination?.meetingPoints || [];
+
+  if (points.length === 0) {
+    return (
+      <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
+        <h2 className="text-base font-bold text-gray-900">Meeting Point</h2>
+        <p className="text-sm text-gray-400">Meeting point akan diinformasikan oleh admin setelah booking dikonfirmasi.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
@@ -37,9 +36,11 @@ export default function MeetingPointInfo({ destination }) {
                   <MapPin size={15} className="shrink-0 text-[#F49D1A]" />
                   {point.location}
                 </h4>
-                <p className="mt-1.5 text-xs leading-relaxed text-gray-500">
-                  {point.description}
-                </p>
+                {point.description && (
+                  <p className="mt-1.5 text-xs leading-relaxed text-gray-500">
+                    {point.description}
+                  </p>
+                )}
               </div>
             </li>
           ))}

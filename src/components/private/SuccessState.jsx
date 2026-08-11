@@ -3,6 +3,9 @@ import Footer from "@/components/layout/Footer";
 import { A } from "./helpers/constants";
 import Subs from "../landing/Subs";
 
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+const WA_MESSAGE_DEFAULT = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
+
 function formatRupiah(v) {
   if (!v && v !== 0) return "-";
   return "Rp " + Math.floor(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -73,6 +76,8 @@ function Row({ icon, label, value }) {
 }
 
 export default function SuccessState({ form, onReset }) {
+  const waMessage = `Halo, saya baru saja mengajukan request Private Trip atas nama *${form.nama || "-"}*. Mohon konfirmasinya. Terima kasih!`;
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMessage || WA_MESSAGE_DEFAULT)}`;
   return (
     <>
       <Navbar />
@@ -125,16 +130,22 @@ export default function SuccessState({ form, onReset }) {
 
               {form.tripType === "explorer" && form.selectedDestinasi && (
                 <div className="pt-3 flex gap-3 items-center">
-                  <img
-                    src={form.selectedDestinasi.image}
-                    alt={form.selectedDestinasi.title}
-                    className="w-14 h-14 rounded-xl object-cover shrink-0"
-                  />
+                  {form.selectedDestinasi.image ? (
+                    <img
+                      src={form.selectedDestinasi.image}
+                      alt={form.selectedDestinasi.title || "Destinasi"}
+                      className="w-14 h-14 rounded-xl object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 font-bold text-xs">
+                      {(form.selectedDestinasi.title || "??").slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-gray-800 truncate">{form.selectedDestinasi.title}</p>
                     <p className="text-[11px] text-gray-400 mt-0.5">{form.selectedDestinasi.location}</p>
                     <p className="text-[11px] font-semibold mt-0.5" style={{ color: A }}>
-                      * {form.selectedDestinasi.rating.toFixed(1)} · mulai {formatRupiah(form.selectedDestinasi.priceMin)}
+                      {form.selectedDestinasi.rating != null ? `★ ${Number(form.selectedDestinasi.rating).toFixed(1)} · ` : ""}mulai {formatRupiah(form.selectedDestinasi.priceMin)}
                     </p>
                   </div>
                 </div>
@@ -177,6 +188,16 @@ export default function SuccessState({ form, onReset }) {
               ))}
             </div>
           </div>
+
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe57] text-white"
+          >
+            <img src="/whatsapp-logo.webp" alt="WhatsApp" className="w-5 h-5 object-contain" />
+            Konfirmasi via WhatsApp
+          </a>
 
           <a
             href="/my-trips"

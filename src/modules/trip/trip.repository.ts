@@ -3,15 +3,12 @@ import {
   trips, tripDepartures, tripPrices,
   itineraryItems, tripGalleries,
 } from "./trip.schema";
-import { eq, and, asc, desc, sql } from "drizzle-orm";
+import { eq, and, asc, desc, sql, getTableColumns } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
-export interface TripWithPrice {
-  id: string;
-  title: string;
-  slug: string;
-  description: string | null;
-  durationDays: number;
+export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin" | "priceMax"> {
+  priceMin: number | null;
+  priceMax: number | null;
   startDate: string | null;
   price: string | null;
   departureId: string | null;
@@ -24,6 +21,7 @@ export interface ITripRepository {
   findById(id: UUID): Promise<typeof trips.$inferSelect | null>;
   findDeparturesByTripId(tripId: UUID): Promise<(typeof tripDepartures.$inferSelect)[]>;
   findPricesByDepartureId(departureId: UUID): Promise<(typeof tripPrices.$inferSelect)[]>;
+  findCanonicalPriceByDepartureId(departureId: UUID): Promise<typeof tripPrices.$inferSelect | null>;
   create(data: typeof trips.$inferInsert): Promise<typeof trips.$inferSelect>;
   update(id: UUID, data: Partial<typeof trips.$inferInsert>): Promise<typeof trips.$inferSelect | null>;
   delete(id: UUID): Promise<void>;
@@ -49,28 +47,60 @@ export interface ItineraryInput {
   description?: string | null;
 }
 
+export function pickCanonicalPrice(prices: { name: string; price: string }[]): string | null {
+  if (prices.length === 0) return null;
+  const dewas = prices.find((p) => p.name === "Dewasa");
+  return dewas?.price ?? prices[0].price;
+}
+
 export const tripRepository: ITripRepository = {
   async findAllPublished() {
     const rows = await db
       .select({
-        id: trips.id,
-        title: trips.title,
-        slug: trips.slug,
-        description: trips.description,
-        durationDays: trips.durationDays,
+        ...getTableColumns(trips),
         startDate: tripDepartures.startDate,
-        price: tripPrices.price,
         departureId: tripDepartures.id,
+        price: tripPrices.price,
+        priceName: tripPrices.name,
       })
       .from(trips)
       .leftJoin(tripDepartures, eq(trips.id, tripDepartures.tripId))
-      .leftJoin(tripPrices, eq(tripDepartures.id, tripPrices.departureId))
-      .where(and(eq(trips.status, "published"), eq(tripPrices.isActive, true)))
+      .leftJoin(tripPrices, and(eq(tripDepartures.id, tripPrices.departureId), eq(tripPrices.isActive, true)))
+      .where(eq(trips.status, "published"))
       .orderBy(asc(tripDepartures.startDate));
 
-    const map = new Map<string, TripWithPrice>();
-    for (const r of rows) if (!map.has(r.id)) map.set(r.id, r);
-    return [...map.values()];
+    const byTrip = new Map<string, TripWithPrice>();
+    const pricesByDeparture = new Map<string, { name: string; price: string }[]>();
+
+    for (const r of rows) {
+      if (r.departureId) {
+        if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
+        pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
+      }
+      if (!byTrip.has(r.id)) {
+        byTrip.set(r.id, {
+          ...r,
+          startDate: r.startDate,
+          departureId: r.departureId,
+          price: null,
+        });
+      }
+    }
+
+    for (const row of byTrip.values()) {
+      const prices = pricesByDeparture.get(row.departureId!) ?? [];
+      row.price = pickCanonicalPrice(prices);
+    }
+
+    return [...byTrip.values()];
+  },
+
+  async findCanonicalPriceByDepartureId(departureId) {
+    const rows = await db
+      .select()
+      .from(tripPrices)
+      .where(and(eq(tripPrices.departureId, departureId), eq(tripPrices.isActive, true)));
+    return rows.find((r) => r.name === "Dewasa") ?? rows[0] ?? null;
   },
 
   async findBySlug(slug) {

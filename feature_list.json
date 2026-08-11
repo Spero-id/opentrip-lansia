@@ -1,6 +1,6 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-08-09",
+  "last_updated": "2026-08-10",
   "summary": {
     "total_features": 52,
     "in_review": 19,
@@ -127,12 +127,12 @@
         {
           "id": "feat-031",
           "title": "Payment flow (manual transfer + confirmation)",
-          "description": "Payment method selection per metode (bri/mandiri/gopay/ovo/dana/qris) menampilkan rekening tujuan dari tabel payment_accounts, upload bukti transfer wajib sebelum submit (disimpan ke public/payments), booking default pending. Admin verifikasi di /admin/pesanan (approve → paid/confirmed, reject wajib alasan → rejected/cancelled). Alur ini menggantikan konfirmasi otomatis checkout lama; schema gateway webhook tetap siap.",
+          "description": "Payment page with booking code, total amount, payment method selection (manual/Midtrans), confirmation. Schema for gateway webhook ready.",
           "status": "in_review",
           "priority": 31,
           "depends_on": ["feat-030"],
           "verification": ["npm run lint"],
-          "evidence": "PaymentStep.jsx (6 metode + account card + proof uploader), /api/payments/upload, /api/payments/accounts, /api/payments/[paymentId]/review, /api/checkout (booking pending + payment pending + snapshot rekening), admin/pesanan detail + form verifikasi, my-trips status pembayaran/bukti/catatan, payment.schema.ts (7 kolom baru + paymentAccounts)"
+          "evidence": "POST /api/payments (auth+owner+method/proof validation, amount dari server), upload dengan magic-byte check, admin review approve/reject + note, /checkout/pay/[id], bukti+catatan admin di /my-trips"
         },
         {
           "id": "feat-032",
@@ -412,12 +412,12 @@
         {
           "id": "feat-080",
           "title": "API auth middleware & RBAC",
-          "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL — saat ini 57 endpoint 100% public.",
+          "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL : saat ini 57 endpoint 100% public.",
           "status": "to_do",
           "priority": 2,
           "depends_on": ["feat-001"],
           "verification": ["npm run lint"],
-          "evidence": "Semua route handler tanpa auth middleware — perlu segera diperbaiki",
+          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Endpoint lain masih perlu diaudit.",
           "critical": true
         },
         {

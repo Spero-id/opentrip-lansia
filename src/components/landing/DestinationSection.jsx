@@ -7,21 +7,14 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import DestinationCard from "@/components/destinasi/DestinationCard";
 
-const FALLBACK_IMAGES = [
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4HXrHCu5wU0hTKdf2vfJj5ZiXuH3LEUeh5s2vEDS6mYWKlFLeAP91yNQ&s=10",
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80",
-  "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=600&q=80",
-];
-
 const DEFAULT_RATING = 5.0;
 const PAGE_SIZE = 8;
 
-function toCard(trip, index) {
+function toCard(trip) {
   const image =
     trip.image ||
     (Array.isArray(trip.images) && trip.images[0]) ||
-    FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
+    null;
 
   return {
     id: trip.id,

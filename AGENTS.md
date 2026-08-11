@@ -14,6 +14,32 @@ Before writing code:
 6. **Review recent commits** with `git log --oneline -5`
 
 If baseline verification is failing, repair that first before adding new scope.
+## Global Memory System
+
+OMP maintains a global memory system at `~/.omp/memory/` that persists knowledge across projects and sessions.
+
+**When to read memory:**
+- Start of session → Read `~/.omp/memory/architecture.md` and `~/.omp/memory/conventions.md`
+- Debugging → Check `~/.omp/memory/blockers.md` for known issues
+- Learning → Review `~/.omp/memory/learnings.md` for similar problems
+- Project context → Read `~/.omp/memory/projects/[project].md`
+
+**When to update memory:**
+- Discover new patterns → Add to `architecture.md`
+- Learn from debugging → Add to `learnings.md`
+- Encounter new blockers → Add to `blockers.md`
+- Make decisions → Document in `decisions.md`
+- Complete project milestone → Update `projects/[project].md`
+
+**Memory files:**
+- `README.md` — Usage guide and templates
+- `architecture.md` — Design patterns and architecture
+- `conventions.md` — Code conventions and best practices
+- `decisions.md` — Architecture decisions and rationale
+- `blockers.md` — Known issues and workarounds
+- `learnings.md` — Lessons from development
+- `projects/` — Project-specific knowledge
+- `snippets/` — Useful code snippets
 
 ## Project Overview
 

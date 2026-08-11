@@ -513,6 +513,90 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 **Verification:**
 - `npm run lint` passed with 0 errors.
 
+
+
+
+
+
+
+### Session (2026-08-05) — Vercel Production Deploy + Build Fixes
+- Deployed `main` to production via `vercel --prod` → **https://opentrip-lansia.vercel.app** (deploy `7v1pWRF1kJykGNQwGcJkQEFiFULi`, Ready 59s)
+- **Root cause 1 (blocked deploy):** Repo was private + git author `bhuminindra` (alhafizaulia02@gmail.com) bukan member Vercel team → Vercel Hobby seat policy memblokir (`TEAM_ACCESS_REQUIRED`). User menjadikan repo public → blokir hilang (collaboration gratis utk public repo).
+- **Root cause 2 (build fail):** TypeScript error di `src/app/admin/trips/[id]/edit/page.tsx` — field itinerary/tripDestinations nullable vs `TripForm` butuh non-null. Dikoersi dengan default (`?? ""` / `?? 0`), plus `meetingPointId`/`description`.
+- **Root cause 3 (prerender fail):** `/login` crash saat SSR — `getRedirectPath()` memanggil `window` saat render. Ditambah guard `typeof window === "undefined"` (login & register).
+- `trip-form.tsx`: tambah `slug?: string` ke `TripFormData`.
+- Commit: `c3c1a36` (4 file). Lint: 0 errors / 34 warnings (pre-existing `<img>`).
+- **Catatan:** local `main` ahead of origin/main 1 commit — perlu `git push` bila ingin sinkron.
+
+## Session 17 — Auto Generate Slug di Modal Tambah/Edit Trip
+
+**Goal:** Auto-generate slug secara otomatis di modal Tambah/Edit Trip (`src/app/admin/trips/page.tsx`) saat admin menginputkan Judul Trip.
+
+**Completed:**
+- Updated `src/app/admin/trips/page.tsx`:
+  - Mengimpor `slugify` dari `@/shared/utils/helpers`.
+  - Memperbarui `handleChange` agar setiap kali `title` diubah, `form.slug` secara otomatis terisi dengan versi `slugify(title)`.
+  - Mengunci tipe trip menjadi **Open Trip** saja (menghapus pilihan tipe dropdown).
+  - Menambahkan manajemen **Itinerary** dinamis (multiple items) dengan field: Hari ke berapa (`dayNumber`), Wilayah/Lokasi (`location`), Judul Kegiatan (`title`), dan Deskripsi (`description`).
+  - Menjaga section **Aksesibilitas Lansia** (checkbox Ramah Lansia & text area Info Aksesibilitas).
+  - Menghapus input **Estimasi Waktu (menit)**.
+  - Menghapus input **Highlights** dan **Fasilitas**.
+
+
+## Session 18 — Hapus Meeting Point dari Sidebar & Master Meeting Point
+
+**Goal:** Menghapus menu Meeting Point dari sidebar admin dan menghapus halaman master Meeting Point.
+
+**Completed:**
+- Diperbarui `src/app/admin/layout.tsx`:
+  - Menghapus link `"Meeting Point"` (`/admin/meeting-points`) dari kelompok navigasi `"Trip & Tempat"`.
+  - Menghapus import `Map` yang tidak digunakan dari `lucide-react`.
+- Menghapus halaman & folder master meeting point `src/app/admin/meeting-points/page.tsx` dan file spec E2E `e2e/admin/meeting-points.spec.ts`.
+
+
+## Session 19 — Perubahan Input Harga, Kategori Auto-complete, dan Pilih Provinsi
+
+**Goal:** Mengganti input harga min/max dengan single input Harga (auto format Rupiah), menambahkan auto-complete Kategori dengan `react-select/creatable` (bisa freetext & tersimpan ke DB), serta menambahkan dropdown Pilih Provinsi di Informasi Destinasi.
+
+**Completed:**
+- Updated `src/app/admin/trips/page.tsx`:
+  - Mengubah input `Harga Min` & `Harga Max` menjadi single input **Harga (Rp)** dengan format Rupiah otomatis saat mengetik (`formatRupiah` & `parseRupiah`).
+  - Mengintegrasikan `CreatableSelect` dari `react-select/creatable` pada input **Kategori**, sehingga mendukung auto-complete serta freetext yang akan langsung dikirim ke `POST /api/destinations/categories` dan tersimpan ke database.
+  - Menambahkan dropdown **Pilih Provinsi** berisi 38 provinsi di Indonesia pada bagian **Informasi Destinasi**.
+- Updated `src/db/schema/trips.ts` & `src/modules/trip/trip.schema.ts`:
+  - Menambahkan kolom `province: text("province")` pada tabel `trips`.
+- Updated `src/modules/master/master.repository.ts` & `src/app/api/destinations/categories/route.ts`:
+  - Menambahkan method `createDestinationCategory` dan handler `POST` di `/api/destinations/categories` untuk menyimpan kategori baru.
+
+## Session 20 — Admin Users Management Page (/admin/users)
+
+**Goal:** Tambahkan halaman Users terdaftar pada `/admin/users` untuk melihat, mencari, memfilter role, mengedit detail/role, dan menghapus user terdaftar.
+
+**Completed:**
+- Updated `src/modules/auth/auth.repository.ts` — Menambahkan method `findAll()`, `update()`, dan `delete()`.
+- Updated `src/modules/auth/auth.service.ts` — Menambahkan method `getAllUsers()`, `updateUser()`, dan `deleteUser()`.
+- Created `src/app/api/users/route.ts` — Handler `GET /api/users` untuk mengambil semua pengguna terdaftar.
+- Created `src/app/api/users/[id]/route.ts` — Handler `PUT` dan `DELETE` `/api/users/[id]` untuk mengubah dan menghapus pengguna.
+- Created `src/app/admin/users/page.tsx` — Halaman manajemen user dengan kartu KPI (Total, User Biasa, Agent, Admin), pencarian, filter role, tabel user (avatar, nama, email, hp, role badge, referral, poin loyalitas, tanggal daftar), Modal Edit Pengguna, dan Modal Konfirmasi Hapus.
+- Updated `src/app/admin/layout.tsx` — Menambahkan menu navigasi "Pengguna" di sidebar admin.
+- Created `e2e/admin/users.spec.ts` — Playwright E2E test suite untuk halaman `/admin/users`.
+- Updated `feature_list.json` — Menambahkan `feat-049` (completed).
+
+## Session 21 — Bug Fix: Admin Trips rows.map is not a function
+
+**Goal:** Fix runtime TypeError (`rows.map is not a function`) in `src/app/admin/trips/page.tsx:353:22` when creating trips or when API responses return non-array error objects.
+
+**Completed:**
+- Updated `src/app/admin/trips/page.tsx`:
+  - Enforced array validation in `fetchData()` (`if (res.ok && Array.isArray(data)) setRows(data)`), setting `rows` to `[]` on non-array or error responses.
+  - Added robust error handling in `handleSubmit()` (`if (!res.ok)`), displaying feedback to user instead of failing silently and closing modal.
+  - Safe render mapping with `const tripRows = Array.isArray(rows) ? rows : [];` to prevent crashes under any state anomaly.
+- Updated `src/modules/trip/trip.repository.ts`:
+  - Fixed `saveItinerary()` to explicitly map supported columns (`tripId`, `dayNumber`, `title`, `description`, `startTime`, `endTime`) and omit non-schema properties (such as `location`), plus guaranteeing fallback non-null values for `title`.
+
+**Verification:**
+- `npm run lint` passed with 0 errors.
+
 ## Session 22 — HugeRTE WYSIWYG Editor for Admin Blogs Modal
 
 **Goal:** Implement WYSIWYG rich text editor for blog content textarea in create/edit modal (`src/app/admin/blogs/page.tsx`) using `@hugerte/hugerte-react`.
@@ -533,3 +617,86 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 
 
 
+
+## Session 23 - Payment & Booking Security Hardening
+
+**Goal:** Fix broken manual-transfer payment flow (legacy /api/payment returned 401 without auth) and close critical security holes.
+
+**Completed:**
+- New POST /api/payments route: session-auth required, owner-only (403 otherwise), validates payment method + proof URL (must start with /payments/, no ..), amount sourced from booking.totalAmount server-side, creates payment with status pending and flips booking to pending. Idempotent for existing pending payment.
+- Deleted legacy src/app/api/payment/route.ts (unauthenticated, form-data only).
+- useCheckout.initiatePayment and /checkout/pay/[id] now POST JSON to /api/payments using checkout.proofUrl from ProofUploader.
+- Proof upload hardened with magic-byte validation (JPEG/PNG/GIF/WEBP/AVIF) in addition to MIME check.
+- IDOR fix: GET /api/bookings/[id] now requires session + owner or admin (was fully public, leaking PII + proof images).
+- POST /api/bookings no longer trusts spoofable x-user-id header; uses session.user.id.
+- /api/checkout now validates server-side: pax integer bounds, positive prices, subtotal recomputed from trip.priceMin x pax (DB lookup), total recomputed as subtotal + 15000 - discount.
+- Admin /admin/pesanan: approve/reject via /api/payments/[id]/review (reject requires note), shows proofUrl image + admin note; pending_payment badge added.
+- /my-trips: payment status labels, proof image + admin note display, re-pay link now points to /checkout/pay/[id].
+
+**Verification:**
+- 
+px tsc --noEmit passes (only pre-existing e2e/api/endpoints.spec.ts error remains).
+- 
+pm run lint: no new errors; only warnings in touched files.
+
+## Session 24 — Checkout Server-Authoritative Pricing & Voucher (QA Kritikal #1 & #2)
+
+**Goal:** Tutup 2 eksploitasi kritis hasil QA: (1) voucher diskon dikontrol klien (`appliedVoucher` bisa 100%), (2) harga unit dibaca dari `destination.priceMin` yang dikirim klien (bisa `priceMin=1`).
+
+**Completed:**
+- `src/modules/trip/trip.repository.ts`:
+  - `findAllPublished()` sekarang memakai `getTableColumns(trips)` (semua kolom) + `departureId`, `startDate`, `price`, `priceName`; memilih 1 departure terawal per trip dan harga kanonikal (prioritas nama "Dewasa", fallback baris pertama).
+  - Menambah `findCanonicalPriceByDepartureId()` + helper `pickCanonicalPrice()`.
+- `src/modules/trip/trip.controller.ts`: `GET /api/trips` kini menerima `?all=true` (semua trip, untuk admin) — default mengembalikan trip published + harga kanonikal + departureId. `src/app/admin/trips/page.tsx` fetch `?all=true`.
+- `src/lib/Destination.js`: `toDetail()` memakai `price` (harga kanonikal) sebagai `priceMin` dan meneruskan `departureId`.
+- `src/app/api/checkout/route.ts` (rewrite):
+  - Resolusi trip+departure dari DB (wajib UUID trip published; departureId klien hanya diterima jika milik trip, fallback ke departure terawal).
+  - Harga unit = `tripPrices` DB (Dewasa first); subtotal dihitung ulang server; mismatch -> 400.
+  - Voucher: hanya `voucherCode` dipercaya; validasi ke tabel `promotions` (aktif, tanggal, minPurchase, usageLimit, usageLimitPerUser via `promotion_usages`); diskon dihitung server; `promoId` dicatat ke kolom `bookings.promoId` + notes; `usageCount` di-increment & usage dicatat.
+  - `appliedVoucher` dari klien DIABAIKAN sepenuhnya.
+
+**Verification (live di localhost:3000, dev server):**
+- `priceMin=1` -> 400 "Harga pesanan tidak sesuai" ✅
+- voucher palsu 100% via `appliedVoucher` -> 400 ✅
+- kode voucher tidak valid -> 400 ✅
+- checkout normal -> 200 (subtotal 1.500.000, total 1.515.000) ✅
+- voucher asli `LANSIA10` -> 200 (diskon 150.000, total 1.365.000, promoId terisi) ✅
+- total dipaksa kecil meski pakai voucher -> 400 ✅
+- pax 2 + LANSIA10 -> 200 (diskon 300.000) ✅
+- `GET /api/trips` mengembalikan harga kanonikal + departureId; `?all=true` = 7 trip ✅
+- `npx tsc --noEmit` hanya error e2e pra-ada; `eslint` file diubah: 0 error ✅
+- Test booking & usage promo dibersihkan (LANSIA10 usageCount dikembalikan ke 5).
+
+**Risks/Blocker:** `/api/trips` publik sekarang hanya trip published (draft tidak tampil di listing — behavior lama sama karena filter client-side). Trip tanpa departure/price aktif otomatis tidak muncul di publik. Belum ada transaksi DB atomik (neon-http tidak support `db.transaction`) — promo usage dicatat best-effort. Bug kritikal lain belum dikerjakan: SHA-256 tanpa salt, route admin tanpa auth (trips/promotions/horeca/vendors/galleries/commissions, users, admin dashboard), AVIF magic-byte lemah, rate limiting.
+
+## Session 25 — Hapus Data Statis Destinasi + Gambar Hanya dari DB
+
+**Goal:** (1) Hapus seluruh data destinasi statis, (2) trip published tetap tampil meski tanpa harga/jadwal (biar trip ber-gambar DB seperti "TES mantap" muncul di landing), (3) semua gambar hanya dari DB — tanpa fallback foto stok; kalau kosong tampil placeholder "Gambar tidak tersedia".
+
+**Completed:**
+- **Hapus data statis:** `src/lib/destinationsData.js` & `src/infrastructure/data/destinationsData.js` dihapus. Semua import/usage dibersihkan: `checkout/page.jsx` (staticDest dihapus, selalu fetch `/api/trips`, status awal `loading`/`empty`), `trips/page.jsx` & `private/page.jsx` (initial state `[]`), `trips/[id]/page.jsx` (lookup statis dihapus, selalu fetch DB).
+- **`findAllPublished` (trip.repository.ts):** filter `tripPrices.isActive` dipindah ke kondisi JOIN (`on`), bukan `WHERE`, dan loop tak lagi `continue` saat `departureId` null → semua trip published ikut muncul, termasuk tanpa departure/harga aktif (price null). Harga kanonikal tetap hanya dari harga aktif.
+- **Gambar tanpa fallback stok:** `FALLBACK_IMAGES` dihapus dari `Destination.js` (toDetail → `image` null / `images` [] saat DB kosong) dan `DestinationSection.jsx` (toCard → null). `DestinationCard.jsx` (publik) & `DestinationGallery.jsx` (detail) menampilkan placeholder "Gambar tidak tersedia" saat tidak ada gambar.
+
+**Verification (live, dev server :3000):**
+- `GET /api/trips` → 6 trip published; "TES mantap" (gambar, tanpa harga/departure) dan "Trip Senin" (tanpa gambar/harga) kini tampil ✅
+- Playwright (channel chrome): landing menampilkan kartu TES mantap; `/trips` render 5 placeholder "Gambar tidak tersedia" + kartu bergambar; `/trips/{uuid TES}` h1 = "TES mantap"; `/checkout?destination={uuid TES}` tetap berjalan (status found/memuat, server akan 400 saat submit karena tanpa departure — ekspektasi) ✅
+- `npm run lint`: 0 error baru di semua file yang diubah (error repo pre-existing di icon-picker/my-trips/useNotifications/bundle minified); `tsc --noEmit`: hanya error pre-existing e2e/api/endpoints.spec.ts ✅
+
+**Catatan/risiko:**
+- Trip published tanpa harga tetap tampil di publik dengan harga Rp0 — belum ada penanda "Harga menyusul"; checkout ke trip tanpa departure akan 400 di server.
+- Perubahan belum di-commit.
+
+## Session 26 — Tombol Melayang "Hubungi Kami" Jadi Komponen
+
+**Goal:** Ekstrak tombol WhatsApp melayang (kanan bawah) menjadi komponen reusable dan tampilkan di landing, `/trips`, `/private`, `/blog`, dan `/trips/[id]`.
+
+**Completed:**
+- `src/components/layout/WhatsAppFloat.jsx` (baru) — komponen server tanpa hooks: `wa.me/{NEXT_PUBLIC_WHATSAPP_NUMBER}?text={NEXT_PUBLIC_WHATSAPP_MESSAGE}`, gaya sama persis dengan versi inline lama (ikon bulat di mobile, pill "Hubungi Kami" di desktop).
+- Landing `src/app/page.jsx` — blok inline diganti `<WhatsAppFloat />` (import `Link` & konstanta WHATSAPP_* dihapus).
+- `src/app/trips/page.jsx`, `src/app/trips/[id]/page.jsx`, `src/app/private/page.jsx`, `src/app/blog/page.jsx` — import + render `<WhatsAppFloat />` sebelum `</div>` penutup.
+
+**Verifikasi:**
+- Targeted eslint 6 file: 0 error (2 warning pre-existing: `Newspaper` tak terpakai di blog, `<img>` di WhatsAppFloat sesuai pola repo).
+- Playwright (channel chrome, dev server :3000): tombol `a[aria-label="WhatsApp"]` muncul dengan label "Hubungi Kami" di kelima halaman ✅
+- Perubahan belum di-commit.

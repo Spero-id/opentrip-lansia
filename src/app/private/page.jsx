@@ -12,9 +12,9 @@ import SuccessState from "@/components/private/SuccessState";
 import SubmitBar from "@/components/private/SubmitBar";
 import TermsModal from "@/components/private/TermsModal";
 import Subs from "@/components/landing/Subs";
+import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { initialForm } from "@/components/private/helpers/initialState";
 import { validate } from "@/components/private/helpers/validation";
-import { destinationsData } from "@/infrastructure/data/destinationsData";
 
 /**
  * Builds the `destinationPreferences` text field from all form fields that
@@ -54,13 +54,16 @@ function buildDestinationPreferences(form) {
 function buildPayload(form, budgetValue) {
   const title =
     form.tripType === "custom"
-      ? form.customTripName.trim()
-      : form.selectedDestinasi?.name || form.selectedDestinasi?.title || "Trip Explorer";
+      ? (form.customTripName.trim() || "Custom Trip")
+      : (form.selectedDestinasi?.name || form.selectedDestinasi?.title || "Trip Explorer");
+
+  const participantsCount = parseInt(form.jumlahPeserta, 10);
+  const durationDays = parseInt(form.durasi, 10);
 
   return {
     title,
-    durationDays: parseInt(form.durasi, 10) || 1,
-    participantsCount: parseInt(form.jumlahPeserta, 10) || 1,
+    durationDays: isNaN(durationDays) || durationDays < 1 ? 1 : durationDays,
+    participantsCount: isNaN(participantsCount) ? 6 : participantsCount,
     destinationPreferences: buildDestinationPreferences(form),
     specialRequirements: form.catatan?.trim() || undefined,
     budgetEstimate: budgetValue ? String(budgetValue) : undefined,
@@ -74,7 +77,7 @@ export default function PrivateTripPage() {
   const [showTerms, setShowTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [destinations, setDestinations] = useState(destinationsData);
+  const [destinations, setDestinations] = useState([]);
 
   useEffect(() => {
     async function fetchDestinations() {
@@ -83,9 +86,16 @@ export default function PrivateTripPage() {
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            const normalized = data.map((item) => ({
+            const active = data.filter((item) => item.status === "published");
+            const normalized = active.map((item) => ({
               ...item,
-              title: item.name || item.title,
+              title: item.title || item.name,
+              image: item.image || null,
+              isSeniorFriendly: item.isSeniorFriendly ?? false,
+              priceMin: item.priceMin ?? 0,
+              priceMax: item.priceMax ?? 0,
+              location: item.location || "Indonesia",
+              rating: item.rating ?? 5.0,
             }));
             setDestinations(normalized);
           }
@@ -242,6 +252,7 @@ export default function PrivateTripPage() {
       </main>
       <Subs />
       <Footer />
+      <WhatsAppFloat />
     </div>
   );
 }

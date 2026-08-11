@@ -4,9 +4,10 @@ import { slugify } from "@/shared/utils/helpers";
 
 // --- Next.js Route Handlers ---
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const trips = await tripService.getAllTrips();
+    const all = req.nextUrl.searchParams.get("all") === "true";
+    const trips = all ? await tripService.getAllTrips() : await tripService.getPublishedTrips();
     return NextResponse.json(trips);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";

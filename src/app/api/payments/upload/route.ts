@@ -6,6 +6,19 @@ import { auth } from "@/modules/auth/auth.config";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
 const MAX_SIZE = 5 * 1024 * 1024;
 
+function isAllowedImage(buf: Buffer): boolean {
+  if (buf.length < 12) return false;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return true; // JPEG
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return true; // PNG
+  if (buf.toString("latin1", 0, 4) === "GIF8") return true; // GIF
+  if (
+    buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 &&
+    buf.toString("latin1", 8, 12) === "WEBP"
+  ) return true; // WEBP
+  if (buf.toString("latin1", 4, 8) === "ftyp") return true; // AVIF/HEIC container
+  return false;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: req.headers });
@@ -26,11 +39,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Ukuran file maksimal 5MB." }, { status: 400 });
     }
 
+    const buffer = Buffer.from(await file.arrayBuffer());
+    if (!isAllowedImage(buffer)) {
+      return NextResponse.json({ error: "File tidak valid. Gunakan gambar JPG, PNG, WEBP, GIF, atau AVIF." }, { status: 400 });
+    }
+
     const ext = path.extname(file.name).toLowerCase() || ".jpg";
     const safeName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
     const dir = path.join(process.cwd(), "public", "payments");
     await mkdir(dir, { recursive: true });
-    await writeFile(path.join(dir, safeName), Buffer.from(await file.arrayBuffer()));
+    await writeFile(path.join(dir, safeName), buffer);
 
     return NextResponse.json({ url: `/payments/${safeName}` });
   } catch (err) {
