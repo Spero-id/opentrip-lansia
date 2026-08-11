@@ -73,6 +73,7 @@ function buildPayload(form, budgetValue) {
 export default function PrivateTripPage() {
   const [form, setForm] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [requestId, setRequestId] = useState(null);
   const [errors, setErrors] = useState({});
   const [showTerms, setShowTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -144,6 +145,8 @@ export default function PrivateTripPage() {
         return;
       }
 
+      const responseData = await res.json().catch(() => ({}));
+      setRequestId(responseData.id || null);
       setSubmitted(true);
     } catch {
       setSubmitError("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.");
@@ -154,6 +157,7 @@ export default function PrivateTripPage() {
 
   const resetForm = () => {
     setSubmitted(false);
+    setRequestId(null);
     setErrors({});
     setSubmitError(null);
     setForm(initialForm);
@@ -167,6 +171,7 @@ export default function PrivateTripPage() {
     return (
       <SuccessState
         form={form}
+        requestId={requestId}
         onReset={resetForm}
       />
     );

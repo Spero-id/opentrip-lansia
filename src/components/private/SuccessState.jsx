@@ -3,8 +3,13 @@ import Footer from "@/components/layout/Footer";
 import { A } from "./helpers/constants";
 import Subs from "../landing/Subs";
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-const WA_MESSAGE_DEFAULT = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
+const WA_NUMBER = "6285110511403";
+
+/** Generate kode pendek dari UUID: PTR-XXXXXXXX (8 char pertama uppercase tanpa strip) */
+function generateRequestCode(id) {
+  if (!id) return null;
+  return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();
+}
 
 function formatRupiah(v) {
   if (!v && v !== 0) return "-";
@@ -75,9 +80,12 @@ function Row({ icon, label, value }) {
   );
 }
 
-export default function SuccessState({ form, onReset }) {
-  const waMessage = `Halo, saya baru saja mengajukan request Private Trip atas nama *${form.nama || "-"}*. Mohon konfirmasinya. Terima kasih!`;
-  const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMessage || WA_MESSAGE_DEFAULT)}`;
+export default function SuccessState({ form, requestId, onReset }) {
+  const requestCode = generateRequestCode(requestId);
+  const waMessage = requestCode
+    ? `Halo, saya baru saja mengajukan request Private Trip atas nama *${form.nama || "-"}* dengan kode *${requestCode}*. Mohon konfirmasinya. Terima kasih!`
+    : `Halo, saya baru saja mengajukan request Private Trip atas nama *${form.nama || "-"}*. Mohon konfirmasinya. Terima kasih!`;
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMessage)}`;
   return (
     <>
       <Navbar />
@@ -112,9 +120,31 @@ export default function SuccessState({ form, onReset }) {
               <p className="text-white/80 text-sm">
                 Tim kami akan menghubungi kamu dalam <strong className="text-white">1x24 jam</strong>
               </p>
+              {requestCode && (
+                <div className="mt-4 px-4 py-2 rounded-xl bg-white/20 border border-white/30 flex flex-col items-center gap-0.5">
+                  <span className="text-white/70 text-[10px] font-semibold tracking-widest uppercase">Kode Request</span>
+                  <span className="text-white text-lg font-bold tracking-wider">{requestCode}</span>
+                </div>
+              )}
             </div>
 
             <div className="px-5 pb-4 divide-y divide-gray-50">
+              {requestCode && (
+                <div className="flex justify-between items-center py-2.5">
+                  <span className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <span className="text-gray-400">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>
+                        <path d="M8 14h.01M12 14h.01M16 14h.01"/>
+                      </svg>
+                    </span>
+                    Kode Request
+                  </span>
+                  <span className="text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${A}15`, color: A }}>
+                    {requestCode}
+                  </span>
+                </div>
+              )}
               <Row icon={icons.user}     label="Nama Pemesan"  value={form.nama || "-"} />
               <Row icon={icons.phone}    label="Nomor Ponsel"  value={form.phone || "-"} />
               <Row icon={icons.email}    label="Email"         value={form.email || "-"} />
@@ -172,7 +202,9 @@ export default function SuccessState({ form, onReset }) {
             <h3 className="text-xs font-semibold text-gray-700 mb-3">Langkah Selanjutnya</h3>
             <div className="space-y-3">
               {[
-                "Tim kami akan menghubungi kamu via WhatsApp atau email untuk konfirmasi request.",
+                requestCode
+                  ? `Sertakan kode *${requestCode}* saat menghubungi tim kami via WhatsApp.`
+                  : "Tim kami akan menghubungi kamu via WhatsApp atau email untuk konfirmasi request.",
                 "Itinerary dan rincian harga akan dikirimkan setelah diskusi awal.",
                 "Simpan screenshot halaman ini sebagai referensi.",
               ].map((text, i) => (
