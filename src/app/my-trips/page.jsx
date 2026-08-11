@@ -208,12 +208,59 @@ function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
 
 // ─── ParsedPreferences ─────────────────────────────────────────────────────
 function ParsedPreferences({ text }) {
-  const items = parseDestinationPreferences(text);
-  if (items.length === 0) return <span className="text-gray-400">-</span>;
+  if (!text) return <span className="text-gray-400 text-xs">-</span>;
+
+  // Parse format [Section]\nKey: Value
+  const sections = [];
+  let current = null;
+
+  text.split("\n").forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    const sectionMatch = trimmed.match(/^\[(.+)\]$/);
+    if (sectionMatch) {
+      if (current) sections.push(current);
+      current = { title: sectionMatch[1], rows: [] };
+    } else if (current) {
+      const colonIdx = trimmed.indexOf(":");
+      if (colonIdx > 0) {
+        current.rows.push({
+          key: trimmed.slice(0, colonIdx).trim(),
+          value: trimmed.slice(colonIdx + 1).trim(),
+        });
+      }
+    }
+  });
+  if (current) sections.push(current);
+
+  // Fallback: kalau format tidak dikenali, tampilkan teks biasa
+  if (sections.length === 0) {
+    return <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">{text}</p>;
+  }
+
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {items.map((item, i) => (
-        <span key={i} className="text-xs bg-orange-50 text-[#F49D1A] border border-[#F49D1A]/20 rounded-full px-2.5 py-0.5 font-medium">{item}</span>
+    <div className="space-y-3">
+      {sections.map((sec, si) => (
+        <div key={si}>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+            {sec.title}
+          </p>
+          <div className="rounded-xl border border-gray-100 overflow-hidden">
+            {sec.rows.map((row, ri) => (
+              <div
+                key={ri}
+                className={`flex text-xs ${ri % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+              >
+                <span className="w-40 shrink-0 px-3 py-2 text-gray-500 font-medium border-r border-gray-100">
+                  {row.key}
+                </span>
+                <span className="px-3 py-2 text-gray-800 font-semibold flex-1 min-w-0 break-words">
+                  {row.value || "-"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -222,8 +269,19 @@ function ParsedPreferences({ text }) {
 // ─── Kartu Request (Private Trip) ─────────────────────────────────────────
 function RequestCard({ req, onRefresh }) {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const destinations = parseDestinationPreferences(req.destinationPreferences);
+
+  // Generate kode unik dari UUID — sama dengan logika di SuccessState
+  const requestCode = "PTR-" + req.id.replace(/-/g, "").slice(0, 8).toUpperCase();
+
+  const copyCode = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(requestCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
@@ -242,6 +300,18 @@ function RequestCard({ req, onRefresh }) {
             <p className="text-sm font-bold text-gray-900 truncate">{req.title}</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+            {/* Kode request — bisa disalin, sama seperti Open Trip */}
+            <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-gray-100 rounded px-2 py-0.5">
+              {requestCode}
+              <button
+                onClick={copyCode}
+                title="Salin Kode Request"
+                className="hover:text-gray-900 transition p-0.5"
+              >
+                {copied ? icons.copied : icons.copy}
+              </button>
+            </span>
+            <span>·</span>
             <span>{req.durationDays} Hari</span>
             <span>·</span>
             <span>{req.participantsCount} Peserta</span>
@@ -260,9 +330,9 @@ function RequestCard({ req, onRefresh }) {
 
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
-          {/* Destinasi */}
-          <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
-            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Destinasi yang Diinginkan</p>
+          {/* Detail Pemesanan */}
+          <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Detail Pemesanan</p>
             <ParsedPreferences text={req.destinationPreferences} />
           </div>
 
@@ -274,9 +344,19 @@ function RequestCard({ req, onRefresh }) {
             </div>
           )}
 
-          {/* Status & Aksi */}
+          {/* Status & Kode */}
           <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between">
             <span className="text-[11px] text-gray-400">Dibuat: {new Date(req.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
+            <span className="inline-flex items-center gap-1.5 font-mono text-xs font-bold px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${A}15`, color: A }}>
+              {requestCode}
+              <button
+                onClick={copyCode}
+                title="Salin Kode Request"
+                className="hover:opacity-70 transition p-0.5"
+              >
+                {copied ? icons.copied : icons.copy}
+              </button>
+            </span>
           </div>
 
           {/* Proposals */}
