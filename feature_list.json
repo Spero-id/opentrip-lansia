@@ -417,7 +417,7 @@
           "priority": 2,
           "depends_on": ["feat-001"],
           "verification": ["npm run lint"],
-          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Endpoint lain masih perlu diaudit.",
+          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Admin PAGES kini server-side guard di /admin/layout.tsx (non-admin → /forbidden). Endpoint API admin lain masih perlu diaudit/dilindungi.",
           "critical": true
         },
         {
