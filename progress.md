@@ -776,3 +776,5 @@ ON CONFLICT (method) DO UPDATE SET
 - Alur terkonfirmasi: `initiatePayment` (useCheckout.js:292) mengirim `state.paymentMethod` → `"BCA"`, diterima backend.
 - Perubahan belum di-commit.
 
+**Tambahan (revisi user, sesi sama):** `src/components/layout/Navbar.jsx` — avatar dropdown kini menampilkan nama + role di sampingnya (desktop; tersembunyi di mobile `hidden sm:flex`). Role diambil dari `session.user.role` (additionalFields auth.config.ts), label: admin → "Admin", agent → "Agen", selain itu "Member" (konsisten dengan ProfileInfoCard). Warna teks mengikuti `isScrolled` (putih di navbar gelap, hitam di transparan). Eslint file: 0 error, 2 warning `<img>` pre-existing.
+
