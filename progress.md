@@ -700,3 +700,79 @@ pm run lint: no new errors; only warnings in touched files.
 - Targeted eslint 6 file: 0 error (2 warning pre-existing: `Newspaper` tak terpakai di blog, `<img>` di WhatsAppFloat sesuai pola repo).
 - Playwright (channel chrome, dev server :3000): tombol `a[aria-label="WhatsApp"]` muncul dengan label "Hubungi Kami" di kelima halaman ✅
 - Perubahan belum di-commit.
+
+## Session 27 — Bugfix Delete Trip + Validasi Form Admin Trips
+
+**Goal:** (1) Hapus paket trip yang tadinya "tidak berfungsi" (gagal senyap karena FK constraint), (2) tambah validasi form tambah/edit trip — field wajib tidak boleh kosong, kalau kosong tidak bisa submit dan muncul peringatan.
+
+**Completed — Delete trip:**
+- `src/modules/trip/trip.repository.ts` — `delete(id)` kini menghapus data anak berurutan sebelum trip utama (dulu `DELETE FROM trips` langsung gagal karena FK): `trip_prices`+`trip_departures` (via departure ids), `gallery_media`+`trip_galleries` (via gallery ids), lalu `itinerary_items`, `trip_horeca`, `trip_vendors`, `trip_media`, dan `trips`. Import `inArray` + tabel anak.
+- `src/app/admin/trips/page.tsx` — `handleDelete` sekarang cek `res.ok`; kalau gagal tampil `alert` dengan pesan error dari API dan modal tidak ditutup (dulu selalu ditutup tanpa feedback).
+
+**Completed — Validasi form trip:**
+- State `errors` + `validateForm()` mewajibkan: judul, slug, durasi ≥1, kategori, lokasi utama, provinsi, harga >0, lokasi kumpul, jam kumpul.
+- `handleSubmit` diblokir jika ada error (tidak hit API), menampilkan banner merah ringkasan + pesan per-field (border merah + teks di bawah input).
+- Error per-field otomatis hilang saat field diisi/diubah (handleChange/handlePriceChange/handleCreateCategory), di-reset saat buka modal create/edit.
+
+**Verifikasi:**
+- Targeted eslint 0 error (2 warning pre-existing: unused `Check` & `DynamicLucideIcon` di `page.tsx`).
+- `tsc --noEmit`: 0 error di kedua file yang diubah.
+- Perubahan belum di-commit.
+
+**Bugfix setelah smoke test — trip tidak tampil di user (2026-08-11):**
+- Gejala: `/api/trips` (publik) mengembalikan `[]` padahal `/api/trips?all=true` (admin) menampilkan 1 trip published.
+- Akar: filter `findAllPublished` yang baru ditambahkan (working tree, belum di-commit) hanya mengembalikan trip dengan `departureId != null && price != null`. Form admin trips tidak membuat record `trip_departures`/`trip_prices`, sehingga trip yang dibuat admin tidak pernah lolos filter.
+- Fix: hapus `.filter(...)` di `trip.repository.ts` → `return [...byTrip.values()]`. Kembali ke perilaku Session 25 (trip published tetap tampil meski tanpa harga/jadwal departure). Harga tampil dari `trips.priceMin` via `toDetail` (`price ?? priceMin`).
+- Verifikasi live: `GET /api/trips` kini mengembalikan trip "Jalan Jalan Dengan Sepatu Roda Ku" dengan `priceMin: 2000000`; `/trips` & `/` 200; eslint trip.repository.ts 0 error.
+
+## Session 28 — Jadwal Keberangkatan (Departure) di Admin Trip
+
+**Goal:** Trip yang dibuat admin bisa dibooking oleh user. Akar masalah: `/api/checkout` mewajibkan record `trip_departures` + `trip_prices` (canonical price "Dewasa") untuk trip, tapi form admin trips tidak pernah membuatnya → checkout gagal dengan "Jadwal keberangkatan tidak tersedia".
+
+**Keputusan (dengan user):** Mengelola **daftar beberapa jadwal keberangkatan** per trip (sesuai schema `trips → trip_departures → trip_prices`), harga otomatis mengikuti input Harga, checkout memakai jadwal terawal. (Opsi full tier harga Dewasa/Anak/Early Bird ditunda.)
+
+**Backend:**
+- `trip.repository.ts` — `saveTripSchedules(tripId, schedules[])`: hapus departure+prices lama, lalu insert tiap jadwal (startDate, endDate = start + durasi - 1, maxParticipants, minParticipants 1, status scheduled) + price tier "Dewasa" (price = input Harga, quota = maxParticipants). `findAll()` (admin) kini leftJoin `trip_departures` → menyertakan `startDate`/`departureId` (dedupe per trip, jadwal terawal).
+- `trip.service.ts` — `createTrip`/`updateTrip` menerima `departures[]` + `price`, memanggil `saveTripSchedules`; tambah `getTripWithDepartures(id)` → trip + daftar jadwal untuk isi ulang saat edit.
+- `trip.controller.ts` + `api/trips/[id]/route.ts` — tambah `GET` (detail + departures).
+
+**Frontend (`admin/trips/page.tsx`):**
+- State `departuresList[]` (startDate + maxParticipants), section "Jadwal Keberangkatan" di form (tambah/hapus beberapa jadwal, input tanggal + kuota).
+- `openEdit` async — ambil `/api/trips/[id]` untuk mengisi ulang jadwal.
+- Validasi: minimal 1 jadwal dengan tanggal wajib diisi (selain field wajib sebelumnya).
+- Kolom "Jadwal" di tabel list (tanggal terawal, format DD-MM-YYYY).
+
+**Verifikasi (live :3000, trip uji lalu dihapus):**
+- POST trip published + 2 departures → 201; `GET /api/trips` mengembalikan trip dengan `departureId`, `startDate` (terawal 2026-09-15), `price` 1500000; `GET /api/trips/[id]` → 2 jadwal (kuota 10 & 8); DELETE → 200, GET sesudah → 404 (cascade delete jalan).
+- eslint 0 error (2 warning pre-existing `Check`/`DynamicLucideIcon`); tsc 0 error di file diubah.
+- Perubahan belum di-commit.
+
+**Aksi yang diperlukan user:** trip "Jalan Jalan Dengan Sepatu Roda Ku" (dan trip lain yang sudah ada) belum punya jadwal — edit di admin, isi section "Jadwal Keberangkatan", simpan. Setelah itu bisa dibooking (checkout memakai jadwal terawal).
+
+## Session 29 — Metode Pembayaran Hanya BCA
+
+**Goal:** Halaman pembayaran hanya menampilkan BCA sebagai metode pembayaran, dengan layout disesuaikan (satu kartu BCA, auto-selected).
+
+**Temuan:** BCA sudah ada di daftar UI (static list), tapi BELUM ada di tabel `payment_accounts` (DB) dan belum masuk `ALLOWED_METHODS` di `/api/payments` → kartu rekening tidak tampil & pembayaran ditolak.
+
+**Completed:**
+- `src/app/api/payments/route.ts` — `ALLOWED_METHODS` ditambah `"BCA"`.
+- `src/components/checkout/PaymentStep.jsx` — `PaymentSelector` dirombak jadi satu kartu BCA (logo + centang aktif), BCA auto-set via `useEffect` di `PaymentStep`; `AccountCard` ditampilkan langsung di bawahnya (lookup case-insensitive ke `payment_accounts.method`), dengan fallback banner "Rekening BCA belum diatur" bila DB belum berisi BCA.
+
+**Aksi user (DB, sesuai permintaan user — di-exec manual):**
+```sql
+INSERT INTO payment_accounts (method, bank_name, account_number, account_holder, is_active, created_at, updated_at)
+VALUES ('BCA', 'BCA', '<NOMOR_REKENING>', 'PT OpenTrip Lansia', true, NOW(), NOW())
+ON CONFLICT (method) DO UPDATE SET
+  bank_name      = EXCLUDED.bank_name,
+  account_number = EXCLUDED.account_number,
+  account_holder = EXCLUDED.account_holder,
+  is_active      = true,
+  updated_at     = NOW();
+```
+
+**Verifikasi:**
+- `npm run lint` — PaymentStep hanya warning pre-existing `<img>` (line 209); route.ts tidak ada error. Error repo lain (302) pre-existing (icon-picker, my-trips, useNotifications, bundle minified).
+- Alur terkonfirmasi: `initiatePayment` (useCheckout.js:292) mengirim `state.paymentMethod` → `"BCA"`, diterima backend.
+- Perubahan belum di-commit.
+
