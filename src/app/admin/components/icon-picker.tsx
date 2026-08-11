@@ -3,7 +3,9 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import * as Icons from "lucide-react";
-import { Search, X, Check, ChevronDown, Sparkles, Plus } from "lucide-react";
+import { Search, X, Check, ChevronDown, Sparkles, Plus, type LucideIcon } from "lucide-react";
+
+const iconMap = Icons as unknown as Record<string, LucideIcon>;
 
 // Curated list of popular icons for trip facilities
 export const POPULAR_FACILITY_ICONS = [
@@ -81,8 +83,7 @@ export function DynamicLucideIcon({
   if (!name || !name.trim()) return null;
   
   const iconKey = name.trim();
-  const IconComponent = (Icons as any)[iconKey] || (Icons as any)[`${iconKey}Icon`] || null;
-  if (!IconComponent) return null;
+  const IconComponent = iconMap[iconKey] || iconMap[`${iconKey}Icon`] || Icons.Check;
 
   return <IconComponent className={className} size={size} />;
 }
@@ -94,7 +95,7 @@ const ALL_ICON_NAMES = Object.keys(Icons).filter(
     !key.endsWith("Icon") &&
     key !== "LucideIcon" &&
     key !== "createLucideIcon" &&
-    (typeof (Icons as any)[key] === "object" || typeof (Icons as any)[key] === "function")
+    (typeof iconMap[key] === "object" || typeof iconMap[key] === "function")
 );
 
 interface IconPickerProps {

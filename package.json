@@ -10,7 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "postinstall": "node -e \"require('fs').cpSync('node_modules/hugerte','public/hugerte',{recursive:true})\""
+    "postinstall": "node -e \"require('node:fs').cpSync('node_modules/hugerte','public/hugerte',{recursive:true,force:true})\""
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

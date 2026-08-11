@@ -1,6 +1,6 @@
 import { db } from "@/shared/db";
 import { destinationCategories, horeca, vendors, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 import { slugify } from "@/shared/utils/helpers";
 
@@ -33,11 +33,11 @@ export const masterRepository = {
   },
 
   async getHorecaList() {
-    return db.select().from(horeca);
+    return db.select().from(horeca).orderBy(desc(horeca.createdAt));
   },
 
   async getVendors() {
-    return db.select().from(vendors);
+    return db.select().from(vendors).orderBy(desc(vendors.createdAt));
   },
 
   // HORECA
@@ -82,7 +82,7 @@ export const masterRepository = {
 
   // Meeting Points
   async getMeetingPoints() {
-    return db.select().from(meetingPoints).orderBy(meetingPoints.name);
+    return db.select().from(meetingPoints).orderBy(desc(meetingPoints.createdAt));
   },
 
   async getMeetingPointById(id: UUID) {
