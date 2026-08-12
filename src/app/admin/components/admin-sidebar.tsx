@@ -4,34 +4,134 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft, ChevronDown, type LucideIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { adminNavGroups } from "./nav-data";
+import { adminNavGroups, type AdminNavItem } from "./nav-data";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const menuButtonClass =
+  "h-9 rounded-md text-sidebar-foreground/80 hover:text-sidebar-foreground data-active:text-[#F49D1A] data-active:bg-[#F49D1A]/15 data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]";
+
+function NavLink({
+  item,
+  active,
+}: {
+  item: AdminNavItem;
+  active: boolean;
+}) {
+  const Icon: LucideIcon = item.icon;
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={active}
+        render={<Link href={item.href} />}
+        className={menuButtonClass}
+      >
+        <div className="flex items-center gap-2.5 pl-0 sm:pl-2">
+          <Icon className="size-4 shrink-0" />
+          <span>{item.name}</span>
+        </div>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+function FlatGroup({
+  items,
+  isActive,
+}: {
+  items: AdminNavItem[];
+  isActive: (href: string) => boolean;
+}) {
+  return (
+    <SidebarGroup className="py-1">
+      <SidebarGroupContent>
+        <SidebarMenu className="gap-1">
+          {items.map((item) => (
+            <NavLink key={item.name} item={item} active={isActive(item.href)} />
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}
+
+function CollapsibleGroup({
+  label,
+  items,
+  isOpen,
+  isGroupActive,
+  isActive,
+  onToggle,
+}: {
+  label: string;
+  items: AdminNavItem[];
+  isOpen: boolean;
+  isGroupActive: boolean;
+  isActive: (href: string) => boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <SidebarGroup className="py-0.5">
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`flex h-8 w-full items-center rounded-md px-2 cursor-pointer select-none text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-sidebar-accent/50 ${
+          isGroupActive
+            ? "text-[#F49D1A]"
+            : "text-sidebar-foreground/50 hover:text-sidebar-foreground/80"
+        }`}
+      >
+        <span className="truncate">{label}</span>
+        <ChevronDown
+          className={`ml-auto size-3.5 shrink-0 transition-transform duration-200 ${
+            isGroupActive ? "text-[#F49D1A]/70" : "text-sidebar-foreground/40"
+          } ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <SidebarGroupContent className="pt-0.5">
+            <SidebarMenu className="gap-1">
+              {items.map((item) => (
+                <NavLink key={item.name} item={item} active={isActive(item.href)} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </div>
+      </div>
+    </SidebarGroup>
+  );
+}
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
-  const isActive = (href: string) =>
-    pathname === href || (href !== "/admin" && pathname.startsWith(href));
-
-  const isGroupActive = React.useCallback(
-    (items: { href: string }[]) => items.some((item) => isActive(item.href)),
+  const isActive = React.useCallback(
+    (href: string) => pathname === href || (href !== "/admin" && pathname.startsWith(href)),
     [pathname]
   );
 
-  // Controlled open-state per grup, key-nya group.label
+  const isGroupActive = React.useCallback(
+    (items: AdminNavItem[]) => items.some((item) => isActive(item.href)),
+    [isActive]
+  );
+
   const [openGroups, setOpenGroups] = React.useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     adminNavGroups.forEach((group) => {
@@ -78,96 +178,29 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
             </span>
           </div>
         </SidebarHeader>
+
         <SidebarContent className="overflow-hidden">
           <ScrollArea className="h-full">
             <div className="flex flex-col gap-1 px-1 pr-3">
-              {adminNavGroups.map((group) => {
-                // Grup tanpa label (misal Dashboard) tampil flat, gak perlu dropdown
-                if (!group.label) {
-                  return (
-                    <SidebarGroup key="main" className="py-1">
-                      <SidebarGroupContent>
-                        <SidebarMenu className="gap-1">
-                          {group.items.map((item) => {
-                            const Icon = item.icon;
-                            return (
-                              <SidebarMenuItem key={item.name}>
-                                <SidebarMenuButton
-                                  isActive={isActive(item.href)}
-                                  render={<Link href={item.href} />}
-                                  className="h-9 rounded-md text-sidebar-foreground/80 hover:text-sidebar-foreground data-active:text-[#F49D1A] data-active:bg-[#F49D1A]/15 data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]"
-                                >
-                                  <div className="flex items-center gap-2.5 pl-0 sm:pl-2">
-                                    <Icon className="size-4 shrink-0" />
-                                    <span>{item.name}</span>
-                                  </div>
-                                </SidebarMenuButton>
-                              </SidebarMenuItem>
-                            );
-                          })}
-                        </SidebarMenu>
-                      </SidebarGroupContent>
-                    </SidebarGroup>
-                  );
-                }
-
-                const label = group.label;
-                const isOpen = openGroups[label] ?? false;
-                const active = isGroupActive(group.items);
-
-                return (
-                  <SidebarGroup key={label} className="py-0.5">
-                    <button
-                      type="button"
-                      onClick={() => toggleGroup(label)}
-                      className="flex h-8 w-full items-center rounded-md px-2 cursor-pointer select-none text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground/80 transition-colors"
-                    >
-                      <span className="truncate">{label}</span>
-                      {active && (
-                        <span className="ml-2 size-1.5 shrink-0 rounded-full bg-[#F49D1A]" />
-                      )}
-                      <ChevronDown
-                        className={`ml-auto size-3.5 shrink-0 text-sidebar-foreground/40 transition-transform duration-200 ${
-                          isOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-
-                    <div
-                      className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-                        isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                      }`}
-                    >
-                      <div className="overflow-hidden">
-                        <SidebarGroupContent className="pt-0.5">
-                          <SidebarMenu className="gap-1">
-                            {group.items.map((item) => {
-                              const Icon = item.icon;
-                              return (
-                                <SidebarMenuItem key={item.name}>
-                                  <SidebarMenuButton
-                                    isActive={isActive(item.href)}
-                                    render={<Link href={item.href} />}
-                                    className="h-9 rounded-md text-sidebar-foreground/80 hover:text-sidebar-foreground data-active:text-[#F49D1A] data-active:bg-[#F49D1A]/15 data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]"
-                                  >
-                                    <div className="flex items-center gap-2.5 pl-0 sm:pl-2">
-                                      <Icon className="size-4 shrink-0" />
-                                      <span>{item.name}</span>
-                                    </div>
-                                  </SidebarMenuButton>
-                                </SidebarMenuItem>
-                              );
-                            })}
-                          </SidebarMenu>
-                        </SidebarGroupContent>
-                      </div>
-                    </div>
-                  </SidebarGroup>
-                );
-              })}
+              {adminNavGroups.map((group) =>
+                !group.label ? (
+                  <FlatGroup key="main" items={group.items} isActive={isActive} />
+                ) : (
+                  <CollapsibleGroup
+                    key={group.label}
+                    label={group.label}
+                    items={group.items}
+                    isOpen={openGroups[group.label] ?? false}
+                    isGroupActive={isGroupActive(group.items)}
+                    isActive={isActive}
+                    onToggle={() => toggleGroup(group.label!)}
+                  />
+                )
+              )}
             </div>
           </ScrollArea>
         </SidebarContent>
+
         <SidebarFooter>
           <div className="border-t border-sidebar-border pt-2">
             <Link
