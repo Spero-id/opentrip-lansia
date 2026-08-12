@@ -3,31 +3,27 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import {
-  Compass,
-  LayoutDashboard,
-  Building2,
-  Users,
-  UserCheck,
-  Tag,
-  Percent,
-  Star,
-  FileText,
-  ArrowLeft,
-  Bell,
-  Route,
-  MapPin,
-  ShoppingCart,
-  Menu,
-  X,
-  Check,
-  AlertCircle,
-} from "lucide-react";
+import { Bell, Check, X, AlertCircle, ShoppingCart } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
+import { AdminSidebar } from "./components/admin-sidebar";
+import { getActiveMenu } from "./components/nav-data";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const activeMenu = getActiveMenu(pathname);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(15000);
@@ -61,7 +57,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffMins = Math.floor((now.getTime() - date.getTime()) / 60000);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
@@ -76,124 +73,39 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(num);
   };
 
-  const navGroups = [
-    {
-      label: null,
-      items: [{ name: "Dashboard", href: "/admin", icon: LayoutDashboard }],
-    },
-    {
-      label: "Trip & Tempat",
-      items: [
-        { name: "Paket Trip", href: "/admin/trips", icon: Compass },
-        { name: "Private Trip", href: "/admin/private-trips", icon: Route },
-        { name: "Meeting Point", href: "/admin/meeting-points", icon: MapPin },
-      ],
-    },
-    {
-      label: "Pengguna & Partner",
-      items: [
-        { name: "Pengguna", href: "/admin/users", icon: UserCheck },
-        { name: "HORECA", href: "/admin/horeca", icon: Building2 },
-        { name: "Vendor", href: "/admin/vendors", icon: Users },
-      ],
-    },
-    {
-      label: "Marketing",
-      items: [
-        { name: "Promo", href: "/admin/promotions", icon: Tag },
-        { name: "Komisi", href: "/admin/commissions", icon: Percent },
-      ],
-    },
-    {
-      label: "Order",
-      items: [
-        { name: "Pesanan", href: "/admin/pesanan", icon: ShoppingCart },
-        { name: "Ulasan", href: "/admin/reviews", icon: Star },
-      ],
-    },
-    {
-      label: "Konten",
-      items: [{ name: "Blog", href: "/admin/blogs", icon: FileText }],
-    },
-  ];
-
   return (
-    <div className="flex min-h-screen bg-slate-100/70 font-sans">
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
-
-      {/* Mobile hamburger */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-3 left-3 z-50 lg:hidden bg-[#0D238E] text-white p-2.5 rounded-xl shadow-lg shadow-[#0D238E]/30"
-        aria-label="Toggle sidebar"
-      >
-        {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
-
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#081868] text-slate-200 flex flex-col justify-between p-4 border-r border-[#061452] shrink-0 transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:inset-auto lg:translate-x-0 ${
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      }`}>
-        <div className="space-y-6">
-          {/* Brand header */}
-          <div className="px-3 pt-2">
-            <Link href="/" className="flex items-center gap-2 text-xl font-extrabold text-white tracking-tight">
-              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-15 w-auto" />
-            </Link>
+    <SidebarProvider>
+      <AdminSidebar />
+      <SidebarInset className="bg-slate-100/70">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white px-4 sm:px-6">
+          <div className="flex items-center gap-2 min-w-0">
+            <SidebarTrigger className="-ml-1 text-slate-500" />
+            {activeMenu && (
+              <>
+                <Separator
+                  orientation="vertical"
+                  className="mr-2 data-vertical:h-4 data-vertical:self-auto"
+                />
+                <Breadcrumb className="min-w-0">
+                  <BreadcrumbList>
+                    {activeMenu.label && (
+                      <>
+                        <BreadcrumbItem>
+                          <BreadcrumbPage>{activeMenu.label}</BreadcrumbPage>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                      </>
+                    )}
+                    <BreadcrumbItem>
+                      <BreadcrumbPage className="truncate text-slate-700">
+                        {activeMenu.activeItem.name}
+                      </BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </BreadcrumbList>
+                </Breadcrumb>
+              </>
+            )}
           </div>
-
-          {/* Nav menu */}
-          <nav className="space-y-4 text-sm font-medium overflow-y-auto max-h-[calc(100vh-9rem)]">
-            {navGroups.map((group, gi) => (
-              <div key={gi} className="space-y-1">
-                {group.label && (
-                  <p className="px-3.5 text-[10px] font-bold uppercase tracking-wider text-blue-300/50">
-                    {group.label}
-                  </p>
-                )}
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-200 ${
-                        isActive
-                          ? "bg-[#F49D1A] text-white font-semibold shadow-lg shadow-[#F49D1A]/25"
-                          : "text-blue-100 hover:bg-white/10 hover:text-white"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 shrink-0" />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
-          </nav>
-        </div>
-
-        {/* Back to main website link */}
-        <div className="pt-4 border-t border-white/10">
-          <Link
-            href="/"
-            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-blue-100 hover:text-white transition"
-          >
-            <ArrowLeft className="w-4 h-4 text-[#F49D1A]" />
-            <span>Kembali ke Website Utama</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-
-        {/* Topbar Header */}
-        <header className="bg-white border-b border-slate-200/80 pl-14 lg:pl-6 pr-3 sm:pr-6 py-3.5 flex items-center justify-end sticky top-0 z-30">
 
           <div className="flex items-center gap-4">
             {/* Notification Bell */}
@@ -305,9 +217,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </header>
 
         {/* Content View Container */}
-        <main className="p-4 sm:p-6 lg:p-8 flex-1">{children}</main>
-
-      </div>
-    </div>
+        <div className="p-4 sm:p-6 lg:p-8 flex-1">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

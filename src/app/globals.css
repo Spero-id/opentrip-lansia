@@ -127,11 +127,11 @@ body {
 
 .admin-sidebar-dark,
 [data-mobile="true"][data-sidebar="sidebar"] {
-  --sidebar: oklch(0.31 0.015 262);
+  --sidebar: oklch(0.24 0.02 262);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.39 0.02 262);
+  --sidebar-accent: oklch(0.3 0.025 262);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.556 0 0);
