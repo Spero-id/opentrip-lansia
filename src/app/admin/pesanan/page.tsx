@@ -104,6 +104,10 @@ function getPendingPayment(payments: Payment[] | undefined): Payment | undefined
   return payments?.find(p => p.status === "pending");
 }
 
+function getPaymentMethod(payments: Payment[] | undefined): string {
+  return payments?.find(p => p.method)?.method ?? "-";
+}
+
 function parseAdminMessage(notes: string | null): string {
   if (!notes) return "";
   try {
@@ -283,6 +287,7 @@ export default function AdminPesanan() {
                 <th className="px-6 py-4">Kode Booking</th>
                 <th className="px-6 py-4">Peserta</th>
                 <th className="px-6 py-4">Total</th>
+                <th className="px-6 py-4">Metode Pembayaran</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Tanggal Booking</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
@@ -291,13 +296,13 @@ export default function AdminPesanan() {
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                     Memuat data...
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                     Belum ada data pesanan.
                   </td>
                 </tr>
@@ -320,6 +325,9 @@ export default function AdminPesanan() {
                         {b.currency === "IDR"
                           ? `Rp ${Number(b.totalAmount).toLocaleString("id-ID")}`
                           : b.totalAmount}
+                      </td>
+                      <td className="px-6 py-4 font-semibold text-slate-700">
+                        {getPaymentMethod(b.payments)}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${badge.className}`}>
@@ -414,6 +422,12 @@ export default function AdminPesanan() {
                   }`}>
                     {statusBadge[displayData.status]?.label ?? displayData.status}
                   </span>
+                </p>
+              </div>
+              <div>
+                <p className="text-slate-500 font-medium">Metode Pembayaran</p>
+                <p className="font-mono font-bold text-[#F49D1A]">
+                  {getPaymentMethod(displayData.payments)}
                 </p>
               </div>
               <div>
