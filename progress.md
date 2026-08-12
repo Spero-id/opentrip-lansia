@@ -776,3 +776,28 @@ pm run lint: no new errors; only warnings in touched files.
 - Playwright (login admin@otl.id, console capture) pada `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`: 0 console error, 0 pageerror (sebelumnya 6+3).
 - Script verifikasi sementara dihapus.
 - Perubahan belum di-commit.
+
+## Session 31 - Payment BCA only, Navbar role, Admin pages secure, Lint clean
+
+**1. Metode pembayaran hanya BCA**
+- `src/app/api/payments/route.ts` — `ALLOWED_METHODS` ditambah `"BCA"`.
+- `src/components/checkout/PaymentStep.jsx` — PaymentSelector jadi satu kartu BCA auto-selected (+`useEffect` set paymentMethod="BCA"); AccountCard ambil dari `payment_accounts` (lookup case-insensitive), fallback banner "Rekening BCA belum diatur".
+- **User action:** insert/upsert BCA ke `payment_accounts` sendiri (query diberikan): `method='BCA'`.
+
+**2. Nama + role di Navbar**
+- `src/components/layout/Navbar.jsx` — avatar dropdown menampilkan nama + role (admin→"Admin", agent→"Agen", lain→"Member") dari `session.user.role`; `hidden sm:flex`, warna ikut `isScrolled`.
+
+**3. Admin pages secure (server-side)**
+- `src/app/admin/layout.tsx` jadi server component: `auth.api.getSession({ headers: await headers() })` → no login redirect `/login`, role != admin redirect `/forbidden`, baru render shell.
+- Shell client dipindah ke `src/app/admin/AdminShell.tsx` (tanpa `useAdminAuth`).
+- `src/middleware.ts` komentar diperbarui.
+- Risk tersisa: API admin (mis. `/api/trips?all=true`, `/api/promotions`) masih publik — scope feat-080.
+
+**4. Lint bersih (303 error → 0)**
+- `eslint.config.mjs` — tambah `public/**` ke globalIgnores (±265 error vendor `public/hugerte` hilang).
+- `src/hooks/use-mobile.ts` — `useSyncExternalStore`.
+- `src/app/admin/components/icon-picker.tsx` — pola `mounted`+effect diganti `useSyncExternalStore`; import `Check` dibuang.
+- `src/hooks/useNotifications.ts` — fetch awal pakai microtask boundary.
+- `src/app/my-trips/page.jsx` — `fetchData` pindah ke atas + `useCallback`; dep `router` ditambah.
+
+**Hasil:** `npm run lint` → 0 errors, 59 warnings (semua `<img>`). `tsc --noEmit` hanya error pre-existing `e2e/api/endpoints.spec.ts`. Belum di-commit.

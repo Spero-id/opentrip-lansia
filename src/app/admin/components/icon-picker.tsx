@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import * as Icons from "lucide-react";
-import { Search, X, Check, ChevronDown, Sparkles, Plus, type LucideIcon } from "lucide-react";
+import { Search, X, ChevronDown, Sparkles, Plus, type LucideIcon } from "lucide-react";
 
 const iconMap = Icons as unknown as Record<string, LucideIcon>;
 
@@ -116,18 +116,18 @@ export default function IconPicker({
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Populer");
-  const [mounted, setMounted] = useState(false);
   const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const selectedIcon = value || "";
   const hasIcon = Boolean(selectedIcon.trim());
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const updatePosition = useCallback(() => {
     if (!buttonRef.current) return;
@@ -277,7 +277,7 @@ export default function IconPicker({
         </button>
       )}
 
-      {mounted &&
+      {isClient &&
         isOpen &&
         createPortal(
           <div
