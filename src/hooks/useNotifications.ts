@@ -111,7 +111,12 @@ export function useNotifications(pollInterval = 30000) {
 
   // Initial fetch
   useEffect(() => {
-    fetchNotifications(true);
+    let cancelled = false;
+    void (async () => {
+      await Promise.resolve();
+      if (!cancelled) await fetchNotifications(true);
+    })();
+    return () => { cancelled = true; };
   }, [fetchNotifications]);
 
   // Polling

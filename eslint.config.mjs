@@ -27,6 +27,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static/vendor assets — never lint (e.g. public/hugerte editor bundle)
+    "public/**",
   ]),
 ]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/layout/Navbar";
@@ -18,16 +18,7 @@ export default function MyTripsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
-    if (isPending) return;
-    if (!session?.user) {
-      router.push("/login?redirect=/my-trips");
-      return;
-    }
-    fetchData();
-  }, [session, isPending]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [bookingsRes, requestsRes] = await Promise.all([
@@ -40,7 +31,21 @@ export default function MyTripsPage() {
       console.error("Gagal memuat data:", err);
     }
     setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isPending) return;
+    if (!session?.user) {
+      router.push("/login?redirect=/my-trips");
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      await Promise.resolve();
+      if (!cancelled) await fetchData();
+    })();
+    return () => { cancelled = true; };
+  }, [session, isPending, fetchData, router]);
 
   if (isPending || loading) {
     return (

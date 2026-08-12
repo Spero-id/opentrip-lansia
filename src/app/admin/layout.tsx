@@ -1,19 +1,7 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/modules/auth/auth.config";
+import { requireAdminLayout } from "@/shared/auth-server";
 import AdminShell from "./AdminShell";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user) {
-    redirect("/login?redirect=" + encodeURIComponent("/admin"));
-  }
-
-  const user = session.user as typeof session.user & { role?: string };
-  if (user.role !== "admin") {
-    redirect("/forbidden");
-  }
-
+  await requireAdminLayout();
   return <AdminShell>{children}</AdminShell>;
 }
