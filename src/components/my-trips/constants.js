@@ -71,9 +71,11 @@ export const PAYMENT_STATUS_COLOR = {
 // ─── Helpers ───────────────────────────────────────────────────────────────
 export function formatRupiah(val) {
   if (!val && val !== 0) return null;
-  const num = typeof val === "string" ? parseInt(val.replace(/\D/g, ""), 10) : val;
+  const num = typeof val === "string"
+    ? parseFloat(val.replace(/[^\d.]/g, ""))
+    : val;
   if (isNaN(num)) return null;
-  return "Rp " + num.toLocaleString("id-ID");
+  return "Rp " + Math.floor(num).toLocaleString("id-ID");
 }
 
 export function toRequestCode(id) {
