@@ -1,13 +1,8 @@
-import { neon } from "@neondatabase/serverless";
-
-// Gunakan raw SQL via Neon langsung — menghindari Turbopack bug dengan drizzle-orm/pg-core
-function getSQL() {
-  return neon(process.env.DATABASE_URL!);
-}
+import { db } from "@/shared/db";
+import { sql } from "drizzle-orm";
 
 export const dashboardService = {
   async getStats() {
-    const sql = getSQL();
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
@@ -20,18 +15,18 @@ export const dashboardService = {
       activePromosResult,
       bookingLastMonthResult,
     ] = await Promise.all([
-      sql`SELECT COUNT(*)::int AS count FROM trips`,
-      sql`SELECT COUNT(*)::int AS count FROM bookings WHERE booking_date >= ${startOfMonth}`,
-      sql`SELECT COALESCE(SUM(CAST(total_amount AS numeric)), 0)::text AS total FROM bookings WHERE status IN ('confirmed', 'completed')`,
-      sql`SELECT COUNT(*)::int AS count FROM promotions WHERE is_active = true`,
-      sql`SELECT COUNT(*)::int AS count FROM bookings WHERE booking_date >= ${startOfLastMonth} AND booking_date <= ${endOfLastMonth}`,
+      db.execute(sql`SELECT COUNT(*)::int AS count FROM trips`),
+      db.execute(sql`SELECT COUNT(*)::int AS count FROM bookings WHERE booking_date >= ${startOfMonth}`),
+      db.execute(sql`SELECT COALESCE(SUM(CAST(total_amount AS numeric)), 0)::text AS total FROM bookings WHERE status IN ('confirmed', 'completed')`),
+      db.execute(sql`SELECT COUNT(*)::int AS count FROM promotions WHERE is_active = true`),
+      db.execute(sql`SELECT COUNT(*)::int AS count FROM bookings WHERE booking_date >= ${startOfLastMonth} AND booking_date <= ${endOfLastMonth}`),
     ]);
 
-    const totalTrips = Number(tripCountResult[0]?.count ?? 0);
-    const bookingThisMonth = Number(bookingThisMonthResult[0]?.count ?? 0);
-    const bookingLastMonth = Number(bookingLastMonthResult[0]?.count ?? 0);
-    const revenueNum = Number(revenueResult[0]?.total ?? 0);
-    const activePromos = Number(activePromosResult[0]?.count ?? 0);
+    const totalTrips = Number((tripCountResult.rows[0] as any)?.count ?? 0);
+    const bookingThisMonth = Number((bookingThisMonthResult.rows[0] as any)?.count ?? 0);
+    const bookingLastMonth = Number((bookingLastMonthResult.rows[0] as any)?.count ?? 0);
+    const revenueNum = Number((revenueResult.rows[0] as any)?.total ?? 0);
+    const activePromos = Number((activePromosResult.rows[0] as any)?.count ?? 0);
 
     const bookingChange =
       bookingLastMonth === 0
@@ -55,8 +50,7 @@ export const dashboardService = {
   },
 
   async getRecentBookings() {
-    const sql = getSQL();
-    const rows = await sql`
+    const result = await db.execute(sql`
       SELECT
         b.id,
         b.booking_code,
@@ -73,9 +67,9 @@ export const dashboardService = {
       LEFT JOIN trips t ON t.id = td.trip_id
       ORDER BY b.booking_date DESC
       LIMIT 5
-    `;
+    `);
 
-    return rows.map((b) => ({
+    return result.rows.map((b: any) => ({
       id: b.id as string,
       bookingCode: b.booking_code as string,
       status: b.status as string,
