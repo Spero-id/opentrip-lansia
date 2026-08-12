@@ -1,21 +1,6 @@
 import { privateTripController } from "@/modules/private-trip/private-trip.controller";
-import { auth } from "@/modules/auth/auth.config";
-import { NextRequest, NextResponse } from "next/server";
-
-async function requireAdmin(req: NextRequest): Promise<NextResponse | null> {
-  try {
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (session.user.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-    return null;
-  } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-}
+import { NextRequest } from "next/server";
+import { requireAdmin } from "@/shared/auth";
 
 export async function GET(
   req: NextRequest,
