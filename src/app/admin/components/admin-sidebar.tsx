@@ -63,7 +63,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
                             <SidebarMenuButton
                               isActive={isActive(item.href)}
                               render={<Link href={item.href} />}
-                              className="data-active:bg-[#F49D1A]/15 data-active:text-[#F49D1A] data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]"
+                              className="text-sidebar-foreground/80 hover:text-sidebar-foreground data-active:text-[#F49D1A] data-active:bg-[#F49D1A]/15 data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]"
                             >
                               <Icon />
                               <span>{item.name}</span>
