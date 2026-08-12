@@ -801,3 +801,20 @@ pm run lint: no new errors; only warnings in touched files.
 - `src/app/my-trips/page.jsx` — `fetchData` pindah ke atas + `useCallback`; dep `router` ditambah.
 
 **Hasil:** `npm run lint` → 0 errors, 59 warnings (semua `<img>`). `tsc --noEmit` hanya error pre-existing `e2e/api/endpoints.spec.ts`. Belum di-commit.
+## Session 28 — Refactor Auth Guard Admin: Helper Server-side + Hapus Duplikasi
+
+**Goal:** Ekstrak logic auth guard di `src/app/admin/layout.tsx` menjadi helper server-side yang reusable, hapus duplikasi `requireAdmin` di API private-trip, dan bersihkan dead code.
+
+**Completed:**
+- **Dikerjakan via 2 sub-agent paralel (pola todo → sub-agent):**
+  - Sub-agent A: `src/shared/auth-server.ts` (baru) — `requireAdminLayout()` membungkus getSession → redirect `/login?redirect=/admin` bila tak login, `/forbidden` bila role ≠ admin, return session.
+  - Sub-agent A: `src/app/admin/layout.tsx` — body layout jadi `await requireAdminLayout(); return <AdminShell>{children}</AdminShell>;` (19 → 7 baris), import `headers`/`redirect`/`auth` yang tak terpakai dihapus.
+  - Sub-agent B: `src/app/api/private-trip/admin/route.ts` & `[id]/route.ts` — hapus definisi lokal `requireAdmin` (duplikat), ganti `import { requireAdmin } from "@/shared/auth"` (pola sama dengan `api/trips/route.ts`).
+  - Sub-agent B: hapus `src/hooks/useAdminAuth.ts` (dead code — tidak ada yang meng-import).
+
+**Verification:**
+- `npx tsc --noEmit`: hanya error pre-existing di `e2e/api/endpoints.spec.ts:21` (tidak disentuh).
+- `npx eslint` targeted pada 4 file berubah + 1 baru: 0 error, 0 warning.
+- `npm run lint` (full): error yang muncul semuanya pre-existing di file lain (icon-picker, use-mobile, useNotifications, my-trips) — bukan di file session ini.
+- Fix minor: trailing newline di `admin/layout.tsx`.
+- Perubahan belum di-commit (menunggu review user).
