@@ -18,7 +18,23 @@ test.describe("API Endpoints", () => {
 
   for (const ep of endpoints) {
     test(`${ep.method} ${ep.path} returns ${ep.status}`, async ({ request }) => {
-      const res = await request[ep.method.toLowerCase()](ep.path);
+      const call = () => {
+        switch (ep.method) {
+          case "GET":
+            return request.get(ep.path);
+          case "POST":
+            return request.post(ep.path);
+          case "PUT":
+            return request.put(ep.path);
+          case "PATCH":
+            return request.patch(ep.path);
+          case "DELETE":
+            return request.delete(ep.path);
+          default:
+            throw new Error(`Unsupported method ${ep.method}`);
+        }
+      };
+      const res = await call();
       expect(res.status()).toBe(ep.status);
       const body = await res.json();
       expect(body).toBeDefined();
