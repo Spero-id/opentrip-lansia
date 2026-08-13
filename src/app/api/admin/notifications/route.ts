@@ -3,8 +3,12 @@ import { db } from "@/shared/db";
 import { bookings, bookingParticipants } from "@/modules/booking/booking.schema";
 import { users } from "@/modules/auth/auth.schema";
 import { desc, gte, eq, sql } from "drizzle-orm";
+import { requireAdmin } from "@/shared/auth";
 
 export async function GET(req: NextRequest) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const { searchParams } = new URL(req.url);
     const since = searchParams.get("since");
