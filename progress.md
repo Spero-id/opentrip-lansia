@@ -820,6 +820,39 @@ pm run lint: no new errors; only warnings in touched files.
 - `npm run lint` (full): error yang muncul semuanya pre-existing di file lain (icon-picker, use-mobile, useNotifications, my-trips) — bukan di file session ini.
 - Fix minor: trailing newline di `admin/layout.tsx`.
 
-  - Perubahan belum di-commit (menunggu review user).
+- Perubahan belum di-commit (menunggu review user).
+
+## Session 29 — QA + Refactor Sidebar Admin (PR #76) & Hapus Dead Code
+
+**Goal:** Verifikasi refactor sidebar admin (commit 3b32a77) tidak merusak fitur, rapikan duplikasi logika active-matching, lalu hapus file JSX/TSX yang tidak terpakai.
+
+**Completed — QA (subagent qa, read-only):**
+- Verdict **PASS** (0 Critical/High/Medium).
+- Tidak ada dangling link `/dashboard` (halaman dummy sudah dihapus bersih).
+- 12 route nav di `nav-data.ts` semuanya ada; tidak ada prefix collision pada active-state (exact match `/admin`, startsWith selainnya).
+- Collapsible group aman: auto-open grup aktif saat pindah halaman tanpa menutup grup yang dibuka manual; dependency arrays benar (tidak ada stale closure).
+- Mobile sheet dark-mode (`.admin-sidebar-dark` + `[data-mobile=true][data-sidebar=sidebar]`) tidak terganggu.
+- `next build` hijau; catatan: `tsc --noEmit` butuh `.next/types` di-regenerate bila ada stale ref ke page yang dihapus.
+
+**Completed — Refactor (subagent refactor):**
+- `src/app/admin/components/nav-data.ts` — tambah helper `isHrefActive(pathname, href)` sebagai satu sumber kebenaran; `getActiveMenu` memakainya.
+- `src/app/admin/components/admin-sidebar.tsx` — `isActive` useCallback kini panggil `isHrefActive`; non-null assertion `group.label!` diganti narrowing (`const label` + guard) di useEffect dan JSX map.
+- Perilaku/UI tidak berubah (class name, struktur JSX, key, deps callback dipertahankan).
+
+**Completed — Hapus file mati (9 file, diverifikasi 0 referensi di src/e2e/test):**
+- `src/components/checkout/ConfirmationStep.jsx` (tidak diimport page manapun)
+- `src/components/destinasi/detail/UlasanSection.jsx` (tab Ulasan tidak dirender page; file tak terimport)
+- `src/components/landing/ModalsSlider.jsx`
+- `src/components/private/ParticipantsSection.jsx` (digantikan input jumlahPeserta sejak Session 12)
+- `src/components/app-sidebar.tsx`, `search-form.tsx`, `version-switcher.tsx` (demo shadcn sidebar, tidak terimport)
+- `src/components/ui/dropdown-menu.tsx` (hanya dipakai version-switcher), `ui/label.tsx` (hanya dipakai search-form)
+
+**Verification:**
+- `npx eslint` penuh: 0 error (57 warning pre-existing `<img>`).
+- `npx tsc --noEmit`: bersih (0 error).
+- `npx next build`: compiled successfully.
+
+**Catatan:**
+- Perubahan belum di-commit (menunggu review user) — 2 file modified (refactor), 9 file deleted (dead code).
 
 - Perubahan belum di-commit (menunggu review user).

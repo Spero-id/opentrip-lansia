@@ -66,13 +66,14 @@ export const adminNavGroups: AdminNavGroup[] = [
   },
 ];
 
+export function isHrefActive(pathname: string, href: string): boolean {
+  return pathname === href || (href !== "/admin" && pathname.startsWith(href));
+}
+
 export function getActiveMenu(pathname: string): AdminNavGroup & { activeItem: AdminNavItem } | null {
   for (const group of adminNavGroups) {
     for (const item of group.items) {
-      const isActive =
-        pathname === item.href ||
-        (item.href !== "/admin" && pathname.startsWith(item.href));
-      if (isActive) return { ...group, activeItem: item };
+      if (isHrefActive(pathname, item.href)) return { ...group, activeItem: item };
     }
   }
   return null;
