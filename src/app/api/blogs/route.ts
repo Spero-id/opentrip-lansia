@@ -26,8 +26,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await req.json();
-    const data = await blogRepository.create({ ...body, authorId: session?.user.id });
+    const data = await blogService.createBlog(body, session.user.id);
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";

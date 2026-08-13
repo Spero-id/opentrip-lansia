@@ -1,6 +1,7 @@
 import { db } from "@/shared/db";
 import { users } from "./auth.schema";
-import { eq, desc } from "drizzle-orm";
+import { account } from "./better-auth.schema";
+import { and, eq, desc } from "drizzle-orm";
 
 export interface IAuthRepository {
   findById(id: string): Promise<typeof users.$inferSelect | null>;
@@ -8,6 +9,8 @@ export interface IAuthRepository {
   findAll(): Promise<(typeof users.$inferSelect)[]>;
   update(id: string, data: Partial<typeof users.$inferInsert>): Promise<void>;
   delete(id: string): Promise<void>;
+  getAccountPassword(userId: string): Promise<string | null>;
+  updateAccountPassword(userId: string, password: string): Promise<void>;
 }
 
 export const authRepository: IAuthRepository = {
@@ -31,5 +34,21 @@ export const authRepository: IAuthRepository = {
 
   async delete(id) {
     await db.delete(users).where(eq(users.id, id));
+  },
+
+  async getAccountPassword(userId) {
+    const [acc] = await db
+      .select({ password: account.password })
+      .from(account)
+      .where(and(eq(account.userId, userId), eq(account.providerId, "credential")))
+      .limit(1);
+    return acc?.password ?? null;
+  },
+
+  async updateAccountPassword(userId, password) {
+    await db
+      .update(account)
+      .set({ password, updatedAt: new Date() })
+      .where(and(eq(account.userId, userId), eq(account.providerId, "credential")));
   },
 };

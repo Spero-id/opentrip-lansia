@@ -822,6 +822,52 @@ pm run lint: no new errors; only warnings in touched files.
 
 - Perubahan belum di-commit (menunggu review user).
 
+## Session 30 — Verifikasi Fitur Pasca Phase 1 (API Security Lockdown)
+
+**Goal:** Pastikan fitur-fitur tetap berfungsi setelah Phase 1 mengunci 21+ endpoint API dengan `requireAdmin`, dan lakukan smoke test runtime (bukan hanya statis).
+
+**Dikerjakan:**
+- Smoke test live terhadap dev server (:3000) dengan database Neon terhubung.
+- **13 endpoint publik** tanpa auth → semuanya 200: `/api/trips`, `/api/blogs`, `/api/blogs?published=1`, `/api/horeca`, `/api/horeca-types`, `/api/vendors`, `/api/vendor-types`, `/api/promotions`, `/api/reviews`, `/api/galleries`, `/api/meeting-points`, `/api/destinations/categories`, `/api/payments/accounts`.
+- **5 endpoint terkunci** tanpa auth → semuanya 401: `/api/users`, `/api/admin/dashboard`, `/api/admin/notifications`, `/api/commissions`, `/api/bookings`.
+- **Login admin** (`admin@otl.id` / `admin` dari seed) → 200; lalu endpoint admin dengan session → 200 (users, dashboard, notifications, commissions).
+- Blog by-id: admin GET 200, anon GET blog published 200, anon PUT → 401. Halaman blog publik memakai `/api/blogs?published=1` + filter client-side, bukan rute by-id.
+- Catatan: `GET /api/blogs/{non-uuid}` → 500 (artefak test, slug tidak valid utk findById) — bukan regresi.
+
+**Verification:**
+- Smoke test: **PASS** — semua fitur publik tetap terbuka, proteksi admin aktif, admin tetap bisa akses.
+
+**Catatan:**
+- Belum ada commit untuk sesi ini (menunggu review user / lanjut Phase 2).
+
+## Session 31 — Phase 2: Sanitasi XSS Blog & Hardening Upload
+
+**Goal:** Menutup celah keamanan Phase 2: (a) stored XSS pada konten blog (WYSIWYG → `dangerouslySetInnerHTML`), (b) `/api/upload` yang terbuka tanpa auth, menerima SVG, dan tanpa validasi magic-byte.
+
+**Completed — #3 Sanitasi XSS Blog:**
+- `src/shared/utils/sanitize.ts` (baru) — wrapper `sanitize-html` dengan allowlist tag/atribut/kelas, skema http/https/mailto, `transformTags` a→`rel=noopener noreferrer target=_blank`, img hanya terima src http/https atau path lokal.
+- `src/modules/blog/blog.service.ts` — `createBlog` & `updateBlog` kini sanitize `content` & `excerpt` (null dipertahankan).
+- `src/app/api/blogs/route.ts` — POST dialihkan dari `blogRepository.create` langsung ke `blogService.createBlog` (agar sanitasi & slug-unique berjalan); guard `!session.user.id` → 401.
+- `src/app/blog/[slug]/page.jsx` — defense-in-depth: konten di-sanitize lagi saat render (melindungi data lama yang sudah terlanjur di DB).
+- Live test: payload `<script>`/`onclick`/`onerror`/`javascript:` → semua di-strip, `<h2>/<b>` aman dipertahankan.
+
+**Completed — #2 Hardening Upload:**
+- `src/shared/utils/image-guard.ts` (baru) — deteksi magic-byte per format (JPEG/PNG/GIF/WEBP/AVIF dengan brand `avif|avis`), helper `detectImageKind`/`extensionForImage`.
+- `src/app/api/upload/route.ts` — tambah `requireAdmin` (POST & DELETE), **hapus SVG** (XSS vector), validasi magic-byte (tolak file palsu meski MIME/ext palsu), ekstensi file diturunkan dari isi bukan `file.name`, cek file kosong, DELETE kini cek `access()` dulu (404 kalau tidak ada).
+- `src/app/api/payments/upload/route.ts` — pakai shared guard (hilangkan duplikasi magic-byte inline), AVIF lebih ketat (brand-spesifik), ekstensi dari isi file.
+- Live test: anon upload → 401; admin PNG → 200; HTML palsu ber-ext `.png` → 400; SVG → 400.
+
+**Verification:**
+- `npx eslint` penuh: 0 error (58 warning pre-existing `<img>`).
+- `npx tsc --noEmit`: 0 error.
+- `npx next build`: compiled successfully.
+- Live smoke test: semua PASS; data test dibersihkan (blog draft, file upload, session).
+
+**Catatan:**
+- Dep baru: `sanitize-html` (dependencies) + `@types/sanitize-html` (devDependencies).
+- Belum di-commit (menunggu review user).
+- Sisa Phase 2/3 (opsional): quota oversell, DB transaksi multi-step, rate limiting, CSP, money numeric.
+
 ## Session 29 — QA + Refactor Sidebar Admin (PR #76) & Hapus Dead Code
 
 **Goal:** Verifikasi refactor sidebar admin (commit 3b32a77) tidak merusak fitur, rapikan duplikasi logika active-matching, lalu hapus file JSX/TSX yang tidak terpakai.
@@ -855,4 +901,25 @@ pm run lint: no new errors; only warnings in touched files.
 **Catatan:**
 - Perubahan belum di-commit (menunggu review user) — 2 file modified (refactor), 9 file deleted (dead code).
 
-- Perubahan belum di-commit (menunggu review user).
+## Session 32 — Phase 2 Security: bcrypt Password Hashing & Quota Atomic
+
+**Goal:** Menutup prioritas #1 (hash SHA-256 tanpa salt) dan #2 (quota oversell) dari catatan temuan.
+
+**Completed — #1 Password hashing (SHA-256 → bcrypt):**
+- Dep baru: `bcryptjs` (v3, types built-in).
+- `src/shared/utils/password.ts` (baru) — `hashPassword` (bcrypt cost 10), `verifyPassword` (auto-detect: bcrypt → compare, 64-hex → fallback SHA-256), `isLegacySha256`.
+- `src/modules/auth/auth.config.ts` — hook `password.hash`/`verify` pakai util; fallback memastikan user lama tetap login.
+- Migrasi hash lama: `auth.repository.ts` tambah `getAccountPassword`/`updateAccountPassword`; `auth.controller.ts` POST wrapper deteksi `/sign-in/email` sukses → re-hash SHA-256 ke bcrypt otomatis (via `rehashLegacyPasswordOnSignIn`). Jalur `/api/auth/[...all]` tetap dipakai client (authService.signIn tidak dipanggil langsung).
+- `src/db/seed.ts` — akun seed admin/agent/user kini bcrypt (Promise.all await).
+
+**Completed — #2 Quota atomic:**
+- `trip.repository.ts updateQuota` — tambah kondisi `sql\`${quotaBooked} + ${qty} <= ${quota}\`` ke WHERE; UPDATE yang melewati kuota tidak mengubah row → return false.
+
+**Verification:**
+- `npx tsc --noEmit`: 0 error. `npx eslint`: 0 error. `npx next build`: success.
+- Live smoke (dev server :3000): login `admin@otl.id`/`admin` → 200 + cookie session; hash DB berubah dari SHA-256 ke `$2b$10$...` (verified via SQL); login kedua tetap 200 (bcrypt path); password salah → 401.
+- Quota: simulasi SQL — `+1` saat kosong → 1 row OK; `+20` saat sisa 19 → 0 row (oversell ditahan); nilai awal di-restore.
+
+**Catatan:**
+- Belum di-commit (menunggu review user).
+- Sisa (prioritas lanjutan): #3 transaksi booking (butuh driver WebSocket karena neon-http tak support `db.transaction()`), #4 rate limiting, #5 security headers, #6 money integer-sen, #7 blogs/[id] non-UUID → 500, #8 Google OAuth credential kosong, #9 npm audit (11 vuln).

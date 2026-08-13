@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
+import { sanitizeBlogContent } from "@/shared/utils/sanitize";
 
 const dateLabel = (dateStr) =>
   new Date(dateStr).toLocaleDateString("id-ID", {
@@ -85,7 +86,7 @@ export default function BlogDetailPage({ params }) {
           <div className="mt-8 border-t border-gray-100 pt-8">
             <div
               className="text-sm text-gray-700 leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
-              dangerouslySetInnerHTML={{ __html: post.content || "Konten artikel belum tersedia." }}
+              dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
             />
           </div>
         </div>
