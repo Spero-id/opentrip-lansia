@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { adminNavGroups, type AdminNavItem } from "./nav-data";
+import { adminNavGroups, isHrefActive, type AdminNavItem } from "./nav-data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const menuButtonClass =
@@ -123,7 +123,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
   const pathname = usePathname();
 
   const isActive = React.useCallback(
-    (href: string) => pathname === href || (href !== "/admin" && pathname.startsWith(href)),
+    (href: string) => isHrefActive(pathname, href),
     [pathname]
   );
 
@@ -144,10 +144,9 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
   // (gak nutup grup lain yang udah dibuka manual sama user)
   React.useEffect(() => {
     adminNavGroups.forEach((group) => {
-      if (group.label && isGroupActive(group.items)) {
-        setOpenGroups((prev) =>
-          prev[group.label!] ? prev : { ...prev, [group.label!]: true }
-        );
+      const label = group.label;
+      if (label && isGroupActive(group.items)) {
+        setOpenGroups((prev) => (prev[label] ? prev : { ...prev, [label]: true }));
       }
     });
   }, [pathname, isGroupActive]);
@@ -182,21 +181,22 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
         <SidebarContent className="overflow-hidden">
           <ScrollArea className="h-full">
             <div className="flex flex-col gap-1 px-1 pr-3">
-              {adminNavGroups.map((group) =>
-                !group.label ? (
+              {adminNavGroups.map((group) => {
+                const label = group.label;
+                return !label ? (
                   <FlatGroup key="main" items={group.items} isActive={isActive} />
                 ) : (
                   <CollapsibleGroup
-                    key={group.label}
-                    label={group.label}
+                    key={label}
+                    label={label}
                     items={group.items}
-                    isOpen={openGroups[group.label] ?? false}
+                    isOpen={openGroups[label] ?? false}
                     isGroupActive={isGroupActive(group.items)}
                     isActive={isActive}
-                    onToggle={() => toggleGroup(group.label!)}
+                    onToggle={() => toggleGroup(label)}
                   />
-                )
-              )}
+                );
+              })}
             </div>
           </ScrollArea>
         </SidebarContent>

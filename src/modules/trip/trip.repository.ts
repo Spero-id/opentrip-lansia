@@ -234,6 +234,7 @@ export const tripRepository: ITripRepository = {
       .where(and(
         eq(tripPrices.id, priceId),
         eq(tripPrices.isActive, true),
+        sql`${tripPrices.quotaBooked} + ${qty} <= ${tripPrices.quota}`,
       ));
     return (result.rowCount ?? 0) > 0;
   },

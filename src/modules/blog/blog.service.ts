@@ -1,5 +1,6 @@
 import { blogRepository } from "./blog.repository";
 import { blogs } from "./blog.schema";
+import { sanitizeBlogContent } from "@/shared/utils/sanitize";
 import type { UUID } from "@/shared/types";
 
 type BlogInsert = typeof blogs.$inferInsert;
@@ -40,8 +41,8 @@ export const blogService = {
     return blogRepository.create({
       title: data.title,
       slug,
-      content: data.content ?? null,
-      excerpt: data.excerpt ?? null,
+      content: data.content ? sanitizeBlogContent(data.content) : null,
+      excerpt: data.excerpt ? sanitizeBlogContent(data.excerpt) : null,
       authorId: authorId as UUID,
       categoryId: data.categoryId ?? null,
       coverImageId: data.coverImageId ?? null,
@@ -67,8 +68,8 @@ export const blogService = {
     await blogRepository.update(id, {
       title: data.title ?? existing.title,
       slug,
-      content: data.content !== undefined ? data.content : existing.content,
-      excerpt: data.excerpt !== undefined ? data.excerpt : existing.excerpt,
+      content: data.content !== undefined ? sanitizeBlogContent(data.content) : existing.content,
+      excerpt: data.excerpt !== undefined ? sanitizeBlogContent(data.excerpt) : existing.excerpt,
       categoryId: data.categoryId !== undefined ? data.categoryId : existing.categoryId,
       coverImageId: data.coverImageId !== undefined ? data.coverImageId : existing.coverImageId,
       tags: data.tags !== undefined ? data.tags : existing.tags,

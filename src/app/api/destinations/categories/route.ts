@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { masterRepository } from "@/modules/master";
+import { requireAdmin } from "@/shared/auth";
 
 export async function GET() {
   try {
@@ -11,7 +12,10 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const body = await req.json();
     if (!body.name || typeof body.name !== "string" || !body.name.trim()) {
