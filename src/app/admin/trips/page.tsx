@@ -548,10 +548,8 @@ export default function AdminTrips() {
                 <th className="px-6 py-4">Tipe</th>
                 <th className="px-6 py-4">Lokasi & Provinsi</th>
                 <th className="px-6 py-4">Jadwal</th>
-                <th className="px-6 py-4">Hari</th>
                 <th className="px-6 py-4">Harga</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Featured</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
@@ -573,7 +571,6 @@ export default function AdminTrips() {
                       {[t.location, t.province].filter(Boolean).join(", ") || "-"}
                     </td>
                     <td className="px-6 py-4 text-slate-500">{t.startDate ? formatDate(t.startDate) : "-"}</td>
-                    <td className="px-6 py-4 text-slate-500">{t.durationDays}H</td>
                     <td className="px-6 py-4 font-semibold text-slate-900">
                       {t.priceMin ? formatRupiah(t.priceMin) : "-"}
                     </td>
@@ -581,13 +578,6 @@ export default function AdminTrips() {
                       <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${t.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : t.status === "draft" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700"}`}>
                         {t.status}
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {t.isFeatured ? (
-                        <Eye className="w-4 h-4 text-[#1CA6B7]" />
-                      ) : (
-                        <EyeOff className="w-4 h-4 text-slate-300" />
-                      )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
