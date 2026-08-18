@@ -940,3 +940,29 @@ pm run lint: no new errors; only warnings in touched files.
 **Verification:**
 - `npm run lint` — Berhasil dijalankan (0 errors, 60 warnings pre-existing).
 
+## [2026-08-19] Blog image upload (admin + public)
+
+**Goal:** Tambah upload gambar di blog: admin `/admin/blogs` (sampul + gambar inline konten) & tampil di publik `/blog` dan `/blog/[slug]`.
+
+### Perubahan
+- **DB:** `blogs.cover_image text` — schema `src/modules/blog/blog.schema.ts` (+ sync duplikat stale `src/db/schema/blog.ts` yang masih `author_id uuid`), migrasi `drizzle/0002_blog_cover_image.sql` + `migrate-schema.ts`, ALTER dieksekusi ke DB live Neon.
+- **Service:** `blog.service.ts` — `sanitizeCoverImage()` (hanya `/uploads/`, `/images/`, atau http(s); input lain → null) diterapkan di create & update.
+- **Admin UI (`src/app/admin/blogs/page.tsx`):**
+  - Komponen baru `src/app/admin/components/cover-image-uploader.tsx` (upload via `/api/upload`, preview, hapus → DELETE file server-side; dipakai di modal create/edit).
+  - Thumbnail sampul di tabel list.
+- **WYSIWYG (`src/app/admin/components/wysiwyg-editor.tsx`):** `images_upload_handler` + `file_picker_callback` → admin bisa upload gambar inline di konten (dan drag-drop).
+- **Publik:** `src/app/blog/page.jsx` (thumbnail di kartu) & `src/app/blog/[slug]/page.jsx` (hero image). Sanitizer konten sudah izinkan `<img>` path lokal → gambar inline tampil aman.
+
+### Verifikasi
+- `npm run lint`: 0 errors (64 warnings pre-existing gaya `<img>`, konsisten ImageManager trips).
+- `tsc --noEmit`: clean.
+- Unit test: repo tanpa jest test (672 files, 0 matches) — hanya e2e Playwright.
+- Smoke (dev server, login admin seed `admin@otl.id`):
+  - `POST /api/upload` 200 → `/uploads/...`
+  - `POST /api/blogs` dgn coverImage 201; `GET /api/blogs?published=1` memuat `coverImage`; PUT coverImage→null ok; DELETE ok.
+  - Service round-trip: `javascript:` cover ditolak → null; `<img src="/uploads/">` di konten lolos sanitasi.
+  - `/admin/blogs` 200 (session), `/blog` 200, `/blog/e2e-blog-with-cover` 200.
+- Semua data test dibersihkan (blog + file upload dihapus).
+
+### Catatan
+- `/api/upload` tetap admin-only (401 anonymous) — dipakai bersama editor public-safe (sanitizer tetap aktif).

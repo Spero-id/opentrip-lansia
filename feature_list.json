@@ -347,7 +347,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "Admin blogs page (list + create/edit modal + delete, error feedback, slug auto dari judul), API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages. CRUD di-fe: authorId di-inject dari session (fallback admin), slug unik auto-generate, publishedAt di-set saat published, updatedAt ter-update saat edit."
+          "evidence": "Admin blogs page (list + create/edit modal + delete, error feedback, slug auto dari judul), API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages. CRUD di-fe: authorId di-inject dari session (fallback admin), slug unik auto-generate, publishedAt di-set saat published, updatedAt ter-update saat edit. | Blog image upload: coverImage column (cover_image text, migrated live), admin form uploader (/admin/blogs uses /api/upload), WYSIWYG inline image upload handler, cover thumbnails on public /blog cards and /blog/[slug] hero. Verified: lint 0 errors, tsc clean, service round-trip, API create/update/delete with coverImage."
         },
         {
           "id": "feat-049",
@@ -478,7 +478,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "src/app/blog/page.tsx, src/app/blog/[slug]/page.tsx"
+          "evidence": "src/app/blog/page.tsx, src/app/blog/[slug]/page.tsx | Blog image upload: coverImage column (cover_image text, migrated live), admin form uploader (/admin/blogs uses /api/upload), WYSIWYG inline image upload handler, cover thumbnails on public /blog cards and /blog/[slug] hero. Verified: lint 0 errors, tsc clean, service round-trip, API create/update/delete with coverImage."
         },
         {
           "id": "feat-061",
