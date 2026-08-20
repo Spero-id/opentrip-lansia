@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
@@ -11,9 +12,10 @@ import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { toDetail } from "@/lib/Destination";
 
 export default function DestisasiPage() {
+  const searchParams = useSearchParams();
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("q") || "");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");

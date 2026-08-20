@@ -3,8 +3,6 @@
 import { useRef, useState, useEffect } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import DestinationCard from "@/components/destinasi/DestinationCard";
 
 const DEFAULT_RATING = 5.0;
@@ -34,10 +32,6 @@ export default function DestinationSection() {
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const router = useRouter();
-  const { data: session } = useSession();
-  const isLoggedIn = !!session?.user;
-
   const pageCount = Math.max(1, Math.ceil(destinations.length / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount - 1);
   const visibleDestinations = destinations.slice(
@@ -48,12 +42,6 @@ export default function DestinationSection() {
   function goToPage(nextPage) {
     setPage(Math.min(Math.max(nextPage, 0), pageCount - 1));
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function handleCardClick(e, id) {
-    if (isLoggedIn) return;
-    e.preventDefault();
-    router.push(`/login?redirect=/trips/${id}`);
   }
 
   useEffect(() => {
@@ -77,6 +65,7 @@ export default function DestinationSection() {
       behavior: "smooth",
     });
   };
+
 
   return (
     <section id="destinasi" className="relative bg-white py-10">
@@ -109,7 +98,6 @@ export default function DestinationSection() {
           <DestinationCard
             key={dest.id}
             dest={dest}
-            onClick={(e) => handleCardClick(e, dest.id)}
             className="snap-start shrink-0 w-[280px] sm:w-[320px] md:w-auto"
           />
         ))}

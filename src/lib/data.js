@@ -170,7 +170,7 @@ export const faqs = [
   {
     question: "Bagaimana cara booking trip di Jelajah Memoria?",
     answer:
-      "Pilih destinasi yang kamu mau, klik tombol Booking, isi data diri dan tanggal keberangkatan, lalu lakukan pembayaran. E-voucher akan dikirim otomatis ke email kamu.",
+      "Kamu dapat melakukan pemesanan langsung melalui website kami dengan memilih paket trip yang diinginkan, lalu ikuti petunjuk pengisian data dan pembayaran yang tersedia.",
   },
   {
     question: "Apa saja metode pembayaran yang tersedia?",

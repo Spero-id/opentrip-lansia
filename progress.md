@@ -923,3 +923,20 @@ pm run lint: no new errors; only warnings in touched files.
 **Catatan:**
 - Belum di-commit (menunggu review user).
 - Sisa (prioritas lanjutan): #3 transaksi booking (butuh driver WebSocket karena neon-http tak support `db.transaction()`), #4 rate limiting, #5 security headers, #6 money integer-sen, #7 blogs/[id] non-UUID → 500, #8 Google OAuth credential kosong, #9 npm audit (11 vuln).
+
+## Session 33 — Popup Notifikasi Newsletter Subscribe
+
+**Goal:** Menampilkan popup modal notifikasi/pesan sukses ketika visitor memasukkan email dan melakukan subscribe di newsletter form.
+
+**Completed:**
+- Diperbarui [Subs.jsx](file:///c:/Users/Bhuminindra%20AlHafiz/Documents/opentrip-lansia/src/components/landing/Subs.jsx):
+  - Menambahkan direktif `"use client"` di bagian atas file.
+  - Membuat state untuk input `email` dan `showPopup`.
+  - Mengimplementasikan helper `useEffect` untuk menutup popup ketika tombol Escape ditekan, serta mengunci overflow body (`document.body.style.overflow = "hidden"`) saat popup aktif agar background tidak dapat discroll.
+  - Memperbarui handler form `onSubmit` agar memvalidasi input email sebelum menampilkan popup sukses.
+  - Mendesain popup modal sukses yang premium (menggunakan glassmorphic border, background blur, oranye gradient ornamen, dan checklist micro-animation) dengan tombol "Mulai Jelajah" serta ikon silang `(X)` untuk menutup popup modal.
+  - Menyertakan teks pesan sukses yang tepat sesuai permintaan: `"Selamat bergabung di Keluarga Jelajah Memoria! Kami telah mengirimkan email sambutan untuk Anda. Sampai jumpa di perjalanan seru berikutnya!"`.
+
+**Verification:**
+- `npm run lint` — Berhasil dijalankan (0 errors, 60 warnings pre-existing).
+
