@@ -14,6 +14,11 @@ const inter = Inter({
 export const metadata = {
   title: "Jelajah Memoria",
   description: "Platform open trip terpercaya untuk perjalanan wisata impian Anda.",
+  icons: {
+    icon: "/Jelajah-Memoria-01.png",
+    shortcut: "/Jelajah-Memoria-01.png",
+    apple: "/Jelajah-Memoria-01.png",
+  },
 };
 
 export default function RootLayout({ children }) {
