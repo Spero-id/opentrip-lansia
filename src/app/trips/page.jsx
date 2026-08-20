@@ -17,7 +17,7 @@ export default function DestisasiPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [isSeniorFriendlyOnly, setIsSeniorFriendlyOnly] = useState(false);
 
   useEffect(() => {
@@ -38,14 +38,14 @@ export default function DestisasiPage() {
     selectedLocation !== "" ||
     priceMin !== "" ||
     priceMax !== "" ||
-    selectedCategory !== "" ||
+    selectedCategories.length > 0 ||
     isSeniorFriendlyOnly === true;
 
   const resetAllFilters = () => {
     setSelectedLocation("");
     setPriceMin("");
     setPriceMax("");
-    setSelectedCategory("");
+    setSelectedCategories([]);
     setIsSeniorFriendlyOnly(false);
     setSearch("");
   };
@@ -68,8 +68,8 @@ export default function DestisasiPage() {
       const matchPriceMax = priceMax === "" || (d.priceMin ?? 0) <= Number(priceMax);
 
       const matchCategory =
-        selectedCategory === "" ||
-        categoryStr.toLowerCase() === selectedCategory.toLowerCase();
+        selectedCategories.length === 0 ||
+        selectedCategories.some((cat) => cat.toLowerCase() === categoryStr.toLowerCase());
 
       const matchSenior =
         !isSeniorFriendlyOnly ||
@@ -91,7 +91,7 @@ export default function DestisasiPage() {
     selectedLocation,
     priceMin,
     priceMax,
-    selectedCategory,
+    selectedCategories,
     isSeniorFriendlyOnly,
   ]);
 
@@ -113,8 +113,8 @@ export default function DestisasiPage() {
                 setPriceMin={setPriceMin}
                 priceMax={priceMax}
                 setPriceMax={setPriceMax}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
                 isSeniorFriendlyOnly={isSeniorFriendlyOnly}
                 setIsSeniorFriendlyOnly={setIsSeniorFriendlyOnly}
                 onResetAll={resetAllFilters}

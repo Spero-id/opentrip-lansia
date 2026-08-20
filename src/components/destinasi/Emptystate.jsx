@@ -12,10 +12,10 @@ export default function EmptyState({ onReset }) {
         <SlidersHorizontal size={24} style={{ color: "#F49D1A" }} />
       </div>
       <p className="text-sm font-semibold text-gray-700 mb-1">
-        Tidak ada destinasi cocok
+        Destinasi kamu akan segera hadir
       </p>
       <p className="text-xs text-gray-400 mb-5 max-w-xs">
-        Coba sesuaikan kata kunci pencarian atau reset filter yang aktif.
+        Coba sesuaikan kata kunci pencarian atau reset filter yang lain.
       </p>
       <button
         onClick={onReset}
