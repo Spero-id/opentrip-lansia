@@ -30,7 +30,7 @@ function buildDestinationPreferences(form) {
   lines.push(`[Pemesan]`);
   lines.push(`Nama: ${form.nama}`);
   if (form.phone) lines.push(`Ponsel: ${form.phone}`);
-  if (form.email) lines.push(`Email: ${form.email}`);
+  if (form.email?.trim()) lines.push(`Email: ${form.email.trim()}`);
 
   // Trip details
   lines.push(`[Detail Perjalanan]`);

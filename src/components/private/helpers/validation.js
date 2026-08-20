@@ -6,6 +6,17 @@ function validatePhone(form, e) {
   if (!form.phone.trim()) e.phone = "Wajib diisi";
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function validateEmail(form, e) {
+  const email = form.email.trim();
+  if (!email) {
+    e.email = "Email wajib diisi";
+  } else if (!EMAIL_RE.test(email)) {
+    e.email = "Format email tidak valid";
+  }
+}
+
 function validateJumlahPeserta(form, e) {
   const jumlahPeserta = parseInt(form.jumlahPeserta, 10);
   if (!form.jumlahPeserta || isNaN(jumlahPeserta) || jumlahPeserta < 1)
@@ -38,6 +49,7 @@ export function validate(form) {
 
   validateNama(form, e);
   validatePhone(form, e);
+  validateEmail(form, e);
   validateJumlahPeserta(form, e);
   validateNamaInstitusi(form, e);
   validateTripOption(form, e);
@@ -49,7 +61,7 @@ export function validate(form) {
 /**
  * Memvalidasi hanya field yang termasuk dalam satu langkah wizard.
  * Langkah:
- *   1 = Pemesan        (nama, phone, jumlahPeserta, namaInstitusi)
+ *   1 = Pemesan        (nama, phone, email, jumlahPeserta, namaInstitusi)
  *   2 = Pilihan Trip   (tripType, customTripName, selectedDestinasi)
  *   3 = Detail Trip    (tanggal, meetingPoint, catatan)
  *   4 = Konfirmasi     (tidak ada field yang divalidasi)
@@ -60,6 +72,7 @@ export function validateStep(form, step) {
   if (step === 1) {
     validateNama(form, e);
     validatePhone(form, e);
+    validateEmail(form, e);
     validateJumlahPeserta(form, e);
     validateNamaInstitusi(form, e);
   } else if (step === 2) {
