@@ -118,7 +118,7 @@ export default function SuccessState({ form, requestId, onReset }) {
               </div>
               <h2 className="text-xl font-bold text-white mb-1">Request Terkirim!</h2>
               <p className="text-white/80 text-sm">
-                Tim kami akan menghubungi kamu dalam <strong className="text-white">1x24 jam</strong>
+                Tim kami akan menghubungi Anda dalam <strong className="text-white">1x24 jam</strong>
               </p>
               {requestCode && (
                 <div className="mt-4 px-4 py-2 rounded-xl bg-white/20 border border-white/30 flex flex-col items-center gap-0.5">
@@ -151,7 +151,7 @@ export default function SuccessState({ form, requestId, onReset }) {
               <Row icon={icons.calendar} label="Tanggal"       value={form.tanggal ? new Date(form.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "-"} />
               <Row icon={icons.clock}    label="Durasi"        value={form.durasi ? `${form.durasi} Hari` : "-"} />
               <Row icon={icons.users}    label="Peserta"       value={form.jumlahPeserta ? `${form.jumlahPeserta} orang` : "-"} />
-              <Row icon={icons.pin}      label="Meeting Point" value={form.meetingPoint || "-"} />
+              <Row icon={icons.pin}      label="Titik Kumpul" value={form.meetingPoint || "-"} />
               <Row icon={icons.building} label="Trip Dari"     value={form.tripFrom + (form.namaInstitusi ? ` — ${form.namaInstitusi}` : "")} />
 
               {form.tripType === "custom" && form.customTripName && (
@@ -186,7 +186,7 @@ export default function SuccessState({ form, requestId, onReset }) {
                   className="flex justify-between items-center py-3 mt-2 rounded-xl px-3"
                   style={{ backgroundColor: `${A}08`, border: `1px solid ${A}20` }}
                 >
-                  <span className="text-xs font-semibold text-gray-700">Estimasi Budget</span>
+                  <span className="text-xs font-semibold text-gray-700">Estimasi Anggaran</span>
                   <span className="text-sm font-bold text-gray-900">
                     {formatRupiah(form.tripType === "explorer" ? form.selectedDestinasi?.priceMin : form.budget)}
                     <span className="text-xs font-normal text-gray-400"> /pax</span>
@@ -204,7 +204,7 @@ export default function SuccessState({ form, requestId, onReset }) {
               {[
                 requestCode
                   ? `Sertakan kode *${requestCode}* saat menghubungi tim kami via WhatsApp.`
-                  : "Tim kami akan menghubungi kamu via WhatsApp atau email untuk konfirmasi request.",
+                  : "Tim kami akan menghubungi Anda via WhatsApp atau email untuk konfirmasi request.",
                 "Itinerary dan rincian harga akan dikirimkan setelah diskusi awal.",
                 "Simpan screenshot halaman ini sebagai referensi.",
               ].map((text, i) => (

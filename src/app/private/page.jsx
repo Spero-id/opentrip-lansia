@@ -4,17 +4,20 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PageHeader from "@/components/private/PageHeader";
+import StepIndicator from "@/components/private/StepIndicator";
 import BookingInformationSection from "@/components/private/BookingInformationSection";
 import TripDetailSection from "@/components/private/TripDetailSection";
 import TripOptionSection from "@/components/private/TripOptionSection";
 import TripFromSection from "@/components/private/TripFromSection";
+import SummarySection from "@/components/private/SummarySection";
 import SuccessState from "@/components/private/SuccessState";
 import SubmitBar from "@/components/private/SubmitBar";
 import TermsModal from "@/components/private/TermsModal";
 import Subs from "@/components/landing/Subs";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { initialForm } from "@/components/private/helpers/initialState";
-import { validate } from "@/components/private/helpers/validation";
+import { validateStep } from "@/components/private/helpers/validation";
+import { A } from "@/components/private/helpers/constants";
 
 /**
  * Builds the `destinationPreferences` text field from all form fields that
@@ -63,15 +66,18 @@ function buildPayload(form, budgetValue) {
   return {
     title,
     durationDays: isNaN(durationDays) || durationDays < 1 ? 1 : durationDays,
-    participantsCount: isNaN(participantsCount) ? 6 : participantsCount,
+    participantsCount: isNaN(participantsCount) ? 1 : participantsCount,
     destinationPreferences: buildDestinationPreferences(form),
     specialRequirements: form.catatan?.trim() || undefined,
     budgetEstimate: budgetValue ? String(budgetValue) : undefined,
   };
 }
 
+const TOTAL_STEPS = 4;
+
 export default function PrivateTripPage() {
   const [form, setForm] = useState(initialForm);
+  const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [requestId, setRequestId] = useState(null);
   const [errors, setErrors] = useState({});
@@ -108,15 +114,33 @@ export default function PrivateTripPage() {
     fetchDestinations();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentStep]);
+
   const set = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
+  const goToStep = (step) => {
+    const target = Math.min(Math.max(step, 1), TOTAL_STEPS);
+    setCurrentStep(target);
+  };
+
+  const handleNext = () => {
+    const errs = validateStep(form, currentStep);
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    setErrors({});
+    goToStep(currentStep + 1);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const errs = validate(form);
+    const errs = validateStep(form, currentStep);
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setSubmitError(null);
     setShowTerms(true);
@@ -160,6 +184,7 @@ export default function PrivateTripPage() {
     setRequestId(null);
     setErrors({});
     setSubmitError(null);
+    setCurrentStep(1);
     setForm(initialForm);
   };
 
@@ -176,6 +201,36 @@ export default function PrivateTripPage() {
       />
     );
   }
+
+  const backButton = currentStep > 1 && (
+    <button
+      type="button"
+      onClick={() => goToStep(currentStep - 1)}
+      className="px-7 py-3 rounded-lg border border-gray-200 text-gray-600 font-semibold text-sm transition-all hover:bg-gray-50 active:scale-95 flex items-center gap-2"
+    >
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Kembali
+    </button>
+  );
+
+  const nextButton = currentStep < TOTAL_STEPS && (
+    <button
+      type="button"
+      onClick={handleNext}
+      className="px-7 py-3 rounded-lg text-white font-bold text-sm tracking-wide transition-all active:scale-95 flex items-center gap-2"
+      style={{ backgroundColor: A }}
+      onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c47d12")}
+      onMouseLeave={e => (e.currentTarget.style.backgroundColor = A)}
+    >
+      Lanjut
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+      </svg>
+    </button>
+  );
 
   return (
     <div className="min-h-screen bg-white">
@@ -214,31 +269,46 @@ export default function PrivateTripPage() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <StepIndicator currentStep={currentStep} />
           <form onSubmit={handleSubmit} noValidate>
             <div className="flex flex-col gap-5">
 
-              <BookingInformationSection
-                form={form}
-                set={set}
-                errors={errors}
-              />
-              <TripDetailSection
-                form={form}
-                set={set}
-                errors={errors}
-                budgetValue={budgetValue}
-              />
-              <TripOptionSection
-                form={form}
-                set={set}
-                errors={errors}
-                destinationsData={destinations}
-              />
-              <TripFromSection
-                form={form}
-                set={set}
-                errors={errors}
-              />
+              {currentStep === 1 && (
+                <>
+                  <BookingInformationSection
+                    form={form}
+                    set={set}
+                    errors={errors}
+                  />
+                  <TripFromSection
+                    form={form}
+                    set={set}
+                    errors={errors}
+                  />
+                </>
+              )}
+
+              {currentStep === 2 && (
+                <TripOptionSection
+                  form={form}
+                  set={set}
+                  errors={errors}
+                  destinationsData={destinations}
+                />
+              )}
+
+              {currentStep === 3 && (
+                <TripDetailSection
+                  form={form}
+                  set={set}
+                  errors={errors}
+                  budgetValue={budgetValue}
+                />
+              )}
+
+              {currentStep === 4 && (
+                <SummarySection form={form} budgetValue={budgetValue} />
+              )}
 
               {submitError && (
                 <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
@@ -249,7 +319,15 @@ export default function PrivateTripPage() {
                 </div>
               )}
 
-              <SubmitBar isLoading={isLoading} />
+              <div className="flex items-center justify-between gap-4 pt-2">
+                {backButton}
+                <div className="flex-1" />
+                {currentStep === TOTAL_STEPS ? (
+                  <SubmitBar isLoading={isLoading} />
+                ) : (
+                  nextButton
+                )}
+              </div>
 
             </div>
           </form>
@@ -261,4 +339,3 @@ export default function PrivateTripPage() {
     </div>
   );
 }
-

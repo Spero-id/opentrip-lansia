@@ -37,7 +37,7 @@ export default function TripOptionSection({
 
               {opt.id === "custom" && active && (
                 <div className="mt-2.5 pl-1">
-                  <input type="text" placeholder="Ex. Rafting Sungai Elo"
+                  <input type="text" placeholder="Contoh: Rafting Sungai Elo"
                     value={form.customTripName}
                     onChange={e => set("customTripName", e.target.value)}
                     className={inputCls(errors.customTripName, "")} />

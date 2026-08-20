@@ -8,11 +8,11 @@ const A = "#F49D1A";
 const TERMS_CONTENT = [
   {
     title: "1. Definisi",
-    body: `Dalam syarat dan ketentuan ini, "Kami" merujuk pada tim Jelajah Memoria selaku penyelenggara layanan Private Trip. "Kamu" merujuk pada pemohon atau pemesan yang mengajukan request Custom Trip melalui platform ini.`,
+    body: `Dalam syarat dan ketentuan ini, "Kami" merujuk pada tim Jelajah Memoria selaku penyelenggara layanan Private Trip. "Anda" merujuk pada pemohon atau pemesan yang mengajukan request Custom Trip melalui platform ini.`,
   },
   {
     title: "2. Ketentuan Pemesanan",
-    body: `Pemesanan Private Trip dianggap sah setelah formulir request diterima dan dikonfirmasi oleh tim kami melalui nomor WhatsApp atau email yang kamu daftarkan. Kami berhak menolak request yang tidak memenuhi kriteria layanan kami tanpa pemberitahuan lebih lanjut.`,
+    body: `Pemesanan Private Trip dianggap sah setelah formulir request diterima dan dikonfirmasi oleh tim kami melalui nomor WhatsApp atau email yang Anda daftarkan. Kami berhak menolak request yang tidak memenuhi kriteria layanan kami tanpa pemberitahuan lebih lanjut.`,
   },
   {
     title: "3. Pembayaran",
@@ -36,15 +36,15 @@ const TERMS_CONTENT = [
   },
   {
     title: "8. Privasi dan Data",
-    body: `Data pribadi yang kamu berikan (nama, nomor telepon, email, dan informasi lainnya) hanya digunakan untuk keperluan pengelolaan trip dan tidak akan dibagikan kepada pihak ketiga tanpa persetujuan kamu, kecuali diwajibkan oleh hukum yang berlaku.`,
+    body: `Data pribadi yang Anda berikan (nama, nomor telepon, email, dan informasi lainnya) hanya digunakan untuk keperluan pengelolaan trip dan tidak akan dibagikan kepada pihak ketiga tanpa persetujuan Anda, kecuali diwajibkan oleh hukum yang berlaku.`,
   },
   {
     title: "9. Perubahan Syarat dan Ketentuan",
-    body: `Kami berhak mengubah syarat dan ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan melalui platform kami. Dengan melanjutkan penggunaan layanan setelah perubahan, kamu dianggap menyetujui syarat dan ketentuan yang telah diperbarui.`,
+    body: `Kami berhak mengubah syarat dan ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan melalui platform kami. Dengan melanjutkan penggunaan layanan setelah perubahan, Anda dianggap menyetujui syarat dan ketentuan yang telah diperbarui.`,
   },
   {
     title: "10. Persetujuan",
-    body: `Dengan menekan tombol "Setuju & Lanjutkan", kamu menyatakan telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan Private Trip yang berlaku. Persetujuan ini bersifat mengikat secara hukum.`,
+    body: `Dengan menekan tombol "Setuju & Lanjutkan", Anda menyatakan telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan Private Trip yang berlaku. Persetujuan ini bersifat mengikat secara hukum.`,
   },
 ];
 
@@ -128,7 +128,7 @@ export default function TermsModal({ onAgree, onClose }) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Kamu sudah membaca seluruh ketentuan
+              Anda sudah membaca seluruh ketentuan
             </>
           ) : (
             <>

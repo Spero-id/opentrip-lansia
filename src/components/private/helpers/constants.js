@@ -4,7 +4,7 @@ export const TRIP_OPTIONS = [
   {
     id: "custom",
     label: "Nama Produk Custom",
-    desc: "Ketik nama produk yang kamu inginkan sendiri",
+    desc: "Ketik nama produk yang Anda inginkan sendiri",
   },
   {
     id: "explorer",

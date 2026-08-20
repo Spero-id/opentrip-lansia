@@ -14,7 +14,7 @@ export default function SubmitBar({ isLoading = false }) {
         onMouseEnter={e => { if (!isLoading) e.currentTarget.style.backgroundColor = "#c47d12"; }}
         onMouseLeave={e => { if (!isLoading) e.currentTarget.style.backgroundColor = A; }}
       >
-        {isLoading ? "Mengirim..." : "Request Custom Trip"}
+        {isLoading ? "Mengirim..." : "Kirim Request"}
         {isLoading ? (
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="animate-spin">
             <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>

@@ -36,9 +36,9 @@ export default function TripDetailSection({
           </div>
         </Field>
 
-        <Field label="Meeting Point" required error={errors.meetingPoint}>
+        <Field label="Titik Kumpul" required error={errors.meetingPoint}>
           <input type="text"
-            placeholder="Ex. Depan Stasiun Juanda, Jakarta Pusat"
+            placeholder="Contoh: Depan Stasiun Juanda, Jakarta Pusat"
             value={form.meetingPoint}
             onChange={e => set("meetingPoint", e.target.value)}
             className={inputCls(errors.meetingPoint)} />
@@ -47,7 +47,7 @@ export default function TripDetailSection({
         <div className="sm:col-span-2">
           <Field label="Catatan / Keinginan Trip" required error={errors.catatan}>
             <textarea rows={3}
-              placeholder="Deskripsikan trip yang kamu inginkan, agar tim kami dapat membantu mewujudkannya"
+              placeholder="Deskripsikan trip yang Anda inginkan, agar tim kami dapat membantu mewujudkannya"
               value={form.catatan}
               onChange={e => set("catatan", e.target.value)}
               className={inputCls(errors.catatan, "resize-none")} />
@@ -55,7 +55,7 @@ export default function TripDetailSection({
         </div>
 
         <Field
-          label="Total Budget"
+          label="Total Anggaran"
           hint={form.tripType === "explorer" && form.selectedDestinasi
             ? "Harga mengikuti destinasi yang dipilih"
             : "Kosongkan jika belum tahu"}
@@ -65,7 +65,7 @@ export default function TripDetailSection({
             <input
               type="text"
               inputMode="numeric"
-              placeholder="Ex. 100.000"
+              placeholder="Contoh: 100.000"
               value={
                 form.tripType === "explorer" && form.selectedDestinasi
                   ? Number(form.selectedDestinasi.priceMin).toLocaleString("id-ID")
