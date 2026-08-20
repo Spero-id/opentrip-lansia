@@ -25,8 +25,7 @@ export default function MarketingSection() {
               <span className="text-[#F49D1A]">Jelajah Memoria Ini</span>?
             </h2>
             <p className="text-gray-500 mb-8 max-w-md leading-relaxed">
-              Kami bantu setiap perjalanan mu jadi lebih mudah, aman, dan
-              terjangkau dari pemesanan sampai mu sampai di destinasi.
+              Kami siap membantu setiap perjalanan Anda menjadi lebih mudah, aman, dan terjangkau, mulai dari proses pemesanan hingga tiba di destinasi impian.
             </p>
 
             <div className="space-y-3 mb-10">
@@ -37,8 +36,8 @@ export default function MarketingSection() {
                   <div
                     key={i}
                     className={`rounded-xl border transition-colors duration-300 ${isOpen
-                        ? "border-[#F49D1A]/30 bg-[#F49D1A]/10 shadow-xs"
-                        : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-[#F49D1A]/30 bg-[#F49D1A]/10 shadow-xs"
+                      : "border-gray-200 bg-white hover:border-gray-300"
                       }`}
                   >
                     <button
