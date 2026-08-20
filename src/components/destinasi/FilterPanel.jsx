@@ -24,8 +24,8 @@ export default function FilterPanel({
   setPriceMin,
   priceMax,
   setPriceMax,
-  selectedCategory,
-  setSelectedCategory,
+  selectedCategories,
+  setSelectedCategories,
   isSeniorFriendlyOnly,
   setIsSeniorFriendlyOnly,
   onResetAll,
@@ -48,7 +48,7 @@ export default function FilterPanel({
     selectedLocation !== "",
     priceMin !== "",
     priceMax !== "",
-    selectedCategory !== "",
+    selectedCategories.length > 0,
     isSeniorFriendlyOnly === true,
   ].filter(Boolean).length;
 
@@ -153,12 +153,25 @@ export default function FilterPanel({
             <div className="flex flex-wrap gap-1.5">
               {CATEGORY_OPTIONS.map((cat) => {
                 const val = cat === "Semua" ? "" : cat;
-                const active = selectedCategory === val;
+                const active = val === "" ? selectedCategories.length === 0 : selectedCategories.includes(val);
+                
+                const handleToggle = () => {
+                  if (val === "") {
+                    setSelectedCategories([]);
+                  } else {
+                    if (selectedCategories.includes(val)) {
+                      setSelectedCategories(selectedCategories.filter((c) => c !== val));
+                    } else {
+                      setSelectedCategories([...selectedCategories, val]);
+                    }
+                  }
+                };
+
                 return (
                   <button
                     key={cat}
                     type="button"
-                    onClick={() => setSelectedCategory(val)}
+                    onClick={handleToggle}
                     className="px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1"
                     style={
                       active
