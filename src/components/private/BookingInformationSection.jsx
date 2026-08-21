@@ -1,25 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Field from "./Field";
 import SectionCard from "./SectionCard";
 import { inputCls } from "./helpers/helpers";
-
-function validatePeserta(val) {
-  const num = parseInt(val, 10);
-  if (val === "" || isNaN(num)) return null; // kosong = belum diisi, biarkan submit validation yg handle
-  if (num < 6) return "Jumlah peserta minimal 6 orang";
-  if (num > 10) return "Jumlah peserta maksimal 10 orang";
-  return null;
-}
 
 export default function BookingInformationSection({
   form,
   set,
   errors,
 }) {
-  const [pesertaError, setPesertaError] = useState(null);
-
   return (
     <SectionCard
       icon={<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
@@ -62,8 +51,7 @@ export default function BookingInformationSection({
         <Field
           label="Jumlah Peserta"
           required
-          hint="Minimal 6, maksimal 10 orang"
-          error={pesertaError || errors.jumlahPeserta}
+          error={errors.jumlahPeserta}
         >
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -73,12 +61,18 @@ export default function BookingInformationSection({
               type="number"
               value={form.jumlahPeserta}
               onChange={e => {
-                const val = e.target.value;
-                set("jumlahPeserta", val);
-                setPesertaError(validatePeserta(val));
+                const val = parseInt(e.target.value, 10);
+                if (!isNaN(val) && val >= 0) {
+                  set("jumlahPeserta", val);
+                }
               }}
-              placeholder="6 – 10 orang"
-              className={inputCls(pesertaError || errors.jumlahPeserta, "pl-9")}
+              onKeyDown={e => {
+                if (e.key === '-' || e.key === 'e' || e.key === '+' || e.key === '.') {
+                  e.preventDefault();
+                }
+              }}
+              placeholder="Jumlah peserta"
+              className={inputCls(errors.jumlahPeserta, "pl-9")}
             />
           </div>
         </Field>
