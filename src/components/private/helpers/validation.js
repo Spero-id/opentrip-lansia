@@ -16,11 +16,13 @@ export function validate(form) {
   if (!form.catatan.trim())
     e.catatan = "Wajib diisi";
 
-  const jumlahPeserta = parseInt(form.jumlahPeserta, 10);
-  if (!form.jumlahPeserta || isNaN(jumlahPeserta) || jumlahPeserta < 6)
-    e.jumlahPeserta = "Jumlah peserta minimal 6 orang";
-  else if (jumlahPeserta > 10)
-    e.jumlahPeserta = "Jumlah peserta maksimal 10 orang";
+  if (!form.email || !form.email.trim())
+    e.email = "Wajib diisi";
+  else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email.trim()))
+      e.email = "Format email tidak valid";
+  }
 
   if (
     form.tripType === "custom" &&
