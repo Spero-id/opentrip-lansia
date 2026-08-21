@@ -1,4 +1,5 @@
 import { DynamicLucideIcon } from "@/app/admin/components/icon-picker";
+import { sanitizeBlogContent } from "@/shared/utils/sanitize";
 import SectionHeading from "./SectionHeading";
 
 export default function AboutSection({ dest }) {
@@ -8,9 +9,10 @@ export default function AboutSection({ dest }) {
         <SectionHeading className="mb-3 sm:mb-4">
           Tentang Destinasi
         </SectionHeading>
-        <p className="text-base leading-relaxed text-gray-600 sm:text-md sm:leading-loose">
-          {dest.description}
-        </p>
+        <div
+          className="text-base leading-7 text-gray-600 prose prose-slate max-w-none [&>p]:mb-3 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
+          dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(dest.description) || "Belum ada deskripsi." }}
+        />
       </section>
 
       <section>

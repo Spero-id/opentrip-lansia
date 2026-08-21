@@ -3,7 +3,6 @@ import {
   Compass,
   FileText,
   LayoutDashboard,
-  MapPin,
   Percent,
   Route,
   ShoppingCart,
@@ -35,7 +34,6 @@ export const adminNavGroups: AdminNavGroup[] = [
     items: [
       { name: "Paket Trip", href: "/admin/trips", icon: Compass },
       { name: "Private Trip", href: "/admin/private-trips", icon: Route },
-      { name: "Meeting Point", href: "/admin/meeting-points", icon: MapPin },
     ],
   },
   {

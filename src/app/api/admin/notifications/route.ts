@@ -37,7 +37,11 @@ export async function GET(req: NextRequest) {
     let recentBookings;
     if (since) {
       const sinceDate = new Date(since);
-      recentBookings = await baseQuery.where(gte(bookings.createdAt, sinceDate));
+      if (Number.isNaN(sinceDate.getTime())) {
+        recentBookings = await baseQuery;
+      } else {
+        recentBookings = await baseQuery.where(gte(bookings.createdAt, sinceDate));
+      }
     } else {
       recentBookings = await baseQuery;
     }
@@ -48,16 +52,25 @@ export async function GET(req: NextRequest) {
 
     if (unreadSince) {
       const unreadDate = new Date(unreadSince);
-      const [countResult] = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(bookings)
-        .where(gte(bookings.createdAt, unreadDate));
-      unreadCount = countResult?.count || 0;
+      if (!Number.isNaN(unreadDate.getTime())) {
+        const [countResult] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(bookings)
+          .where(gte(bookings.createdAt, unreadDate));
+        unreadCount = countResult?.count || 0;
+      }
     }
 
     // Transform to notification format
     const notifications = recentBookings.map((booking) => {
-      const notes = booking.notes ? JSON.parse(booking.notes) : {};
+      let parsedNotes: Record<string, unknown> = {};
+      if (booking.notes) {
+        try {
+          parsedNotes = JSON.parse(booking.notes) as Record<string, unknown>;
+        } catch {
+          parsedNotes = {}; // malformed notes must not break the entire list
+        }
+      }
       return {
         id: booking.id,
         type: getNotificationType(booking.status),

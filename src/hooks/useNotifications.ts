@@ -28,11 +28,14 @@ export function useNotifications(pollInterval = 30000) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthError, setIsAuthError] = useState(false);
   const lastCheckedRef = useRef<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch notifications
   const fetchNotifications = useCallback(async (showLoading = true) => {
+    // Session expired/invalid — stop hammering the API on every poll
+    if (isAuthError) return;
     try {
       if (showLoading) setIsLoading(true);
       setError(null);
@@ -44,6 +47,12 @@ export function useNotifications(pollInterval = 30000) {
       params.set("limit", "20");
 
       const response = await fetch(`/api/admin/notifications?${params}`);
+      if (response.status === 401 || response.status === 403) {
+        // Expected once the session expires — no console spam, stop polling
+        setIsAuthError(true);
+        setError("Sesi admin telah berakhir. Silakan login kembali.");
+        return;
+      }
       if (!response.ok) throw new Error("Failed to fetch notifications");
 
       const data: NotificationsResponse = await response.json();
@@ -87,7 +96,7 @@ export function useNotifications(pollInterval = 30000) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isAuthError]);
 
   // Mark notification as read
   const markAsRead = useCallback((notificationId: string) => {
@@ -121,6 +130,8 @@ export function useNotifications(pollInterval = 30000) {
 
   // Polling
   useEffect(() => {
+    if (isAuthError) return; // stop polling after session expiry
+
     intervalRef.current = setInterval(() => {
       fetchNotifications(false);
     }, pollInterval);
@@ -130,7 +141,7 @@ export function useNotifications(pollInterval = 30000) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [fetchNotifications, pollInterval]);
+  }, [fetchNotifications, pollInterval, isAuthError]);
 
   return {
     notifications,

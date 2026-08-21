@@ -26,7 +26,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const activeMenu = getActiveMenu(pathname);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(15000);
+  const { notifications, unreadCount, markAsRead, markAllAsRead, error } = useNotifications(15000);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -143,7 +143,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     {notifications.length === 0 ? (
                       <div className="px-4 py-8 text-center">
                         <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                        <p className="text-sm text-slate-500">Belum ada notifikasi</p>
+                        <p className="text-sm text-slate-500">
+                          {error ?? "Belum ada notifikasi"}
+                        </p>
                       </div>
                     ) : (
                       notifications.slice(0, 10).map((notification) => (

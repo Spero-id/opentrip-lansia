@@ -966,3 +966,42 @@ pm run lint: no new errors; only warnings in touched files.
 
 ### Catatan
 - `/api/upload` tetap admin-only (401 anonymous) — dipakai bersama editor public-safe (sanitizer tetap aktif).
+
+## [2026-08-18] Fix: console error "Failed to fetch notifications" (admin bell)
+
+**Goal:** Hilangkan console error berulang `/src/hooks/useNotifications.ts:47` — "Failed to fetch notifications" menggema tiap 15 detik di halaman admin.
+
+### Diagnosis (verifikasi end-to-end via dev server + DB Neon)
+- Error dilempar client saat `/api/admin/notifications` balas non-2xx. Endpoint **bukan** penyebab utama: session admin valid → HTTP 200 + data benar; session non-admin/expired → 401 (benar, `requireAdmin`).
+- Trigger nyata: **session expired/salah sementara halaman admin terbuka** → poll tiap 15s kena 401 → `console.error` + setError tiap poll (spam console + UI tersembunyi karena AdminShell tak pakai `error`).
+- Latent bug di route: `JSON.parse(booking.notes)` tanpa guard → booking dengan notes non-JSON meledakkan seluruh endpoint jadi 500; `since`/`unreadSince` invalid juga bisa 500.
+
+### Perubahan
+- `src/hooks/useNotifications.ts`:
+  - Status 401/403 → hentikan polling (`isAuthError`), set error "Sesi admin telah berakhir…" sekali, TANPA `console.error` spam.
+  - Polling effect berhenti permanen setelah auth error (interval dibersihkan).
+- `src/app/api/admin/notifications/route.ts`:
+  - `JSON.parse(notes)` dibungkus try/catch (notes rusak → `{}`, list tetap tersaji).
+  - `since`/`unreadSince` invalid date → fallback tanpa filter (bukan 500).
+- `src/app/admin/AdminShell.tsx`: dropdown kosong kini menampilkan pesan `error` dari hook (bukan "Belum ada notifikasi" menyesatkan saat sesi mati).
+
+### Verifikasi
+- `npm run lint`: 0 errors (64 warnings pre-existing) — warning `exhaustive-deps` untuk `isAuthError` sudah dibereskan.
+- `tsc --noEmit`: clean.
+- Smoke (dev server lokal, session admin asli + session dibuat via sign-in flow):
+  - Admin valid → 200; `since=not-a-date` → 200; `unreadSince=garbage` → 200; anonim → 401 (tetap).
+  - Booking test dengan `notes` plain-text "this is plain text, NOT json" → endpoint 200 & row tersaji (sebelumnya 500).
+- Semua data test dibersihkan (booking `OTL-NOTES-*`, user `pi-test-admin@opentrip.test`, sessions/accounts terkait dihapus).
+
+### Catatan
+- Belum di-commit (menunggu review user); 3 file berubah: `useNotifications.ts`, `notifications/route.ts`, `AdminShell.tsx`.
+- `unreadSince` tak pernah dikirim client (dead code) — dibiarkan, tidak bagian dari bug ini.
+
+### Session — Admin "Failed query" (session table) Diagnosis & Hardening
+- **Symptom:** Console error `Failed query: select ... from "session" where token = $1` from `requireAdminLayout` → admin layout 500/redirect.
+- **Diagnosis:** Transient Neon serverless endpoint failure — NOT an app bug. Verified: `session` table + columns match schema exactly; the exact query succeeds; session row + admin user valid; fresh sign-in → `/admin` → 200; 40 concurrent get-session requests all 200.
+- **Fix:** Added bounded retry (2 retries, 120ms/350ms) for transient Neon errors (`Error connecting to database`, HTTP 429/5xx, `Failed query`) — **reads only** (plain SELECT; writes/batches with any write statement are never retried) to avoid duplicate-write risk.
+  - `src/shared/db/retry.ts` (new): `isReadOnlyCall` / `isTransientError` / `RETRY_DELAYS_MS` (unit-tested via tsx — all 20 cases pass)
+  - `src/shared/db/index.ts`: wraps `neon()` with a `Proxy` apply-trap using the above policy
+- **Verification:** `tsc --noEmit` clean, `eslint src/shared/db/` clean, retry unit tests pass, live app: get-session returns session, `/admin` & `/admin/trips` 200, 20-burst all 200.
+- **If it recurs:** check the Neon project compute status / plan limits (free tier scale-to-zero cold starts are the prime suspect); the full original error's `cause`/HTTP status is visible in dev server logs.

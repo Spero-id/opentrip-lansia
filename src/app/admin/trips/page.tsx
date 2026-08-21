@@ -8,6 +8,7 @@ import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 import ImageManager from "./image-manager";
 import IconPicker, { DynamicLucideIcon } from "../components/icon-picker";
+import WysiwygEditor from "../components/wysiwyg-editor";
 
 const PROVINCES = [
   "Aceh",
@@ -597,7 +598,7 @@ export default function AdminTrips() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Trip" : "Tambah Trip"} size="xl">
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Trip" : "Tambah Trip"} size="2xl">
         <form onSubmit={handleSubmit} className="space-y-4">
           {hasErrors && (
             <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3">
@@ -645,9 +646,11 @@ export default function AdminTrips() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+            <label className="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+            <WysiwygEditor
+              value={form.description}
+              onChange={(content) => setForm((prev) => ({ ...prev, description: content }))}
+            />
           </div>
 
           <div className="border-t border-slate-200 pt-4">

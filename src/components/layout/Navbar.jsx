@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X, User, ShoppingBag, LogOut } from "lucide-react";
+import { Menu, X, User, ShoppingBag, LogOut, LayoutDashboard } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
@@ -190,6 +190,16 @@ export default function Navbar() {
                           <ShoppingBag className="w-4 h-4 shrink-0" />
                           Riwayat Trip
                         </Link>
+                        {session.user.role === "admin" && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4 shrink-0" />
+                            Dashboard Admin
+                          </Link>
+                        )}
                       </div>
 
                       {/* Logout */}
