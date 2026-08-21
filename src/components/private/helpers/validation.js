@@ -16,6 +16,14 @@ export function validate(form) {
   if (!form.catatan.trim())
     e.catatan = "Wajib diisi";
 
+  if (!form.email || !form.email.trim())
+    e.email = "Wajib diisi";
+  else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email.trim()))
+      e.email = "Format email tidak valid";
+  }
+
   if (
     form.tripType === "custom" &&
     !form.customTripName.trim()

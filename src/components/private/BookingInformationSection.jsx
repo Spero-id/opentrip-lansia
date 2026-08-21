@@ -37,14 +37,12 @@ export default function BookingInformationSection({
           </div>
         </Field>
 
-        <Field label="Email" hint="Konfirmasi akan dikirim ke email ini">
+        <Field label="Email" required error={errors.email} hint="Konfirmasi akan dikirim ke email ini">
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             </span>
-            <input type="email" placeholder="Ex. xxxx@xxxxx.xxx" value={form.email}
-              onChange={e => set("email", e.target.value)}
-              className={inputCls(null, "pl-9")} />
+            <input type="email" placeholder="Ex. xxxx@xxxxx.xxx" value={form.email} onChange={e => set("email", e.target.value)} className={inputCls(errors.email, "pl-9")} />
           </div>
         </Field>
 
