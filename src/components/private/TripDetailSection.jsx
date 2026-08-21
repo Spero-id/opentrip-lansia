@@ -22,19 +22,25 @@ export default function TripDetailSection({
       title="Detail Perjalanan"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <Field label="Tanggal Keberangkatan" required error={errors.tanggal}>
-          <div className="flex gap-2">
-            <input type="date" value={form.tanggal}
-              onChange={e => set("tanggal", e.target.value)}
-              className={inputCls(errors.tanggal, "flex-1")} />
-            <div className="relative w-30 shrink-0">
-              <input type="number" min="1" placeholder="Durasi" value={form.durasi}
-                onChange={e => set("durasi", e.target.value)}
-                className={inputCls(null, "pr-10")} />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">Hari</span>
-            </div>
+        <div className="flex gap-3 items-start">
+          <div className="flex-1 min-w-0">
+            <Field label="Tanggal Keberangkatan" required error={errors.tanggal}>
+              <input type="date" value={form.tanggal}
+                onChange={e => set("tanggal", e.target.value)}
+                className={inputCls(errors.tanggal, "w-full")} />
+            </Field>
           </div>
-        </Field>
+          <div className="w-28 shrink-0">
+            <Field label="Durasi">
+              <div className="relative">
+                <input type="number" min="1" value={form.durasi}
+                  onChange={e => set("durasi", e.target.value)}
+                  className={inputCls(null, "pr-10 w-full")} />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">Hari</span>
+              </div>
+            </Field>
+          </div>
+        </div>
 
         <Field label="Meeting Point" required error={errors.meetingPoint}>
           <input type="text"
