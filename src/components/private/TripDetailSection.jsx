@@ -61,7 +61,7 @@ export default function TripDetailSection({
         </div>
 
         <Field
-          label="Total Budget"
+          label="Budget per pax"
           hint={form.tripType === "explorer" && form.selectedDestinasi
             ? "Harga mengikuti destinasi yang dipilih"
             : "Kosongkan jika belum tahu"}
