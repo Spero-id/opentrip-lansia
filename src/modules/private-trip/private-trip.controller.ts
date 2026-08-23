@@ -20,12 +20,6 @@ function validateCreateRequest(body: Record<string, unknown>): ValidationError[]
     errors.push({ field: "durationDays", message: "Durasi perjalanan minimal 1 hari" });
   }
 
-  if (body.participantsCount == null || typeof body.participantsCount !== "number" || body.participantsCount < 6) {
-    errors.push({ field: "participantsCount", message: "Jumlah peserta minimal 6 orang" });
-  } else if (body.participantsCount > 10) {
-    errors.push({ field: "participantsCount", message: "Jumlah peserta maksimal 10 orang" });
-  }
-
   if (!body.destinationPreferences || typeof body.destinationPreferences !== "string" || body.destinationPreferences.trim().length === 0) {
     errors.push({ field: "destinationPreferences", message: "Destinasi yang diinginkan wajib diisi" });
   }
