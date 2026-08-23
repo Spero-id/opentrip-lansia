@@ -66,8 +66,22 @@ export default function BlogPage() {
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="group rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-lg hover:border-[#F49D1A]/30 transition-all p-6 flex flex-col"
+                className="group rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-lg hover:border-[#F49D1A]/30 transition-all overflow-hidden flex flex-col"
               >
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
+                  {post.coverImage ? (
+                    <img
+                      src={post.coverImage}
+                      alt={post.title}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#F49D1A]/10 to-[#1CA6B7]/10 text-[#F49D1A]/40">
+                      <Newspaper className="h-10 w-10" />
+                    </div>
+                  )}
+                </div>
+                <div className="p-6 flex flex-col flex-1">
                 <div className="text-[11px] font-semibold text-[#F49D1A] uppercase tracking-wider mb-2">
                   {dateLabel(post.publishedAt || post.createdAt)}
                 </div>
@@ -83,6 +97,7 @@ export default function BlogPage() {
                   Baca Selengkapnya
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </span>
+                </div>
               </Link>
             ))}
           </div>

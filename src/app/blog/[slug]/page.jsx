@@ -81,6 +81,13 @@ export default function BlogDetailPage({ params }) {
                 {post.excerpt}
               </p>
             )}
+            {post.coverImage && (
+              <img
+                src={post.coverImage}
+                alt={post.title}
+                className="mt-6 w-full rounded-2xl object-cover"
+              />
+            )}
           </div>
 
           <div className="mt-8 border-t border-gray-100 pt-8">
