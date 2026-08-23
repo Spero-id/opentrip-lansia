@@ -1,5 +1,5 @@
 import { A } from "./helpers/constants";
-import { Star, Heart } from "lucide-react";
+import { Star, Heart, X } from "lucide-react";
 import { formatRupiah } from "./helpers/helpers";
 
 export default function SelectedDestination({
@@ -54,10 +54,7 @@ export default function SelectedDestination({
         onClick={onClear}
         className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B7280] hover:text-red-400 hover:bg-red-50 transition-colors shrink-0 my-4 mr-4"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
+        <X size={14} strokeWidth={2.5} />
       </button>
     </div>
   );
