@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Clock, ChevronRight, AlertCircle } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PageHeader from "@/components/private/PageHeader";
@@ -218,19 +219,14 @@ export default function PrivateTripPage() {
             >
               <div className="flex items-center gap-3.5">
                 <span className="w-8 h-8 rounded-full bg-[#FFF1CC] border border-[#FDE6C8] flex items-center justify-center shrink-0">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EAA300" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 7v5l3 2" />
-                  </svg>
+                  <Clock size={16} color="#EAA300" strokeWidth={1.8} />
                 </span>
                 <div>
                   <p className="text-[13px] font-semibold text-[#1F2937] leading-tight">Sudah pernah mengajukan request?</p>
                   <p className="text-xs text-[#6B7280] leading-none mt-1">Pantau status dan lihat proposal dari admin</p>
                 </div>
               </div>
-              <svg className="w-5 h-5 text-[#EAA300] group-hover:translate-x-0.5 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
+              <ChevronRight className="w-5 h-5 text-[#EAA300] group-hover:translate-x-0.5 transition-transform shrink-0" />
             </a>
           </div>
         </div>
@@ -254,9 +250,7 @@ export default function PrivateTripPage() {
 
               {submitError && (
                 <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
-                  <svg className="shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
+                  <AlertCircle className="shrink-0 mt-0.5" size={16} />
                   <span>{submitError}</span>
                 </div>
               )}

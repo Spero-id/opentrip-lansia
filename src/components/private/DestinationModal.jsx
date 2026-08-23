@@ -66,7 +66,7 @@ export default function DestinationModal({
         </div>
 
         {/* Search */}
-        <div className="px-5 sm:px-6 pt-5 pb-4 border-b border-[#E5E7EB]">
+        <div className="px-5 sm:px-6 pt-5 pb-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280]" size={16} />
             <input
@@ -81,7 +81,7 @@ export default function DestinationModal({
 
         {/* Destinations list */}
         <div
-          className="flex-1 overflow-y-auto px-5 sm:px-6 py-5"
+          className="flex-1 overflow-y-auto px-5 sm:px-6 pt-3 pb-5"
           style={{ scrollbarWidth: "thin", scrollbarColor: "#e5e7eb transparent" }}
         >
           {destinations.length === 0 ? (
