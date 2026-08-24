@@ -1,4 +1,4 @@
-// Shared design tokens for the OpenTrip Lansia frontend.
+// Shared design tokens for the Jelajah Memoria frontend.
 //
 // These mirror the Private Trip module's visual language so every public page
 // (Contact, Private Trip, etc.) stays consistent. Import these instead of

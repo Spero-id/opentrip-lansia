@@ -5,7 +5,7 @@ import { bookings } from "@/modules/booking/booking.schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";
 
-const ALLOWED_METHODS = new Set(["BCA", "bri", "mandiri", "gopay", "ovo", "dana", "qris"]);
+const ALLOWED_METHODS = new Set(["BCA", "BRI", "MANDIRI", "GOPAY", "OVO", "DANA", "QRIS"]);
 
 export async function POST(req: NextRequest) {
   try {
