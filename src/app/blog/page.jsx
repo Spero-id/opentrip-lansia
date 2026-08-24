@@ -42,7 +42,7 @@ export default function BlogPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="mb-8 sm:mb-12">
             <h1 className="text-3xl sm:text-4xl font-bold mt-3 tracking-tight text-[#1F2937]">
-              Berita &amp; Artikel
+              Berita &amp; <span className="text-[#F49D1A]">Artikel</span>
             </h1>
             <p className="text-sm sm:text-base text-[#6B7280] mt-2">
               Info terbaru seputar open trip, destinasi, dan layanan kami.
