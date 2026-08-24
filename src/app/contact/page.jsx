@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User, MessagesSquare } from "lucide-react";
+import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User } from "lucide-react";
+
+// Tautan Google Maps untuk alamat pada panel "Hubungi Kami".
+const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    "Jl. Ratu Bidadari 3 No. 2, Ciputat, Tangerang Selatan"
+)}`;
 
 // Kartu Telepon di panel "Hubungi Kami" langsung membuka chat WhatsApp.
-// Nomor mengikuti yang tampil di panel: +62 851-1051-1403.
 const WA_NUMBER = "6285110511403";
 const WA_MESSAGE =
     process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ||
@@ -97,46 +101,52 @@ export default function ContactPage() {
                                         langsung datang ke lokasi kantor kami.
                                     </p>
 
-                                    <div className="space-y-3">
-                                        <a
-                                            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-4 bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3.5 transition-colors group"
-                                        >
-                                            <div className="w-10 h-10 rounded-full bg-white group-hover:bg-[#F49D1A] flex items-center justify-center shrink-0 transition-colors">
-                                                <Phone className="w-4 h-4 text-[#F49D1A] group-hover:text-white transition-colors" />
-                                            </div>
+                                    <ul className="space-y-8">
+                                        <li className="flex items-start gap-4">
+                                            <Phone className="w-4 h-4 text-[#F49D1A] shrink-0 mt-0.5" />
                                             <div>
                                                 <p className="text-xs text-white/50">Telepon</p>
-                                                <p className="text-sm font-semibold text-white">+62 851-1051-1403</p>
+                                                <a
+                                                    href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm font-normal text-white hover:underline underline-offset-2 decoration-white/60"
+                                                >
+                                                    +62 851-1051-1403
+                                                </a>
                                             </div>
-                                        </a>
+                                        </li>
 
-                                        <a
-                                            href="mailto:hello@opentrip.id"
-                                            className="flex items-center gap-4 bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3.5 transition-colors group"
-                                        >
-                                            <div className="w-10 h-10 rounded-full bg-white group-hover:bg-[#F49D1A] flex items-center justify-center shrink-0 transition-colors">
-                                                <Mail className="w-4 h-4 text-[#F49D1A] group-hover:text-white transition-colors" />
-                                            </div>
+                                        <li className="flex items-start gap-4">
+                                            <Mail className="w-4 h-4 text-[#F49D1A] shrink-0 mt-0.5" />
                                             <div>
                                                 <p className="text-xs text-white/50">Email</p>
-                                                <p className="text-sm font-semibold text-white">jelajahmemoria@gmail.com</p>
+                                                <a
+                                                    href="https://mail.google.com/mail/?view=cm&fs=1&to=jelajahmemoria@gmail.com"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm font-normal text-white hover:underline underline-offset-2 decoration-white/60"
+                                                >
+                                                    jelajahmemoria@gmail.com
+                                                </a>
                                             </div>
-                                        </a>
+                                        </li>
 
-                                        <div className="flex items-center gap-4 bg-white/5 rounded-xl px-4 py-3.5">
-                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
-                                                <MapPin className="w-4 h-4 text-[#F49D1A]" />
-                                            </div>
+                                        <li className="flex items-start gap-4">
+                                            <MapPin className="w-4 h-4 text-[#F49D1A] shrink-0 mt-0.5" />
                                             <div>
                                                 <p className="text-xs text-white/50">Alamat</p>
-                                                <p className="text-sm font-semibold text-white">Jl. Ratu Bidadari 3 no 2, Ciputat, Tangerang Selatan</p>
+                                                <a
+                                                    href={MAPS_URL}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm font-normal text-white leading-relaxed max-w-[240px] hover:underline underline-offset-2 decoration-white/60"
+                                                >
+                                                    Jl. Ratu Bidadari 3 no 2, Ciputat, Tangerang Selatan
+                                                </a>
                                             </div>
-                                        </div>
-
-                                    </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
 
@@ -179,7 +189,7 @@ export default function ContactPage() {
                                             </div>
                                             <div>
                                                 <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                    Phone
+                                                    Telepon
                                                 </label>
                                                 <div className="relative">
                                                     <Phone className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -195,7 +205,7 @@ export default function ContactPage() {
 
                                         <div>
                                             <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Name
+                                                Nama Lengkap
                                             </label>
                                             <div className="relative">
                                                 <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -211,18 +221,15 @@ export default function ContactPage() {
 
                                         <div>
                                             <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Message
+                                                Pesan
                                             </label>
-                                            <div className="relative">
-                                                <MessagesSquare className="w-4 h-4 absolute left-4 top-4 text-[#9CA3AF]" />
-                                                <textarea
-                                                    rows={5}
-                                                    name="message"
-                                                    placeholder="Tulis pesan kamu di sini..."
-                                                    required
-                                                    className={`${baseInput} pl-11 pr-4 text-[#1F2A37] resize-none ${normalBorder}`}
-                                                />
-                                            </div>
+                                            <textarea
+                                                rows={5}
+                                                name="message"
+                                                placeholder="Tulis pesan kamu di sini..."
+                                                required
+                                                className={`${baseInput} text-[#1F2A37] resize-none ${normalBorder}`}
+                                            />
                                         </div>
 
                                         {error && (
