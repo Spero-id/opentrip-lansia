@@ -181,7 +181,7 @@ export default function ContactPage() {
                                                     <input
                                                         type="email"
                                                         name="email"
-                                                        placeholder="nama@email.com"
+                                                        placeholder="Cth: budi@email.com"
                                                         required
                                                         className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
                                                     />
@@ -196,7 +196,7 @@ export default function ContactPage() {
                                                     <input
                                                         type="tel"
                                                         name="phone"
-                                                        placeholder="08xx-xxxx-xxxx"
+                                                        placeholder="081234567890"
                                                         className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
                                                     />
                                                 </div>
@@ -212,7 +212,7 @@ export default function ContactPage() {
                                                 <input
                                                     type="text"
                                                     name="name"
-                                                    placeholder="Nama lengkap"
+                                                    placeholder="Cth: Budi Santoso"
                                                     required
                                                     className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
                                                 />
