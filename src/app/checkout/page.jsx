@@ -137,26 +137,58 @@ function CheckoutContent() {
               <PaymentStep checkout={checkout} onPay={checkout.initiatePayment} onBack={checkout.goBack} />
             )}
             {checkout.step === "confirmation" && (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-20 h-20 rounded-full bg-[#1CA6B7]/15 flex items-center justify-center mb-6">
+              <div className="w-full max-w-md mx-auto py-16 text-center">
+                <div className="w-20 h-20 rounded-full bg-[#1CA6B7]/15 flex items-center justify-center mb-6 mx-auto">
                   <svg className="w-10 h-10 text-[#1CA6B7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <p className="text-lg font-semibold text-gray-900 mb-2">Bukti Pembayaran Terkirim!</p>
-                <p className="text-sm text-gray-500 mb-1">Pesanan Anda sedang menunggu verifikasi admin</p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Bukti transfer Anda telah <strong className="text-gray-900">tersimpan di akun</strong> dan sedang menunggu verifikasi admin.
+                  Seperti aplikasi KAI/tiket lain, bukti booking Anda bisa dilihat kapan saja di halaman <strong className="text-gray-900">Perjalanan Saya</strong>.
+                </p>
+
+                {/* Preview bukti yang baru diupload */}
+                {checkout.proofUrl && (
+                  <div className="mb-6 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Pratinjau Bukti Transfer</p>
+                    <a
+                      href={checkout.proofUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <img
+                        src={checkout.proofUrl}
+                        alt="Bukti transfer"
+                        className="w-full max-h-48 object-contain bg-white rounded-lg border border-gray-200 mx-auto"
+                      />
+                    </a>
+                    <p className="text-[10px] text-gray-400 mt-1">Klik untuk perbesar</p>
+                  </div>
+                )}
+
                 {checkout.orderId && (
-                  <p className="text-xs text-gray-400 mb-8">
+                  <p className="text-xs text-gray-400 mb-6">
                     Kode Booking: <span className="font-mono font-bold text-[#F49D1A]">{checkout.orderId}</span>
                   </p>
                 )}
-                {!checkout.orderId && <p className="text-xs text-gray-400 mb-8">&nbsp;</p>}
-                <button
-                  onClick={() => router.push("/")}
-                  className="bg-[#F49D1A] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
-                >
-                  Kembali ke Beranda
-                </button>
+
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link
+                    href="/my-trips"
+                    className="bg-[#F49D1A] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
+                  >
+                    Lihat di Perjalanan Saya
+                  </Link>
+                  <button
+                    onClick={() => router.push("/")}
+                    className="px-6 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Kembali ke Beranda
+                  </button>
+                </div>
               </div>
             )}
           </>

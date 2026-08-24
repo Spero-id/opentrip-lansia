@@ -7,16 +7,11 @@ import Image from "next/image";
 import { Upload } from "lucide-react";
 
 export default function PaymentStep({ checkout, onPay, onBack }) {
-  useEffect(() => {
-    checkout.setPaymentMethod?.("BCA");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
       <div className="lg:col-span-3 space-y-6">
         <BookingSummary destination={checkout.destination} />
-        <PaymentSelector />
+        <PaymentSelector paymentMethod={checkout.paymentMethod} setPaymentMethod={checkout.setPaymentMethod} />
         <ProofUploader checkout={checkout} />
 
         {checkout.error && (
@@ -66,7 +61,7 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
   );
 }
 
-function PaymentSelector() {
+function PaymentSelector({ paymentMethod, setPaymentMethod }) {
   const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
@@ -81,41 +76,96 @@ function PaymentSelector() {
     return () => { cancelled = true; };
   }, []);
 
-  const account = accounts.find((a) => a.method?.toLowerCase() === "bca") || null;
+  const bcaAccount = accounts.find((a) => a.method?.toLowerCase() === "bca") || null;
+
+  const isBCA = paymentMethod === "BCA";
+  const isQRIS = paymentMethod === "QRIS";
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Metode Pembayaran</h2>
         <p className="text-xs text-gray-400 mt-0.5">
-          Pembayaran dilakukan via transfer bank BCA.
+          Pilih salah satu metode pembayaran di bawah ini.
         </p>
       </div>
 
-      <div className="flex items-center justify-between rounded-xl border border-[#F49D1A] bg-[#F49D1A]/5 ring-2 ring-[#F49D1A]/20 p-4">
-        <div className="flex items-center gap-3">
-          <div className="w-14 h-9 flex items-center justify-center">
-            <Image src="/BCA-logo-2.webp" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
+      <div className="space-y-3">
+        {/* BCA Option */}
+        <label
+          className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
+          onClick={() => setPaymentMethod?.("BCA")}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-9 flex items-center justify-center">
+              <Image src="/BCA-logo-2.webp" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">BCA</p>
+              <p className="text-[11px] text-gray-500">Transfer Bank BCA</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-bold text-gray-900">BCA</p>
-            <p className="text-[11px] text-gray-500">Transfer Bank BCA</p>
-          </div>
-        </div>
-        <span className="w-5 h-5 rounded-full bg-[#F49D1A] flex items-center justify-center">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </span>
-      </div>
+          <span className="w-5 h-5 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: isBCA ? "#F49D1A" : "transparent", border: isBCA ? "none" : "2px solid #D1D5DB" }}
+          >
+            {isBCA && (
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </span>
+        </label>
 
-      {account ? (
-        <AccountCard account={account} />
-      ) : (
-        <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-          Rekening BCA belum diatur. Silakan hubungi admin untuk melakukan pembayaran.
-        </p>
-      )}
+        {bcaAccount && isBCA && (
+          <AccountCard account={bcaAccount} />
+        )}
+
+        {/* QRIS Option */}
+        <label
+          className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
+          onClick={() => setPaymentMethod?.("QRIS")}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-9 flex items-center justify-center">
+              <Image
+                src="/logo_qris.webp"
+                alt="QRIS"
+                width={62}
+                height={62}
+                className="object-contain max-h-9"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">QRIS</p>
+              <p className="text-[11px] text-gray-500">Scan QRIS untuk pembayaran</p>
+            </div>
+          </div>
+          <span className="w-5 h-5 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: isQRIS ? "#F49D1A" : "transparent", border: isQRIS ? "none" : "2px solid #D1D5DB" }}
+          >
+            {isQRIS && (
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </span>
+        </label>
+
+        {/* QRIS QR Code Display - only show when QRIS selected */}
+        {isQRIS && (
+          <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center">
+            <p className="text-xs font-semibold text-gray-600 mb-2">QR Code QRIS</p>
+            <Image
+              src="/qris_sivarya.jpeg"
+              alt="QRIS QR Code"
+              width={200}
+              height={200}
+              className="mx-auto object-contain rounded-lg bg-white p-2"
+            />
+            <p className="text-[11px] text-gray-400 mt-2">Scan kode QR di atas menggunakan aplikasi e-wallet/banking</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
