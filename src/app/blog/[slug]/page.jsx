@@ -52,44 +52,53 @@ export default function BlogDetailPage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       {status !== "found" || !post ? (
-        <div className="flex items-center justify-center min-h-[60vh] text-sm text-gray-400">
+        <div className="flex items-center justify-center min-h-[60vh] text-sm text-[#6B7280]">
           Memuat artikel...
         </div>
       ) : (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#F49D1A] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Kembali ke Blog
-          </Link>
+        <main className="min-h-screen bg-[#F9FAFB]">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#6B7280] hover:text-[#F49D1A] transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Kembali ke Blog
+            </Link>
 
-          <div className="mt-6">
-            <div className="text-xs font-semibold text-[#F49D1A] uppercase tracking-wider mb-3">
-              {dateLabel(post.publishedAt || post.createdAt)}
+            <div className="mt-6">
+              <div className="text-xs font-semibold text-[#F49D1A] uppercase tracking-wider mb-3">
+                {dateLabel(post.publishedAt || post.createdAt)}
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight text-[#1F2937]">
+                {post.title}
+              </h1>
+              {post.excerpt && (
+                <p className="text-sm sm:text-base text-[#6B7280] mt-4 leading-relaxed">
+                  {post.excerpt}
+                </p>
+              )}
+              {post.coverImage && (
+                <img
+                  src={post.coverImage}
+                  alt={post.title}
+                  className="mt-6 w-full rounded-xl object-cover"
+                />
+              )}
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight">
-              {post.title}
-            </h1>
-            {post.excerpt && (
-              <p className="text-sm sm:text-base text-gray-500 mt-4 leading-relaxed">
-                {post.excerpt}
-              </p>
-            )}
-          </div>
 
-          <div className="mt-8 border-t border-gray-100 pt-8">
-            <div
-              className="text-sm text-gray-700 leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
-              dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
-            />
+            <div className="mt-8 border-t border-slate-200 pt-8">
+              <div
+                className="text-sm text-[#475569] leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
+                dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
+              />
+            </div>
           </div>
-        </div>
+        </main>
       )}
       <Subs />
       <Footer />
