@@ -49,12 +49,12 @@ export async function sendContactEmail(data: ContactEmailData) {
       <h3 style="color: #333;">Pesan</h3>
       <p style="color: #555; line-height: 1.6;">${data.message}</p>
       <hr style="border: 1px solid #eee;" />
-      <p style="color: #999; font-size: 12px;">Email ini dikirim otomatis dari formulir Contact Us OpenTrip Lansia.</p>
+      <p style="color: #999; font-size: 12px;">Email ini dikirim otomatis dari formulir Contact Us Jelajah Memoria.</p>
     </div>
   `;
 
   await transporter.sendMail({
-    from: `"OpenTrip Lansia" <${process.env.SMTP_USER}>`,
+    from: `"Jelajah Memoria" <${process.env.SMTP_USER}>`,
     to: adminEmail,
     subject: `Pesan Baru dari Contact Us - ${data.name}`,
     replyTo: data.email,
