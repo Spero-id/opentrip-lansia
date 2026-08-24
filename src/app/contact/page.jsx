@@ -2,6 +2,13 @@
 
 import { useState, useRef } from "react";
 import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User, MessagesSquare } from "lucide-react";
+
+// Kartu Telepon di panel "Hubungi Kami" langsung membuka chat WhatsApp.
+// Nomor mengikuti yang tampil di panel: +62 851-1051-1403.
+const WA_NUMBER = "6285110511403";
+const WA_MESSAGE =
+    process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ||
+    "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
@@ -92,7 +99,9 @@ export default function ContactPage() {
 
                                     <div className="space-y-3">
                                         <a
-                                            href="tel:+6281234567890"
+                                            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="flex items-center gap-4 bg-white/5 hover:bg-white/10 rounded-xl px-4 py-3.5 transition-colors group"
                                         >
                                             <div className="w-10 h-10 rounded-full bg-white group-hover:bg-[#F49D1A] flex items-center justify-center shrink-0 transition-colors">
