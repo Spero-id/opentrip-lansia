@@ -34,7 +34,7 @@ export function useCheckout(initialDestination) {
     voucherCode: "",
     appliedVoucher: null,
     voucherError: "",
-    paymentMethod: null,
+    paymentMethod: "BCA",
     proofUrl: "",
     orderId: "",
     totalAmount: 0,
