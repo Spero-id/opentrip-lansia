@@ -1,6 +1,7 @@
 import "dotenv/config";
 import crypto from "crypto";
-import { db } from "../shared/db";
+import postgres from "postgres";
+import { drizzle } from "drizzle-orm/postgres-js";
 import {
   destinationCategories, horecaTypes, horeca,
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
@@ -8,6 +9,9 @@ import {
 } from "../db/schema";
 import { account } from "../modules/auth/better-auth.schema";
 import { users } from "../modules/auth/auth.schema";
+
+const client = postgres(process.env.DATABASE_URL!);
+const db = drizzle(client);
 
 function hash(pw: string) {
   return crypto.createHash("sha256").update(pw).digest("hex");
