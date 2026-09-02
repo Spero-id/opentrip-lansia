@@ -54,10 +54,10 @@ export async function sendContactEmail(data: ContactEmailData) {
   `;
 
   await transporter.sendMail({
-    from: `"Jelajah Memoria" <${process.env.SMTP_USER}>`,
+    from: `"Jelajah Memoria" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     to: adminEmail,
     subject: `Pesan Baru dari Contact Us - ${data.name}`,
-    replyTo: data.email,
+    replyTo: "no-reply@jelajahmemoria.com",
     html,
   });
 }
@@ -78,9 +78,10 @@ export async function sendSubscriptionConfirmationEmail(data: SubscriptionEmailD
   `;
 
   await transporter.sendMail({
-    from: `"Jelajah Memoria" <${process.env.SMTP_USER}>`,
+    from: `"Jelajah Memoria" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     to: data.email,
     subject: "Selamat Datang di Jelajah Memoria!",
+    replyTo: "no-reply@jelajahmemoria.com",
     html,
   });
 }
