@@ -61,3 +61,26 @@ export async function sendContactEmail(data: ContactEmailData) {
     html,
   });
 }
+
+interface SubscriptionEmailData {
+  email: string;
+}
+
+export async function sendSubscriptionConfirmationEmail(data: SubscriptionEmailData) {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #F49D1A;">Selamat Datang di Jelajah Memoria!</h2>
+      <hr style="border: 1px solid #eee;" />
+      <p style="color: #555; line-height: 1.6;">Terima kasih sudah berlangganan newsletter kami. Kami akan mengirimkan info trip & promo terbaru langsung ke email Anda.</p>
+      <hr style="border: 1px solid #eee;" />
+      <p style="color: #999; font-size: 12px;">Email ini dikirim otomatis dari sistem newsletter Jelajah Memoria.</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"Jelajah Memoria" <${process.env.SMTP_USER}>`,
+    to: data.email,
+    subject: "Selamat Datang di Jelajah Memoria!",
+    html,
+  });
+}
