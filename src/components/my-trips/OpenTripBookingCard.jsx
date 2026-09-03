@@ -11,9 +11,10 @@ import {
   icons,
 } from "./constants";
 
-export default function OpenTripBookingCard({ booking }) {
+export default function OpenTripBookingCard({ booking, imageUrl }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   let notesObj = {};
   if (booking.notes) {
@@ -46,6 +47,8 @@ export default function OpenTripBookingCard({ booking }) {
     }
   };
 
+  const showImage = imageUrl && !imgError;
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
       {/* Header */}
@@ -53,10 +56,26 @@ export default function OpenTripBookingCard({ booking }) {
         id={`open-trip-card-${booking.id}`}
         role="button"
         tabIndex={0}
-        className="w-full text-left px-5 py-4 flex items-start justify-between gap-4 hover:bg-gray-50/70 transition cursor-pointer"
+        className="w-full text-left px-5 py-4 flex items-start gap-4 hover:bg-gray-50/70 transition cursor-pointer"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen((v) => !v); } }}
       >
+        {showImage ? (
+          <img
+            src={imageUrl}
+            alt={destinationName}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover shrink-0 bg-gray-100"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl shrink-0 bg-gray-100 flex items-center justify-center text-gray-400 font-bold text-lg"
+          >
+            {destinationName.slice(0, 2).toUpperCase()}
+          </div>
+        )}
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-[#F49D1A] border border-[#F49D1A]/30">
