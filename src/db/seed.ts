@@ -1,7 +1,7 @@
 import "dotenv/config";
 import crypto from "crypto";
-import postgres from "postgres";
-import { drizzle } from "drizzle-orm/postgres-js";
+import { hashPassword } from "../shared/utils/password";
+import { db } from "../shared/db";
 import {
   destinationCategories, horecaTypes, horeca,
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
@@ -10,11 +10,8 @@ import {
 import { account } from "../modules/auth/better-auth.schema";
 import { users } from "../modules/auth/auth.schema";
 
-const client = postgres(process.env.DATABASE_URL!);
-const db = drizzle(client);
-
 function hash(pw: string) {
-  return crypto.createHash("sha256").update(pw).digest("hex");
+  return hashPassword(pw);
 }
 
 async function seed() {
@@ -31,10 +28,14 @@ async function seed() {
   ]);
   console.log("  Users: Admin OTL, Siti Agen, Budi Lansia");
 
+  const [adminPassword, agentPassword, userPassword] = await Promise.all([
+    hash("admin"), hash("agent"), hash("user"),
+  ]);
+
   await db.insert(account).values([
-    { id: crypto.randomUUID(), userId: adminId, accountId: adminId, providerId: "credential", password: hash("admin") },
-    { id: crypto.randomUUID(), userId: agentId, accountId: agentId, providerId: "credential", password: hash("agent") },
-    { id: crypto.randomUUID(), userId: userId, accountId: userId, providerId: "credential", password: hash("user") },
+    { id: crypto.randomUUID(), userId: adminId, accountId: adminId, providerId: "credential", password: adminPassword },
+    { id: crypto.randomUUID(), userId: agentId, accountId: agentId, providerId: "credential", password: agentPassword },
+    { id: crypto.randomUUID(), userId: userId, accountId: userId, providerId: "credential", password: userPassword },
   ]);
   console.log("  Credential accounts created");
 

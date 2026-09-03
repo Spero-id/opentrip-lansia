@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { referralRepository } from "@/modules/referral";
+import { requireAdmin } from "@/shared/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const data = await referralRepository.findAllCommissions();
     return NextResponse.json(data);
@@ -12,6 +16,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const body = await req.json();
     const data = await referralRepository.createCommission(body);

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X, User, ShoppingBag, LogOut } from "lucide-react";
+import { Menu, X, User, ShoppingBag, LogOut, LayoutDashboard } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
@@ -112,24 +112,51 @@ export default function Navbar() {
                     aria-label="Menu akun"
                     aria-expanded={dropdownOpen}
                     className={cn(
-                      "group relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors cursor-pointer hover:bg-[#c47d12] focus:outline-none overflow-hidden",
-                      dropdownOpen && "focus:ring-2 focus:ring-[#F49D1A]/50 focus:ring-offset-1 focus:ring-offset-transparent"
+                      "group relative flex items-center gap-2 rounded-full p-1 sm:pr-3 transition-colors cursor-pointer focus:outline-none",
+                      dropdownOpen
                     )}
                   >
-                    {session.user.image ? (
-                      <>
-                        <img
-                          src={session.user.image}
-                          alt="Foto profil"
-                          className="h-full w-full object-cover"
-                        />
-                        <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-                      </>
-                    ) : (
-                      <span className="text-sm font-semibold">
-                        {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+
+                    <span className="hidden sm:flex flex-col items-end leading-tight text-left">
+                      <span
+                        className={cn(
+                          "max-w-[140px] truncate text-sm font-semibold",
+                          isScrolled ? "text-white" : "text-black"
+                        )}
+                      >
+                        {session.user.name || "Pengguna"}
                       </span>
-                    )}
+                      <span
+                        className={cn(
+                          "text-[11px] font-medium",
+                          isScrolled ? "text-white/70" : "text-slate-500"
+                        )}
+                      >
+                        {session.user.role === "admin"
+                          ? "Admin"
+                          : session.user.role === "agent"
+                          ? "Agen"
+                          : "Member"}
+                      </span>
+                    </span>
+
+                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
+                      {session.user.image ? (
+                        <>
+                          <img
+                            src={session.user.image}
+                            alt="Foto profil"
+                            className="h-full w-full object-cover"
+                          />
+                          <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                        </>
+                      ) : (
+                        <span className="text-sm font-semibold">
+                          {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                        </span>
+                      )}
+                    </span>
+                    
                   </button>
 
                   {/* Dropdown panel */}
@@ -163,6 +190,16 @@ export default function Navbar() {
                           <ShoppingBag className="w-4 h-4 shrink-0" />
                           Riwayat Trip
                         </Link>
+                        {session.user.role === "admin" && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4 shrink-0" />
+                            Dashboard Admin
+                          </Link>
+                        )}
                       </div>
 
                       {/* Logout */}

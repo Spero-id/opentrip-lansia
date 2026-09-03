@@ -148,21 +148,21 @@ export const features = [
     title: "Banyak Pilihan Destinasi",
     desc: "Mau liburan ke Bandung, Lembang, Yogyakarta, Semarang, Surabaya, Gunung ataupun Laut semuanya ada di sini",
     detail:
-      "Kami punya lebih dari 100 destinasi yang tersebar di seluruh Indonesia, mulai dari wisata alam, budaya, sampai kuliner. Setiap trip udah dikurasi langsung sama tim lokal biar kamu dapet pengalaman paling otentik, bukan cuma sekadar foto-foto di tempat rame.",
+      "Kami menyediakan lebih dari 100 destinasi pilihan di seluruh Indonesia, mulai dari pesona alam, kekayaan budaya, hingga wisata kuliner. Setiap rute perjalanan dirancang secara maksimal dengan menyisipkan unsur edukatif kaya wawasan, serta dikurasi untuk memberikan pengalaman yang otentik dan mendalam.",
   },
   {
     icon: BadgePercent,
     title: "Transaksi Mudah & Transparan",
     desc: "Keamanan dan privasi transaksi online Anda menjadi prioritas kami.",
     detail:
-      "Semua pembayaran diproses lewat payment gateway resmi dan terenkripsi, gak ada biaya tersembunyi yang muncul belakangan. Kamu juga bisa cicil buat trip tertentu, dan dapet invoice jelas buat setiap transaksi yang dilakukan.",
+      "Seluruh proses pembayaran dilakukan secara langsung melalui transfer bank dan QRIS resmi yang aman, menjamin privasi Anda tanpa ada biaya tersembunyi di kemudian hari. Kami juga menyediakan kemudahan opsi cicilan untuk paket trip tertentu, lengkap dengan penerbitan invoice resmi untuk setiap transaksi.",
   },
   {
     icon: Headset,
-    title: "Layanan 24/7",
+    title: "Layanan Ramah Lansia & Dokumentasi Lengkap",
     desc: "Tim support kami siap membantu ada kapanpun dan dimana pun",
     detail:
-      "Ada kendala pas lagi trip di tengah malam sekalipun? Tim CS kami standby lewat WhatsApp, email, atau live chat. Rata-rata respon di bawah 5 menit, jadi kamu gak perlu khawatir kalau ada hal mendadak di perjalanan.",
+      "Kami menghadirkan perjalanan inklusif yang sangat nyaman bagi lansia, lengkap dengan dukungan pendamping (caregiver) khusus yang siap siaga selama trip. Agar momen berharga tersebut abadi, kami juga menyediakan fasilitas dokumentasi profesional dalam bentuk digital maupun cetak untuk setiap peserta.",
   },
 ];
 
@@ -170,12 +170,12 @@ export const faqs = [
   {
     question: "Bagaimana cara booking trip di Jelajah Memoria?",
     answer:
-      "Pilih destinasi yang kamu mau, klik tombol Booking, isi data diri dan tanggal keberangkatan, lalu lakukan pembayaran. E-voucher akan dikirim otomatis ke email kamu.",
+      "Kamu dapat melakukan pemesanan langsung melalui website kami dengan memilih paket trip yang diinginkan, lalu ikuti petunjuk pengisian data dan pembayaran yang tersedia.",
   },
   {
     question: "Apa saja metode pembayaran yang tersedia?",
     answer:
-      "Kami menerima transfer bank, e-wallet (GoPay, OVO, Dana), dan kartu kredit/debit. Semua transaksi diproses lewat payment gateway yang aman.",
+      "Kami menerima pembayaran melalui transfer bank dan QRIS. Seluruh transaksi diproses secara aman melalui rekening resmi kami.",
   },
   {
     question: "Bagaimana cara menghubungi customer service?",
@@ -190,11 +190,11 @@ export const faqs = [
   {
     question: "Apa saja yang termasuk dalam paket trip?",
     answer:
-      "Umumnya termasuk transportasi, akomodasi, tiket masuk destinasi, dan guide. Detail lengkap fasilitas bisa dicek di halaman masing-masing paket.",
+      "Fasilitas standar kami umumnya sudah mencakup transportasi, akomodasi, tiket masuk destinasi, dokumentasi foto (digital dan cetak), caregiver, guide, serta merchandise. Untuk detail fasilitas yang lebih lengkap dan spesifik, silakan cek langsung di halaman masing-masing paket trip.",
   },
   {
     question: "Bagaimana jika saya ingin membatalkan trip?",
     answer:
-      "Pembatalan bisa dilakukan sesuai kebijakan refund yang berlaku, tergantung seberapa dekat waktu pembatalan dengan tanggal keberangkatan.",
+      "Pembatalan perjalanan dapat dilakukan sesuai dengan kebijakan pengembalian dana (refund) yang berlaku, paling lambat 7 hari (H-7) sebelum tanggal keberangkatan.",
   },
 ];

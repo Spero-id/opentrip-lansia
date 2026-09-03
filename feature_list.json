@@ -1,10 +1,10 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-08-10",
+  "last_updated": "2026-08-13",
   "summary": {
-    "total_features": 52,
+    "total_features": 54,
     "in_review": 19,
-    "completed": 19,
+    "completed": 22,
     "to_do": 14,
     "not_started": 0
   },
@@ -20,7 +20,9 @@
           "description": "Run init.sh, confirm npm run lint passes on the current codebase",
           "status": "completed",
           "priority": 1,
-          "verification": ["./init.sh"],
+          "verification": [
+            "./init.sh"
+          ],
           "evidence": "init.sh passes, 280 tests pass, lint configured"
         }
       ]
@@ -36,8 +38,12 @@
           "description": "Admin can create/edit/archive trips with all destination fields inline (location, category, accessibility, highlights, facilities, itinerary jsonb, meeting points jsonb). UI: List page with modal + dedicated create/edit pages. API: GET/POST/PUT/DELETE /api/trips with nested itinerary items.",
           "status": "in_review",
           "priority": 10,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "List page (/admin/trips), create/edit pages, API endpoints, service/repository layer. Destinations merged into trips - no separate destination entity."
         },
         {
@@ -46,8 +52,12 @@
           "description": "Admin can add/edit departures with start_date, end_date, max/min participants, status. Schema & repository exist. UI pending.",
           "status": "to_do",
           "priority": 11,
-          "depends_on": ["feat-010"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-010"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Schema tripDepartures exists in module, admin UI belum ada"
         },
         {
@@ -56,8 +66,12 @@
           "description": "Admin can set tiered pricing (Dewasa/Anak/Early Bird) with atomic quota_booked updates. Schema & repository exist. UI pending.",
           "status": "to_do",
           "priority": 12,
-          "depends_on": ["feat-011"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-011"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Schema tripPrices + updateQuota repository exist, admin UI belum ada"
         },
         {
@@ -66,8 +80,12 @@
           "description": "CRUD itinerary items per trip: day, time, activity, description, location. Integrated into trip form. No longer references separate destination entity.",
           "status": "in_review",
           "priority": 13,
-          "depends_on": ["feat-010"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-010"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "itineraryItems table, repository methods (findItineraryByTripId/saveItinerary), trip form with per-day itinerary sections, linked destinations from master data"
         }
       ]
@@ -83,8 +101,12 @@
           "description": "Public trip listing with search/filter, detail page. Data from trips table (which now contains all destination fields). FilterPanel, Gallery, Tabs (tentang/itinerary/meeting/ulasan), BookingCard.",
           "status": "completed",
           "priority": 20,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "/destinasi and /destinasi/[id] pages from GH repo, replaces old /trips route"
         },
         {
@@ -93,8 +115,12 @@
           "description": "Login and register pages from GH repo with password visibility toggle, Google OAuth button. Navbar with scroll-aware styling, Register/Login CTAs. Footer with 4-column layout.",
           "status": "completed",
           "priority": 21,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "/login, /register pages, Navbar.jsx, Footer.jsx from GH repo"
         },
         {
@@ -103,8 +129,12 @@
           "description": "Modular landing page with HeroSection, MarketingSection, DestinationSection, TutorialSection, TestimonialsSection, FAQSection. Clean component split.",
           "status": "completed",
           "priority": 22,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Landing page with 6 modular sections from GH repo"
         }
       ]
@@ -120,8 +150,13 @@
           "description": "User can book trip via /booking page, booking form with participant quantity per price tier, name & phone input, submission.",
           "status": "in_review",
           "priority": 30,
-          "depends_on": ["feat-012", "feat-021"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-012",
+            "feat-021"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "/booking page, BookingForm component, booking module with createBooking service"
         },
         {
@@ -130,8 +165,12 @@
           "description": "Payment page with booking code, total amount, payment method selection (manual/Midtrans), confirmation. Schema for gateway webhook ready.",
           "status": "in_review",
           "priority": 31,
-          "depends_on": ["feat-030"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-030"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "POST /api/payments (auth+owner+method/proof validation, amount dari server), upload dengan magic-byte check, admin review approve/reject + note, /checkout/pay/[id], bukti+catatan admin di /my-trips"
         },
         {
@@ -140,8 +179,12 @@
           "description": "Integrasi payment gateway sungguhan dengan webhook dan atomic status updates. Schema paymentWebhookEvents sudah siap.",
           "status": "to_do",
           "priority": 32,
-          "depends_on": ["feat-031"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-031"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "payment.schema.ts with paymentWebhookEvents table, refunds table"
         },
         {
@@ -150,8 +193,12 @@
           "description": "Apply promo code with validation, discount calculation (percentage/fixed), usage limit, max discount. Service exists, UI + API endpoint needed.",
           "status": "to_do",
           "priority": 33,
-          "depends_on": ["feat-030"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-030"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "promotion.service.ts with full applyPromo logic"
         },
         {
@@ -160,8 +207,13 @@
           "description": "User booking history dashboard at /my-trips displaying Open Trip bookings and Private Trip requests with tabs, search, status filter, expandable card details, and Navbar/MobileMenu integration.",
           "status": "completed",
           "priority": 34,
-          "depends_on": ["feat-030", "feat-055"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-030",
+            "feat-055"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "/my-trips page, GET /api/bookings, POST /api/checkout session integration, Navbar.jsx, MobileMenu.jsx"
         }
       ]
@@ -174,12 +226,16 @@
         {
           "id": "feat-040",
           "title": "Admin dashboard layout & sidebar",
-          "description": "Admin sidebar with 10 nav items, KPI cards, quick actions, recent bookings table.",
+          "description": "Admin sidebar with 10 nav items, KPI cards, quick actions, recent bookings table. Sidebar rebuilt on ShadCN (SidebarProvider/SidebarInset), dark theme scoped, orange active states.",
           "status": "in_review",
           "priority": 40,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
-          "evidence": "Admin layout with sidebar, dashboard page with KPI cards"
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
+          "evidence": "Admin layout with ShadCN sidebar (admin-sidebar.tsx), dashboard page with KPI cards"
         },
         {
           "id": "feat-041",
@@ -187,8 +243,12 @@
           "description": "Destinations merged into trips. No separate destination entity. All destination fields (location, category, accessibility, etc.) are now inline on the trips table.",
           "status": "completed",
           "priority": 41,
-          "depends_on": ["feat-010"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-010"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Destinations table removed, all fields merged into trips. Admin destination pages and API removed. Seeder updated."
         },
         {
@@ -197,8 +257,12 @@
           "description": "CRUD for HORECA with type, star rating, accessibility, phone, address.",
           "status": "in_review",
           "priority": 42,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Admin horeca page with modal form, API routes (GET/POST/PUT/DELETE at /api/horeca, /api/horeca/[id], /api/horeca-types)"
         },
         {
@@ -207,8 +271,12 @@
           "description": "CRUD for vendors with type, contact person, service area, verified status.",
           "status": "in_review",
           "priority": 43,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Admin vendors page with modal form, API routes (GET/POST/PUT/DELETE at /api/vendors, /api/vendors/[id], /api/vendor-types)"
         },
         {
@@ -217,8 +285,12 @@
           "description": "CRUD for promo codes with discount type (percentage/nominal), max usage, min purchase.",
           "status": "in_review",
           "priority": 44,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Admin promotions page, API routes (GET/POST/PUT/DELETE at /api/promotions, /api/promotions/[id])"
         },
         {
@@ -227,8 +299,12 @@
           "description": "CRUD for trip galleries with public/private status.",
           "status": "in_review",
           "priority": 45,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Admin galleries page, API routes (GET/POST/PUT/DELETE at /api/galleries, /api/galleries/[id])"
         },
         {
@@ -237,8 +313,12 @@
           "description": "Review list with status management (pending/approved/rejected) and featured flag.",
           "status": "in_review",
           "priority": 46,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Admin reviews page, API routes (GET at /api/reviews, PUT/DELETE at /api/reviews/[id])"
         },
         {
@@ -247,8 +327,12 @@
           "description": "CRUD for agent commissions with status lifecycle (pending/approved/paid/rejected).",
           "status": "in_review",
           "priority": 47,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Admin commissions page, API routes (GET/POST/PUT/DELETE at /api/commissions, /api/commissions/[id])"
         },
         {
@@ -257,9 +341,13 @@
           "description": "CRUD for blog posts with draft/published status, slug, excerpt.",
           "status": "in_review",
           "priority": 48,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
-          "evidence": "Admin blogs page, API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages"
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
+          "evidence": "Admin blogs page (list + create/edit modal + delete, error feedback, slug auto dari judul), API routes (GET/POST/PUT/DELETE at /api/blogs, /api/blogs/[id]), public blog pages. CRUD di-fe: authorId di-inject dari session (fallback admin), slug unik auto-generate, publishedAt di-set saat published, updatedAt ter-update saat edit. | Blog image upload: coverImage column (cover_image text, migrated live), admin form uploader (/admin/blogs uses /api/upload), WYSIWYG inline image upload handler, cover thumbnails on public /blog cards and /blog/[slug] hero. Verified: lint 0 errors, tsc clean, service round-trip, API create/update/delete with coverImage."
         },
         {
           "id": "feat-049",
@@ -267,8 +355,12 @@
           "description": "Registered users management page at /admin/users with search, role filter, edit role/details, and delete functionality.",
           "status": "completed",
           "priority": 49,
-          "depends_on": ["feat-040"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-040"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "/admin/users page, GET/PUT/DELETE /api/users endpoints, auth repository methods, e2e/admin/users.spec.ts"
         }
       ]
@@ -284,8 +376,13 @@
           "description": "Public form page where logged-in users can submit private trip requests with destination preferences, duration, participants, budget, and special requirements. Complete with validation and Rupiah formatting.",
           "status": "completed",
           "priority": 50,
-          "depends_on": ["feat-021"],
-          "verification": ["npm run lint", "npm test"],
+          "depends_on": [
+            "feat-021"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm test"
+          ],
           "evidence": "src/app/private-trip/page.tsx with full form, validation, and API integration"
         },
         {
@@ -294,8 +391,13 @@
           "description": "Secure API endpoints for creating, listing, and viewing private trip requests with Better Auth session validation and input validation.",
           "status": "completed",
           "priority": 51,
-          "depends_on": ["feat-021"],
-          "verification": ["npm run lint", "npm test"],
+          "depends_on": [
+            "feat-021"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm test"
+          ],
           "evidence": "CRUD endpoints at /api/private-trip with auth and admin routes"
         },
         {
@@ -305,7 +407,9 @@
           "status": "completed",
           "priority": 52,
           "depends_on": [],
-          "verification": ["npm run lint"],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "CTA section on src/app/page.tsx with 'Rencanakan Private Trip' button"
         },
         {
@@ -314,8 +418,14 @@
           "description": "Admin list and detail pages for reviewing private trip requests, creating proposals, and managing status transitions.",
           "status": "completed",
           "priority": 53,
-          "depends_on": ["feat-040", "feat-051"],
-          "verification": ["npm run lint", "npm test"],
+          "depends_on": [
+            "feat-040",
+            "feat-051"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm test"
+          ],
           "evidence": "Admin pages at /admin/private-trips with status workflow"
         },
         {
@@ -324,8 +434,13 @@
           "description": "Admin can submit proposals (price, inclusions, exclusions) and users can accept, reject, or request revision with state transition validation.",
           "status": "completed",
           "priority": 54,
-          "depends_on": ["feat-053"],
-          "verification": ["npm run lint", "npm test"],
+          "depends_on": [
+            "feat-053"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm test"
+          ],
           "evidence": "Proposal API, service layer with state machine, user dashboard actions"
         },
         {
@@ -334,8 +449,14 @@
           "description": "User profile tab showing private trip requests, proposals, and ability to respond to proposals.",
           "status": "completed",
           "priority": 55,
-          "depends_on": ["feat-021", "feat-054"],
-          "verification": ["npm run lint", "npm test"],
+          "depends_on": [
+            "feat-021",
+            "feat-054"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm test"
+          ],
           "evidence": "Private Trip tab on profile page with proposal actions"
         }
       ]
@@ -351,9 +472,13 @@
           "description": "Public blog pages with published article listing (grid cards) and detail view.",
           "status": "in_review",
           "priority": 60,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
-          "evidence": "src/app/blog/page.tsx, src/app/blog/[slug]/page.tsx"
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
+          "evidence": "src/app/blog/page.tsx, src/app/blog/[slug]/page.tsx | Blog image upload: coverImage column (cover_image text, migrated live), admin form uploader (/admin/blogs uses /api/upload), WYSIWYG inline image upload handler, cover thumbnails on public /blog cards and /blog/[slug] hero. Verified: lint 0 errors, tsc clean, service round-trip, API create/update/delete with coverImage."
         },
         {
           "id": "feat-061",
@@ -361,8 +486,12 @@
           "description": "Schema blogCategories exists. Management UI and API needed.",
           "status": "to_do",
           "priority": 61,
-          "depends_on": ["feat-048"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-048"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "blog.schema.ts with blogCategories table"
         }
       ]
@@ -378,8 +507,12 @@
           "description": "Agent dashboard with referral stats, copyable link, commissions history table.",
           "status": "in_review",
           "priority": 70,
-          "depends_on": ["feat-021"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-021"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "src/app/agent/page.tsx, referral module (6 tables)"
         },
         {
@@ -388,8 +521,12 @@
           "description": "Commission payout workflow. Schema exists (commissionPayouts, payoutCommissions). API endpoints needed.",
           "status": "to_do",
           "priority": 71,
-          "depends_on": ["feat-070"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-070"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "referral.schema.ts with commissionPayouts + payoutCommissions tables"
         },
         {
@@ -398,8 +535,12 @@
           "description": "Loyalty transactions tracking and redeem. Schema exists. Implementation needed.",
           "status": "to_do",
           "priority": 72,
-          "depends_on": ["feat-070"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-070"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "referral.schema.ts with loyaltyTransactions table"
         }
       ]
@@ -415,9 +556,13 @@
           "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL : saat ini 57 endpoint 100% public.",
           "status": "to_do",
           "priority": 2,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
-          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Endpoint lain masih perlu diaudit.",
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
+          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Admin PAGES kini server-side guard via helper reusable requireAdminLayout() di src/shared/auth-server.ts (dipakai /admin/layout.tsx; non-admin → /forbidden). Duplikasi requireAdmin di api/private-trip/admin dihapus — kini import dari src/shared/auth. Endpoint API admin lain masih perlu diaudit/dilindungi.",
           "critical": true
         },
         {
@@ -426,8 +571,12 @@
           "description": "Image upload system for trip media, gallery, review media, blog covers. Schema media exists.",
           "status": "to_do",
           "priority": 80,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "master.schema.ts with media table"
         },
         {
@@ -436,8 +585,12 @@
           "description": "Tabel auditLogs sudah ada. Integrasi ke modul-modul lain untuk mencatat perubahan status.",
           "status": "to_do",
           "priority": 81,
-          "depends_on": ["feat-080"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-080"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "contact.schema.ts with auditLogs table"
         },
         {
@@ -446,9 +599,43 @@
           "description": "Notification system for booking confirmation, payment reminders, private trip status changes.",
           "status": "to_do",
           "priority": 82,
-          "depends_on": ["feat-080"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-080"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": ""
+        },
+        {
+          "id": "feat-084",
+          "title": "Phase 2 Security: XSS sanitasi blog & upload hardening",
+          "description": "Sanitasi stored-XSS pada konten blog (WYSIWYG → dangerouslySetInnerHTML) via sanitize-html allowlist, diterapkan saat simpan (blogService.createBlog/updateBlog) dan saat render (blog/[slug]). Hardening /api/upload: requireAdmin, hapus SVG, validasi magic-byte, ekstensi dari isi file, DELETE cek akses. /api/payments/upload pakai shared image-guard (AVIF brand-spesifik).",
+          "status": "completed",
+          "priority": 2,
+          "depends_on": [
+            "feat-080"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm run build"
+          ],
+          "evidence": "src/shared/utils/sanitize.ts + image-guard.ts; POST /api/blogs dialihkan ke blogService.createBlog; live test: script/on*/javascript: di-strip, anon upload 401, HTML palsu/SVG 400, admin PNG 200"
+        },
+        {
+          "id": "feat-085",
+          "title": "Phase 2 Security: bcrypt password hashing & quota atomic",
+          "description": "Ganti hash password SHA-256 (tanpa salt) ke bcryptjs. auth.config pakai hashPassword/verifyPassword (src/shared/utils/password.ts) dengan fallback verify SHA-256 lama + re-hash otomatis saat login (via auth.controller POST wrapper untuk /api/auth/sign-in/email). seed.ts pakai bcrypt. updateQuota trip.repository.ts tambah kondisi atomic quota_booked + qty <= quota untuk cegah oversell.",
+          "status": "completed",
+          "priority": 1,
+          "depends_on": [
+            "feat-084"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm run build"
+          ],
+          "evidence": "tsc 0 error, eslint 0 error, build sukses; live: login admin 200 + hash migrasi ke \\ (verified via SQL), password salah 401; quota: +1 OK, oversell +20 ditahan 0 row, restore OK"
         }
       ]
     },
@@ -463,8 +650,12 @@
           "description": "Reusable Button, Input, Card, Modal, Loading/Spinner, Badge components. Saat ini semua inline.",
           "status": "to_do",
           "priority": 90,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Hanya 4 komponen shared (Navbar, Footer, ConditionalFooter, CopyButton)"
         },
         {
@@ -473,8 +664,12 @@
           "description": "FAQ page with accordion/toggle answers. Link exists in Navbar but page is missing.",
           "status": "to_do",
           "priority": 91,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Link FAQ di Navbar → route /faq belum ada"
         },
         {
@@ -483,8 +678,12 @@
           "description": "About page with company info, team, values. Link exists in Navbar but page is missing.",
           "status": "to_do",
           "priority": 92,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Link Tentang di Navbar → route /about belum ada"
         },
         {
@@ -493,8 +692,12 @@
           "description": "Skeleton screens, loading states, empty state illustrations for all list pages.",
           "status": "to_do",
           "priority": 93,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": ""
         },
         {
@@ -503,8 +706,12 @@
           "description": "Full audit and improvement for mobile layout across all pages.",
           "status": "to_do",
           "priority": 94,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": ""
         },
         {
@@ -513,8 +720,12 @@
           "description": "Contact form page from GH repo at /contact with contact info panel (phone, email, address, hours), form submission with success state. Hero section with background image.",
           "status": "completed",
           "priority": 95,
-          "depends_on": ["feat-001"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "/contact page from GH repo with full layout"
         },
         {
@@ -523,8 +734,12 @@
           "description": "Multi-step checkout at /checkout with destination selection, participant form, meeting point, voucher, payment methods, Midtrans Snap integration, confirmation screen.",
           "status": "completed",
           "priority": 97,
-          "depends_on": ["feat-020"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-020"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "/checkout page, useCheckout hook, components from GH repo"
         },
         {
@@ -533,8 +748,12 @@
           "description": "UI for forgot password and reset password. Better Auth sudah support.",
           "status": "to_do",
           "priority": 96,
-          "depends_on": ["feat-021"],
-          "verification": ["npm run lint"],
+          "depends_on": [
+            "feat-021"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
           "evidence": "Better Auth configured but no UI for password reset"
         },
         {
@@ -543,8 +762,12 @@
           "description": "Comprehensive E2E test suite covering all features: public pages (landing, trips, auth, checkout, contact, private-trip), admin CRUD pages (dashboard, trips, destinations, blogs, commissions, galleries, horeca, pesanan, private-trips, promotions, reviews, vendors), and API endpoint smoke tests.",
           "status": "completed",
           "priority": 98,
-          "depends_on": ["feat-001"],
-          "verification": ["npx playwright test"],
+          "depends_on": [
+            "feat-001"
+          ],
+          "verification": [
+            "npx playwright test"
+          ],
           "evidence": "81 tests in 19 files across e2e/public/, e2e/admin/, e2e/api/, all passing"
         }
       ]
@@ -561,7 +784,10 @@
           "status": "completed",
           "priority": 99,
           "depends_on": [],
-          "verification": ["npm run lint", "GET /api/destinations"],
+          "verification": [
+            "npm run lint",
+            "GET /api/destinations"
+          ],
           "evidence": "bookedCount dikembalikan API (verified: Pantai Parangtritis bookedCount=1); blok kuota dirender di BookingCard; lint 0 error pada file yang diubah"
         },
         {
@@ -571,8 +797,23 @@
           "status": "completed",
           "priority": 100,
           "depends_on": [],
-          "verification": ["npm run lint", "GET /api/blogs?published=1"],
+          "verification": [
+            "npm run lint",
+            "GET /api/blogs?published=1"
+          ],
           "evidence": "GET /api/blogs?published=1 hanya mengembalikan published; /blog dan /blog/[slug] merespons 200"
+        },
+        {
+          "id": "feat-101",
+          "title": "Metode Pembayaran Hanya BCA",
+          "description": "Halaman pembayaran hanya menampilkan BCA (satu kartu, auto-selected, layout disesuaikan). Backend /api/payments menerima method BCA. Kartu rekening BCA diambil dari payment_accounts (user insert manual via SQL).",
+          "status": "in_review",
+          "priority": 101,
+          "depends_on": [],
+          "verification": [
+            "npm run lint"
+          ],
+          "evidence": "PaymentSelector (PaymentStep.jsx) satu kartu BCA + auto-select; ALLOWED_METHODS berisi BCA; query SQL INSERT/upsert payment_accounts diserahkan ke user"
         }
       ]
     }

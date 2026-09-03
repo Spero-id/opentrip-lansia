@@ -210,26 +210,22 @@ export function useCheckout(initialDestination) {
 
   // Save booking to DB when clicking "Lanjut ke Pembayaran"
   const goToPayment = useCallback(async () => {
-    let snapshot = null;
+    if (!state.destination) return;
 
-    setState((prev) => {
-      if (!prev.destination) return prev;
-      snapshot = {
-        orderId: OrderDomain.generateOrderId(),
-        destination: prev.destination,
-        pax: prev.pax,
-        customer: prev.customer,
-        voucherCode: prev.voucherCode,
-        appliedVoucher: prev.appliedVoucher,
-        paymentMethod: prev.paymentMethod,
-        proofUrl: prev.proofUrl,
-        subtotal: (prev.destination?.priceMin ?? 0) * prev.pax,
-        totalAmount: getTotal(prev),
-      };
-      return { ...prev, isLoading: true, error: null, orderId: snapshot.orderId };
-    });
+    const snapshot = {
+      orderId: OrderDomain.generateOrderId(),
+      destination: state.destination,
+      pax: state.pax,
+      customer: state.customer,
+      voucherCode: state.voucherCode,
+      appliedVoucher: state.appliedVoucher,
+      paymentMethod: state.paymentMethod,
+      proofUrl: state.proofUrl,
+      subtotal: (state.destination?.priceMin ?? 0) * state.pax,
+      totalAmount: getTotal(state),
+    };
 
-    if (!snapshot) return;
+    setState((prev) => ({ ...prev, isLoading: true, error: null, orderId: snapshot.orderId }));
 
     try {
       const res = await fetch("/api/checkout", {
@@ -272,7 +268,7 @@ export function useCheckout(initialDestination) {
         isLoading: false,
       }));
     }
-  }, [getTotal]);
+  }, [state, getTotal]);
 
   // Submit payment proof to create a payment record
   const initiatePayment = useCallback(async () => {
@@ -372,3 +368,5 @@ export function useCheckout(initialDestination) {
     goBack,
   };
 }
+
+

@@ -7,11 +7,16 @@ import Image from "next/image";
 import { Upload } from "lucide-react";
 
 export default function PaymentStep({ checkout, onPay, onBack }) {
+  useEffect(() => {
+    checkout.setPaymentMethod?.("BCA");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
       <div className="lg:col-span-3 space-y-6">
         <BookingSummary destination={checkout.destination} />
-        <PaymentSelector method={checkout.paymentMethod} onChange={checkout.setPaymentMethod} />
+        <PaymentSelector />
         <ProofUploader checkout={checkout} />
 
         {checkout.error && (
@@ -61,7 +66,7 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
   );
 }
 
-function PaymentSelector({ method, onChange }) {
+function PaymentSelector() {
   const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
@@ -76,56 +81,41 @@ function PaymentSelector({ method, onChange }) {
     return () => { cancelled = true; };
   }, []);
 
-  const account = accounts.find((a) => a.method === method) || null;
-
-  const methods = [
-    { id: "bri", alt: "BRI", icon: "/logo-BRI.png" },
-    { id: "mandiri", alt: "Mandiri", icon: "/logo-Mandiri.png" },
-    { id: "gopay", alt: "GoPay", icon: "/logo-Gopay.png" },
-    { id: "ovo", alt: "OVO", icon: "/logo-Ovo.jpg" },
-    { id: "dana", alt: "DANA", icon: "/logo-Dana.webp" },
-    { id: "qris", alt: "QRIS", icon: "/logo-Qris-2.png" },
-  ];
+  const account = accounts.find((a) => a.method?.toLowerCase() === "bca") || null;
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Metode Pembayaran</h2>
-        <p className="text-xs text-gray-400 mt-0.5">Pilih metode pembayaran yang kamu inginkan.</p>
+        <p className="text-xs text-gray-400 mt-0.5">
+          Pembayaran dilakukan via transfer bank BCA.
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {methods.map((m) => {
-          const active = method === m.id;
-          return (
-            <button
-              key={m.id}
-              onClick={() => onChange(m.id)}
-              className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all ${
-                active
-                  ? "border-[#F49D1A] bg-[#F49D1A]/5 ring-2 ring-[#F49D1A]/20"
-                  : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-              }`}
-            >
-              <div className="w-full h-9 flex items-center justify-center">
-                <Image src={m.icon} alt={m.alt} width={62} height={62} className="object-contain max-h-9" />
-              </div>
-              <span className={`text-xs font-semibold ${active ? "text-[#F49D1A]" : "text-gray-600"}`}>
-                {m.alt}
-              </span>
-              {active && (
-                <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#F49D1A] flex items-center justify-center">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </span>
-              )}
-            </button>
-          );
-        })}
+      <div className="flex items-center justify-between rounded-xl border border-[#F49D1A] bg-[#F49D1A]/5 ring-2 ring-[#F49D1A]/20 p-4">
+        <div className="flex items-center gap-3">
+          <div className="w-14 h-9 flex items-center justify-center">
+            <Image src="/BCA-logo-2.webp" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-gray-900">BCA</p>
+            <p className="text-[11px] text-gray-500">Transfer Bank BCA</p>
+          </div>
+        </div>
+        <span className="w-5 h-5 rounded-full bg-[#F49D1A] flex items-center justify-center">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
       </div>
 
-      {account && <AccountCard account={account} />}
+      {account ? (
+        <AccountCard account={account} />
+      ) : (
+        <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+          Rekening BCA belum diatur. Silakan hubungi admin untuk melakukan pembayaran.
+        </p>
+      )}
     </div>
   );
 }

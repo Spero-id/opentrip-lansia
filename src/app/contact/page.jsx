@@ -107,7 +107,7 @@ export default function ContactPage() {
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/50">Telepon</p>
-                                                <p className="text-sm font-semibold text-white">+62 812-3456-7890</p>
+                                                <p className="text-sm font-semibold text-white">+62 851-1051-1403</p>
                                             </div>
                                         </a>
 
@@ -120,7 +120,7 @@ export default function ContactPage() {
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/50">Email</p>
-                                                <p className="text-sm font-semibold text-white">hello@opentrip.id</p>
+                                                <p className="text-sm font-semibold text-white">jelajahmemoria@gmail.com</p>
                                             </div>
                                         </a>
 
@@ -130,19 +130,10 @@ export default function ContactPage() {
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/50">Alamat</p>
-                                                <p className="text-sm font-semibold text-white">Jl. Merdeka No. 10, Bandung, Jawa Barat</p>
+                                                <p className="text-sm font-semibold text-white">Jl. Ratu Bidadari 3 no 2, Ciputat, Tangerang Selatan</p>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-4 bg-white/5 rounded-xl px-4 py-3.5">
-                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
-                                                <ClockIcon className="w-4 h-4 text-[#F49D1A]" />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-white/50">Jam Operasional</p>
-                                                <p className="text-sm font-semibold text-white">Senin – Sabtu, 09.00 – 18.00</p>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -1,9 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/shared/db";
+import { hashPassword, verifyPassword } from "@/shared/utils/password";
 import { users } from "./auth.schema";
 import { session, account, verification } from "./better-auth.schema";
-
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
@@ -21,21 +21,8 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
     password: {
-      hash: async (password) => {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-        const hashArray = new Uint8Array(hashBuffer);
-        return Array.from(hashArray).map(b => b.toString(16).padStart(2, "0")).join("");
-      },
-      verify: async ({ password, hash }) => {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-        const hashArray = new Uint8Array(hashBuffer);
-        const hashed = Array.from(hashArray).map(b => b.toString(16).padStart(2, "0")).join("");
-        return hashed === hash;
-      },
+      hash: (password) => hashPassword(password),
+      verify: ({ password, hash }) => verifyPassword(password, hash),
     },
   },
   socialProviders: {

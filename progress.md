@@ -700,3 +700,308 @@ pm run lint: no new errors; only warnings in touched files.
 - Targeted eslint 6 file: 0 error (2 warning pre-existing: `Newspaper` tak terpakai di blog, `<img>` di WhatsAppFloat sesuai pola repo).
 - Playwright (channel chrome, dev server :3000): tombol `a[aria-label="WhatsApp"]` muncul dengan label "Hubungi Kami" di kelima halaman ✅
 - Perubahan belum di-commit.
+## Session 27 - ShadCN Sidebar untuk Admin
+
+**Goal:** Mengganti struktur sidebar admin yang dibuat manual (custom aside) dengan sidebar ShadCN yang sudah terpasang di project, disesuaikan dengan navigasi admin OpenTrip Lansia. Topbar (notifikasi + profil) dipertahankan.
+
+**Completed:**
+- `src/app/admin/components/nav-data.ts` (baru) - ekstraksi array `navGroups` (Dashboard, Trip & Tempat, Pengguna & Partner, Marketing, Order, Konten) dari layout.tsx menjadi modul bertipe (`AdminNavGroup`/`AdminNavItem`, ikon lucide).
+- `src/app/admin/components/admin-sidebar.tsx` (baru) - komponen ShadCN: `Sidebar` (collapsible="icon") + `SidebarHeader` (logo brand) + `SidebarContent` (SidebarGroup/GroupLabel/Menu/MenuButton dari nav-data, active state via usePathname: exact match /admin, startsWith selainnya, `render={<Link/>}` untuk navigasi) + `SidebarFooter` ("Kembali ke Website Utama") + `SidebarRail`. Item aktif di-warnai oranye #F49D1A via `data-active:bg-[#F49D1A]`.
+- `src/app/globals.css` - blok variabel `--sidebar-*` dark scoped `.admin-sidebar-dark` + `[data-mobile="true"][data-sidebar="sidebar"]` (mobile sheet portaled) agar sidebar admin ikut dark mode tanpa memengaruhi area konten/dashboard.
+- `src/app/admin/layout.tsx` - rombak total: hapus custom aside, mobile overlay/hamburger manual, dan state sidebarOpen; kini `SidebarProvider` + `<AdminSidebar />` + `SidebarInset` (bg-slate-100/70); topbar notifikasi + profil dipindah jadi header di dalam SidebarInset dengan `SidebarTrigger` menggantikan hamburger. `useAdminAuth()` tetap.
+
+**Verification:**
+- Targeted eslint (3 file diubah): 0 error, 1 warning `<img>` (pola sama dengan kode asli).
+- `npm run lint` penuh: error/warning hanya pre-existing (use-mobile.ts set-state-in-effect, useNotifications.ts, icon-picker, my-trips, dll.) - tidak ada dari file yang diubah.
+- `tsc --noEmit`: error hanya pre-existing di `e2e/api/endpoints.spec.ts`.
+- Perubahan belum di-commit.
+
+**Risiko:** dark mode hanya di-scope ke sidebar; jika ingin seluruh halaman admin ikut dark, perlu refactor terpisah. `h-15` (Tailwind v4 dynamic spacing) digunakan untuk logo.
+## Session 27b - Softkan Kontras Aktif + Fix Hover Sidebar Admin
+
+**Goal:** (1) Menurunkan kontras item aktif sidebar admin (solid oranye -> tint), (2) memperbaiki bug: hover pada item aktif menimpa warna aktif dengan slate abu-abu.
+
+**Analisis (dikonfirmasi via kompilasi CSS `npx @tailwindcss/cli`):**
+- `.hover\:bg-sidebar-accent:hover` = spesifisitas (0,2,0); `.data-active\:bg-[\#F49D1A]:where(...)` = (0,1,0) karena `:where()` bernilai 0. Hover menang walau posisinya di atas.
+- Fix = stacked variant `data-active:hover:*` yang menghasilkan selector (0,2,0) namun muncul lebih belakang di stylesheet.
+
+**Completed:**
+- `src/app/admin/components/admin-sidebar.tsx` (baris 53) - className `SidebarMenuButton` diubah:
+  - Sebelum: `data-active:bg-[#F49D1A] data-active:text-white data-active:font-semibold`
+  - Sesudah: `data-active:bg-[#F49D1A]/15 data-active:text-[#F49D1A] data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]`
+  - `font-medium` (bukan `font-semibold`) karena warna sudah jadi penanda utama dan konsisten dengan default shadcn.
+  - Hover item aktif menaikkan tint 15%->20%, teks tetap oranye; item non-aktif tetap hover slate normal.
+
+**Verification:**
+- `npx eslint`: 0 error (1 warning `<img>` pre-existing).
+- Kompilasi CSS: `.data-active\:bg-[\#F49D1A]/15` (ln 4906), `.data-active\:text-[\#F49D1A]` (ln 4916), `.data-active\:hover\:bg-[\#F49D1A]/20` (ln 4923) dan `.data-active\:hover\:text-[\#F49D1A]` (ln 4926) semua muncul SETELAH `.hover\:bg-sidebar-accent:hover` (ln 3610) -> stacked variant menang.
+- Perubahan belum di-commit.
+## Session 27c - Breadcrumb Header Admin + Penerapan Ulang Hapus Ikon
+
+**Goal:** (1) Menambahkan breadcrumb di header admin dengan format "Label > Menu", pengecualian Dashboard cukup "Dashboard". (2) Menerapkan ulang penghapusan ikon menu sidebar yang sempat kerevert.
+
+**Completed - Breadcrumb:**
+- `src/app/admin/components/nav-data.ts` - tambah helper `getActiveMenu(pathname)` yang mengembalikan grup + item aktif (logika sama dengan isActive sidebar: exact match /admin, startsWith selainnya).
+- `src/app/admin/layout.tsx` - header kini berisi `SidebarTrigger` + `Separator` vertikal + `Breadcrumb`:
+  - Format: `{label} > {menu}` (mis. "Trip & Tempat > Paket Trip") via `BreadcrumbPage` + `BreadcrumbSeparator` (chevron).
+  - Dashboard (`/admin`): label null -> hanya menampilkan "Dashboard" tanpa separator.
+  - Breadcrumb disembunyikan di mobile (`hidden md:flex`) mengikuti pola halaman dashboard contoh.
+
+**Completed - Re-apply hapus ikon (file sempat kerevert):**
+- `src/app/admin/components/admin-sidebar.tsx` - `<Icon />` dan `const Icon = item.icon` dihapus lagi; `collapsible="icon"` -> `collapsible="offcanvas"` (mode collapse-ikon tak relevan tanpa ikon); class `group-data-[collapsible=icon]:hidden` di logo dihapus.
+- `src/app/admin/components/nav-data.ts` - import lucide + field `icon` dibersihkan ulang dari tipe & data.
+
+**Catatan:** Di antara tugas, `admin-sidebar.tsx` dan `nav-data.ts` kembali ke versi berikon (kemungkinan revert/kembali-commit oleh user); seluruh perubahan diterapkan ulang dan terverifikasi.
+
+**Verification:**
+- `npx eslint` (3 file): 0 error, 1 warning `<img>` pre-existing.
+- `npx tsc --noEmit`: error hanya pre-existing `e2e/api/endpoints.spec.ts`.
+- Perubahan belum di-commit.
+## Session 27d - Fix Error Hidrasi Breadcrumb Admin
+
+**Goal:** Perbaiki hydration error yang muncul di semua halaman `/admin` (dikonfirmasi via Playwright console capture saat login admin).
+
+**Akar masalah:**
+- `src/app/admin/layout.tsx` breadcrumb menaruh `<BreadcrumbSeparator />` (renders `<li>`) DI DALAM `<BreadcrumbItem />` (renders `<li>`) -> HTML invalid `<li>` bersarang `<li>` -> React "Hydration failed ... <li> cannot be a descendant of <li>".
+- Terkonfirmasi: 6 console error + 3 pageerror "Hydration failed" di `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`.
+
+**Solusi (applied):**
+- `src/app/admin/layout.tsx` - susun ulang breadcrumb menjadi dua `BreadcrumbItem` terpisah dengan `BreadcrumbSeparator` sebagai sibling di antaranya (pola sama dengan `src/app/dashboard/page.tsx`). Breadcrumb kini tampil di semua ukuran layar (tidak lagi `hidden md:flex`).
+
+**Catatan selidik (temuan sekunder, tidak diubah):**
+- `src/middleware.ts:23` - redirect login untuk `/admin/*` tanpa session memakai `redirect="/"` bukan path asli (`/login?redirect=/`), sehingga redirect balik ke beranda bukan ke halaman admin yang diminta.
+
+**Verification:**
+- `npx eslint src/app/admin/layout.tsx`: 0 error.
+- Playwright (login admin@otl.id, console capture) pada `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`: 0 console error, 0 pageerror (sebelumnya 6+3).
+- Script verifikasi sementara dihapus.
+- Perubahan belum di-commit.
+
+
+## Session 31 - Payment BCA only, Navbar role, Admin pages secure, Lint clean
+
+**1. Metode pembayaran hanya BCA**
+- `src/app/api/payments/route.ts` — `ALLOWED_METHODS` ditambah `"BCA"`.
+- `src/components/checkout/PaymentStep.jsx` — PaymentSelector jadi satu kartu BCA auto-selected (+`useEffect` set paymentMethod="BCA"); AccountCard ambil dari `payment_accounts` (lookup case-insensitive), fallback banner "Rekening BCA belum diatur".
+- **User action:** insert/upsert BCA ke `payment_accounts` sendiri (query diberikan): `method='BCA'`.
+
+**2. Nama + role di Navbar**
+- `src/components/layout/Navbar.jsx` — avatar dropdown menampilkan nama + role (admin→"Admin", agent→"Agen", lain→"Member") dari `session.user.role`; `hidden sm:flex`, warna ikut `isScrolled`.
+
+**3. Admin pages secure (server-side)**
+- `src/app/admin/layout.tsx` jadi server component: `auth.api.getSession({ headers: await headers() })` → no login redirect `/login`, role != admin redirect `/forbidden`, baru render shell.
+- Shell client dipindah ke `src/app/admin/AdminShell.tsx` (tanpa `useAdminAuth`).
+- `src/middleware.ts` komentar diperbarui.
+- Risk tersisa: API admin (mis. `/api/trips?all=true`, `/api/promotions`) masih publik — scope feat-080.
+
+**4. Lint bersih (303 error → 0)**
+- `eslint.config.mjs` — tambah `public/**` ke globalIgnores (±265 error vendor `public/hugerte` hilang).
+- `src/hooks/use-mobile.ts` — `useSyncExternalStore`.
+- `src/app/admin/components/icon-picker.tsx` — pola `mounted`+effect diganti `useSyncExternalStore`; import `Check` dibuang.
+- `src/hooks/useNotifications.ts` — fetch awal pakai microtask boundary.
+- `src/app/my-trips/page.jsx` — `fetchData` pindah ke atas + `useCallback`; dep `router` ditambah.
+
+**Hasil:** `npm run lint` → 0 errors, 59 warnings (semua `<img>`). `tsc --noEmit` hanya error pre-existing `e2e/api/endpoints.spec.ts`. Belum di-commit.
+
+## Session 28 — Refactor Auth Guard Admin: Helper Server-side + Hapus Duplikasi
+
+**Goal:** Ekstrak logic auth guard di `src/app/admin/layout.tsx` menjadi helper server-side yang reusable, hapus duplikasi `requireAdmin` di API private-trip, dan bersihkan dead code.
+
+**Completed:**
+- **Dikerjakan via 2 sub-agent paralel (pola todo → sub-agent):**
+  - Sub-agent A: `src/shared/auth-server.ts` (baru) — `requireAdminLayout()` membungkus getSession → redirect `/login?redirect=/admin` bila tak login, `/forbidden` bila role ≠ admin, return session.
+  - Sub-agent A: `src/app/admin/layout.tsx` — body layout jadi `await requireAdminLayout(); return <AdminShell>{children}</AdminShell>;` (19 → 7 baris), import `headers`/`redirect`/`auth` yang tak terpakai dihapus.
+  - Sub-agent B: `src/app/api/private-trip/admin/route.ts` & `[id]/route.ts` — hapus definisi lokal `requireAdmin` (duplikat), ganti `import { requireAdmin } from "@/shared/auth"` (pola sama dengan `api/trips/route.ts`).
+  - Sub-agent B: hapus `src/hooks/useAdminAuth.ts` (dead code — tidak ada yang meng-import).
+
+**Verification:**
+- `npx tsc --noEmit`: hanya error pre-existing di `e2e/api/endpoints.spec.ts:21` (tidak disentuh).
+- `npx eslint` targeted pada 4 file berubah + 1 baru: 0 error, 0 warning.
+- `npm run lint` (full): error yang muncul semuanya pre-existing di file lain (icon-picker, use-mobile, useNotifications, my-trips) — bukan di file session ini.
+- Fix minor: trailing newline di `admin/layout.tsx`.
+
+- Perubahan belum di-commit (menunggu review user).
+
+## Session 30 — Verifikasi Fitur Pasca Phase 1 (API Security Lockdown)
+
+**Goal:** Pastikan fitur-fitur tetap berfungsi setelah Phase 1 mengunci 21+ endpoint API dengan `requireAdmin`, dan lakukan smoke test runtime (bukan hanya statis).
+
+**Dikerjakan:**
+- Smoke test live terhadap dev server (:3000) dengan database Neon terhubung.
+- **13 endpoint publik** tanpa auth → semuanya 200: `/api/trips`, `/api/blogs`, `/api/blogs?published=1`, `/api/horeca`, `/api/horeca-types`, `/api/vendors`, `/api/vendor-types`, `/api/promotions`, `/api/reviews`, `/api/galleries`, `/api/meeting-points`, `/api/destinations/categories`, `/api/payments/accounts`.
+- **5 endpoint terkunci** tanpa auth → semuanya 401: `/api/users`, `/api/admin/dashboard`, `/api/admin/notifications`, `/api/commissions`, `/api/bookings`.
+- **Login admin** (`admin@otl.id` / `admin` dari seed) → 200; lalu endpoint admin dengan session → 200 (users, dashboard, notifications, commissions).
+- Blog by-id: admin GET 200, anon GET blog published 200, anon PUT → 401. Halaman blog publik memakai `/api/blogs?published=1` + filter client-side, bukan rute by-id.
+- Catatan: `GET /api/blogs/{non-uuid}` → 500 (artefak test, slug tidak valid utk findById) — bukan regresi.
+
+**Verification:**
+- Smoke test: **PASS** — semua fitur publik tetap terbuka, proteksi admin aktif, admin tetap bisa akses.
+
+**Catatan:**
+- Belum ada commit untuk sesi ini (menunggu review user / lanjut Phase 2).
+
+## Session 31 — Phase 2: Sanitasi XSS Blog & Hardening Upload
+
+**Goal:** Menutup celah keamanan Phase 2: (a) stored XSS pada konten blog (WYSIWYG → `dangerouslySetInnerHTML`), (b) `/api/upload` yang terbuka tanpa auth, menerima SVG, dan tanpa validasi magic-byte.
+
+**Completed — #3 Sanitasi XSS Blog:**
+- `src/shared/utils/sanitize.ts` (baru) — wrapper `sanitize-html` dengan allowlist tag/atribut/kelas, skema http/https/mailto, `transformTags` a→`rel=noopener noreferrer target=_blank`, img hanya terima src http/https atau path lokal.
+- `src/modules/blog/blog.service.ts` — `createBlog` & `updateBlog` kini sanitize `content` & `excerpt` (null dipertahankan).
+- `src/app/api/blogs/route.ts` — POST dialihkan dari `blogRepository.create` langsung ke `blogService.createBlog` (agar sanitasi & slug-unique berjalan); guard `!session.user.id` → 401.
+- `src/app/blog/[slug]/page.jsx` — defense-in-depth: konten di-sanitize lagi saat render (melindungi data lama yang sudah terlanjur di DB).
+- Live test: payload `<script>`/`onclick`/`onerror`/`javascript:` → semua di-strip, `<h2>/<b>` aman dipertahankan.
+
+**Completed — #2 Hardening Upload:**
+- `src/shared/utils/image-guard.ts` (baru) — deteksi magic-byte per format (JPEG/PNG/GIF/WEBP/AVIF dengan brand `avif|avis`), helper `detectImageKind`/`extensionForImage`.
+- `src/app/api/upload/route.ts` — tambah `requireAdmin` (POST & DELETE), **hapus SVG** (XSS vector), validasi magic-byte (tolak file palsu meski MIME/ext palsu), ekstensi file diturunkan dari isi bukan `file.name`, cek file kosong, DELETE kini cek `access()` dulu (404 kalau tidak ada).
+- `src/app/api/payments/upload/route.ts` — pakai shared guard (hilangkan duplikasi magic-byte inline), AVIF lebih ketat (brand-spesifik), ekstensi dari isi file.
+- Live test: anon upload → 401; admin PNG → 200; HTML palsu ber-ext `.png` → 400; SVG → 400.
+
+**Verification:**
+- `npx eslint` penuh: 0 error (58 warning pre-existing `<img>`).
+- `npx tsc --noEmit`: 0 error.
+- `npx next build`: compiled successfully.
+- Live smoke test: semua PASS; data test dibersihkan (blog draft, file upload, session).
+
+**Catatan:**
+- Dep baru: `sanitize-html` (dependencies) + `@types/sanitize-html` (devDependencies).
+- Belum di-commit (menunggu review user).
+- Sisa Phase 2/3 (opsional): quota oversell, DB transaksi multi-step, rate limiting, CSP, money numeric.
+
+## Session 29 — QA + Refactor Sidebar Admin (PR #76) & Hapus Dead Code
+
+**Goal:** Verifikasi refactor sidebar admin (commit 3b32a77) tidak merusak fitur, rapikan duplikasi logika active-matching, lalu hapus file JSX/TSX yang tidak terpakai.
+
+**Completed — QA (subagent qa, read-only):**
+- Verdict **PASS** (0 Critical/High/Medium).
+- Tidak ada dangling link `/dashboard` (halaman dummy sudah dihapus bersih).
+- 12 route nav di `nav-data.ts` semuanya ada; tidak ada prefix collision pada active-state (exact match `/admin`, startsWith selainnya).
+- Collapsible group aman: auto-open grup aktif saat pindah halaman tanpa menutup grup yang dibuka manual; dependency arrays benar (tidak ada stale closure).
+- Mobile sheet dark-mode (`.admin-sidebar-dark` + `[data-mobile=true][data-sidebar=sidebar]`) tidak terganggu.
+- `next build` hijau; catatan: `tsc --noEmit` butuh `.next/types` di-regenerate bila ada stale ref ke page yang dihapus.
+
+**Completed — Refactor (subagent refactor):**
+- `src/app/admin/components/nav-data.ts` — tambah helper `isHrefActive(pathname, href)` sebagai satu sumber kebenaran; `getActiveMenu` memakainya.
+- `src/app/admin/components/admin-sidebar.tsx` — `isActive` useCallback kini panggil `isHrefActive`; non-null assertion `group.label!` diganti narrowing (`const label` + guard) di useEffect dan JSX map.
+- Perilaku/UI tidak berubah (class name, struktur JSX, key, deps callback dipertahankan).
+
+**Completed — Hapus file mati (9 file, diverifikasi 0 referensi di src/e2e/test):**
+- `src/components/checkout/ConfirmationStep.jsx` (tidak diimport page manapun)
+- `src/components/destinasi/detail/UlasanSection.jsx` (tab Ulasan tidak dirender page; file tak terimport)
+- `src/components/landing/ModalsSlider.jsx`
+- `src/components/private/ParticipantsSection.jsx` (digantikan input jumlahPeserta sejak Session 12)
+- `src/components/app-sidebar.tsx`, `search-form.tsx`, `version-switcher.tsx` (demo shadcn sidebar, tidak terimport)
+- `src/components/ui/dropdown-menu.tsx` (hanya dipakai version-switcher), `ui/label.tsx` (hanya dipakai search-form)
+
+**Verification:**
+- `npx eslint` penuh: 0 error (57 warning pre-existing `<img>`).
+- `npx tsc --noEmit`: bersih (0 error).
+- `npx next build`: compiled successfully.
+
+**Catatan:**
+- Perubahan belum di-commit (menunggu review user) — 2 file modified (refactor), 9 file deleted (dead code).
+
+## Session 32 — Phase 2 Security: bcrypt Password Hashing & Quota Atomic
+
+**Goal:** Menutup prioritas #1 (hash SHA-256 tanpa salt) dan #2 (quota oversell) dari catatan temuan.
+
+**Completed — #1 Password hashing (SHA-256 → bcrypt):**
+- Dep baru: `bcryptjs` (v3, types built-in).
+- `src/shared/utils/password.ts` (baru) — `hashPassword` (bcrypt cost 10), `verifyPassword` (auto-detect: bcrypt → compare, 64-hex → fallback SHA-256), `isLegacySha256`.
+- `src/modules/auth/auth.config.ts` — hook `password.hash`/`verify` pakai util; fallback memastikan user lama tetap login.
+- Migrasi hash lama: `auth.repository.ts` tambah `getAccountPassword`/`updateAccountPassword`; `auth.controller.ts` POST wrapper deteksi `/sign-in/email` sukses → re-hash SHA-256 ke bcrypt otomatis (via `rehashLegacyPasswordOnSignIn`). Jalur `/api/auth/[...all]` tetap dipakai client (authService.signIn tidak dipanggil langsung).
+- `src/db/seed.ts` — akun seed admin/agent/user kini bcrypt (Promise.all await).
+
+**Completed — #2 Quota atomic:**
+- `trip.repository.ts updateQuota` — tambah kondisi `sql\`${quotaBooked} + ${qty} <= ${quota}\`` ke WHERE; UPDATE yang melewati kuota tidak mengubah row → return false.
+
+**Verification:**
+- `npx tsc --noEmit`: 0 error. `npx eslint`: 0 error. `npx next build`: success.
+- Live smoke (dev server :3000): login `admin@otl.id`/`admin` → 200 + cookie session; hash DB berubah dari SHA-256 ke `$2b$10$...` (verified via SQL); login kedua tetap 200 (bcrypt path); password salah → 401.
+- Quota: simulasi SQL — `+1` saat kosong → 1 row OK; `+20` saat sisa 19 → 0 row (oversell ditahan); nilai awal di-restore.
+
+**Catatan:**
+- Belum di-commit (menunggu review user).
+- Sisa (prioritas lanjutan): #3 transaksi booking (butuh driver WebSocket karena neon-http tak support `db.transaction()`), #4 rate limiting, #5 security headers, #6 money integer-sen, #7 blogs/[id] non-UUID → 500, #8 Google OAuth credential kosong, #9 npm audit (11 vuln).
+
+## Session 33 — Popup Notifikasi Newsletter Subscribe
+
+**Goal:** Menampilkan popup modal notifikasi/pesan sukses ketika visitor memasukkan email dan melakukan subscribe di newsletter form.
+
+**Completed:**
+- Diperbarui [Subs.jsx](file:///c:/Users/Bhuminindra%20AlHafiz/Documents/opentrip-lansia/src/components/landing/Subs.jsx):
+  - Menambahkan direktif `"use client"` di bagian atas file.
+  - Membuat state untuk input `email` dan `showPopup`.
+  - Mengimplementasikan helper `useEffect` untuk menutup popup ketika tombol Escape ditekan, serta mengunci overflow body (`document.body.style.overflow = "hidden"`) saat popup aktif agar background tidak dapat discroll.
+  - Memperbarui handler form `onSubmit` agar memvalidasi input email sebelum menampilkan popup sukses.
+  - Mendesain popup modal sukses yang premium (menggunakan glassmorphic border, background blur, oranye gradient ornamen, dan checklist micro-animation) dengan tombol "Mulai Jelajah" serta ikon silang `(X)` untuk menutup popup modal.
+  - Menyertakan teks pesan sukses yang tepat sesuai permintaan: `"Selamat bergabung di Keluarga Jelajah Memoria! Kami telah mengirimkan email sambutan untuk Anda. Sampai jumpa di perjalanan seru berikutnya!"`.
+
+**Verification:**
+- `npm run lint` — Berhasil dijalankan (0 errors, 60 warnings pre-existing).
+
+## [2026-08-19] Blog image upload (admin + public)
+
+**Goal:** Tambah upload gambar di blog: admin `/admin/blogs` (sampul + gambar inline konten) & tampil di publik `/blog` dan `/blog/[slug]`.
+
+### Perubahan
+- **DB:** `blogs.cover_image text` — schema `src/modules/blog/blog.schema.ts` (+ sync duplikat stale `src/db/schema/blog.ts` yang masih `author_id uuid`), migrasi `drizzle/0002_blog_cover_image.sql` + `migrate-schema.ts`, ALTER dieksekusi ke DB live Neon.
+- **Service:** `blog.service.ts` — `sanitizeCoverImage()` (hanya `/uploads/`, `/images/`, atau http(s); input lain → null) diterapkan di create & update.
+- **Admin UI (`src/app/admin/blogs/page.tsx`):**
+  - Komponen baru `src/app/admin/components/cover-image-uploader.tsx` (upload via `/api/upload`, preview, hapus → DELETE file server-side; dipakai di modal create/edit).
+  - Thumbnail sampul di tabel list.
+- **WYSIWYG (`src/app/admin/components/wysiwyg-editor.tsx`):** `images_upload_handler` + `file_picker_callback` → admin bisa upload gambar inline di konten (dan drag-drop).
+- **Publik:** `src/app/blog/page.jsx` (thumbnail di kartu) & `src/app/blog/[slug]/page.jsx` (hero image). Sanitizer konten sudah izinkan `<img>` path lokal → gambar inline tampil aman.
+
+### Verifikasi
+- `npm run lint`: 0 errors (64 warnings pre-existing gaya `<img>`, konsisten ImageManager trips).
+- `tsc --noEmit`: clean.
+- Unit test: repo tanpa jest test (672 files, 0 matches) — hanya e2e Playwright.
+- Smoke (dev server, login admin seed `admin@otl.id`):
+  - `POST /api/upload` 200 → `/uploads/...`
+  - `POST /api/blogs` dgn coverImage 201; `GET /api/blogs?published=1` memuat `coverImage`; PUT coverImage→null ok; DELETE ok.
+  - Service round-trip: `javascript:` cover ditolak → null; `<img src="/uploads/">` di konten lolos sanitasi.
+  - `/admin/blogs` 200 (session), `/blog` 200, `/blog/e2e-blog-with-cover` 200.
+- Semua data test dibersihkan (blog + file upload dihapus).
+
+### Catatan
+- `/api/upload` tetap admin-only (401 anonymous) — dipakai bersama editor public-safe (sanitizer tetap aktif).
+
+## [2026-08-18] Fix: console error "Failed to fetch notifications" (admin bell)
+
+**Goal:** Hilangkan console error berulang `/src/hooks/useNotifications.ts:47` — "Failed to fetch notifications" menggema tiap 15 detik di halaman admin.
+
+### Diagnosis (verifikasi end-to-end via dev server + DB Neon)
+- Error dilempar client saat `/api/admin/notifications` balas non-2xx. Endpoint **bukan** penyebab utama: session admin valid → HTTP 200 + data benar; session non-admin/expired → 401 (benar, `requireAdmin`).
+- Trigger nyata: **session expired/salah sementara halaman admin terbuka** → poll tiap 15s kena 401 → `console.error` + setError tiap poll (spam console + UI tersembunyi karena AdminShell tak pakai `error`).
+- Latent bug di route: `JSON.parse(booking.notes)` tanpa guard → booking dengan notes non-JSON meledakkan seluruh endpoint jadi 500; `since`/`unreadSince` invalid juga bisa 500.
+
+### Perubahan
+- `src/hooks/useNotifications.ts`:
+  - Status 401/403 → hentikan polling (`isAuthError`), set error "Sesi admin telah berakhir…" sekali, TANPA `console.error` spam.
+  - Polling effect berhenti permanen setelah auth error (interval dibersihkan).
+- `src/app/api/admin/notifications/route.ts`:
+  - `JSON.parse(notes)` dibungkus try/catch (notes rusak → `{}`, list tetap tersaji).
+  - `since`/`unreadSince` invalid date → fallback tanpa filter (bukan 500).
+- `src/app/admin/AdminShell.tsx`: dropdown kosong kini menampilkan pesan `error` dari hook (bukan "Belum ada notifikasi" menyesatkan saat sesi mati).
+
+### Verifikasi
+- `npm run lint`: 0 errors (64 warnings pre-existing) — warning `exhaustive-deps` untuk `isAuthError` sudah dibereskan.
+- `tsc --noEmit`: clean.
+- Smoke (dev server lokal, session admin asli + session dibuat via sign-in flow):
+  - Admin valid → 200; `since=not-a-date` → 200; `unreadSince=garbage` → 200; anonim → 401 (tetap).
+  - Booking test dengan `notes` plain-text "this is plain text, NOT json" → endpoint 200 & row tersaji (sebelumnya 500).
+- Semua data test dibersihkan (booking `OTL-NOTES-*`, user `pi-test-admin@opentrip.test`, sessions/accounts terkait dihapus).
+
+### Catatan
+- Belum di-commit (menunggu review user); 3 file berubah: `useNotifications.ts`, `notifications/route.ts`, `AdminShell.tsx`.
+- `unreadSince` tak pernah dikirim client (dead code) — dibiarkan, tidak bagian dari bug ini.
+
+### Session — Admin "Failed query" (session table) Diagnosis & Hardening
+- **Symptom:** Console error `Failed query: select ... from "session" where token = $1` from `requireAdminLayout` → admin layout 500/redirect.
+- **Diagnosis:** Transient Neon serverless endpoint failure — NOT an app bug. Verified: `session` table + columns match schema exactly; the exact query succeeds; session row + admin user valid; fresh sign-in → `/admin` → 200; 40 concurrent get-session requests all 200.
+- **Fix:** Added bounded retry (2 retries, 120ms/350ms) for transient Neon errors (`Error connecting to database`, HTTP 429/5xx, `Failed query`) — **reads only** (plain SELECT; writes/batches with any write statement are never retried) to avoid duplicate-write risk.
+  - `src/shared/db/retry.ts` (new): `isReadOnlyCall` / `isTransientError` / `RETRY_DELAYS_MS` (unit-tested via tsx — all 20 cases pass)
+  - `src/shared/db/index.ts`: wraps `neon()` with a `Proxy` apply-trap using the above policy
+- **Verification:** `tsc --noEmit` clean, `eslint src/shared/db/` clean, retry unit tests pass, live app: get-session returns session, `/admin` & `/admin/trips` 200, 20-burst all 200.
+- **If it recurs:** check the Neon project compute status / plan limits (free tier scale-to-zero cold starts are the prime suspect); the full original error's `cause`/HTTP status is visible in dev server logs.

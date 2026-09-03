@@ -2,7 +2,7 @@ import { getSessionCookie } from "better-auth/cookies";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Only protect /admin/* routes
@@ -15,8 +15,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Edge-safe session check (cookie only). Role is enforced client-side
-  // via useAdminAuth and server-side by every admin API route.
+  // Edge-safe session check (cookie only). Role is enforced server-side
+  // in src/app/admin/layout.tsx (redirects non-admins to /forbidden).
   const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
     const loginUrl = new URL("/login", request.url);

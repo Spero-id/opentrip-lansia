@@ -66,8 +66,17 @@ export default function BlogPage() {
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="group rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-lg hover:border-[#F49D1A]/30 transition-all p-6 flex flex-col"
+                className="group rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-lg hover:border-[#F49D1A]/30 transition-all p-6 flex flex-col overflow-hidden"
               >
+                {post.coverImage && (
+                  <div className="-mx-6 -mt-6 mb-4 overflow-hidden">
+                    <img
+                      src={post.coverImage}
+                      alt={post.title}
+                      className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
                 <div className="text-[11px] font-semibold text-[#F49D1A] uppercase tracking-wider mb-2">
                   {dateLabel(post.publishedAt || post.createdAt)}
                 </div>
