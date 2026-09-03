@@ -77,11 +77,12 @@ export default function OpenTripBookingCard({ booking, imageUrl }) {
           </div>
         )}
         <div className="flex-1 min-w-0 space-y-1.5">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-[#F49D1A] border border-[#F49D1A]/30">
+          <div className="space-y-1">
+            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-[#F49D1A] border border-[#F49D1A]/30">
               Open Trip
             </span>
             <p className="text-sm font-bold text-gray-900 truncate">{destinationName}</p>
+            <p className="text-xs text-gray-500">{booking.totalParticipants} Peserta</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
             <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-gray-100 rounded px-2 py-0.5">
@@ -91,13 +92,8 @@ export default function OpenTripBookingCard({ booking, imageUrl }) {
               </button>
             </span>
             {travelDate && (
-              <>
-                <span>·</span>
-                <span>Tgl Perjalanan: <strong className="text-gray-700">{travelDate}</strong></span>
-              </>
+              <span>Tgl Perjalanan: <strong className="text-gray-700">{travelDate}</strong></span>
             )}
-            <span>·</span>
-            <span>{booking.totalParticipants} Peserta</span>
           </div>
         </div>
 
