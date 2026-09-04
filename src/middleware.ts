@@ -20,7 +20,7 @@ export function middleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", "/");
+    loginUrl.searchParams.set("redirect", "/admin");
     return NextResponse.redirect(loginUrl);
   }
 

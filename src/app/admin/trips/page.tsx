@@ -198,7 +198,9 @@ export default function AdminTrips() {
     if (res.ok) {
       const data = await res.json();
       setCategories(data);
+      return data as { id: string; name: string }[];
     }
+    return null;
   }
 
   async function handleCreateCategory(inputValue: string) {
@@ -219,7 +221,8 @@ export default function AdminTrips() {
     }
   }
 
-  function openCreate() {
+  async function openCreate() {
+    if (categories.length === 0) await fetchCategories();
     setEditing(null);
     setForm(emptyForm);
     setImages([]);
@@ -301,6 +304,8 @@ export default function AdminTrips() {
     } catch {
       setDeparturesList([{ startDate: "", maxParticipants: 10 }]);
     }
+
+    if (categories.length === 0) await fetchCategories();
 
     setModalOpen(true);
   }
