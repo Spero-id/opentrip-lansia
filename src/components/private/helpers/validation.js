@@ -7,14 +7,17 @@ export function validate(form) {
   if (!form.phone.trim())
     e.phone = "Wajib diisi";
 
-  if (!form.tanggal)
+  if (!form.tanggal && !form.tanggalFleksibel)
     e.tanggal = "Wajib diisi";
 
   if (!form.meetingPoint.trim())
     e.meetingPoint = "Wajib diisi";
 
-  if (!form.catatan.trim())
-    e.catatan = "Wajib diisi";
+  if (!form.jumlahPeserta || String(form.jumlahPeserta).trim() === "")
+    e.jumlahPeserta = "Wajib diisi";
+
+  if (!form.durasi || String(form.durasi).trim() === "")
+    e.durasi = "Wajib diisi";
 
   if (!form.email || !form.email.trim())
     e.email = "Wajib diisi";
@@ -41,6 +44,15 @@ export function validate(form) {
     !form.namaInstitusi.trim()
   )
     e.namaInstitusi = "Wajib diisi";
+
+  if (!form.transportNeeds)
+    e.transportNeeds = "Wajib diisi";
+
+  if (!form.standarPenginapan || !String(form.standarPenginapan).trim())
+    e.standarPenginapan = "Wajib diisi";
+
+  if (!form.metodeKontak || !String(form.metodeKontak).trim())
+    e.metodeKontak = "Wajib diisi";
 
   return e;
 }

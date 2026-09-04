@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1784708728270,
+      "tag": "0000_powerful_tomas",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784708728271,
+      "tag": "0001_merge_destinations_into_trips",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784708728272,
+      "tag": "0002_add_subscribers",
+      "breakpoints": true
+    }
+  ]
+}

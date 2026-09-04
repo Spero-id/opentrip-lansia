@@ -1,6 +1,6 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-08-13",
+  "last_updated": "2026-09-04",
   "summary": {
     "total_features": 54,
     "in_review": 19,
@@ -44,7 +44,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "List page (/admin/trips), create/edit pages, API endpoints, service/repository layer. Destinations merged into trips - no separate destination entity."
+          "evidence": "List page (/admin/trips), create/edit pages, API endpoints, service/repository layer. Destinations merged into trips - no separate destination entity. Bugfix 2026-09-04: findAllPublished() now joins destinationCategories so categoryName is included in public API response."
         },
         {
           "id": "feat-011",

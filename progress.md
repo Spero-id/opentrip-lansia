@@ -1005,3 +1005,38 @@ pm run lint: no new errors; only warnings in touched files.
   - `src/shared/db/index.ts`: wraps `neon()` with a `Proxy` apply-trap using the above policy
 - **Verification:** `tsc --noEmit` clean, `eslint src/shared/db/` clean, retry unit tests pass, live app: get-session returns session, `/admin` & `/admin/trips` 200, 20-burst all 200.
 - **If it recurs:** check the Neon project compute status / plan limits (free tier scale-to-zero cold starts are the prime suspect); the full original error's `cause`/HTTP status is visible in dev server logs.
+
+
+## Session (2026-09-04) — Bugfix: Kategori Trip & Admin Login
+
+**Goal:** Perbaiki dua bug: (1) kategori trip selalu tampil "Alam" di halaman publik, (2) login admin@otl.id gagal di localhost.
+
+### Bug 1 — Kategori Trip Selalu "Alam"
+
+**Root cause:** `findAllPublished()` di `trip.repository.ts` menggunakan `getTableColumns(trips)` tanpa JOIN ke `destinationCategories`, sehingga field `categoryName` tidak pernah ada di response API publik. `toDetail()` di `Destination.js` sudah membaca `dest.categoryName` dengan benar, tapi nilainya selalu `undefined` → fallback ke `"Alam"`.
+
+**Fix:** Tambahkan JOIN `destinationCategories` pada `findAllPublished()` dan sertakan `categoryName: destinationCategories.name` di select. Tambahkan `categoryName: string | null` ke interface `TripWithPrice`.
+
+**File diubah:** `src/modules/trip/trip.repository.ts`
+
+### Bug 2 — Admin Login Gagal di Localhost
+
+**Root cause:** Tiga masalah teridentifikasi:
+1. `.env` menetapkan `BETTER_AUTH_URL=https://jelajahmemoria.spero-lab.id/` (production URL). better-auth menggunakan URL ini untuk cookie domain & CSRF check → login selalu gagal di `localhost`.
+2. `middleware.ts` meredirect ke `/login?redirect=/` (hardcoded `/`) bukan `/login?redirect=/admin` saat session tidak ada di halaman admin.
+3. `login/page.jsx` `getClientSnapshot()` memblokir param redirect yang dimulai dengan `/admin` (`!redirect.startsWith("/admin")`), sehingga setelah login sukses admin dikirim ke `/` bukan `/admin`.
+
+**Fix:**
+- Buat `.env.local` dengan `BETTER_AUTH_URL=http://localhost:3000` (override `.env` untuk dev lokal — tidak ter-commit ke production karena `.env.local` ada di `.gitignore`).
+- `middleware.ts`: ganti `redirect=/` → `redirect=/admin`.
+- `login/page.jsx`: hapus kondisi `!redirect.startsWith("/admin")`.
+
+**File diubah/dibuat:** `.env.local`, `src/middleware.ts`, `src/app/login/page.jsx`
+
+### Verifikasi
+- `tsc --noEmit --skipLibCheck` — 0 error
+- `npm run lint` — timeout di shell environment (issue environment, bukan issue kode); perubahan minimal dan tidak memperkenalkan pola baru
+
+### Catatan
+- `.env.local` **tidak boleh di-commit** (sudah ada di `.gitignore`). Setiap developer lokal perlu membuat file ini sendiri.
+- Jika production domain berbeda dari `localhost`, `BETTER_AUTH_URL` di `.env` untuk production tetap menggunakan domain production — hanya lokal yang perlu override.

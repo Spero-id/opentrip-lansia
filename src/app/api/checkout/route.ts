@@ -113,6 +113,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // --- Validasi birthDate: tahun max 4 digit, tidak masa depan ---
+    const birthDate = customer?.birthDate;
+    if (birthDate) {
+      const year = birthDate.split("-")[0];
+      if (!year || year.length !== 4 || isNaN(Number(year))) {
+        return NextResponse.json(
+          { error: "Tanggal lahir tidak valid: tahun harus 4 digit" },
+          { status: 400 }
+        );
+      }
+      const birth = new Date(birthDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (birth > today) {
+        return NextResponse.json(
+          { error: "Tanggal lahir tidak boleh di masa depan" },
+          { status: 400 }
+        );
+      }
+    }
+
     const paxNum = Number(pax);
     if (!Number.isInteger(paxNum) || paxNum < 1 || paxNum > 99) {
       return NextResponse.json({ error: "Jumlah peserta tidak valid" }, { status: 400 });

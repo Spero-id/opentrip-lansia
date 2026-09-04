@@ -146,6 +146,7 @@ export default function AdminBlogs() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
               <tr>
+                <th className="px-6 py-4">Sampul</th>
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Tanggal</th>
@@ -154,9 +155,9 @@ export default function AdminBlogs() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-400">Belum ada data blog.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Belum ada data blog.</td></tr>
               ) : (
                 rows.map((b) => (
                   <tr key={b.id} className="hover:bg-slate-50/60 transition">
@@ -220,6 +221,12 @@ export default function AdminBlogs() {
             <WysiwygEditor
               value={form.content}
               onChange={(content) => setForm((prev) => ({ ...prev, content }))}
+            />
+          </div>
+          <div>
+            <BlogCoverUploader
+              value={form.coverImage || null}
+              onChange={(url) => setForm((prev) => ({ ...prev, coverImage: url || "" }))}
             />
           </div>
           <div>

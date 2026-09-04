@@ -35,29 +35,17 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        <div className="mb-8 sm:mb-12">
-
-          <h1 className="text-3xl sm:text-4xl font-bold mt-3 tracking-tight">
-            Berita &amp; Artikel
-          </h1>
-          <p className="text-sm sm:text-base text-gray-500 mt-2">
-            Info terbaru seputar open trip, destinasi, dan layanan kami.
-          </p>
-        </div>
-
-        {posts === null ? (
-          <div className="text-center py-16 text-sm text-gray-400">
-            Memuat artikel...
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-gray-300 py-16 px-4 text-center bg-gray-50/50">
-            <p className="text-sm font-bold text-gray-800">Belum ada artikel</p>
-            <p className="text-xs text-gray-400 mt-1">
-              Nantikan berita dan artikel terbaru dari kami.
+      <main className="min-h-screen bg-[#F9FAFB]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="mb-8 sm:mb-12">
+            <h1 className="text-3xl sm:text-4xl font-bold mt-3 tracking-tight text-[#1F2937]">
+              Berita &amp; <span className="text-[#F49D1A]">Artikel</span>
+            </h1>
+            <p className="text-sm sm:text-base text-[#6B7280] mt-2">
+              Info terbaru seputar open trip, destinasi, dan layanan kami.
             </p>
           </div>
         ) : (

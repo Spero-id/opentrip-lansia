@@ -4,6 +4,7 @@ export const initialForm = {
   email: "",
   budget: "",
   tanggal: "",
+  tanggalFleksibel: false,
   durasi: "",
   meetingPoint: "",
   catatan: "",
@@ -13,5 +14,9 @@ export const initialForm = {
   tripFrom: "Individu",
   namaInstitusi: "",
   jumlahPeserta: "",
+  transportNeeds: "",
+  standarPenginapan: "",
+  layananTambahan: [],
+  metodeKontak: "whatsapp",
 };
 
