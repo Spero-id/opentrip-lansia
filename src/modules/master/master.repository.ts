@@ -1,12 +1,12 @@
 import { db } from "@/shared/db";
 import { destinationCategories, horeca, vendors, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 import { slugify } from "@/shared/utils/helpers";
 
 export const masterRepository = {
   async getDestinationCategories() {
-    return db.select().from(destinationCategories);
+    return db.select().from(destinationCategories).orderBy(asc(destinationCategories.name));
   },
 
   async createDestinationCategory(name: string) {

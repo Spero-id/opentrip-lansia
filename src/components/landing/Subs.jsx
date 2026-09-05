@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 export default function Subs() {
   const [email, setEmail] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (showPopup) {
@@ -20,14 +22,34 @@ export default function Subs() {
     }
   }, [showPopup]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) return;
-    
-    // Trigger popup success
-    setShowPopup(true);
-    // Clear input field
-    setEmail("");
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Gagal berlangganan");
+        return;
+      }
+
+      setShowPopup(true);
+      setEmail("");
+    } catch {
+      setError("Terjadi kesalahan, coba lagi nanti");
+    } finally {
+      setLoading(false);
+    }
   };
 
 
@@ -51,35 +73,42 @@ export default function Subs() {
                   Kami akan mengirimkan info trip & promo terbaru langsung ke email kamu.
                 </p>
               </div>
-              <form onSubmit={handleSubmit} className="flex w-full lg:w-auto gap-3">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Masukkan email kamu"
-                  className="flex-1 lg:w-72 bg-white border border-white/10 rounded-full px-5 py-3 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 bg-[#F49D1A] text-white px-4 py-3 rounded-full text-[13px] font-semibold hover:bg-[#c47d12] transition-colors shrink-0 cursor-pointer"
-                >
-                  Subscribe
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+              <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full lg:w-auto">
+                <div className="flex gap-3">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setError(""); }}
+                    placeholder="Masukkan email kamu"
+                    disabled={loading}
+                    className="flex-1 lg:w-72 bg-white border border-white/10 rounded-full px-5 py-3 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] transition-colors disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex items-center gap-2 bg-[#F49D1A] text-white px-4 py-3 rounded-full text-[13px] font-semibold hover:bg-[#c47d12] transition-colors shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
-                </button>
+                    {loading ? "Mengirim..." : "Subscribe"}
+                    {!loading && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {error && <p className="text-red-400 text-xs px-5">{error}</p>}
               </form>
             </div>
           </div>

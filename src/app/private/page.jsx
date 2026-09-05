@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Clock, ChevronRight, AlertCircle } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PageHeader from "@/components/private/PageHeader";
 import BookingInformationSection from "@/components/private/BookingInformationSection";
 import TripDetailSection from "@/components/private/TripDetailSection";
-import TripOptionSection from "@/components/private/TripOptionSection";
-import TripFromSection from "@/components/private/TripFromSection";
+import FacilitiesSection from "@/components/private/FacilitiesSection";
 import SuccessState from "@/components/private/SuccessState";
 import SubmitBar from "@/components/private/SubmitBar";
 import TermsModal from "@/components/private/TermsModal";
@@ -31,18 +31,38 @@ function buildDestinationPreferences(form) {
 
   // Trip details
   lines.push(`[Detail Perjalanan]`);
-  if (form.tanggal) lines.push(`Tanggal Keberangkatan: ${form.tanggal}`);
+  lines.push(`Tipe Trip: ${form.tripType === "custom" ? "Destinasi Baru (Custom)" : "Modifikasi Paket Web"}`);
+  if (form.tripType === "custom" && form.customTripName) lines.push(`Tujuan: ${form.customTripName}`);
+  if (form.tripType === "explorer" && form.selectedDestinasi) lines.push(`Paket Referensi: ${form.selectedDestinasi.title || form.selectedDestinasi.name}`);
+  lines.push(`Jumlah Peserta: ${form.jumlahPeserta || 1} orang`);
+  lines.push(`Durasi: ${form.durasi || "-"} hari`);
+  if (form.tanggalFleksibel) lines.push(`Tanggal Keberangkatan: Fleksibel`);
+  else if (form.tanggal) lines.push(`Tanggal Keberangkatan: ${form.tanggal}`);
   if (form.meetingPoint) lines.push(`Meeting Point: ${form.meetingPoint}`);
+  if (form.transportNeeds) {
+    const map = { "all-in": "All-in dari Kota Asal", local: "Transportasi Lokal Saja", self: "Bawa Kendaraan Sendiri" };
+    lines.push(`Transportasi: ${map[form.transportNeeds] || form.transportNeeds}`);
+  }
+
+  // Fasilitas & Preferensi
+  lines.push(`[Fasilitas & Budget]`);
+  if (form.standarPenginapan) {
+    const sm = { budget: "Budget / Homestay", bintang3: "Hotel Bintang 3", bintang4: "Hotel Bintang 4", bintang5: "Hotel Bintang 5", villa: "Villa / Resort" };
+    lines.push(`Standar Penginapan: ${sm[form.standarPenginapan] || form.standarPenginapan}`);
+  }
+  if (form.layananTambahan && form.layananTambahan.length > 0) {
+    const lm = { fotografer: "Fotografer / Video", drone: "Kamera Drone", gala: "Gala Dinner / BBQ", tourLeader: "Tour Leader Khusus" };
+    lines.push(`Layanan Tambahan: ${form.layananTambahan.map((k) => lm[k] || k).join(", ")}`);
+  }
+  if (form.catatan) lines.push(`Catatan Khusus: ${form.catatan}`);
+  if (form.budget) lines.push(`Estimasi Budget: Rp ${form.budget} /orang`);
+  if (form.metodeKontak) lines.push(`Metode Tindak Lanjut: ${form.metodeKontak === "whatsapp" ? "Hubungi via WhatsApp" : "Kirim ke Email"}`);
 
   // Booking source
   lines.push(`[Asal Pemesanan]`);
   lines.push(`Tipe: ${form.tripFrom}`);
   if (form.tripFrom !== "Individu" && form.namaInstitusi)
     lines.push(`Institusi: ${form.namaInstitusi}`);
-
-  // Participants
-  lines.push(`[Peserta]`);
-  lines.push(`Jumlah Peserta: ${form.jumlahPeserta || 1} orang`);
 
   return lines.join("\n");
 }
@@ -188,32 +208,30 @@ export default function PrivateTripPage() {
         />
       )}
 
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-[#F9FAFB]">
 
-        <PageHeader />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-0">
-          <a
-            href="/my-trips"
-            className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-[#F49D1A]/30 bg-[#F49D1A]/5 hover:bg-[#F49D1A]/10 transition-colors group"
-          >
-            <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-xl bg-[#F49D1A]/15 flex items-center justify-center shrink-0">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F49D1A" strokeWidth="2.5">
-                  <path d="M9 12h6M12 9v6"/><circle cx="12" cy="12" r="9"/>
-                </svg>
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Sudah pernah mengajukan request?</p>
-                <p className="text-xs text-gray-500">Pantau status dan lihat proposal dari admin</p>
+        <div className="bg-[#F9FAFB]">
+          <PageHeader />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
+            <a
+              href="/my-trips"
+              className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-[#FDE6C8] bg-[#FFFBEB] hover:bg-[#FFF6DA] transition-colors group shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            >
+              <div className="flex items-center gap-3.5">
+                <span className="w-8 h-8 rounded-full bg-[#FFF1CC] border border-[#FDE6C8] flex items-center justify-center shrink-0">
+                  <Clock size={16} color="#EAA300" strokeWidth={1.8} />
+                </span>
+                <div>
+                  <p className="text-[13px] font-semibold text-[#1F2937] leading-tight">Sudah pernah mengajukan request?</p>
+                  <p className="text-xs text-[#6B7280] leading-none mt-1">Pantau status dan lihat proposal dari admin</p>
+                </div>
               </div>
-            </div>
-            <svg className="w-4 h-4 text-[#F49D1A] group-hover:translate-x-0.5 transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </a>
+              <ChevronRight className="w-5 h-5 text-[#EAA300] group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
+          </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8">
           <form onSubmit={handleSubmit} noValidate>
             <div className="flex flex-col gap-5">
 
@@ -226,25 +244,13 @@ export default function PrivateTripPage() {
                 form={form}
                 set={set}
                 errors={errors}
-                budgetValue={budgetValue}
-              />
-              <TripOptionSection
-                form={form}
-                set={set}
-                errors={errors}
                 destinationsData={destinations}
               />
-              <TripFromSection
-                form={form}
-                set={set}
-                errors={errors}
-              />
+              <FacilitiesSection form={form} set={set} errors={errors} />
 
               {submitError && (
                 <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
-                  <svg className="shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
+                  <AlertCircle className="shrink-0 mt-0.5" size={16} />
                   <span>{submitError}</span>
                 </div>
               )}

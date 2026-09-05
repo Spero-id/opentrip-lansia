@@ -15,18 +15,38 @@ export default function MyTripsPage() {
   const [tab, setTab] = useState("open");
   const [bookings, setBookings] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [tripImages, setTripImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+
+  const getDestinationId = (booking) => {
+    if (!booking?.notes) return null;
+    try {
+      const notes = typeof booking.notes === "string" ? JSON.parse(booking.notes) : booking.notes;
+      return notes?.destinationId || null;
+    } catch {
+      return null;
+    }
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [bookingsRes, requestsRes] = await Promise.all([
+      const [bookingsRes, requestsRes, tripsRes] = await Promise.all([
         fetch("/api/bookings").then((r) => r.json()),
         fetch("/api/private-trips").then((r) => r.json()),
+        fetch("/api/trips").then((r) => r.json()).catch(() => []),
       ]);
       setBookings(Array.isArray(bookingsRes) ? bookingsRes : bookingsRes?.rows || []);
       setRequests(Array.isArray(requestsRes) ? requestsRes : requestsRes?.rows || []);
+      const trips = Array.isArray(tripsRes) ? tripsRes : tripsRes?.rows || [];
+      const imageMap = {};
+      for (const t of trips) {
+        if (t?.id && (t.image || t.images?.[0])) {
+          imageMap[t.id] = t.image || t.images[0];
+        }
+      }
+      setTripImages(imageMap);
     } catch (err) {
       console.error("Gagal memuat data:", err);
     }
@@ -134,7 +154,13 @@ export default function MyTripsPage() {
             {filteredBookings.length === 0 ? (
               <EmptyState type="open" />
             ) : (
-              filteredBookings.map((b) => <OpenTripBookingCard key={b.id} booking={b} />)
+              filteredBookings.map((b) => (
+                <OpenTripBookingCard
+                  key={b.id}
+                  booking={b}
+                  imageUrl={tripImages[getDestinationId(b)] || null}
+                />
+              ))
             )}
           </div>
         ) : (

@@ -14,6 +14,7 @@ export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin
   startDate: string | null;
   price: string | null;
   departureId: string | null;
+  categoryName: string | null;
 }
 
 export type TripWithCategory = typeof trips.$inferSelect & { categoryName: string | null };
@@ -72,8 +73,10 @@ export const tripRepository: ITripRepository = {
         departureId: tripDepartures.id,
         price: tripPrices.price,
         priceName: tripPrices.name,
+        categoryName: destinationCategories.name,
       })
       .from(trips)
+      .leftJoin(destinationCategories, eq(trips.categoryId, destinationCategories.id))
       .leftJoin(tripDepartures, eq(trips.id, tripDepartures.tripId))
       .leftJoin(tripPrices, and(eq(tripDepartures.id, tripPrices.departureId), eq(tripPrices.isActive, true)))
       .where(eq(trips.status, "published"))
@@ -92,6 +95,7 @@ export const tripRepository: ITripRepository = {
           ...r,
           startDate: r.startDate,
           departureId: r.departureId,
+          categoryName: r.categoryName ?? null,
           price: null,
         });
       }

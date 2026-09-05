@@ -24,18 +24,6 @@ async function ensureUniqueSlug(base: string): Promise<string> {
   return slug;
 }
 
-/**
- * Hanya terima URL gambar aman: path lokal ({`/uploads/`, `/images/`, `/hugerte/`})
- * atau http(s) URL. Konten lain dikembalikan null.
- */
-function sanitizeCoverImage(value: string | null | undefined): string | null {
-  if (!value) return null;
-  const url = value.trim();
-  if (url.startsWith("/uploads/") || url.startsWith("/images/")) return url;
-  if (/^https?:\/\//i.test(url)) return url;
-  return null;
-}
-
 export const blogService = {
   async getPublishedBlogs() {
     return blogRepository.findAllPublished();
@@ -58,7 +46,7 @@ export const blogService = {
       authorId: authorId as UUID,
       categoryId: data.categoryId ?? null,
       coverImageId: data.coverImageId ?? null,
-      coverImage: sanitizeCoverImage(data.coverImage),
+      coverImage: data.coverImage ? data.coverImage : null,
       tags: data.tags ?? null,
       status: data.status || "draft",
       publishedAt,
@@ -85,7 +73,7 @@ export const blogService = {
       excerpt: data.excerpt !== undefined ? sanitizeBlogContent(data.excerpt) : existing.excerpt,
       categoryId: data.categoryId !== undefined ? data.categoryId : existing.categoryId,
       coverImageId: data.coverImageId !== undefined ? data.coverImageId : existing.coverImageId,
-      coverImage: data.coverImage !== undefined ? sanitizeCoverImage(data.coverImage) : existing.coverImage,
+      coverImage: data.coverImage !== undefined ? (data.coverImage || null) : existing.coverImage,
       tags: data.tags !== undefined ? data.tags : existing.tags,
       status: data.status ?? existing.status,
       publishedAt,
