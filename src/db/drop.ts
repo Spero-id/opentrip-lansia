@@ -1,7 +1,7 @@
 import "dotenv/config";
-import postgres from "postgres";
+import { neon } from "@neondatabase/serverless";
 
-const sql = postgres(process.env.DATABASE_URL!);
+const sql = neon(process.env.DATABASE_URL!);
 
 async function dropAll() {
   const tables = await sql`SELECT tablename FROM pg_tables WHERE schemaname='public'`;

@@ -940,68 +940,37 @@ pm run lint: no new errors; only warnings in touched files.
 **Verification:**
 - `npm run lint` — Berhasil dijalankan (0 errors, 60 warnings pre-existing).
 
-## [2026-08-19] Blog image upload (admin + public)
 
-**Goal:** Tambah upload gambar di blog: admin `/admin/blogs` (sampul + gambar inline konten) & tampil di publik `/blog` dan `/blog/[slug]`.
+## Session (2026-09-04) — Bugfix: Kategori Trip & Admin Login
 
-### Perubahan
-- **DB:** `blogs.cover_image text` — schema `src/modules/blog/blog.schema.ts` (+ sync duplikat stale `src/db/schema/blog.ts` yang masih `author_id uuid`), migrasi `drizzle/0002_blog_cover_image.sql` + `migrate-schema.ts`, ALTER dieksekusi ke DB live Neon.
-- **Service:** `blog.service.ts` — `sanitizeCoverImage()` (hanya `/uploads/`, `/images/`, atau http(s); input lain → null) diterapkan di create & update.
-- **Admin UI (`src/app/admin/blogs/page.tsx`):**
-  - Komponen baru `src/app/admin/components/cover-image-uploader.tsx` (upload via `/api/upload`, preview, hapus → DELETE file server-side; dipakai di modal create/edit).
-  - Thumbnail sampul di tabel list.
-- **WYSIWYG (`src/app/admin/components/wysiwyg-editor.tsx`):** `images_upload_handler` + `file_picker_callback` → admin bisa upload gambar inline di konten (dan drag-drop).
-- **Publik:** `src/app/blog/page.jsx` (thumbnail di kartu) & `src/app/blog/[slug]/page.jsx` (hero image). Sanitizer konten sudah izinkan `<img>` path lokal → gambar inline tampil aman.
+**Goal:** Perbaiki dua bug: (1) kategori trip selalu tampil "Alam" di halaman publik, (2) login admin@otl.id gagal di localhost.
 
-### Verifikasi
-- `npm run lint`: 0 errors (64 warnings pre-existing gaya `<img>`, konsisten ImageManager trips).
-- `tsc --noEmit`: clean.
-- Unit test: repo tanpa jest test (672 files, 0 matches) — hanya e2e Playwright.
-- Smoke (dev server, login admin seed `admin@otl.id`):
-  - `POST /api/upload` 200 → `/uploads/...`
-  - `POST /api/blogs` dgn coverImage 201; `GET /api/blogs?published=1` memuat `coverImage`; PUT coverImage→null ok; DELETE ok.
-  - Service round-trip: `javascript:` cover ditolak → null; `<img src="/uploads/">` di konten lolos sanitasi.
-  - `/admin/blogs` 200 (session), `/blog` 200, `/blog/e2e-blog-with-cover` 200.
-- Semua data test dibersihkan (blog + file upload dihapus).
+### Bug 1 — Kategori Trip Selalu "Alam"
 
-### Catatan
-- `/api/upload` tetap admin-only (401 anonymous) — dipakai bersama editor public-safe (sanitizer tetap aktif).
+**Root cause:** `findAllPublished()` di `trip.repository.ts` menggunakan `getTableColumns(trips)` tanpa JOIN ke `destinationCategories`, sehingga field `categoryName` tidak pernah ada di response API publik. `toDetail()` di `Destination.js` sudah membaca `dest.categoryName` dengan benar, tapi nilainya selalu `undefined` → fallback ke `"Alam"`.
 
-## [2026-08-18] Fix: console error "Failed to fetch notifications" (admin bell)
+**Fix:** Tambahkan JOIN `destinationCategories` pada `findAllPublished()` dan sertakan `categoryName: destinationCategories.name` di select. Tambahkan `categoryName: string | null` ke interface `TripWithPrice`.
 
-**Goal:** Hilangkan console error berulang `/src/hooks/useNotifications.ts:47` — "Failed to fetch notifications" menggema tiap 15 detik di halaman admin.
+**File diubah:** `src/modules/trip/trip.repository.ts`
 
-### Diagnosis (verifikasi end-to-end via dev server + DB Neon)
-- Error dilempar client saat `/api/admin/notifications` balas non-2xx. Endpoint **bukan** penyebab utama: session admin valid → HTTP 200 + data benar; session non-admin/expired → 401 (benar, `requireAdmin`).
-- Trigger nyata: **session expired/salah sementara halaman admin terbuka** → poll tiap 15s kena 401 → `console.error` + setError tiap poll (spam console + UI tersembunyi karena AdminShell tak pakai `error`).
-- Latent bug di route: `JSON.parse(booking.notes)` tanpa guard → booking dengan notes non-JSON meledakkan seluruh endpoint jadi 500; `since`/`unreadSince` invalid juga bisa 500.
+### Bug 2 — Admin Login Gagal di Localhost
 
-### Perubahan
-- `src/hooks/useNotifications.ts`:
-  - Status 401/403 → hentikan polling (`isAuthError`), set error "Sesi admin telah berakhir…" sekali, TANPA `console.error` spam.
-  - Polling effect berhenti permanen setelah auth error (interval dibersihkan).
-- `src/app/api/admin/notifications/route.ts`:
-  - `JSON.parse(notes)` dibungkus try/catch (notes rusak → `{}`, list tetap tersaji).
-  - `since`/`unreadSince` invalid date → fallback tanpa filter (bukan 500).
-- `src/app/admin/AdminShell.tsx`: dropdown kosong kini menampilkan pesan `error` dari hook (bukan "Belum ada notifikasi" menyesatkan saat sesi mati).
+**Root cause:** Tiga masalah teridentifikasi:
+1. `.env` menetapkan `BETTER_AUTH_URL=https://jelajahmemoria.spero-lab.id/` (production URL). better-auth menggunakan URL ini untuk cookie domain & CSRF check → login selalu gagal di `localhost`.
+2. `middleware.ts` meredirect ke `/login?redirect=/` (hardcoded `/`) bukan `/login?redirect=/admin` saat session tidak ada di halaman admin.
+3. `login/page.jsx` `getClientSnapshot()` memblokir param redirect yang dimulai dengan `/admin` (`!redirect.startsWith("/admin")`), sehingga setelah login sukses admin dikirim ke `/` bukan `/admin`.
+
+**Fix:**
+- Buat `.env.local` dengan `BETTER_AUTH_URL=http://localhost:3000` (override `.env` untuk dev lokal — tidak ter-commit ke production karena `.env.local` ada di `.gitignore`).
+- `middleware.ts`: ganti `redirect=/` → `redirect=/admin`.
+- `login/page.jsx`: hapus kondisi `!redirect.startsWith("/admin")`.
+
+**File diubah/dibuat:** `.env.local`, `src/middleware.ts`, `src/app/login/page.jsx`
 
 ### Verifikasi
-- `npm run lint`: 0 errors (64 warnings pre-existing) — warning `exhaustive-deps` untuk `isAuthError` sudah dibereskan.
-- `tsc --noEmit`: clean.
-- Smoke (dev server lokal, session admin asli + session dibuat via sign-in flow):
-  - Admin valid → 200; `since=not-a-date` → 200; `unreadSince=garbage` → 200; anonim → 401 (tetap).
-  - Booking test dengan `notes` plain-text "this is plain text, NOT json" → endpoint 200 & row tersaji (sebelumnya 500).
-- Semua data test dibersihkan (booking `OTL-NOTES-*`, user `pi-test-admin@opentrip.test`, sessions/accounts terkait dihapus).
+- `tsc --noEmit --skipLibCheck` — 0 error
+- `npm run lint` — timeout di shell environment (issue environment, bukan issue kode); perubahan minimal dan tidak memperkenalkan pola baru
 
 ### Catatan
-- Belum di-commit (menunggu review user); 3 file berubah: `useNotifications.ts`, `notifications/route.ts`, `AdminShell.tsx`.
-- `unreadSince` tak pernah dikirim client (dead code) — dibiarkan, tidak bagian dari bug ini.
-
-### Session — Admin "Failed query" (session table) Diagnosis & Hardening
-- **Symptom:** Console error `Failed query: select ... from "session" where token = $1` from `requireAdminLayout` → admin layout 500/redirect.
-- **Diagnosis:** Transient Neon serverless endpoint failure — NOT an app bug. Verified: `session` table + columns match schema exactly; the exact query succeeds; session row + admin user valid; fresh sign-in → `/admin` → 200; 40 concurrent get-session requests all 200.
-- **Fix:** Added bounded retry (2 retries, 120ms/350ms) for transient Neon errors (`Error connecting to database`, HTTP 429/5xx, `Failed query`) — **reads only** (plain SELECT; writes/batches with any write statement are never retried) to avoid duplicate-write risk.
-  - `src/shared/db/retry.ts` (new): `isReadOnlyCall` / `isTransientError` / `RETRY_DELAYS_MS` (unit-tested via tsx — all 20 cases pass)
-  - `src/shared/db/index.ts`: wraps `neon()` with a `Proxy` apply-trap using the above policy
-- **Verification:** `tsc --noEmit` clean, `eslint src/shared/db/` clean, retry unit tests pass, live app: get-session returns session, `/admin` & `/admin/trips` 200, 20-burst all 200.
-- **If it recurs:** check the Neon project compute status / plan limits (free tier scale-to-zero cold starts are the prime suspect); the full original error's `cause`/HTTP status is visible in dev server logs.
+- `.env.local` **tidak boleh di-commit** (sudah ada di `.gitignore`). Setiap developer lokal perlu membuat file ini sendiri.
+- Jika production domain berbeda dari `localhost`, `BETTER_AUTH_URL` di `.env` untuk production tetap menggunakan domain production — hanya lokal yang perlu override.

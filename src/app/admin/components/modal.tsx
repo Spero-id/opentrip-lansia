@@ -8,7 +8,7 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  size?: "sm" | "md" | "lg" | "xl" | "2xl";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 export default function Modal({ open, onClose, title, children, size = "md" }: ModalProps) {
@@ -31,7 +31,6 @@ export default function Modal({ open, onClose, title, children, size = "md" }: M
     md: "max-w-md",
     lg: "max-w-lg",
     xl: "max-w-xl",
-    "2xl": "max-w-3xl",
   };
 
   return (
@@ -49,7 +48,7 @@ export default function Modal({ open, onClose, title, children, size = "md" }: M
             <X className="w-4 h-4" />
           </button>
         </div>
-        <div className="px-6 py-5 max-h-[85vh] overflow-y-auto">{children}</div>
+        <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">{children}</div>
       </div>
     </div>
   );
