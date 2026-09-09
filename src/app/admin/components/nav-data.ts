@@ -4,8 +4,8 @@ import {
   Compass,
   FileText,
   LayoutDashboard,
-  Percent,
   Route,
+  Search,
   ShoppingCart,
   Star,
   Tag,
@@ -52,7 +52,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     label: "Marketing",
     items: [
       { name: "Promo", href: "/admin/promotions", icon: Tag },
-      { name: "Komisi", href: "/admin/commissions", icon: Percent },
+      { name: "History Referral", href: "/admin/referrals", icon: Search },
     ],
   },
   {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { Suspense, useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -11,7 +11,7 @@ import DestinationGrid from "@/components/destinasi/DestinationGrid";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { toDetail } from "@/lib/Destination";
 
-export default function DestisasiPage() {
+function DestisasiContent() {
   const searchParams = useSearchParams();
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -138,5 +138,13 @@ export default function DestisasiPage() {
       <Footer />
       <WhatsAppFloat />
     </div>
+  );
+}
+
+export default function DestisasiPage() {
+  return (
+    <Suspense fallback={null}>
+      <DestisasiContent />
+    </Suspense>
   );
 }

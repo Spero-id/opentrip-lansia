@@ -35,11 +35,11 @@ export async function POST(req: NextRequest) {
 
     const ext = extensionForImage(buffer) || ".jpg";
     const safeName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-    const dir = path.join(process.cwd(), "public", "uploads");
+    const dir = path.join(process.cwd(), "uploads");
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, safeName), buffer);
 
-    return NextResponse.json({ url: `/uploads/${safeName}` });
+    return NextResponse.json({ url: `/api/uploads/${safeName}` });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan saat upload.";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -52,11 +52,12 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const url = req.nextUrl.searchParams.get("url") || "";
-    if (!url.startsWith("/uploads/") || url.includes("..")) {
+    if (!url.startsWith("/api/uploads/") || url.includes("..")) {
       return NextResponse.json({ error: "URL tidak valid." }, { status: 400 });
     }
-    const filePath = path.join(process.cwd(), "public", url);
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    const filename = url.replace("/api/uploads/", "");
+    const filePath = path.join(process.cwd(), "uploads", filename);
+    const uploadsDir = path.join(process.cwd(), "uploads");
     if (!filePath.startsWith(uploadsDir)) {
       return NextResponse.json({ error: "URL tidak valid." }, { status: 400 });
     }

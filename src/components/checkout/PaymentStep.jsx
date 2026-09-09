@@ -98,7 +98,7 @@ function PaymentSelector({ paymentMethod, setPaymentMethod }) {
         >
           <div className="flex items-center gap-3">
             <div className="w-14 h-9 flex items-center justify-center">
-              <Image src="/BCA-logo-2.webp" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
+              <Image src="https://vectorseek.com/wp-content/uploads/2022/07/vectorseek.com-BCA-Bank-Logo-Vector.png" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
             </div>
             <div>
               <p className="text-sm font-bold text-gray-900">BCA</p>

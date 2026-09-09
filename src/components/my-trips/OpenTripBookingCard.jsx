@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import FeedbackModal from "./FeedbackModal";
 import {
   A,
   OPEN_TRIP_STATUS_LABEL,
@@ -11,10 +12,12 @@ import {
   icons,
 } from "./constants";
 
-export default function OpenTripBookingCard({ booking, imageUrl }) {
+export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   let notesObj = {};
   if (booking.notes) {
@@ -37,6 +40,12 @@ export default function OpenTripBookingCard({ booking, imageUrl }) {
   const paymentMethod   = booking.payments?.[0]?.method || "online";
   const paymentProof    = booking.payments?.[0]?.proofUrl || booking.payments?.[0]?.gatewayResponse?.proofUrl || null;
   const paymentAdminNote = booking.payments?.[0]?.adminNote || null;
+
+  const isCompleted = booking.status === "completed";
+  const hasReview = booking.hasReview || feedbackSubmitted;
+
+  // tripId comes from booking service (joined from tripDepartures)
+  const tripId = booking.tripId || notesObj.tripId || null;
 
   const copyCode = (e) => {
     e.stopPropagation();
@@ -114,6 +123,22 @@ export default function OpenTripBookingCard({ booking, imageUrl }) {
             >
               Bayar
             </a>
+          )}
+          {isCompleted && !hasReview && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setFeedbackOpen(true);
+              }}
+              className="px-4 py-2 bg-[#1CA6B7] text-white text-xs font-bold rounded-lg hover:bg-[#159ba9] transition-colors"
+            >
+              Beri Ulasan
+            </button>
+          )}
+          {isCompleted && hasReview && (
+            <span className="px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded-lg">
+              ✓ Sudah Diulas
+            </span>
           )}
           <span className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
             {icons.chevron}
@@ -255,6 +280,38 @@ export default function OpenTripBookingCard({ booking, imageUrl }) {
           )}
         </div>
       )}
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        open={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+        onSubmit={async ({ rating, content }) => {
+          if (!tripId) {
+            throw new Error("Data trip tidak ditemukan. Silakan refresh halaman.");
+          }
+
+          const res = await fetch("/api/reviews", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              bookingId: booking.id,
+              tripId: tripId,
+              rating,
+              content,
+            }),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Gagal mengirim ulasan");
+          }
+          setFeedbackSubmitted(true);
+          setFeedbackOpen(false);
+          alert("Terima kasih! Ulasan Anda telah dikirim.");
+          if (onRefresh) onRefresh();
+        }}
+        tripTitle={destinationName}
+        bookingCode={booking.bookingCode}
+      />
     </div>
   );
 }

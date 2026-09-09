@@ -974,3 +974,188 @@ pm run lint: no new errors; only warnings in touched files.
 ### Catatan
 - `.env.local` **tidak boleh di-commit** (sudah ada di `.gitignore`). Setiap developer lokal perlu membuat file ini sendiri.
 - Jika production domain berbeda dari `localhost`, `BETTER_AUTH_URL` di `.env` untuk production tetap menggunakan domain production — hanya lokal yang perlu override.
+
+## Session 26 — User Referral System (feat-073)
+
+**Goal:** Implement user-facing referral system: display referral code in profile with copy/share, add referral code input in checkout, and show referral history in profile.
+
+**Completed:**
+
+### Backend API Routes
+- `GET /api/user/referral` — Returns user's referral code + stats (total referred, converted, pending, total commission)
+- `GET /api/user/referral/history` — Paginated referral history with joined user/booking/trip/commission data
+- `POST /api/checkout/validate-referral` — Validates referral code, checks self-referral, returns referrer info
+- Updated `POST /api/checkout` — Accepts `referralCode`, validates server-side, creates referral record in `referrals` table
+
+### Frontend Components
+- `ReferralCard.jsx` — Profile component showing referral code with copy, WhatsApp share, and link share buttons + stats
+- `ReferralHistory.jsx` — Profile component with expandable referral list, status badges, pagination, and commission info
+- `ReferralInput.jsx` — Checkout component for entering/validating referral code with success/error states
+
+### Updated Existing Components
+- `ProfileStats.jsx` — Added referral code display with copy button, total referral count
+- `profile/page.jsx` — Integrated ReferralCard and ReferralHistory sections
+- `useCheckout.js` — Added referral state (referralCode, appliedReferral, referralError) + applyReferral/removeReferral functions
+- `DetailsStep.jsx` — Added ReferralInput below VoucherCard
+
+**Verification:**
+- `npm run lint` — 0 errors (67 pre-existing warnings)
+- All new files pass lint without introducing new errors
+
+**Files Created:**
+- `src/app/api/user/referral/route.ts`
+- `src/app/api/user/referral/history/route.ts`
+- `src/app/api/checkout/validate-referral/route.ts`
+- `src/components/profile/ReferralCard.jsx`
+- `src/components/profile/ReferralHistory.jsx`
+- `src/components/checkout/ReferralInput.jsx`
+
+**Files Modified:**
+- `src/app/api/checkout/route.ts` — Added referral code handling + referral record creation
+- `src/components/profile/ProfileStats.jsx` — Added referral code display with copy button
+- `src/app/profile/page.jsx` — Added ReferralCard and ReferralHistory sections
+- `src/lib/hooks/useCheckout.js` — Added referral state management
+- `src/components/checkout/DetailsStep.jsx` — Added ReferralInput component
+
+## Session 27 — Hapus Semua Referral History
+
+**Goal:** Menghapus semua data referral history dari database (tabel referrals, commissions, commission_payouts, payout_commissions).
+
+**Completed:**
+- Created `scripts/clear-referral-history.sql` — SQL script untuk menghapus data secara manual
+- Created `scripts/clear-referral-history.ts` — TypeScript script untuk menghapus data via Drizzle ORM
+- Executed SQL cleanup: `DELETE FROM payout_commissions; DELETE FROM commission_payouts; DELETE FROM commissions; DELETE FROM referrals;`
+- Verified deletion: semua tabel terkait referral sudah kosong (0 rows)
+
+**Verification:**
+- SQL query `SELECT COUNT(*) FROM referrals/commissions/commission_payouts/payout_commissions` → semua 0 rows
+
+**Tabel yang dibersihkan:**
+- `referrals` — 0 rows
+- `commissions` — 0 rows
+- `commission_payouts` — 0 rows
+- `payout_commissions` — 0 rows
+
+## Session 34 — Fitur Grup Trip Selesai + Feedback & Rating
+
+**Goal:** Implement fitur penandaan grup trip selesai, feedback/rating dari user, dan tampilan data review yang lebih lengkap di admin.
+
+**Completed:**
+
+### Backend
+- Created `src/app/api/trips/[id]/groups/[groupId]/complete/route.ts` — API endpoint PUT untuk menandai grup selesai:
+  - Update status trip_departures ke "completed"
+  - Update semua booking berstatus "confirmed" untuk departure tersebut ke "completed"
+  - Return success message
+
+### Admin UI — Grup Trip
+- Updated `src/app/admin/trips/[id]/groups/page.tsx`:
+  - Import `CheckCircle` icon dari lucide-react
+  - Tambah tombol "Tandai Selesai" (hanya muncul jika status belum completed)
+  - Tambah fungsi `handleComplete(groupId)` dengan konfirmasi dan fetch ke API complete
+  - Styling: tombol hijau dengan icon CheckCircle
+
+### User UI — My Trips
+- Created `src/components/my-trips/FeedbackModal.jsx` — Modal komponen untuk feedback:
+  - Rating bintang 1-5 dengan interaksi hover
+  - Textarea ulasan (max 2000 karakter)
+  - Submit handler dengan loading state
+  - Styling premium dengan gradient icon
+
+- Updated `src/components/my-trips/OpenTripBookingCard.jsx`:
+  - Import FeedbackModal
+  - Tambah state `feedbackOpen` dan `feedbackSubmitted`
+  - Deteksi status completed dari booking
+  - Cek apakah sudah ada review (`booking.hasReview`)
+  - Tombol "Beri" untuk user memberikan feedback
+  - Label "Sudah Diulas" jika sudah memberikan feedback
+  - Submit feedback ke POST /api/reviews dengan bookingId, tripId, rating, content
+
+### Admin UI — Reviews Page
+- Updated `src/app/admin/reviews/page.tsx`:
+  - Tambah icon User, Calendar, Hash dari lucide-react
+  - Interface Review ditambah: userName, userEmail, tripTitle, groupStartDate, groupEndDate, bookingCode
+  - Tabel kolom baru: Pengguna (avatar + nama + email), Trip & Grup (nama trip + tanggal grup + kode booking), Rating, Ulasan, Status
+  - Hapus kolom Featured (bisa diedit di modal)
+
+### Review Repository
+- Updated `src/modules/review/review.repository.ts`:
+  - Tambah interface ReviewWithDetails dengan data enriched
+  - Method `findAll()` sekarang return data enriched dengan join ke users, trips, tripDepartures, bookings
+  - Tambah method `findByUserId(userId)` untuk cek apakah user sudah review booking tertentu
+
+### Booking Service
+- Updated `src/modules/booking/booking.service.ts`:
+  - Import reviewRepository
+  - Helper `withDetails()` sekarang tambah field `hasReview` (boolean) untuk setiap booking
+  - Cek apakah user sudah membuat review untuk booking tersebut
+
+**Files Created:**
+- `src/app/api/trips/[id]/groups/[groupId]/complete/route.ts`
+- `src/components/my-trips/FeedbackModal.jsx`
+
+**Files Modified:**
+- `src/app/admin/trips/[id]/groups/page.tsx` — Tombol "Tandai Selesai"
+- `src/components/my-trips/OpenTripBookingCard.jsx` — Feedback button + modal
+- `src/app/admin/reviews/page.tsx` — Enhanced table dengan data lengkap
+- `src/modules/review/review.repository.ts` — Enriched findAll() + findByUserId()
+- `src/modules/booking/booking.service.ts` — hasReview field di booking
+- `feature_list.json` — Update feat-011b description dan evidence
+
+**Verification:**
+- `npm run lint` — 0 errors, 79 warnings (pre-existing `<img>` warnings)
+- Semua file baru dan yang diubah pass lint tanpa error
+
+**Alur Fitur:**
+1. Admin klik "Tandai Selesai" di halaman grup trip
+2. Konfirmasi → API update status grup + booking ke completed
+3. User login → lihat status "Selesai" di My Trips
+4. User klik "Beri" → modal feedback muncul
+5. User isi rating + ulasan → submit ke /api/reviews
+6. Admin lihat di /admin/reviews dengan data: nama user, email, nama trip, tanggal grup, kode booking, rating, ulasan
+
+---
+
+### Referral Bonus Points Configurable (feat-072 update)
+
+**Goal:** Referral bonus points bisa diatur admin, bukan hardcoded.
+
+**Completed:**
+1. Created `site_settings` module (schema, repository, service)
+2. Created `site_settings` table via drizzle push
+3. Created API endpoints:
+   - `GET /api/admin/site-settings` — List all settings
+   - `PUT /api/admin/site-settings` — Update setting by key
+   - `GET /api/admin/site-settings/referral-bonus` — Get referral bonus points
+4. Updated `loyalty.service.ts` — `creditReferralBonus()` now reads from `site_settings` instead of hardcoded value
+5. Updated admin referral page (`/admin/referrals`):
+   - Added "Pengaturan Referral" card with input for bonus points
+   - Save button to update setting via API
+   - Status badge shows "+X poin" for converted referrals
+6. Default value: 10,000 points
+
+**Files Created:**
+- `src/modules/site-settings/site-settings.schema.ts`
+- `src/modules/site-settings/site-settings.repository.ts`
+- `src/modules/site-settings/site-settings.service.ts`
+- `src/app/api/admin/site-settings/route.ts`
+- `src/app/api/admin/site-settings/referral-bonus/route.ts`
+- `drizzle/0003_site_settings.sql`
+
+**Files Modified:**
+- `src/db/schema/index.ts` — Export siteSettings schema
+- `src/modules/loyalty/loyalty.service.ts` — Read bonus from settings
+- `src/app/admin/referrals/page.tsx` — Settings UI + poin display
+- `feature_list.json` — Update feat-072 evidence
+
+**Verification:**
+- `npm run lint` — 0 errors, 79 warnings (pre-existing)
+- `drizzle-kit push` — Table created successfully
+
+**Alur:**
+1. Admin buka /admin/referrals
+2. card "Pengaturan Referral" muncul di atas
+3. Admin ubah jumlah poin → klik Simpan
+4. Setting tersimpan di DB (site_settings.key = 'referral_bonus_points')
+5. Saat payment di-approve → referral convert → loyaltyService.creditReferralBonus() baca dari DB → poin sesuai setting
+6. Di tabel referral, status "Berhasil" tampilkan "+X poin" sesuai setting

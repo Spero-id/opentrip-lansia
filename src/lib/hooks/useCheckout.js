@@ -34,6 +34,9 @@ export function useCheckout(initialDestination) {
     voucherCode: "",
     appliedVoucher: null,
     voucherError: "",
+    referralCode: "",
+    appliedReferral: null,
+    referralError: "",
     paymentMethod: "BCA",
     proofUrl: "",
     orderId: "",
@@ -171,6 +174,59 @@ export function useCheckout(initialDestination) {
     setState((prev) => ({ ...prev, appliedVoucher: null, voucherCode: "" }));
   }, []);
 
+  const setReferralCode = useCallback((code) => {
+    setState((prev) => ({ ...prev, referralCode: code, referralError: "" }));
+  }, []);
+
+  const applyReferral = useCallback(async () => {
+    const code = state.referralCode.trim();
+    if (!code) return;
+
+    setState((prev) => ({ ...prev, referralError: "" }));
+
+    try {
+      const res = await fetch("/api/checkout/validate-referral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ referralCode: code }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setState((prev) => ({
+          ...prev,
+          referralError: data.error || "Kode referral tidak valid",
+        }));
+        return;
+      }
+
+      setState((prev) => ({
+        ...prev,
+        appliedReferral: {
+          code: code.toUpperCase(),
+          referrerName: data.referrerName,
+          referrerId: data.referrerId,
+        },
+        referralError: "",
+      }));
+    } catch (_err) {
+      setState((prev) => ({
+        ...prev,
+        referralError: "Gagal memvalidasi kode referral",
+      }));
+    }
+  }, [state.referralCode]);
+
+  const removeReferral = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      referralCode: "",
+      appliedReferral: null,
+      referralError: "",
+    }));
+  }, []);
+
   const setPaymentMethod = useCallback((method) => {
     setState((prev) => ({ ...prev, paymentMethod: method }));
   }, []);
@@ -219,6 +275,7 @@ export function useCheckout(initialDestination) {
       customer: state.customer,
       voucherCode: state.voucherCode,
       appliedVoucher: state.appliedVoucher,
+      referralCode: state.appliedReferral?.code || null,
       paymentMethod: state.paymentMethod,
       proofUrl: state.proofUrl,
       subtotal: (state.destination?.priceMin ?? 0) * state.pax,
@@ -324,6 +381,9 @@ export function useCheckout(initialDestination) {
       voucherCode: "",
       appliedVoucher: null,
       voucherError: "",
+      referralCode: "",
+      appliedReferral: null,
+      referralError: "",
       paymentMethod: null,
       proofUrl: "",
       orderId: "",
@@ -359,6 +419,9 @@ export function useCheckout(initialDestination) {
     setVoucherCode,
     applyVoucher,
     removeVoucher,
+    setReferralCode,
+    applyReferral,
+    removeReferral,
     setPaymentMethod,
     setProofUrl,
     setAgreeToTerms,

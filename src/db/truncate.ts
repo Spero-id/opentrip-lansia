@@ -1,14 +1,22 @@
 import "dotenv/config";
-import { neon } from "@neondatabase/serverless";
+import pg from "pg";
 
-const sql = neon(process.env.DATABASE_URL!);
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL! });
 
 async function truncateAll() {
-  const tables = await sql`SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename NOT LIKE '__drizzle%'`;
-  for (const t of tables) {
-    await sql.unsafe(`TRUNCATE TABLE "${t.tablename}" CASCADE`);
+  const client = await pool.connect();
+  try {
+    const res = await client.query(
+      "SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename NOT LIKE '__drizzle%'"
+    );
+    for (const t of res.rows) {
+      await client.query(`TRUNCATE TABLE "${t.tablename}" CASCADE`);
+    }
+    console.log(`Cleared ${res.rowCount} tables`);
+  } finally {
+    client.release();
   }
-  console.log(`Cleared ${tables.length} tables`);
+  await pool.end();
 }
 
 truncateAll().catch(console.error);

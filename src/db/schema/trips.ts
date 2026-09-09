@@ -42,6 +42,7 @@ export const tripDepartures = pgTable("trip_departures", {
   maxParticipants: integer("max_participants").notNull(),
   minParticipants: integer("min_participants").default(1),
   status: varchar("status", { length: 20 }).notNull().default("scheduled"),
+  isActive: boolean("is_active").default(false),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

@@ -159,6 +159,7 @@ export default function MyTripsPage() {
                   key={b.id}
                   booking={b}
                   imageUrl={tripImages[getDestinationId(b)] || null}
+                  onRefresh={fetchData}
                 />
               ))
             )}

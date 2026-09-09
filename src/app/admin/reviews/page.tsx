@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Edit, Trash2, Star } from "lucide-react";
+import { Edit, Trash2, Star, User, Calendar, Hash } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 
@@ -14,6 +14,12 @@ interface Review {
   bookingId: string;
   tripId: string;
   createdAt: string;
+  userName?: string | null;
+  userEmail?: string | null;
+  tripTitle?: string | null;
+  groupStartDate?: string | null;
+  groupEndDate?: string | null;
+  bookingCode?: string | null;
 }
 
 interface ReviewForm {
@@ -103,36 +109,63 @@ export default function AdminReviews() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
               <tr>
-                <th className="px-6 py-4">Rating</th>
-                <th className="px-6 py-4">Konten</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Featured</th>
-                <th className="px-6 py-4 text-right">Aksi</th>
+                <th className="px-4 py-4">Pengguna</th>
+                <th className="px-4 py-4">Trip & Grup</th>
+                <th className="px-4 py-4">Rating</th>
+                <th className="px-4 py-4">Ulasan</th>
+                <th className="px-4 py-4">Status</th>
+                <th className="px-4 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Belum ada data ulasan.</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-400">Belum ada data ulasan.</td></tr>
               ) : (
                 rows.map((r) => (
                   <tr key={r.id} className="hover:bg-slate-50/60 transition">
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-[#1CA6B7]/10 flex items-center justify-center">
+                          <User className="w-4 h-4 text-[#1CA6B7]" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-slate-900">{r.userName || "-"}</p>
+                          <p className="text-[10px] text-slate-500 truncate max-w-[120px]">{r.userEmail || "-"}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="space-y-1">
+                        <p className="text-xs font-semibold text-slate-900 truncate max-w-[150px]">{r.tripTitle || "-"}</p>
+                        {r.groupStartDate && (
+                          <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                            <Calendar className="w-3 h-3" />
+                            {r.groupStartDate}
+                            {r.groupEndDate ? ` - ${r.groupEndDate}` : ""}
+                          </div>
+                        )}
+                        {r.bookingCode && (
+                          <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                            <Hash className="w-3 h-3" />
+                            {r.bookingCode}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
                       <span className="inline-flex items-center gap-1 text-amber-500 font-bold">
                         {r.rating}/5 <Star className="w-3 h-3 fill-amber-500" />
                       </span>
                     </td>
-                    <td className="px-6 py-4 max-w-xs truncate text-slate-500">{r.content || "-"}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
+                      <p className="text-xs text-slate-600 max-w-[200px] truncate">{r.content || "-"}</p>
+                    </td>
+                    <td className="px-4 py-4">
                       <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${statusStyles[r.status] || "bg-slate-100 text-slate-600"}`}>{r.status}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${r.isFeatured ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
-                        {r.isFeatured ? "Featured" : "No"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
                         <button onClick={() => openEdit(r)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Ulasan">
                           <Edit className="w-4 h-4" />

@@ -1,6 +1,7 @@
 import { tripRepository } from "./trip.repository";
 import type { UUID } from "@/shared/types";
 import type { trips, itineraryItems } from "./trip.schema";
+import type { GroupCreateInput } from "./trip.repository";
 
 type TripInsert = typeof trips.$inferInsert;
 type ItineraryInsert = typeof itineraryItems.$inferInsert;
@@ -121,5 +122,75 @@ export const tripService = {
 
   async deleteTrip(id: UUID) {
     return tripRepository.delete(id);
+  },
+
+  // Group Trip Management
+  async getTripGroups(tripId: UUID) {
+    const trip = await tripRepository.findById(tripId);
+    if (!trip) throw new Error("Trip tidak ditemukan");
+    const groups = await tripRepository.findAllGroupsByTripId(tripId);
+    return { trip, groups };
+  },
+
+  async getGroupById(groupId: UUID) {
+    return tripRepository.findGroupById(groupId);
+  },
+
+  async createGroup(tripId: UUID, data: GroupCreateInput) {
+    const trip = await tripRepository.findById(tripId);
+    if (!trip) throw new Error("Trip tidak ditemukan");
+    return tripRepository.createGroup(tripId, data);
+  },
+
+  async updateGroup(groupId: UUID, data: Partial<GroupCreateInput>) {
+    const group = await tripRepository.findGroupById(groupId);
+    if (!group) throw new Error("Grup tidak ditemukan");
+
+    const updateData: Record<string, unknown> = {};
+    if (data.startDate) updateData.startDate = data.startDate;
+    if (data.endDate) updateData.endDate = data.endDate;
+    if (data.maxParticipants !== undefined) updateData.maxParticipants = data.maxParticipants;
+    if (data.minParticipants !== undefined) updateData.minParticipants = data.minParticipants;
+    if (data.notes !== undefined) updateData.notes = data.notes;
+
+    return tripRepository.updateGroup(groupId, updateData);
+  },
+
+  async deleteGroup(groupId: UUID) {
+    const group = await tripRepository.findGroupById(groupId);
+    if (!group) throw new Error("Grup tidak ditemukan");
+
+    // Check if there are active bookings
+    const bookingCount = await tripRepository.countBookingsByDepartureId(groupId);
+    if (bookingCount > 0) {
+      throw new Error("Tidak bisa menghapus grup yang sudah memiliki booking aktif");
+    }
+
+    return tripRepository.deleteGroup(groupId);
+  },
+
+  async activateGroup(tripId: UUID, groupId: UUID) {
+    const trip = await tripRepository.findById(tripId);
+    if (!trip) throw new Error("Trip tidak ditemukan");
+
+    const group = await tripRepository.findGroupById(groupId);
+    if (!group) throw new Error("Grup tidak ditemukan");
+
+    if (group.tripId !== tripId) throw new Error("Grup tidak termasuk dalam trip ini");
+
+    // Only scheduled or confirmed groups can be activated
+    if (!["scheduled", "confirmed"].includes(group.status)) {
+      throw new Error("Hanya grup dengan status scheduled atau confirmed yang bisa diaktifkan");
+    }
+
+    return tripRepository.activateGroup(tripId, groupId);
+  },
+
+  async getActiveGroupInfo(tripId: UUID) {
+    return tripRepository.getActiveGroupWithPrice(tripId);
+  },
+
+  async getGroupParticipants(departureId: UUID) {
+    return tripRepository.findBookingsWithDetailsByDepartureId(departureId);
   },
 };

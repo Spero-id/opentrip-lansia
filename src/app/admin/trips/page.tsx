@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Eye, EyeOff, Sparkles, Check } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, Sparkles, Check, Users } from "lucide-react";
 import CreatableSelect from "react-select/creatable";
 import { slugify } from "@/shared/utils/helpers";
 import Modal from "../components/modal";
@@ -63,13 +63,6 @@ function parseRupiah(val: string): number {
   return raw ? parseInt(raw, 10) : 0;
 }
 
-function formatDate(val: string | null | undefined): string {
-  if (!val) return "-";
-  const [y, m, d] = val.slice(0, 10).split("-");
-  if (!y || !m || !d) return val;
-  return `${d}-${m}-${y}`;
-}
-
 interface Trip {
   id: string;
   type: string;
@@ -89,8 +82,6 @@ interface Trip {
   facilities?: (string | { name: string; icon?: string })[] | null;
   itinerary?: { day: number; location?: string; title: string; description: string }[];
   itineraryItems?: { dayNumber: number; location?: string; title: string; description: string }[];
-  startDate?: string | null;
-  departureId?: string | null;
   createdAt: string;
 }
 
@@ -104,11 +95,6 @@ interface ItineraryItemInput {
 interface FacilityItemInput {
   name: string;
   icon: string;
-}
-
-interface DepartureItemInput {
-  startDate: string;
-  maxParticipants: number;
 }
 
 interface TripForm {
@@ -162,7 +148,7 @@ export default function AdminTrips() {
   const [images, setImages] = useState<string[]>([]);
   const [itineraryList, setItineraryList] = useState<ItineraryItemInput[]>([]);
   const [facilitiesList, setFacilitiesList] = useState<FacilityItemInput[]>([]);
-  const [departuresList, setDeparturesList] = useState<DepartureItemInput[]>([]);
+  
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -228,7 +214,6 @@ export default function AdminTrips() {
     setImages([]);
     setItineraryList([{ dayNumber: 1, location: "", title: "", description: "" }]);
     setFacilitiesList([{ name: "", icon: "Check" }]);
-    setDeparturesList([{ startDate: "", maxParticipants: 10 }]);
     setErrors({});
     setModalOpen(true);
   }
@@ -288,24 +273,7 @@ export default function AdminTrips() {
         : []
     );
 
-    try {
-      const res = await fetch(`/api/trips/${item.id}`);
-      const data = await res.json();
-      if (res.ok && Array.isArray(data?.departures)) {
-        setDeparturesList(
-          data.departures.map((d: { startDate?: string; maxParticipants?: number | null }) => ({
-            startDate: d.startDate || "",
-            maxParticipants: d.maxParticipants || 10,
-          }))
-        );
-      } else {
-        setDeparturesList([{ startDate: "", maxParticipants: 10 }]);
-      }
-    } catch {
-      setDeparturesList([{ startDate: "", maxParticipants: 10 }]);
-    }
-
-    if (categories.length === 0) await fetchCategories();
+if (categories.length === 0) await fetchCategories();
 
     setModalOpen(true);
   }
@@ -321,9 +289,6 @@ export default function AdminTrips() {
     if (!form.price || form.price <= 0) e.price = "Harga wajib diisi dan harus lebih dari 0.";
     if (!form.meetingPoint.trim()) e.meetingPoint = "Lokasi kumpul wajib diisi.";
     if (!form.meetingPointTime) e.meetingPointTime = "Jam kumpul wajib diisi.";
-    if (departuresList.filter((d) => d.startDate.trim() !== "").length === 0) {
-      e.departures = "Minimal satu jadwal keberangkatan wajib diisi.";
-    }
     return e;
   }
 
@@ -356,12 +321,6 @@ export default function AdminTrips() {
       priceMin: form.price || undefined,
       priceMax: form.price || undefined,
       price: form.price || undefined,
-      departures: departuresList
-        .filter((d) => d.startDate.trim() !== "")
-        .map((d) => ({
-          startDate: d.startDate,
-          maxParticipants: Number(d.maxParticipants) || 10,
-        })),
       facilities: facilitiesList
         .filter((item) => item.name.trim() !== "")
         .map((item) => ({
@@ -481,29 +440,6 @@ export default function AdminTrips() {
     setFacilitiesList((prev) => [...prev, { name: "", icon: "" }]);
   }
 
-  function addDepartureItem() {
-    setDeparturesList((prev) => [...prev, { startDate: "", maxParticipants: 10 }]);
-  }
-
-  function removeDepartureItem(index: number) {
-    setDeparturesList((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  function handleDepartureChange(index: number, field: keyof DepartureItemInput, value: string | number) {
-    setDeparturesList((prev) => {
-      const copy = [...prev];
-      copy[index] = { ...copy[index], [field]: field === "maxParticipants" ? Number(value) : value };
-      return copy;
-    });
-    if (field === "startDate") {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next.departures;
-        return next;
-      });
-    }
-  }
-
   function removeFacilityItem(index: number) {
     setFacilitiesList((prev) => prev.filter((_, i) => i !== index));
   }
@@ -552,7 +488,6 @@ export default function AdminTrips() {
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Tipe</th>
                 <th className="px-6 py-4">Lokasi & Provinsi</th>
-                <th className="px-6 py-4">Jadwal</th>
                 <th className="px-6 py-4">Harga</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
@@ -560,9 +495,9 @@ export default function AdminTrips() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={9} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
               ) : tripRows.length === 0 ? (
-                <tr><td colSpan={9} className="px-6 py-12 text-center text-slate-400">Belum ada data trip.</td></tr>
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">Belum ada data trip.</td></tr>
               ) : (
                 tripRows.map((t) => (
                   <tr key={t.id} className="hover:bg-slate-50/60 transition">
@@ -575,7 +510,6 @@ export default function AdminTrips() {
                     <td className="px-6 py-4 text-slate-500">
                       {[t.location, t.province].filter(Boolean).join(", ") || "-"}
                     </td>
-                    <td className="px-6 py-4 text-slate-500">{t.startDate ? formatDate(t.startDate) : "-"}</td>
                     <td className="px-6 py-4 font-semibold text-slate-900">
                       {t.priceMin ? formatRupiah(t.priceMin) : "-"}
                     </td>
@@ -588,6 +522,9 @@ export default function AdminTrips() {
                       <div className="inline-flex items-center gap-2">
                         <button onClick={() => openEdit(t)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition" title="Kelola Grup">
+                          <Users className="w-4 h-4" />
                         </button>
                         <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
@@ -907,76 +844,6 @@ export default function AdminTrips() {
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="border-t border-slate-200 pt-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Jadwal Keberangkatan</h3>
-                <p className="text-xs text-slate-500">Satu trip bisa punya beberapa jadwal. Harga per jadwal mengikuti input Harga di atas.</p>
-              </div>
-              <button
-                type="button"
-                onClick={addDepartureItem}
-                className="px-3 py-1.5 text-xs font-semibold text-[#F49D1A] bg-[#F49D1A]/10 hover:bg-[#F49D1A]/20 rounded-xl transition inline-flex items-center gap-1.5"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Jadwal</span>
-              </button>
-            </div>
-
-            {errors.departures && (
-              <div className="rounded-xl bg-red-50 border border-red-200 px-3 py-2">
-                <p className="text-xs font-medium text-red-600">{errors.departures}</p>
-              </div>
-            )}
-
-            {departuresList.length === 0 ? (
-              <p className="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-                Belum ada jadwal keberangkatan. Klik tombol di atas untuk menambah jadwal.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {departuresList.map((item, index) => (
-                  <div key={index} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                        Jadwal #{index + 1}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => removeDepartureItem(index)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                        title="Hapus Jadwal"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-slate-600">Tanggal Keberangkatan *</label>
-                        <input
-                          type="date"
-                          value={item.startDate}
-                          onChange={(e) => handleDepartureChange(index, "startDate", e.target.value)}
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-slate-600">Kuota Maksimal</label>
-                        <input
-                          type="number"
-                          min={1}
-                          value={item.maxParticipants}
-                          onChange={(e) => handleDepartureChange(index, "maxParticipants", Number(e.target.value))}
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
-                        />
-                      </div>
-                    </div>
                   </div>
                 ))}
               </div>

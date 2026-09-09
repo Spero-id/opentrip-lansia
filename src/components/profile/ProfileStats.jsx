@@ -1,8 +1,17 @@
 "use client";
 
-import { Coins, Ticket, CalendarDays, Clock } from "lucide-react";
+import { Coins, CalendarDays, Users } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function ProfileStats({ user }) {
+  const [referralData, setReferralData] = useState(null);
+  useEffect(() => {
+    fetch("/api/user/referral")
+      .then((res) => res.json())
+      .then((data) => setReferralData(data))
+      .catch(() => {});
+  }, []);
+
   const memberSince = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString("id-ID", {
         month: "long",
@@ -10,9 +19,22 @@ export default function ProfileStats({ user }) {
       })
     : "-";
 
+  const formatPoints = (points) => {
+    if (!points || points === 0) return "0";
+    return points.toLocaleString("id-ID");
+  };
+
   const stats = [
-    { label: "Poin Loyalitas", icon: Coins, comingSoon: true },
-    { label: "Kode Referral", icon: Ticket, comingSoon: true },
+    {
+      label: "Poin Loyalitas",
+      icon: Coins,
+      value: formatPoints(referralData?.loyaltyPoints ?? 0),
+    },
+    {
+      label: "Total Referral",
+      icon: Users,
+      value: referralData?.stats?.totalReferred ?? 0,
+    },
     { label: "Anggota Sejak", value: memberSince, icon: CalendarDays },
   ];
 
@@ -30,18 +52,9 @@ export default function ProfileStats({ user }) {
             <p className="text-xs font-medium text-slate-500">{stat.label}</p>
           </div>
 
-          {stat.comingSoon ? (
-            <div className="mt-3 flex w-fit items-center gap-1.5 rounded-lg border border-[#F3E2C0] bg-[#FEF6E7] px-2.5 py-1.5">
-              <Clock size={12} className="text-[#c47d12]" />
-              <span className="text-[11px] font-semibold text-[#c47d12]">
-                Segera Hadir
-              </span>
-            </div>
-          ) : (
-            <p className="mt-3 truncate text-lg font-bold text-slate-900">
-              {stat.value}
-            </p>
-          )}
+          <p className="mt-3 truncate text-lg font-bold text-slate-900">
+            {stat.value}
+          </p>
         </div>
       ))}
     </div>

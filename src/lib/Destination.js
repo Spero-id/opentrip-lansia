@@ -53,5 +53,6 @@ export function toDetail(dest) {
     meetingPoints: Array.isArray(dest.meetingPoints) ? dest.meetingPoints : Array.isArray(dest.meetingPointsJson) ? dest.meetingPointsJson : [],
     reviewsList: dest.reviewsList || [],
     bookedCount: dest.bookedCount ?? null,
+    activeGroup: dest.activeGroup || null,
   };
 }

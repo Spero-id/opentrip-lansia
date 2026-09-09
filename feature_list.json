@@ -1,11 +1,11 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-09-04",
+  "last_updated": "2026-09-09",
   "summary": {
-    "total_features": 54,
-    "in_review": 19,
-    "completed": 22,
-    "to_do": 14,
+    "total_features": 55,
+    "in_review": 20,
+    "completed": 23,
+    "to_do": 13,
     "not_started": 0
   },
   "phases": [
@@ -59,6 +59,22 @@
             "npm run lint"
           ],
           "evidence": "Schema tripDepartures exists in module, admin UI belum ada"
+        },
+        {
+          "id": "feat-011b",
+          "title": "Group Trip Management",
+          "description": "Satu trip bisa punya banyak grup keberangkatan (departure). Setiap grup punya tanggal, kuota, status sendiri. Admin bisa set grup yang aktif untuk menerima booking. Booking user otomatis masuk ke grup aktif. Admin bisa upload foto per grup setelah trip selesai. Tombol 'Grup' di tabel trips → halaman manage groups. Admin bisa menandai grup selesai untuk feedback user.",
+          "status": "completed",
+          "priority": 11,
+          "depends_on": [
+            "feat-010",
+            "feat-011"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
+          "evidence": "Schema: tripDepartures.isActive column added. Repository: findAllGroupsByTripId, createGroup, updateGroup, deleteGroup, activateGroup, getActiveGroupWithPrice methods. Service: getTripGroups, createGroup, updateGroup, deleteGroup, activateGroup, getActiveGroupInfo. API: GET/POST /api/trips/[id]/groups, PUT/DELETE /api/trips/[id]/groups/[groupId], PUT activate, GET active-group, gallery CRUD, PUT complete. Admin UI: /admin/trips/[id]/groups page with list, create/edit modal, activate button, 'Tandai Selesai' button. /admin/trips/[id]/groups/[groupId]/gallery page with upload. Checkout route updated to use active group. BookingCard shows active group info with quota progress bar. User can submit feedback/rating when trip completed. Admin reviews page shows user name, trip title, group dates, booking code."
+        },
         },
         {
           "id": "feat-012",
@@ -516,6 +532,21 @@
           "evidence": "src/app/agent/page.tsx, referral module (6 tables)"
         },
         {
+          "id": "feat-073",
+          "title": "User Referral System (Profile + Checkout)",
+          "description": "User-facing referral system: display referral code in profile with copy/share, add referral code input in checkout, and show referral history in profile. Backend: validate referral code, create referral record on booking, track referral stats.",
+          "status": "in_review",
+          "priority": 73,
+          "depends_on": [
+            "feat-021",
+            "feat-030"
+          ],
+          "verification": [
+            "npm run lint"
+          ],
+          "evidence": "Backend: GET /api/user/referral (stats), GET /api/user/referral/history (paginated), POST /api/checkout/validate-referral (validation + self-referral check). Updated POST /api/checkout to accept referralCode and create referral record. Frontend: ReferralCard (profile, copy/share), ReferralHistory (expandable list, pagination), ReferralInput (checkout validation). Updated ProfileStats, profile/page.jsx, useCheckout.js, DetailsStep.jsx. npm run lint: 0 errors."
+        },
+        {
           "id": "feat-071",
           "title": "Commission payout system",
           "description": "Commission payout workflow. Schema exists (commissionPayouts, payoutCommissions). API endpoints needed.",
@@ -532,8 +563,8 @@
         {
           "id": "feat-072",
           "title": "Loyalty points system",
-          "description": "Loyalty transactions tracking and redeem. Schema exists. Implementation needed.",
-          "status": "to_do",
+          "description": "Loyalty transactions tracking and redeem. Includes: (1) creditReferralBonus - give points to referrer when referral converts, (2) profile page displays actual loyalty points instead of 'Segera Hadir', (3) payment approval triggers referral conversion + points. (4) Referral bonus points configurable via admin settings.",
+          "status": "in_review",
           "priority": 72,
           "depends_on": [
             "feat-070"
@@ -541,7 +572,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "referral.schema.ts with loyaltyTransactions table"
+          "evidence": "loyalty.service.ts: creditReferralBonus reads from site_settings (configurable). payment.service.ts: reviewPayment converts referral status + credits referrer. site_settings module: schema + repository + service + API (GET/PUT /api/admin/site-settings). Admin referral page: settings card to configure bonus points. DB: site_settings table with default referral_bonus_points=10000. npm run lint: 0 errors."
         }
       ]
     },

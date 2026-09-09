@@ -1,6 +1,7 @@
 "use client";
 
 import VoucherCard from "./VoucherCard";
+import ReferralInput from "./ReferralInput";
 import PriceBreakdown from "./PriceBreakdown";
 import MeetingPointInfo from "./MeetingPointInfo";
 import CustomerForm from "./CustomerForm";
@@ -42,6 +43,15 @@ export default function DetailsStep({ checkout, onNext }) {
           onRemove={checkout.removeVoucher}
           appliedVoucher={checkout.appliedVoucher}
           voucherError={checkout.voucherError}
+        />
+
+        <ReferralInput
+          referralCode={checkout.referralCode}
+          setReferralCode={checkout.setReferralCode}
+          appliedReferral={checkout.appliedReferral}
+          referralError={checkout.referralError}
+          onApply={checkout.applyReferral}
+          onRemove={checkout.removeReferral}
         />
       </div>
 

@@ -11,3 +11,4 @@ export * from "../../modules/blog/blog.schema";
 export * from "../../modules/private-trip/private-trip.schema";
 export * from "../../modules/contact/contact.schema";
 export * from "../../modules/newsletter/newsletter.schema";
+export * from "../../modules/site-settings/site-settings.schema";

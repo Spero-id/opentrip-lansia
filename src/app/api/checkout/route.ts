@@ -3,6 +3,8 @@ import { db } from "@/shared/db";
 import { bookings, bookingParticipants, healthDeclarations } from "@/modules/booking/booking.schema";
 import { trips, tripDepartures } from "@/db/schema/trips";
 import { promotionUsages } from "@/db/schema/promotions";
+import { referrals } from "@/modules/referral/referral.schema";
+import { users } from "@/modules/auth/auth.schema";
 import { auth } from "@/modules/auth/auth.config";
 import { promotionRepository } from "@/modules/promotion";
 import { tripRepository } from "@/modules/trip/trip.repository";
@@ -45,6 +47,7 @@ export async function POST(req: NextRequest) {
       pax,
       customer,
       voucherCode,
+      referralCode,
       subtotal: clientSubtotalRaw,
       totalAmount: clientTotalRaw,
     } = body;
@@ -84,10 +87,23 @@ export async function POST(req: NextRequest) {
         .from(tripDepartures)
         .where(and(eq(tripDepartures.id, departureId), eq(tripDepartures.tripId, trip.id)))
         .limit(1);
-      if (!dep) departureId = null;
+      if (dep) departureId = dep.id;
+      else departureId = null;
     } else {
       departureId = null;
     }
+    
+    // If no valid departureId, find the active group
+    if (!departureId) {
+      const [activeDep] = await db
+        .select()
+        .from(tripDepartures)
+        .where(and(eq(tripDepartures.tripId, trip.id), eq(tripDepartures.isActive, true)))
+        .limit(1);
+      departureId = activeDep?.id ?? null;
+    }
+    
+    // Fallback: if still no departure, find the first upcoming one
     if (!departureId) {
       const [dep] = await db
         .select()
@@ -275,6 +291,36 @@ export async function POST(req: NextRequest) {
         await promotionRepository.recordUsage(promoId, userId, booking.id);
       } catch (e) {
         console.error("Failed to record promotion usage:", e);
+      }
+    }
+
+    // --- Validate and record referral if provided ---
+    const refCode = String(referralCode ?? "").trim().toUpperCase();
+    let referrerId: string | null = null;
+
+    if (refCode) {
+      const [referrer] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.referralCode, refCode))
+        .limit(1);
+
+      if (referrer && referrer.id !== userId) {
+        referrerId = referrer.id;
+      }
+    }
+
+    // Create referral record if valid referrer exists
+    if (referrerId) {
+      try {
+        await db.insert(referrals).values({
+          referrerId,
+          referredUserId: userId,
+          bookingId: booking.id,
+          status: "pending",
+        });
+      } catch (e) {
+        console.error("Failed to create referral record:", e);
       }
     }
 

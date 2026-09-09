@@ -1,14 +1,22 @@
 import "dotenv/config";
-import { neon } from "@neondatabase/serverless";
+import pg from "pg";
 
-const sql = neon(process.env.DATABASE_URL!);
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL! });
 
 async function dropAll() {
-  const tables = await sql`SELECT tablename FROM pg_tables WHERE schemaname='public'`;
-  for (const t of tables) {
-    await sql.unsafe(`DROP TABLE IF EXISTS "${t.tablename}" CASCADE`);
+  const client = await pool.connect();
+  try {
+    const res = await client.query(
+      "SELECT tablename FROM pg_tables WHERE schemaname='public'"
+    );
+    for (const t of res.rows) {
+      await client.query(`DROP TABLE IF EXISTS "${t.tablename}" CASCADE`);
+    }
+    console.log(`Dropped ${res.rowCount} tables`);
+  } finally {
+    client.release();
   }
-  console.log(`Dropped ${tables.length} tables`);
+  await pool.end();
 }
 
 dropAll().catch(console.error);

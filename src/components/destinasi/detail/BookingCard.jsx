@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { formatRupiah } from "@/lib/format";
+import { Calendar } from "lucide-react";
 
 const A = "#F49D1A";
 
 const QUOTA_MAX = 10;
 const MIN_TO_GO = 6;
+
+function formatDate(val) {
+  if (!val) return "-";
+  const [y, m, d] = val.slice(0, 10).split("-");
+  if (!y || !m || !d) return val;
+  return `${d}-${m}-${y}`;
+}
 
 function QuotaStatus({ booked }) {
   if (booked >= QUOTA_MAX) {
@@ -17,9 +25,10 @@ function QuotaStatus({ booked }) {
 }
 
 export default function BookingCard({ dest }) {
-  const bookedCount =
-    typeof dest.bookedCount === "number" ? dest.bookedCount : null;
-  const remaining = bookedCount === null ? null : Math.max(QUOTA_MAX - bookedCount, 0);
+  const activeGroup = dest.activeGroup || null;
+  const bookedCount = activeGroup?.quotaBooked ?? (typeof dest.bookedCount === "number" ? dest.bookedCount : null);
+  const maxQuota = activeGroup?.maxParticipants ?? QUOTA_MAX;
+  const remaining = bookedCount === null ? null : Math.max(maxQuota - bookedCount, 0);
 
   return (
     <div className="sticky top-28 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col gap-6">
@@ -31,6 +40,21 @@ export default function BookingCard({ dest }) {
         <div className="text-sm text-gray-400 mt-1">per orang / pax</div>
       </div>
 
+      {activeGroup && (
+        <div className="bg-[#1CA6B7]/5 border border-[#1CA6B7]/20 rounded-2xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Calendar className="w-4 h-4 text-[#1CA6B7]" />
+            <span className="text-sm font-bold text-[#1CA6B7]">Jadwal Aktif</span>
+          </div>
+          <div className="text-sm font-semibold text-gray-900">
+            {formatDate(activeGroup.startDate)}
+            {activeGroup.endDate && activeGroup.endDate !== activeGroup.startDate && (
+              <span className="text-gray-500"> s/d {formatDate(activeGroup.endDate)}</span>
+            )}
+          </div>
+        </div>
+      )}
+
       {bookedCount !== null && (
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between mb-2">
@@ -41,7 +65,7 @@ export default function BookingCard({ dest }) {
             <div
               className="h-full rounded-full transition-all"
               style={{
-                width: `${Math.min((bookedCount / QUOTA_MAX) * 100, 100)}%`,
+                width: `${Math.min((bookedCount / maxQuota) * 100, 100)}%`,
                 backgroundColor: A,
               }}
             />
@@ -57,14 +81,23 @@ export default function BookingCard({ dest }) {
       )}
 
       <div className="pt-2">
-        <Link href={`/checkout?destination=${dest.id}`} className="block w-full">
+        {activeGroup ? (
+          <Link href={`/checkout?destination=${dest.id}`} className="block w-full">
+            <button
+              className="w-full py-3.5 rounded-xl text-white font-semibold text-base shadow-sm hover:shadow-lg transition-all cursor-pointer"
+              style={{ backgroundColor: A }}
+            >
+              Pesan Sekarang
+            </button>
+          </Link>
+        ) : (
           <button
-            className="w-full py-3.5 rounded-xl text-white font-semibold text-base shadow-sm hover:shadow-lg transition-all cursor-pointer"
-            style={{ backgroundColor: A }}
+            disabled
+            className="w-full py-3.5 rounded-xl text-gray-400 bg-gray-100 font-semibold text-base cursor-not-allowed"
           >
-            Pesan Sekarang
+            Belum Ada Jadwal
           </button>
-        </Link>
+        )}
         <p className="text-center text-xs text-gray-400 mt-4">Belum dipungut biaya saat ini.</p>
       </div>
 

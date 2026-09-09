@@ -4,6 +4,8 @@ import {
   itineraryItems, tripGalleries, galleryMedia,
   tripHoreca, tripVendors, tripMedia,
 } from "./trip.schema";
+import { bookings, bookingItems, bookingParticipants } from "../booking/booking.schema";
+import { payments } from "../payment/payment.schema";
 import { destinationCategories } from "../master/master.schema";
 import { eq, and, asc, desc, sql, getTableColumns, inArray } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
@@ -15,6 +17,14 @@ export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin
   price: string | null;
   departureId: string | null;
   categoryName: string | null;
+  activeGroup?: {
+    id: string;
+    startDate: string;
+    endDate: string;
+    maxParticipants: number;
+    quotaBooked: number;
+    status: string;
+  } | null;
 }
 
 export type TripWithCategory = typeof trips.$inferSelect & { categoryName: string | null };
@@ -38,6 +48,17 @@ export interface ITripRepository {
     schedules: { startDate: string; endDate: string; maxParticipants: number; price: number }[]
   ): Promise<void>;
 
+  // Group Trip Management
+  findAllGroupsByTripId(tripId: UUID): Promise<GroupWithDetails[]>;
+  findGroupById(groupId: UUID): Promise<typeof tripDepartures.$inferSelect | null>;
+  findActiveGroupByTripId(tripId: UUID): Promise<typeof tripDepartures.$inferSelect | null>;
+  createGroup(tripId: UUID, data: GroupCreateInput): Promise<typeof tripDepartures.$inferSelect>;
+  updateGroup(groupId: UUID, data: Partial<typeof tripDepartures.$inferInsert>): Promise<typeof tripDepartures.$inferSelect | null>;
+  deleteGroup(groupId: UUID): Promise<void>;
+  activateGroup(tripId: UUID, groupId: UUID): Promise<{ activated: string; deactivated: string | null }>;
+  countBookingsByDepartureId(departureId: UUID): Promise<number>;
+  getActiveGroupWithPrice(tripId: UUID): Promise<ActiveGroupInfo | null>;
+
   // Itinerary
   findItineraryByTripId(tripId: UUID): Promise<(typeof itineraryItems.$inferSelect)[]>;
   saveItinerary(tripId: UUID, items: ItineraryInput[]): Promise<void>;
@@ -45,9 +66,13 @@ export interface ITripRepository {
   // Galleries
   findAllGalleries(): Promise<(typeof tripGalleries.$inferSelect)[]>;
   findGalleryById(id: UUID): Promise<typeof tripGalleries.$inferSelect | null>;
+  findGalleriesByDepartureId(departureId: UUID): Promise<(typeof tripGalleries.$inferSelect)[]>;
   createGallery(data: typeof tripGalleries.$inferInsert): Promise<typeof tripGalleries.$inferSelect>;
   updateGallery(id: UUID, data: Partial<typeof tripGalleries.$inferInsert>): Promise<void>;
   deleteGallery(id: UUID): Promise<void>;
+
+  // Group Participants
+  findBookingsWithDetailsByDepartureId(departureId: UUID): Promise<GroupBookingDetail[]>;
 }
 
 export interface ItineraryInput {
@@ -56,6 +81,65 @@ export interface ItineraryInput {
   endTime?: string | null;
   title: string;
   description?: string | null;
+}
+
+export interface GroupCreateInput {
+  startDate: string;
+  endDate: string;
+  maxParticipants: number;
+  minParticipants?: number;
+  notes?: string | null;
+}
+
+export interface GroupWithDetails {
+  id: string;
+  tripId: string;
+  startDate: string;
+  endDate: string;
+  maxParticipants: number;
+  minParticipants: number | null;
+  status: string;
+  isActive: boolean | null;
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  quotaBooked: number;
+  bookingCount: number;
+  galleryCount: number;
+  price: string | null;
+}
+
+export interface ActiveGroupInfo {
+  id: string;
+  tripId: string;
+  startDate: string;
+  endDate: string;
+  maxParticipants: number;
+  status: string;
+  quotaBooked: number;
+  price: string;
+}
+
+export interface GroupBookingDetail {
+  bookingId: string;
+  bookingCode: string;
+  bookingStatus: string;
+  totalParticipants: number;
+  totalAmount: string;
+  bookingDate: Date;
+  participants: {
+    fullName: string;
+    phone: string | null;
+    isPrimary: boolean | null;
+  }[];
+  payment: {
+    id: string;
+    status: string;
+    proofUrl: string | null;
+    method: string | null;
+    amount: string;
+    adminNote: string | null;
+  } | null;
 }
 
 export function pickCanonicalPrice(prices: { name: string; price: string }[]): string | null {
@@ -74,6 +158,10 @@ export const tripRepository: ITripRepository = {
         price: tripPrices.price,
         priceName: tripPrices.name,
         categoryName: destinationCategories.name,
+        isActiveDeparture: tripDepartures.isActive,
+        departureEndDate: tripDepartures.endDate,
+        departureMaxParticipants: tripDepartures.maxParticipants,
+        departureStatus: tripDepartures.status,
       })
       .from(trips)
       .leftJoin(destinationCategories, eq(trips.categoryId, destinationCategories.id))
@@ -84,11 +172,24 @@ export const tripRepository: ITripRepository = {
 
     const byTrip = new Map<string, TripWithPrice>();
     const pricesByDeparture = new Map<string, { name: string; price: string }[]>();
+    const activeGroups = new Map<string, { id: string; startDate: string; endDate: string; maxParticipants: number; status: string; quotaBooked: number }>();
 
     for (const r of rows) {
       if (r.departureId) {
         if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
         pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
+        
+        // Track active group
+        if (r.isActiveDeparture && !activeGroups.has(r.id)) {
+          activeGroups.set(r.id, {
+            id: r.departureId,
+            startDate: r.startDate ?? "",
+            endDate: r.departureEndDate ?? "",
+            maxParticipants: r.departureMaxParticipants ?? 0,
+            status: r.departureStatus ?? "scheduled",
+            quotaBooked: 0, // Will be calculated later if needed
+          });
+        }
       }
       if (!byTrip.has(r.id)) {
         byTrip.set(r.id, {
@@ -97,6 +198,7 @@ export const tripRepository: ITripRepository = {
           departureId: r.departureId,
           categoryName: r.categoryName ?? null,
           price: null,
+          activeGroup: null,
         });
       }
     }
@@ -104,6 +206,7 @@ export const tripRepository: ITripRepository = {
     for (const row of byTrip.values()) {
       const prices = pricesByDeparture.get(row.departureId!) ?? [];
       row.price = pickCanonicalPrice(prices);
+      row.activeGroup = activeGroups.get(row.id) ?? null;
     }
 
     return [...byTrip.values()];
@@ -299,6 +402,62 @@ export const tripRepository: ITripRepository = {
     );
   },
 
+  // Group Participants
+  async findBookingsWithDetailsByDepartureId(departureId: UUID) {
+    const bookingRows = await db
+      .select({
+        id: bookings.id,
+        bookingCode: bookings.bookingCode,
+        status: bookings.status,
+        totalParticipants: bookings.totalParticipants,
+        totalAmount: bookings.totalAmount,
+        bookingDate: bookings.bookingDate,
+      })
+      .from(bookings)
+      .where(eq(bookings.departureId, departureId))
+      .orderBy(desc(bookings.createdAt));
+
+    const result: GroupBookingDetail[] = [];
+
+    for (const b of bookingRows) {
+      const participantRows = await db
+        .select({
+          fullName: bookingParticipants.fullName,
+          phone: bookingParticipants.phone,
+          isPrimary: bookingParticipants.isPrimary,
+        })
+        .from(bookingParticipants)
+        .where(eq(bookingParticipants.bookingId, b.id));
+
+      const [paymentRow] = await db
+        .select({
+          id: payments.id,
+          status: payments.status,
+          proofUrl: payments.proofUrl,
+          method: payments.method,
+          amount: payments.amount,
+          adminNote: payments.adminNote,
+        })
+        .from(payments)
+        .where(eq(payments.bookingId, b.id))
+        .orderBy(desc(payments.createdAt))
+        .limit(1);
+
+      result.push({
+        bookingId: b.id,
+        bookingCode: b.bookingCode,
+        bookingStatus: b.status,
+        totalParticipants: b.totalParticipants,
+        totalAmount: b.totalAmount,
+        bookingDate: b.bookingDate,
+        participants: participantRows,
+        payment: paymentRow ?? null,
+      });
+    }
+
+    return result;
+  },
+
   // Galleries
   async findAllGalleries() {
     return db.select().from(tripGalleries).orderBy(desc(tripGalleries.createdAt));
@@ -307,6 +466,10 @@ export const tripRepository: ITripRepository = {
   async findGalleryById(id) {
     const [g] = await db.select().from(tripGalleries).where(eq(tripGalleries.id, id)).limit(1);
     return g ?? null;
+  },
+
+  async findGalleriesByDepartureId(departureId) {
+    return db.select().from(tripGalleries).where(eq(tripGalleries.departureId, departureId));
   },
 
   async createGallery(data) {
@@ -321,4 +484,184 @@ export const tripRepository: ITripRepository = {
   async deleteGallery(id) {
     await db.delete(tripGalleries).where(eq(tripGalleries.id, id));
   },
+
+  // Group Trip Management
+  async findAllGroupsByTripId(tripId) {
+    const departures = await db
+      .select()
+      .from(tripDepartures)
+      .where(eq(tripDepartures.tripId, tripId))
+      .orderBy(asc(tripDepartures.startDate));
+
+    const result: GroupWithDetails[] = [];
+    for (const dep of departures) {
+      const [priceRow] = await db
+        .select({ price: tripPrices.price })
+        .from(tripPrices)
+        .where(and(eq(tripPrices.departureId, dep.id), eq(tripPrices.isActive, true)))
+        .limit(1);
+
+      const [bookingCountResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(bookings)
+        .where(and(
+          eq(bookings.departureId, dep.id),
+          sql`${bookings.status} IN ('pending', 'confirmed')`
+        ));
+
+      const [quotaResult] = await db
+        .select({ total: sql<number>`COALESCE(sum(${bookings.totalParticipants}), 0)::int` })
+        .from(bookings)
+        .where(and(
+          eq(bookings.departureId, dep.id),
+          sql`${bookings.status} IN ('pending', 'confirmed')`
+        ));
+
+      const [galleryCountResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(tripGalleries)
+        .where(eq(tripGalleries.departureId, dep.id));
+
+      result.push({
+        ...dep,
+        quotaBooked: quotaResult?.total ?? 0,
+        bookingCount: bookingCountResult?.count ?? 0,
+        galleryCount: galleryCountResult?.count ?? 0,
+        price: priceRow?.price ?? null,
+      });
+    }
+    return result;
+  },
+
+  async findGroupById(groupId) {
+    const [dep] = await db.select().from(tripDepartures).where(eq(tripDepartures.id, groupId)).limit(1);
+    return dep ?? null;
+  },
+
+  async findActiveGroupByTripId(tripId) {
+    const [dep] = await db
+      .select()
+      .from(tripDepartures)
+      .where(and(eq(tripDepartures.tripId, tripId), eq(tripDepartures.isActive, true)))
+      .limit(1);
+    return dep ?? null;
+  },
+
+  async createGroup(tripId, data) {
+    const [trip] = await db
+      .select({ priceMin: trips.priceMin })
+      .from(trips)
+      .where(eq(trips.id, tripId))
+      .limit(1);
+
+    const [dep] = await db
+      .insert(tripDepartures)
+      .values({
+        tripId,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        maxParticipants: data.maxParticipants,
+        minParticipants: data.minParticipants ?? 1,
+        status: "scheduled",
+        isActive: false,
+        notes: data.notes,
+      })
+      .returning();
+
+    // Create default price entry using trip's price
+    await db.insert(tripPrices).values({
+      departureId: dep.id,
+      name: "Dewasa",
+      price: String(trip?.priceMin ?? 0),
+      quota: data.maxParticipants,
+      isActive: true,
+    });
+
+    return dep;
+  },
+
+  async updateGroup(groupId, data) {
+    const [dep] = await db
+      .update(tripDepartures)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(tripDepartures.id, groupId))
+      .returning();
+    return dep ?? null;
+  },
+
+  async deleteGroup(groupId) {
+    // Delete associated prices first
+    await db.delete(tripPrices).where(eq(tripPrices.departureId, groupId));
+    await db.delete(tripDepartures).where(eq(tripDepartures.id, groupId));
+  },
+
+  async activateGroup(tripId, groupId) {
+    // Deactivate all groups in this trip
+    const deactivated = await db
+      .update(tripDepartures)
+      .set({ isActive: false, updatedAt: new Date() })
+      .where(and(eq(tripDepartures.tripId, tripId), eq(tripDepartures.isActive, true)))
+      .returning({ id: tripDepartures.id });
+
+    // Activate the target group
+    const [activated] = await db
+      .update(tripDepartures)
+      .set({ isActive: true, updatedAt: new Date() })
+      .where(eq(tripDepartures.id, groupId))
+      .returning({ id: tripDepartures.id });
+
+    return {
+      activated: activated?.id ?? groupId,
+      deactivated: deactivated.length > 0 ? deactivated[0].id : null,
+    };
+  },
+
+  async countBookingsByDepartureId(departureId) {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(bookings)
+      .where(and(
+        eq(bookings.departureId, departureId),
+        sql`${bookings.status} IN ('pending', 'confirmed')`
+      ));
+    return result?.count ?? 0;
+  },
+
+  async getActiveGroupWithPrice(tripId) {
+    const [dep] = await db
+      .select()
+      .from(tripDepartures)
+      .where(and(eq(tripDepartures.tripId, tripId), eq(tripDepartures.isActive, true)))
+      .limit(1);
+
+    if (!dep) return null;
+
+    const [priceRow] = await db
+      .select()
+      .from(tripPrices)
+      .where(and(eq(tripPrices.departureId, dep.id), eq(tripPrices.isActive, true)))
+      .limit(1);
+
+    // Get total booked from bookings
+    const [bookedResult] = await db
+      .select({ total: sql<number>`COALESCE(SUM(${bookingItems.quantity}), 0)::int` })
+      .from(bookingItems)
+      .innerJoin(bookings, eq(bookingItems.bookingId, bookings.id))
+      .where(and(
+        eq(bookings.departureId, dep.id),
+        sql`${bookings.status} IN ('pending', 'confirmed')`
+      ));
+
+    return {
+      id: dep.id,
+      tripId: dep.tripId,
+      startDate: dep.startDate,
+      endDate: dep.endDate,
+      maxParticipants: dep.maxParticipants,
+      status: dep.status,
+      quotaBooked: bookedResult?.total ?? 0,
+      price: priceRow?.price ?? "0",
+    };
+  },
 };
+

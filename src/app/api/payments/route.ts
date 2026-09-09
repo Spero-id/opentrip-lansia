@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     if (!bookingId || !paymentMethod || !proofUrl) {
       return NextResponse.json({ error: "Data pembayaran tidak lengkap" }, { status: 400 });
     }
-    if (typeof proofUrl !== "string" || !proofUrl.startsWith("/payments/") || proofUrl.includes("..")) {
+    if (typeof proofUrl !== "string" || !proofUrl.startsWith("/api/uploads/") || proofUrl.includes("..")) {
       return NextResponse.json({ error: "URL bukti transfer tidak valid" }, { status: 400 });
     }
     if (!ALLOWED_METHODS.has(paymentMethod)) {

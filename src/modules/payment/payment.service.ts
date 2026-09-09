@@ -1,5 +1,9 @@
 import { paymentRepository } from "./payment.repository";
 import { bookingRepository } from "../booking/booking.repository";
+import { loyaltyService } from "../loyalty/loyalty.service";
+import { db } from "@/shared/db";
+import { referrals } from "@/modules/referral/referral.schema";
+import { eq } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export const paymentService = {
@@ -41,6 +45,33 @@ export const paymentService = {
     if (action === "approve") {
       await paymentRepository.update(paymentId, { status: "paid", paidAt: new Date(), ...reviewed });
       await bookingRepository.update(payment.bookingId, { status: "confirmed" });
+
+      // Handle referral conversion + loyalty points for referrer
+      try {
+        const [referral] = await db
+          .select()
+          .from(referrals)
+          .where(eq(referrals.bookingId, payment.bookingId))
+          .limit(1);
+
+        if (referral && referral.status === "pending") {
+          // Update referral status to converted
+          await db
+            .update(referrals)
+            .set({ status: "converted" })
+            .where(eq(referrals.id, referral.id));
+
+          // Credit loyalty points to referrer
+          if (referral.referrerId && referral.referredUserId) {
+            await loyaltyService.creditReferralBonus(
+              referral.referrerId as UUID,
+              referral.referredUserId as UUID
+            );
+          }
+        }
+      } catch (e) {
+        console.error("Failed to process referral conversion:", e);
+      }
     } else {
       await paymentRepository.update(paymentId, { status: "rejected", ...reviewed });
       await bookingRepository.update(payment.bookingId, { status: "cancelled" });
