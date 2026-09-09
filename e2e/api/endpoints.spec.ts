@@ -11,7 +11,6 @@ test.describe("API Endpoints", () => {
     { path: "/api/promotions", method: "GET", status: 200 },
     { path: "/api/reviews", method: "GET", status: 200 },
     { path: "/api/galleries", method: "GET", status: 200 },
-    { path: "/api/meeting-points", method: "GET", status: 200 },
   ];
 
   const adminProtectedEndpoints = [

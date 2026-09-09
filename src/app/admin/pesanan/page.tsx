@@ -37,7 +37,6 @@ interface NotesInfo {
   destinationName?: string;
   destinationId?: number;
   travelDate?: string;
-  meetingPointId?: string;
   customerName?: string;
   customerEmail?: string;
   customerPhone?: string;

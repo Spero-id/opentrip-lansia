@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { destinationCategories, horeca, vendors, horecaTypes, vendorTypes, meetingPoints } from "./master.schema";
+import { destinationCategories, horeca, vendors, horecaTypes, vendorTypes } from "./master.schema";
 import { eq, desc, asc } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 import { slugify } from "@/shared/utils/helpers";
@@ -78,29 +78,5 @@ export const masterRepository = {
 
   async deleteVendor(id: UUID) {
     await db.delete(vendors).where(eq(vendors.id, id));
-  },
-
-  // Meeting Points
-  async getMeetingPoints() {
-    return db.select().from(meetingPoints).orderBy(desc(meetingPoints.createdAt));
-  },
-
-  async getMeetingPointById(id: UUID) {
-    const [item] = await db.select().from(meetingPoints).where(eq(meetingPoints.id, id)).limit(1);
-    return item ?? null;
-  },
-
-  async createMeetingPoint(data: typeof meetingPoints.$inferInsert) {
-    const [item] = await db.insert(meetingPoints).values(data).returning();
-    return item;
-  },
-
-  async updateMeetingPoint(id: UUID, data: Partial<typeof meetingPoints.$inferInsert>) {
-    const [item] = await db.update(meetingPoints).set(data).where(eq(meetingPoints.id, id)).returning();
-    return item ?? null;
-  },
-
-  async deleteMeetingPoint(id: UUID) {
-    await db.delete(meetingPoints).where(eq(meetingPoints.id, id));
   },
 };
