@@ -190,11 +190,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   {notifications.length > 0 && (
                     <div className="px-4 py-2 border-t border-slate-100 bg-slate-50">
                       <Link
-                        href="/admin/pesanan"
+                        href="/admin/notifications"
                         onClick={() => setShowNotifications(false)}
                         className="text-xs text-[#F49D1A] hover:text-[#E08A0E] font-medium text-center block"
                       >
-                        Lihat semua pesanan →
+                        Lihat semua notifikasi →
                       </Link>
                     </div>
                   )}

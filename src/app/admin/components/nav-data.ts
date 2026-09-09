@@ -1,9 +1,9 @@
 import {
+  Bell,
   Building2,
   Compass,
   FileText,
   LayoutDashboard,
-  MapPin,
   Percent,
   Route,
   ShoppingCart,
@@ -28,14 +28,16 @@ export type AdminNavGroup = {
 export const adminNavGroups: AdminNavGroup[] = [
   {
     label: null,
-    items: [{ name: "Dashboard", href: "/admin", icon: LayoutDashboard }],
+    items: [
+      { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+      { name: "Notifikasi", href: "/admin/notifications", icon: Bell },
+    ],
   },
   {
     label: "Trip & Tempat",
     items: [
       { name: "Paket Trip", href: "/admin/trips", icon: Compass },
       { name: "Private Trip", href: "/admin/private-trips", icon: Route },
-      { name: "Meeting Point", href: "/admin/meeting-points", icon: MapPin },
     ],
   },
   {
