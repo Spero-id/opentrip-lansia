@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/shared/db";
 import { hashPassword, verifyPassword } from "@/shared/utils/password";
+import { generateCode } from "@/shared/utils/helpers";
 import { users } from "./auth.schema";
 import { session, account, verification } from "./better-auth.schema";
 
@@ -39,6 +40,21 @@ export const auth = betterAuth({
       referralCode: { type: "string", required: false },
       referredBy: { type: "string", required: false },
       loyaltyPoints: { type: "number", required: false },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const referralCode = generateCode("OTL");
+          return {
+            data: {
+              ...user,
+              referralCode,
+            },
+          };
+        },
+      },
     },
   },
   session: {
