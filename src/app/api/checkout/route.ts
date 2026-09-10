@@ -10,7 +10,6 @@ import { promotionRepository } from "@/modules/promotion";
 import { tripRepository } from "@/modules/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
 
-const SERVICE_FEE = 15000;
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function toNumber(value: unknown): number {
@@ -223,7 +222,7 @@ export async function POST(req: NextRequest) {
       promoId = promo.id;
     }
 
-    const expectedTotal = expectedSubtotal + SERVICE_FEE - discount;
+    const expectedTotal = expectedSubtotal - discount;
     const clientTotal = Number(clientTotalRaw);
     if (!Number.isFinite(clientTotal) || Math.round(clientTotal) !== expectedTotal) {
       return NextResponse.json(

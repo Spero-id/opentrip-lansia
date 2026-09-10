@@ -30,6 +30,7 @@ export const trips = pgTable("trips", {
   highlights: jsonb("highlights").$type<string[]>(),
   facilities: jsonb("facilities").$type<(string | { name: string; icon?: string })[]>(),
   itinerary: jsonb("itinerary").$type<{ day: number; title: string; description: string }[]>(),
+  meetingPointId: uuid("meeting_point_id").references(() => destinationCategories.id),
   meetingPointsJson: jsonb("meeting_points").$type<{ time: string; location: string; description: string }[]>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

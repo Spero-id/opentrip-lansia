@@ -6,6 +6,7 @@ import {
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
   blogs, blogCategories, contactMessages, promotions
 } from "../db/schema";
+import { paymentAccounts } from "../modules/payment/payment.schema";
 import { account } from "../modules/auth/better-auth.schema";
 import { users } from "../modules/auth/auth.schema";
 
@@ -206,6 +207,11 @@ async function seed() {
     { name: "Ratna", email: "ratna@mail.com", phone: "08222222222", subject: "Pertanyaan Fasilitas", message: "Apakah hotel menyediakan kursi roda?", isRead: true },
   ]);
   console.log("  Contact messages: 2 created");
+
+  await db.insert(paymentAccounts).values([
+    { method: "BCA", bankName: "Bank BCA", accountNumber: "6802082513", accountHolder: "PT. SINERGI INOVASI KARYA", isActive: true },
+  ]);
+  console.log("  Payment accounts: 1 created (BCA)");
 
   console.log("\nSeed complete!");
 }

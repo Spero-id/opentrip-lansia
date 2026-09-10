@@ -61,7 +61,6 @@ export default function DetailsStep({ checkout, onNext }) {
           pricePerPax={checkout.destination?.priceMin ?? 0}
           pax={checkout.pax}
           ticketSubtotal={checkout.ticketSubtotal}
-          serviceFee={checkout.serviceFee}
           total={checkout.total}
           discount={checkout.discount}
           appliedVoucher={checkout.appliedVoucher}

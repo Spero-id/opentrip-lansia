@@ -194,7 +194,6 @@ function PayContent() {
     pax: booking?.totalParticipants || 1,
     total: Number(booking?.totalAmount || 0),
     ticketSubtotal: Number(booking?.subtotal || 0),
-    serviceFee: 15000,
     discount: Number(booking?.discountAmount || 0),
     isLoading: false,
   };

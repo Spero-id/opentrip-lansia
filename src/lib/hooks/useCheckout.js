@@ -23,8 +23,6 @@ const initialCustomer = {
   mobilityOption: "independent",
 };
 
-const SERVICE_FEE = 15000;
-
 export function useCheckout(initialDestination) {
   const [state, setState] = useState({
     step: "details",
@@ -259,7 +257,7 @@ export function useCheckout(initialDestination) {
     (s) => {
       const sub = getTicketSubtotal(s);
       const disc = getDiscount(s);
-      return Math.max(0, sub + SERVICE_FEE - disc);
+      return Math.max(0, sub - disc);
     },
     [getTicketSubtotal, getDiscount]
   );
@@ -408,7 +406,6 @@ export function useCheckout(initialDestination) {
 
   return {
     ...state,
-    serviceFee: SERVICE_FEE,
     ticketSubtotal,
     discount,
     total,

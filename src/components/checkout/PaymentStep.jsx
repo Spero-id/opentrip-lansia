@@ -50,7 +50,6 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
           pricePerPax={checkout.destination?.priceMin ?? 0}
           pax={checkout.pax}
           ticketSubtotal={checkout.ticketSubtotal}
-          serviceFee={checkout.serviceFee}
           discount={checkout.discount}
           total={checkout.total}
           appliedVoucher={checkout.appliedVoucher}

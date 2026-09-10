@@ -63,10 +63,12 @@ export default function ProfilePage() {
             <ProfileHeader user={session.user} />
             <ProfileStats user={session.user} />
             <ProfileInfoCard user={session.user} />
-            <ReferralCard 
-              referralCode={session.user.referralCode} 
-              stats={referralStats?.stats}
-            />
+            {session.user.role === 'admin' && (
+              <ReferralCard 
+                referralCode={session.user.referralCode} 
+                stats={referralStats?.stats}
+              />
+            )}
             <ReferralHistory />
             <LogoutButton />
           </div>
