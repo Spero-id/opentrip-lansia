@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tripRepository } from "@/modules/trip/trip.repository";
 import { requireAdmin } from "@/shared/auth";
 import { db } from "@/shared/db";
 import { tripGalleries, galleryMedia } from "@/modules/trip/trip.schema";
+import { media } from "@/db/schema/master";
 import { eq } from "drizzle-orm";
 
 export async function GET(
@@ -23,13 +23,22 @@ export async function GET(
       return NextResponse.json({ gallery: null, media: [] });
     }
 
-    // Get media for this gallery
-    const media = await db
-      .select()
+    // Get media for this gallery with URL from media table
+    const mediaItems = await db
+      .select({
+        id: galleryMedia.id,
+        galleryId: galleryMedia.galleryId,
+        mediaId: galleryMedia.mediaId,
+        uploadedBy: galleryMedia.uploadedBy,
+        sortOrder: galleryMedia.sortOrder,
+        createdAt: galleryMedia.createdAt,
+        url: media.url,
+      })
       .from(galleryMedia)
+      .leftJoin(media, eq(galleryMedia.mediaId, media.id))
       .where(eq(galleryMedia.galleryId, gallery.id));
 
-    return NextResponse.json({ gallery, media });
+    return NextResponse.json({ gallery, media: mediaItems });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";
     return NextResponse.json({ error: message }, { status: 500 });
