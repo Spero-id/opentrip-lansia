@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import FeedbackModal from "./FeedbackModal";
+import GalleryModal from "./GalleryModal";
 import {
   A,
   OPEN_TRIP_STATUS_LABEL,
@@ -18,6 +19,7 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
   const [imgError, setImgError] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
 
   let notesObj = {};
   if (booking.notes) {
@@ -43,6 +45,9 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
 
   const isCompleted = booking.status === "completed";
   const hasReview = booking.hasReview || feedbackSubmitted;
+
+  // departureId is the groupId for gallery
+  const departureId = booking.departureId || null;
 
   // tripId comes from booking service (joined from tripDepartures)
   const tripId = booking.tripId || notesObj.tripId || null;
@@ -139,6 +144,17 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
             <span className="px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded-lg">
               ✓ Sudah Diulas
             </span>
+          )}
+          {isCompleted && departureId && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setGalleryOpen(true);
+              }}
+              className="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Lihat Foto
+            </button>
           )}
           <span className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
             {icons.chevron}
@@ -280,6 +296,15 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
           )}
         </div>
       )}
+
+      {/* Gallery Modal */}
+      <GalleryModal
+        open={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        tripId={tripId}
+        departureId={departureId}
+        groupLabel={destinationName}
+      />
 
       {/* Feedback Modal */}
       <FeedbackModal
