@@ -3,6 +3,8 @@ import { writeFile, unlink, mkdir, access } from "fs/promises";
 import path from "path";
 import { requireAdmin } from "@/shared/auth";
 import { detectImageKind, extensionForImage } from "@/shared/utils/image-guard";
+import { db } from "@/shared/db";
+import { media } from "@/db/schema/master";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -39,7 +41,18 @@ export async function POST(req: NextRequest) {
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, safeName), buffer);
 
-    return NextResponse.json({ url: `/api/uploads/${safeName}` });
+    // Create media record in database
+    const [mediaRecord] = await db
+      .insert(media)
+      .values({
+        filename: file.name,
+        url: `/api/uploads/${safeName}`,
+        type: kind,
+        fileSize: file.size,
+      })
+      .returning();
+
+    return NextResponse.json({ id: mediaRecord.id, url: `/api/uploads/${safeName}` });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan saat upload.";
     return NextResponse.json({ error: message }, { status: 500 });

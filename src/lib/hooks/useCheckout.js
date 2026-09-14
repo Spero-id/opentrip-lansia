@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { OrderDomain } from "../Order";
 
 const initialCustomer = {
@@ -46,18 +46,32 @@ export function useCheckout(initialDestination) {
   });
 
   const [dbVouchers, setDbVouchers] = useState([]);
+  const [vouchersLoading, setVouchersLoading] = useState(true);
+  const dbVouchersRef = useRef([]);
+  const vouchersLoadingRef = useRef(true);
+
+  // Keep refs in sync with state
+  useEffect(() => { dbVouchersRef.current = dbVouchers; }, [dbVouchers]);
+  useEffect(() => { vouchersLoadingRef.current = vouchersLoading; }, [vouchersLoading]);
 
   // Fetch vouchers from DB on mount
-  useEffect(() => {
+  const fetchVouchers = useCallback(() => {
     fetch("/api/promotions")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
           setDbVouchers(data.filter((v) => v.isActive));
+        } else {
+          setDbVouchers([]);
         }
       })
-      .catch(() => {});
+      .catch(() => setDbVouchers([]))
+      .finally(() => setVouchersLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchVouchers();
+  }, [fetchVouchers]);
 
   const setDestination = useCallback((dest) => {
     setState((prev) => ({ ...prev, destination: dest }));
@@ -107,12 +121,33 @@ export function useCheckout(initialDestination) {
   }, []);
 
   const applyVoucher = useCallback(() => {
+    // Always read from refs to avoid stale closure
+    const currentVouchers = dbVouchersRef.current;
+    const isLoading = vouchersLoadingRef.current;
+
+    // If vouchers haven't loaded yet, re-fetch and show loading
+    if (isLoading) {
+      setState((prev) => ({ ...prev, voucherError: "Memuat data voucher, silakan coba lagi sebentar." }));
+      return;
+    }
+
+    // If vouchers are empty (fetch may have failed), retry fetch
+    if (currentVouchers.length === 0) {
+      fetchVouchers();
+      setState((prev) => ({ ...prev, voucherError: "Memuat ulang data voucher..." }));
+      return;
+    }
+
     setState((prev) => {
       const code = prev.voucherCode.trim().toUpperCase();
       const subtotal = (prev.destination?.priceMin ?? 0) * prev.pax;
 
+      if (!code) {
+        return { ...prev, voucherError: "Masukkan kode voucher.", appliedVoucher: null };
+      }
+
       // Look up in DB vouchers
-      const found = dbVouchers.find((v) => v.code?.toUpperCase() === code);
+      const found = currentVouchers.find((v) => v.code?.trim().toUpperCase() === code);
       if (!found) {
         return { ...prev, voucherError: "Kode voucher tidak valid.", appliedVoucher: null };
       }
@@ -166,7 +201,7 @@ export function useCheckout(initialDestination) {
         voucherError: "",
       };
     });
-  }, [dbVouchers]);
+  }, [fetchVouchers]);
 
   const removeVoucher = useCallback(() => {
     setState((prev) => ({ ...prev, appliedVoucher: null, voucherCode: "" }));
@@ -406,6 +441,7 @@ export function useCheckout(initialDestination) {
 
   return {
     ...state,
+    vouchersLoading,
     ticketSubtotal,
     discount,
     total,

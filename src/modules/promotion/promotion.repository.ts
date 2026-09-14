@@ -25,21 +25,30 @@ export const promotionRepository: IPromotionRepository = {
   },
 
   async findByCode(code) {
+    const upperCode = code.toUpperCase();
     const [promo] = await db
       .select()
       .from(promotions)
-      .where(and(eq(promotions.code, code), eq(promotions.isActive, true)))
+      .where(and(sql`upper(${promotions.code}) = ${upperCode}`, eq(promotions.isActive, true)))
       .limit(1);
     return promo ?? null;
   },
 
   async create(data) {
-    const [promo] = await db.insert(promotions).values(data).returning();
+    const normalizedData = {
+      ...data,
+      code: data.code ? String(data.code).toUpperCase().trim() : data.code,
+    };
+    const [promo] = await db.insert(promotions).values(normalizedData).returning();
     return promo;
   },
 
   async update(id, data) {
-    await db.update(promotions).set(data).where(eq(promotions.id, id));
+    const normalizedData = {
+      ...data,
+      ...(data.code ? { code: String(data.code).toUpperCase().trim() } : {}),
+    };
+    await db.update(promotions).set(normalizedData).where(eq(promotions.id, id));
   },
 
   async delete(id) {

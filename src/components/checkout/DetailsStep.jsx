@@ -43,6 +43,7 @@ export default function DetailsStep({ checkout, onNext }) {
           onRemove={checkout.removeVoucher}
           appliedVoucher={checkout.appliedVoucher}
           voucherError={checkout.voucherError}
+          vouchersLoading={checkout.vouchersLoading}
         />
 
         <ReferralInput

@@ -56,7 +56,7 @@ export const loyaltyTransactions = pgTable("loyalty_transactions", {
   points: integer("points").notNull(),
   type: varchar("type", { length: 20 }).notNull(),
   referenceType: varchar("reference_type", { length: 50 }),
-  referenceId: uuid("reference_id"),
+  referenceId: text("reference_id"),
   description: text("description"),
   expiresAt: timestamp("expires_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
