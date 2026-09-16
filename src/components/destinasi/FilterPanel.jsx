@@ -285,6 +285,7 @@ export default function FilterPanel({
                 <input
                   type="number"
                   placeholder="Contoh: 200000"
+                  min="0"
                   value={priceMin}
                   onChange={(e) => setPriceMin(e.target.value === "" ? "" : Number(e.target.value))}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
@@ -298,6 +299,7 @@ export default function FilterPanel({
                 <input
                   type="number"
                   placeholder="Contoh: 2000000"
+                  min="0"
                   value={priceMax}
                   onChange={(e) => setPriceMax(e.target.value === "" ? "" : Number(e.target.value))}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
