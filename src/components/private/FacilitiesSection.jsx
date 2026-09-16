@@ -53,12 +53,13 @@ export default function FacilitiesSection({ form, set, errors }) {
       {/* Body */}
       <div className="px-5 sm:px-6 py-5 space-y-5">
         {/* Standar Penginapan */}
-        <div>
-          <label className="text-[13px] font-medium text-[#374151]">
+        <div id="field-standarPenginapan">
+          <label htmlFor="field-standarPenginapan-select" className="text-[13px] font-medium text-[#374151]">
             Standar Penginapan <span className="text-[#DC2626]">*</span>
           </label>
           <div className="relative mt-1.5">
             <select
+              id="field-standarPenginapan-select"
               value={form.standarPenginapan || ""}
               onChange={(e) => set("standarPenginapan", e.target.value)}
               className={`${baseInput} pr-8 appearance-none cursor-pointer ${errors.standarPenginapan ? errorBorder : normalBorder} ${!form.standarPenginapan ? "text-[#9CA3AF]" : "text-[#1F2A37]"}`}
@@ -158,7 +159,7 @@ export default function FacilitiesSection({ form, set, errors }) {
         </div>
 
         {/* Pilih Metode Tindak Lanjut */}
-        <div>
+        <div id="field-metodeKontak">
           <p className="text-[13px] font-medium text-[#374151]">
             Pilih Metode Tindak Lanjut <span className="text-[#DC2626]">*</span>
           </p>
