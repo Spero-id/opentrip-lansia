@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   ArrowDownToLine,
   ChevronDown,
@@ -100,8 +101,8 @@ export default function MarketingSection() {
               />
             </div>
 
-            <a
-              href="#book"
+            <Link
+              href="/trips"
               className="relative mt-6 flex items-center justify-center gap-3 rounded-2xl overflow-hidden h-20 group"
             >
               <img
@@ -121,7 +122,7 @@ export default function MarketingSection() {
                   Book A Trip Now
                 </span>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
