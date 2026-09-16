@@ -103,6 +103,7 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
           {form.tripType === "custom" && (
             <div className="mt-1.5">
               <input
+                id="field-customTripName"
                 type="text"
                 placeholder="Ketik destinasi tujuan Anda (Cth: Eksplorasi Bromo & Batu)"
                 value={form.customTripName}
@@ -117,7 +118,7 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
 
           {/* Explorer picker — modal popup */}
           {form.tripType === "explorer" && (
-            <div className="mt-1.5">
+            <div id="field-selectedDestinasi" className="mt-1.5">
               <div className="relative">
                 <button
                   type="button"
@@ -169,11 +170,12 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
         {/* Jumlah Peserta & Durasi */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-[#374151]">
+            <label htmlFor="field-jumlahPeserta" className="text-[13px] font-medium text-[#374151]">
               Jumlah Peserta <span className="text-[#DC2626]">*</span>
             </label>
             <div className="relative mt-1.5">
               <input
+                id="field-jumlahPeserta"
                 type="number"
                 min="1"
                 placeholder="Cth: 15"
@@ -203,11 +205,12 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
           </div>
 
           <div>
-            <label className="text-[13px] font-medium text-[#374151]">
+            <label htmlFor="field-durasi" className="text-[13px] font-medium text-[#374151]">
               Durasi <span className="text-[#DC2626]">*</span>
             </label>
             <div className="relative mt-1.5">
               <input
+                id="field-durasi"
                 type="number"
                 min="1"
                 placeholder="Cth: 3"
@@ -239,11 +242,12 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
         {/* Tanggal & Titik Kumpul */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-[#374151]">
+            <label htmlFor="field-tanggal" className="text-[13px] font-medium text-[#374151]">
               Tanggal Keberangkatan <span className="text-[#DC2626]">*</span>
             </label>
             <div className="relative mt-1.5">
               <input
+                id="field-tanggal"
                 type="date"
                 value={form.tanggal}
                 onChange={(e) => set("tanggal", e.target.value)}
@@ -282,10 +286,11 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
           </div>
 
           <div>
-            <label className="text-[13px] font-medium text-[#374151]">
+            <label htmlFor="field-meetingPoint" className="text-[13px] font-medium text-[#374151]">
               Titik Kumpul (Meeting Point) <span className="text-[#DC2626]">*</span>
             </label>
             <input
+              id="field-meetingPoint"
               type="text"
               placeholder="Cth: Bandara / Stasiun kota asal"
               value={form.meetingPoint}
@@ -301,7 +306,7 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
         <div className="h-px bg-[#E5E7EB]" />
 
         {/* Kebutuhan Transportasi */}
-        <div>
+        <div id="field-transportNeeds">
           <p className="text-[13px] font-medium text-[#374151]">
             Kebutuhan Transportasi <span className="text-[#DC2626]">*</span>
           </p>

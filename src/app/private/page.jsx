@@ -137,7 +137,37 @@ export default function PrivateTripPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const errs = validate(form);
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+
+      // Scroll to the first error field in document order
+      const fieldOrder = [
+        "namaInstitusi",
+        "nama",
+        "phone",
+        "email",
+        "customTripName",
+        "selectedDestinasi",
+        "jumlahPeserta",
+        "durasi",
+        "tanggal",
+        "meetingPoint",
+        "transportNeeds",
+        "standarPenginapan",
+        "metodeKontak",
+      ];
+      const firstErrorKey = fieldOrder.find((k) => errs[k]);
+      if (firstErrorKey) {
+        const el = document.getElementById(`field-${firstErrorKey}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Focus if it's an actual input/select/textarea
+          const focusable = el.matches("input,select,textarea") ? el : el.querySelector("input,select,textarea");
+          if (focusable) setTimeout(() => focusable.focus({ preventScroll: true }), 350);
+        }
+      }
+      return;
+    }
     setSubmitError(null);
     setShowTerms(true);
   };
@@ -247,6 +277,15 @@ export default function PrivateTripPage() {
                 destinationsData={destinations}
               />
               <FacilitiesSection form={form} set={set} errors={errors} />
+
+              {Object.keys(errors).length > 0 && (
+                <div className="flex items-start gap-3 px-4 py-3.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-[13px]">
+                  <AlertCircle className="shrink-0 mt-0.5 text-amber-500" size={16} />
+                  <span>
+                    Ada <strong>{Object.keys(errors).length} isian</strong> yang belum lengkap. Periksa kembali bagian yang ditandai merah di atas.
+                  </span>
+                </div>
+              )}
 
               {submitError && (
                 <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">

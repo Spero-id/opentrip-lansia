@@ -85,10 +85,11 @@ export default function BookingInformationSection({ form, set, errors }) {
 
           {isInstitusi && (
             <div className="mt-4">
-              <label className="text-[13px] font-medium text-[#374151]">
+              <label htmlFor="field-namaInstitusi" className="text-[13px] font-medium text-[#374151]">
                 {institusiLabel} <span className="text-[#DC2626]">*</span>
               </label>
               <input
+                id="field-namaInstitusi"
                 type="text"
                 placeholder={institusiPlaceholder}
                 value={form.namaInstitusi}
@@ -105,10 +106,11 @@ export default function BookingInformationSection({ form, set, errors }) {
         {/* Nama & WhatsApp */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-[#374151]">
+            <label htmlFor="field-nama" className="text-[13px] font-medium text-[#374151]">
               Nama Lengkap <span className="text-[#DC2626]">*</span>
             </label>
             <input
+              id="field-nama"
               type="text"
               placeholder="Cth: Budi Santoso"
               value={form.nama}
@@ -121,10 +123,11 @@ export default function BookingInformationSection({ form, set, errors }) {
           </div>
 
           <div>
-            <label className="text-[13px] font-medium text-[#374151]">
+            <label htmlFor="field-phone" className="text-[13px] font-medium text-[#374151]">
               No. WhatsApp <span className="text-[#DC2626]">*</span>
             </label>
             <input
+              id="field-phone"
               type="tel"
               placeholder="Cth: 081234567890"
               value={form.phone}
@@ -139,10 +142,11 @@ export default function BookingInformationSection({ form, set, errors }) {
 
         {/* Email */}
         <div>
-          <label className="text-[13px] font-medium text-[#374151]">
+          <label htmlFor="field-email" className="text-[13px] font-medium text-[#374151]">
             Email <span className="text-[#DC2626]">*</span>
           </label>
           <input
+            id="field-email"
             type="email"
             placeholder="Cth: budi@email.com"
             value={form.email}
