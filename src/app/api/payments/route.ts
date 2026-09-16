@@ -4,6 +4,7 @@ import { payments } from "@/modules/payment/payment.schema";
 import { bookings } from "@/modules/booking/booking.schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";
+import { notificationService } from "@/modules/notification/notification.service";
 
 const ALLOWED_METHODS = new Set(["BCA", "BRI", "MANDIRI", "GOPAY", "OVO", "DANA", "QRIS"]);
 
@@ -73,6 +74,15 @@ export async function POST(req: NextRequest) {
       .update(bookings)
       .set({ status: "pending", updatedAt: new Date() })
       .where(eq(bookings.id, bookingId));
+
+    // MVP trigger: bukti pembayaran -> /admin/pesanan?highlight=CODE
+    void notificationService
+      .onPaymentProofUploaded({
+        bookingCode: booking.bookingCode,
+        bookingId: booking.id,
+        userName: session.user.name || session.user.email || "User",
+      })
+      .catch((e) => console.error("notify payment_proof failed", e));
 
     return NextResponse.json({ success: true, payment });
   } catch (err) {
