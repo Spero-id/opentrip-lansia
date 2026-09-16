@@ -6,6 +6,7 @@ import { db } from "@/shared/db";
 import { eq } from "drizzle-orm";
 import { generateCode } from "@/shared/utils/helpers";
 import type { UUID } from "@/shared/types";
+import { notificationService } from "../notification/notification.service";
 
 export interface BookingItemInput {
   priceId: string;
@@ -59,6 +60,10 @@ export const bookingService = {
           isPrimary: idx === 0,
         }))
       );
+      const primary = participants[0];
+      void notificationService
+        .onParticipantAdded({ bookingCode, bookingId: booking.id, participantName: primary?.fullName || `${totalPax} peserta` })
+        .catch((e) => console.error("notify participant_added failed", e));
     }
 
     return booking;
@@ -91,7 +96,6 @@ async function withDetails(b: typeof import("../booking/booking.schema").booking
     bookingRepository.findParticipantsByBookingId(b.id),
     bookingRepository.findItemsByBookingId(b.id),
     bookingRepository.findPaymentsByBookingId(b.id),
-    // Get departure to include tripId
     (async () => {
       const [dep] = await db
         .select({ tripId: tripDepartures.tripId })
@@ -102,13 +106,11 @@ async function withDetails(b: typeof import("../booking/booking.schema").booking
     })(),
   ]);
 
-  // Check if review exists
   let hasReview = false;
   try {
     const userReviews = await reviewRepository.findByUserId(b.userId);
     hasReview = userReviews.some((r) => r.bookingId === b.id);
   } catch {
-    // Ignore errors
   }
 
   return {

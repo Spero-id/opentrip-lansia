@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Check, X, AlertCircle, ShoppingCart } from "lucide-react";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications, getNotificationHref } from "@/hooks/useNotifications";
 import { AdminSidebar } from "./components/admin-sidebar";
 import { getActiveMenu } from "./components/nav-data";
 import {
@@ -23,10 +23,18 @@ import {
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const activeMenu = getActiveMenu(pathname);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(15000);
+
+  const handleNotificationClick = (n: { id: string; type: string; link?: string | null }) => {
+    void markAsRead(n.id);
+    const href = getNotificationHref(n);
+    setShowNotifications(false);
+    router.push(href);
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -41,10 +49,15 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case "new_booking":
-        return <ShoppingCart className="w-4 h-4 text-blue-500" />;
       case "payment_proof":
         return <Check className="w-4 h-4 text-green-500" />;
+      case "private_trip_request":
+        return <ShoppingCart className="w-4 h-4 text-purple-500" />;
+      case "participant_added":
+        return <Check className="w-4 h-4 text-blue-500" />;
+      // legacy fallback
+      case "new_booking":
+        return <ShoppingCart className="w-4 h-4 text-blue-500" />;
       case "booking_confirmed":
         return <Check className="w-4 h-4 text-green-600" />;
       case "booking_cancelled":
@@ -68,8 +81,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     return `${diffDays} hari lalu`;
   };
 
-  const formatRupiah = (amount: string) => {
+  const formatRupiah = (amount?: string | null) => {
+    if (!amount) return "";
     const num = parseInt(amount);
+    if (isNaN(num)) return amount;
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(num);
   };
 
@@ -149,7 +164,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                       notifications.slice(0, 10).map((notification) => (
                         <div
                           key={notification.id}
-                          onClick={() => markAsRead(notification.id)}
+                          onClick={() => handleNotificationClick(notification)}
                           className={`px-4 py-3 border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition ${
                             !notification.isRead ? "bg-[#F49D1A]/5" : ""
                           }`}
@@ -174,10 +189,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                                 <span className="text-[10px] text-slate-400">
                                   {formatTimeAgo(notification.createdAt)}
                                 </span>
-                                <span className="text-[10px] text-slate-400">•</span>
-                                <span className="text-[10px] font-medium text-slate-600">
-                                  {formatRupiah(notification.amount)}
-                                </span>
+                                {notification.amount ? (
+                                  <>
+                                    <span className="text-[10px] text-slate-400">•</span>
+                                    <span className="text-[10px] font-medium text-slate-600">
+                                      {formatRupiah(notification.amount)}
+                                    </span>
+                                  </>
+                                ) : null}
                               </div>
                             </div>
                           </div>
