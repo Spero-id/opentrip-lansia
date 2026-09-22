@@ -90,6 +90,8 @@ function buildPayload(form, budgetValue) {
   };
 }
 
+const STORAGE_KEY = "private-trip-form-draft";
+
 export default function PrivateTripPage() {
   const [form, setForm] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
@@ -99,6 +101,38 @@ export default function PrivateTripPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [destinations, setDestinations] = useState([]);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Load draft from sessionStorage on mount (avoids hydration mismatch)
+  // Also migrates/cleans legacy localStorage key if present
+  useEffect(() => {
+    try {
+      // Clean up legacy localStorage draft from previous version
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration from sessionStorage
+        setForm({
+          ...initialForm,
+          ...parsed,
+          layananTambahan: Array.isArray(parsed.layananTambahan)
+            ? parsed.layananTambahan
+            : initialForm.layananTambahan,
+        });
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mark hydrated after mount
+    setIsHydrated(true);
+  }, []);
+
+  // Persist form to sessionStorage on every change (after hydration)
+  useEffect(() => {
+    if (!isHydrated) return;
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+    } catch {}
+  }, [form, isHydrated]);
 
   useEffect(() => {
     async function fetchDestinations() {
@@ -198,6 +232,9 @@ export default function PrivateTripPage() {
       const responseData = await res.json().catch(() => ({}));
       setRequestId(responseData.id || null);
       setSubmitted(true);
+      try {
+        sessionStorage.removeItem(STORAGE_KEY);
+      } catch {}
     } catch {
       setSubmitError("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.");
     } finally {
@@ -211,6 +248,9 @@ export default function PrivateTripPage() {
     setErrors({});
     setSubmitError(null);
     setForm(initialForm);
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch {}
   };
 
   const budgetValue = form.tripType === "explorer" && form.selectedDestinasi
