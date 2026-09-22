@@ -180,12 +180,15 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
+                maxLength={3}
                 placeholder="Cth: 15"
                 value={form.jumlahPeserta}
                 onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, "");
-                  if (digits === "") set("jumlahPeserta", "");
-                  else set("jumlahPeserta", String(parseInt(digits, 10)));
+                  let digits = e.target.value.replace(/\D/g, "").slice(0, 3);
+                  if (digits === "") { set("jumlahPeserta", ""); return; }
+                  let num = parseInt(digits, 10);
+                  if (num > 100) num = 100;
+                  set("jumlahPeserta", String(num));
                 }}
                 onKeyDown={(e) => {
                   if (e.ctrlKey || e.metaKey) return;
@@ -196,8 +199,12 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                   const text = e.clipboardData.getData("text");
                   if (/[^\d]/.test(text)) {
                     e.preventDefault();
-                    const digits = text.replace(/\D/g, "");
-                    if (digits) set("jumlahPeserta", String(parseInt(digits, 10)));
+                    let digits = text.replace(/\D/g, "").slice(0, 3);
+                    if (digits) {
+                      let num = parseInt(digits, 10);
+                      if (num > 100) num = 100;
+                      set("jumlahPeserta", String(num));
+                    }
                   }
                 }}
                 className={`${baseInput} pr-14 ${errors.jumlahPeserta ? errorBorder : normalBorder}`}
@@ -221,12 +228,15 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
+                maxLength={2}
                 placeholder="Cth: 3"
                 value={form.durasi}
                 onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, "");
-                  if (digits === "") set("durasi", "");
-                  else set("durasi", String(parseInt(digits, 10)));
+                  let digits = e.target.value.replace(/\D/g, "").slice(0, 2);
+                  if (digits === "") { set("durasi", ""); return; }
+                  let num = parseInt(digits, 10);
+                  if (num > 30) num = 30;
+                  set("durasi", String(num));
                 }}
                 onKeyDown={(e) => {
                   if (e.ctrlKey || e.metaKey) return;
@@ -237,8 +247,12 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                   const text = e.clipboardData.getData("text");
                   if (/[^\d]/.test(text)) {
                     e.preventDefault();
-                    const digits = text.replace(/\D/g, "");
-                    if (digits) set("durasi", String(parseInt(digits, 10)));
+                    let digits = text.replace(/\D/g, "").slice(0, 2);
+                    if (digits) {
+                      let num = parseInt(digits, 10);
+                      if (num > 30) num = 30;
+                      set("durasi", String(num));
+                    }
                   }
                 }}
                 className={`${baseInput} pr-12 ${errors.durasi ? errorBorder : normalBorder}`}
