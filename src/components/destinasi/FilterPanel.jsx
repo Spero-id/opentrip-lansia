@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Filter, MapPin, DollarSign, Tag, Heart, X, ChevronDown, ChevronUp, Check } from "lucide-react";
 
 const A = "#F49D1A";
+const MAX_RUPIAH = 100_000_000; // Rp 100jt — reasonable cap for open trip filter
 
 const CATEGORY_OPTIONS = [
   "Semua",
@@ -283,11 +284,37 @@ export default function FilterPanel({
               <div className="space-y-1">
                 <span className="text-[11px] font-medium text-gray-400">Harga Minimal</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={9}
                   placeholder="Contoh: 200000"
-                  min="0"
                   value={priceMin}
-                  onChange={(e) => setPriceMin(e.target.value === "" ? "" : Number(e.target.value))}
+                  onChange={(e) => {
+                    let digits = e.target.value.replace(/\D/g, "").slice(0, 9);
+                    if (digits === "") { setPriceMin(""); return; }
+                    let num = Number(digits);
+                    if (num > MAX_RUPIAH) num = MAX_RUPIAH;
+                    setPriceMin(num);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.ctrlKey || e.metaKey) return;
+                    if (["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+                    if (e.key.length === 1 && !/^\d$/.test(e.key)) e.preventDefault();
+                  }}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData("text");
+                    if (/[^\d]/.test(text)) {
+                      e.preventDefault();
+                      let digits = text.replace(/\D/g, "").slice(0, 9);
+                      if (digits) {
+                        let num = Number(digits);
+                        if (num > MAX_RUPIAH) num = MAX_RUPIAH;
+                        setPriceMin(num);
+                      }
+                      else if (text === "") setPriceMin("");
+                    }
+                  }}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
@@ -297,11 +324,37 @@ export default function FilterPanel({
               <div className="space-y-1">
                 <span className="text-[11px] font-medium text-gray-400">Harga Maksimal</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={9}
                   placeholder="Contoh: 2000000"
-                  min="0"
                   value={priceMax}
-                  onChange={(e) => setPriceMax(e.target.value === "" ? "" : Number(e.target.value))}
+                  onChange={(e) => {
+                    let digits = e.target.value.replace(/\D/g, "").slice(0, 9);
+                    if (digits === "") { setPriceMax(""); return; }
+                    let num = Number(digits);
+                    if (num > MAX_RUPIAH) num = MAX_RUPIAH;
+                    setPriceMax(num);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.ctrlKey || e.metaKey) return;
+                    if (["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+                    if (e.key.length === 1 && !/^\d$/.test(e.key)) e.preventDefault();
+                  }}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData("text");
+                    if (/[^\d]/.test(text)) {
+                      e.preventDefault();
+                      let digits = text.replace(/\D/g, "").slice(0, 9);
+                      if (digits) {
+                        let num = Number(digits);
+                        if (num > MAX_RUPIAH) num = MAX_RUPIAH;
+                        setPriceMax(num);
+                      }
+                      else if (text === "") setPriceMax("");
+                    }
+                  }}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
