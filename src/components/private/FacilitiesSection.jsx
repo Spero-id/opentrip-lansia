@@ -144,11 +144,25 @@ export default function FacilitiesSection({ form, set, errors }) {
             <input
               type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="Kosongkan jika belum tahu"
               value={budgetDisplay(form.budget)}
               onChange={(e) => {
                 const raw = e.target.value.replace(/\D/g, "");
                 set("budget", raw);
+              }}
+              onKeyDown={(e) => {
+                if (e.ctrlKey || e.metaKey) return;
+                if (["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+                if (e.key.length === 1 && !/^\d$/.test(e.key)) e.preventDefault();
+              }}
+              onPaste={(e) => {
+                const text = e.clipboardData.getData("text");
+                if (/[^\d]/.test(text)) {
+                  e.preventDefault();
+                  const digits = text.replace(/\D/g, "");
+                  if (digits) set("budget", digits);
+                }
               }}
               className={`${baseInput} pl-8 ${errors.budget ? errorBorder : normalBorder}`}
             />

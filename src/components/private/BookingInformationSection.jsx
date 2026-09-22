@@ -129,9 +129,24 @@ export default function BookingInformationSection({ form, set, errors }) {
             <input
               id="field-phone"
               type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="Cth: 081234567890"
               value={form.phone}
-              onChange={(e) => set("phone", e.target.value)}
+              onChange={(e) => set("phone", e.target.value.replace(/\D/g, ""))}
+              onKeyDown={(e) => {
+                if (e.ctrlKey || e.metaKey) return;
+                if (["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+                if (e.key.length === 1 && !/^\d$/.test(e.key)) e.preventDefault();
+              }}
+              onPaste={(e) => {
+                const text = e.clipboardData.getData("text");
+                if (/\D/.test(text)) {
+                  e.preventDefault();
+                  const digits = text.replace(/\D/g, "");
+                  if (digits) set("phone", `${form.phone}${digits}`.replace(/\D/g, ""));
+                }
+              }}
               className={`${baseInput} mt-1.5 ${errors.phone ? errorBorder : normalBorder}`}
             />
             {errors.phone && (
