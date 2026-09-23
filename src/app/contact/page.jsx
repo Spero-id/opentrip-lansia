@@ -174,7 +174,7 @@ export default function ContactPage() {
                                         <div className="grid sm:grid-cols-2 gap-5">
                                             <div>
                                                 <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                    Email
+                                                    Email <span className="text-red-500">*</span>
                                                 </label>
                                                 <div className="relative">
                                                     <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -189,7 +189,7 @@ export default function ContactPage() {
                                             </div>
                                             <div>
                                                 <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                    Telepon
+                                                    Telepon <span className="text-red-500">*</span>
                                                 </label>
                                                 <div className="relative">
                                                     <Phone className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -197,6 +197,7 @@ export default function ContactPage() {
                                                         type="tel"
                                                         name="phone"
                                                         placeholder="081234567890"
+                                                        required
                                                         className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
                                                     />
                                                 </div>
@@ -205,7 +206,7 @@ export default function ContactPage() {
 
                                         <div>
                                             <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Nama Lengkap
+                                                Nama Lengkap <span className="text-red-500">*</span>
                                             </label>
                                             <div className="relative">
                                                 <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -221,7 +222,7 @@ export default function ContactPage() {
 
                                         <div>
                                             <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Pesan
+                                                Pesan <span className="text-red-500">*</span>
                                             </label>
                                             <textarea
                                                 rows={5}
