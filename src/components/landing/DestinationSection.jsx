@@ -6,7 +6,7 @@ import Link from "next/link";
 import DestinationCard from "@/components/destinasi/DestinationCard";
 
 const DEFAULT_RATING = 5.0;
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 6;
 
 function toCard(trip) {
   const image =
@@ -92,7 +92,13 @@ export default function DestinationSection() {
 
       <div
         ref={scrollRef}
-        className="flex md:grid md:grid-cols-4 md:grid-rows-2 md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 scroll-mt-28 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className={`flex md:grid md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 scroll-mt-28 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${
+          visibleDestinations.length <= 3
+            ? "md:grid-cols-3"
+            : visibleDestinations.length === 4
+            ? "md:grid-cols-4"
+            : "md:grid-cols-3 md:grid-rows-2"
+        }`}
       >
         {visibleDestinations.map((dest) => (
           <DestinationCard
