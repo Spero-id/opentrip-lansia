@@ -7,7 +7,7 @@ import {
 import { bookings, bookingItems, bookingParticipants } from "../booking/booking.schema";
 import { payments } from "../payment/payment.schema";
 import { destinationCategories } from "../master/master.schema";
-import { eq, and, asc, desc, sql, getTableColumns, inArray } from "drizzle-orm";
+import { eq, and, asc, desc, sql, getTableColumns, inArray, isNotNull } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin" | "priceMax"> {
@@ -166,7 +166,7 @@ export const tripRepository: ITripRepository = {
       .from(trips)
       .leftJoin(destinationCategories, eq(trips.categoryId, destinationCategories.id))
       .leftJoin(tripDepartures, eq(trips.id, tripDepartures.tripId))
-      .leftJoin(tripPrices, and(eq(tripDepartures.id, tripPrices.departureId), eq(tripPrices.isActive, true)))
+      .leftJoin(tripPrices, and(eq(tripDepartures.id, tripPrices.departureId), sql`${tripPrices.isActive} = true`))
       .where(eq(trips.status, "published"))
       .orderBy(asc(tripDepartures.startDate));
 
