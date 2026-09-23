@@ -33,6 +33,7 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
     "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
   const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
   const errorBorder = "border-red-300 focus:border-red-400 focus:ring-red-100";
+  const todayStr = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD local
 
   const [showDestinationModal, setShowDestinationModal] = useState(false);
   const [destinationSearch, setDestinationSearch] = useState("");
@@ -176,22 +177,35 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
             <div className="relative mt-1.5">
               <input
                 id="field-jumlahPeserta"
-                type="number"
-                min="1"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={3}
                 placeholder="Cth: 15"
                 value={form.jumlahPeserta}
                 onChange={(e) => {
-                  const v = e.target.value;
-                  /* allow empty for clearing */
-                  if (v === "") set("jumlahPeserta", "");
-                  else {
-                    const num = parseInt(v, 10);
-                    if (!isNaN(num) && num >= 0) set("jumlahPeserta", String(num));
-                  }
+                  let digits = e.target.value.replace(/\D/g, "").slice(0, 3);
+                  if (digits === "") { set("jumlahPeserta", ""); return; }
+                  let num = parseInt(digits, 10);
+                  if (num > 100) num = 100;
+                  set("jumlahPeserta", String(num));
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e" || e.key === "+" || e.key === ".")
+                  if (e.ctrlKey || e.metaKey) return;
+                  if (["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+                  if (e.key.length === 1 && !/^\d$/.test(e.key)) e.preventDefault();
+                }}
+                onPaste={(e) => {
+                  const text = e.clipboardData.getData("text");
+                  if (/[^\d]/.test(text)) {
                     e.preventDefault();
+                    let digits = text.replace(/\D/g, "").slice(0, 3);
+                    if (digits) {
+                      let num = parseInt(digits, 10);
+                      if (num > 100) num = 100;
+                      set("jumlahPeserta", String(num));
+                    }
+                  }
                 }}
                 className={`${baseInput} pr-14 ${errors.jumlahPeserta ? errorBorder : normalBorder}`}
               />
@@ -211,21 +225,35 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
             <div className="relative mt-1.5">
               <input
                 id="field-durasi"
-                type="number"
-                min="1"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={2}
                 placeholder="Cth: 3"
                 value={form.durasi}
                 onChange={(e) => {
-                  const v = e.target.value;
-                  if (v === "") set("durasi", "");
-                  else {
-                    const num = parseInt(v, 10);
-                    if (!isNaN(num) && num >= 0) set("durasi", String(num));
-                  }
+                  let digits = e.target.value.replace(/\D/g, "").slice(0, 2);
+                  if (digits === "") { set("durasi", ""); return; }
+                  let num = parseInt(digits, 10);
+                  if (num > 30) num = 30;
+                  set("durasi", String(num));
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e" || e.key === "+" || e.key === ".")
+                  if (e.ctrlKey || e.metaKey) return;
+                  if (["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+                  if (e.key.length === 1 && !/^\d$/.test(e.key)) e.preventDefault();
+                }}
+                onPaste={(e) => {
+                  const text = e.clipboardData.getData("text");
+                  if (/[^\d]/.test(text)) {
                     e.preventDefault();
+                    let digits = text.replace(/\D/g, "").slice(0, 2);
+                    if (digits) {
+                      let num = parseInt(digits, 10);
+                      if (num > 30) num = 30;
+                      set("durasi", String(num));
+                    }
+                  }
                 }}
                 className={`${baseInput} pr-12 ${errors.durasi ? errorBorder : normalBorder}`}
               />
@@ -250,6 +278,7 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                 id="field-tanggal"
                 type="date"
                 value={form.tanggal}
+                min={todayStr}
                 onChange={(e) => set("tanggal", e.target.value)}
                 disabled={form.tanggalFleksibel}
                 className={`${baseInput} ${form.tanggalFleksibel ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""} ${errors.tanggal ? errorBorder : normalBorder}`}

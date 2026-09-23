@@ -11,6 +11,8 @@ const STANDAR_OPTIONS = [
   { value: "villa", label: "Villa / Resort" },
 ];
 
+const MAX_BUDGET = 100_000_000; // Rp 100jt per orang — cap
+
 const LAYANAN_OPTIONS = [
   { key: "fotografer", label: "Fotografer / Video" },
   { key: "drone", label: "Kamera Drone" },
@@ -144,11 +146,28 @@ export default function FacilitiesSection({ form, set, errors }) {
             <input
               type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={12}
               placeholder="Kosongkan jika belum tahu"
               value={budgetDisplay(form.budget)}
               onChange={(e) => {
-                const raw = e.target.value.replace(/\D/g, "");
+                let raw = e.target.value.replace(/\D/g, "").slice(0, 9);
+                if (raw !== "" && Number(raw) > MAX_BUDGET) raw = String(MAX_BUDGET);
                 set("budget", raw);
+              }}
+              onKeyDown={(e) => {
+                if (e.ctrlKey || e.metaKey) return;
+                if (["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+                if (e.key.length === 1 && !/^\d$/.test(e.key)) e.preventDefault();
+              }}
+              onPaste={(e) => {
+                const text = e.clipboardData.getData("text");
+                if (/[^\d]/.test(text)) {
+                  e.preventDefault();
+                  let digits = text.replace(/\D/g, "").slice(0, 9);
+                  if (digits && Number(digits) > MAX_BUDGET) digits = String(MAX_BUDGET);
+                  if (digits) set("budget", digits);
+                }
               }}
               className={`${baseInput} pl-8 ${errors.budget ? errorBorder : normalBorder}`}
             />

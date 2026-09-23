@@ -9,6 +9,10 @@ export function validate(form) {
 
   if (!form.tanggal && !form.tanggalFleksibel)
     e.tanggal = "Wajib diisi";
+  else if (form.tanggal && !form.tanggalFleksibel) {
+    const todayStr = new Date().toLocaleDateString("en-CA");
+    if (form.tanggal < todayStr) e.tanggal = "Tanggal tidak boleh sebelum hari ini";
+  }
 
   if (!form.meetingPoint.trim())
     e.meetingPoint = "Wajib diisi";
