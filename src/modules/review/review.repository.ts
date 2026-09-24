@@ -3,7 +3,7 @@ import { reviews } from "./review.schema";
 import { bookings } from "../booking/booking.schema";
 import { tripDepartures, trips } from "../trip/trip.schema";
 import { users } from "../auth/auth.schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export interface ReviewWithDetails {
@@ -25,8 +25,22 @@ export interface ReviewWithDetails {
   bookingCode: string | null;
 }
 
+export interface PublicReview {
+  id: string;
+  rating: number;
+  content: string | null;
+  isFeatured: boolean;
+  createdAt: Date;
+  userName: string | null;
+  tripTitle: string | null;
+  tripId: string;
+}
+
 export interface IReviewRepository {
   findAll(): Promise<ReviewWithDetails[]>;
+  findApproved(): Promise<PublicReview[]>;
+  findApprovedByTripId(tripId: UUID): Promise<PublicReview[]>;
+  findAverageRatingByTripId(tripId: UUID): Promise<number | null>;
   findById(id: UUID): Promise<typeof reviews.$inferSelect | null>;
   create(data: typeof reviews.$inferInsert): Promise<typeof reviews.$inferSelect>;
   findByTripId(tripId: UUID): Promise<(typeof reviews.$inferSelect)[]>;
@@ -35,7 +49,68 @@ export interface IReviewRepository {
   delete(id: UUID): Promise<void>;
 }
 
+async function fetchApproved(tripId?: string): Promise<PublicReview[]> {
+  const whereClause = tripId
+    ? and(eq(reviews.status, "approved"), eq(reviews.tripId, tripId))
+    : eq(reviews.status, "approved");
+
+  const rows = await db
+    .select({
+      id: reviews.id,
+      rating: reviews.rating,
+      content: reviews.content,
+      isFeatured: reviews.isFeatured,
+      createdAt: reviews.createdAt,
+      userId: reviews.userId,
+      tripId: reviews.tripId,
+    })
+    .from(reviews)
+    .where(whereClause)
+    .orderBy(desc(reviews.createdAt));
+
+  const result: PublicReview[] = [];
+  for (const r of rows) {
+    const [user] = await db
+      .select({ name: users.name })
+      .from(users)
+      .where(eq(users.id, r.userId))
+      .limit(1);
+    const [trip] = await db
+      .select({ title: trips.title })
+      .from(trips)
+      .where(eq(trips.id, r.tripId))
+      .limit(1);
+    result.push({
+      id: r.id,
+      rating: r.rating,
+      content: r.content,
+      isFeatured: r.isFeatured ?? false,
+      createdAt: r.createdAt,
+      userName: user?.name ?? null,
+      tripTitle: trip?.title ?? null,
+      tripId: r.tripId,
+    });
+  }
+  return result;
+}
+
 export const reviewRepository: IReviewRepository = {
+  async findApproved() {
+    return fetchApproved();
+  },
+
+  async findApprovedByTripId(tripId: UUID) {
+    return fetchApproved(tripId);
+  },
+
+  async findAverageRatingByTripId(tripId: UUID): Promise<number | null> {
+    const [result] = await db
+      .select({ avg: sql<number>`ROUND(AVG(${reviews.rating})::numeric, 1)` })
+      .from(reviews)
+      .where(and(eq(reviews.tripId, tripId), eq(reviews.status, "approved")));
+    return result?.avg ?? null;
+  },
+
   async findAll() {
     const data = await db
       .select({

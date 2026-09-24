@@ -1,9 +1,10 @@
-import { FileText, Route, Accessibility } from "lucide-react";
+import { FileText, Route, Accessibility, Star } from "lucide-react";
 
 const TABS = [
   { id: "tentang", label: "Deskripsi", icon: FileText },
   { id: "itinerary", label: "Rundown", icon: Route },
   { id: "aksesibilitas", label: "Aksesibilitas", icon: Accessibility },
+  { id: "ulasan", label: "Ulasan", icon: Star },
 ];
 
 export default function DestinationTabs({ activeTab, onChange }) {

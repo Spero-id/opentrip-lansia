@@ -64,7 +64,7 @@ export default function UlasanSection({ dest }) {
               </div>
               <div className="flex items-center gap-1 bg-[#FEF6E7] px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg">
                 <span className="text-[#F49D1A] font-bold text-xs sm:text-sm flex items-center"><Star className="w-3.5 h-3.5 fill-current" /></span>
-                <span className="font-bold text-xs sm:text-sm text-gray-900">{review.rating.toFixed(1)}</span>
+                <span className="font-bold text-xs sm:text-sm text-gray-900">{Number(review.rating).toFixed(1)}</span>
               </div>
             </div>
             <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3">&ldquo;{review.comment}&rdquo;</p>
