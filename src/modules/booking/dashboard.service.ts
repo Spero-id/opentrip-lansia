@@ -39,11 +39,11 @@ export const dashboardService = {
         ),
     ]);
 
-    const totalTrips = Number(tripCountResult[0]?.count ?? 0);
-    const bookingThisMonth = Number(bookingThisMonthResult[0]?.count ?? 0);
-    const bookingLastMonth = Number(bookingLastMonthResult[0]?.count ?? 0);
-    const revenueNum = Number(revenueResult[0]?.total ?? 0);
-    const activePromos = Number(activePromosResult[0]?.count ?? 0);
+    const totalTrips = Number((tripCountResult.rows[0] as any)?.count ?? 0);
+    const bookingThisMonth = Number((bookingThisMonthResult.rows[0] as any)?.count ?? 0);
+    const bookingLastMonth = Number((bookingLastMonthResult.rows[0] as any)?.count ?? 0);
+    const revenueNum = Number((revenueResult.rows[0] as any)?.total ?? 0);
+    const activePromos = Number((activePromosResult.rows[0] as any)?.count ?? 0);
 
     const bookingChange =
       bookingLastMonth === 0

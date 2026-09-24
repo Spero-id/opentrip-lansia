@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   X,
 } from "lucide-react";
+import ConfirmAction from "@/app/admin/components/confirm-action";
 
 interface Trip {
   id: string;
@@ -73,6 +74,7 @@ export default function AdminGroupGalleryPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteMediaId, setDeleteMediaId] = useState<string | null>(null);
 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -191,20 +193,18 @@ export default function AdminGroupGalleryPage() {
   }
 
   async function handleDeleteMedia(mediaId: string) {
-    if (!confirm("Hapus foto ini?")) return;
+    setDeleteMediaId(mediaId);
+  }
 
-    try {
-      const res = await fetch(`/api/trips/${tripId}/groups/${groupId}/gallery/media/${mediaId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        throw new Error("Gagal menghapus");
-      }
-      await fetchData();
-    } catch (err) {
-      console.error("Delete error:", err);
-      alert("Gagal menghapus foto");
+  async function doDeleteMedia() {
+    if (!deleteMediaId) return;
+    const res = await fetch(`/api/trips/${tripId}/groups/${groupId}/gallery/media/${deleteMediaId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      throw new Error("Gagal menghapus foto");
     }
+    await fetchData();
   }
 
   if (loading) {
@@ -405,6 +405,16 @@ export default function AdminGroupGalleryPage() {
           </div>
         </div>
       )}
+      {/* Delete Photo Confirmation */}
+      <ConfirmAction
+        open={!!deleteMediaId}
+        onClose={() => setDeleteMediaId(null)}
+        onConfirm={doDeleteMedia}
+        title="Hapus Foto"
+        message="Foto ini akan dihapus permanen dan tidak bisa dikembalikan."
+        confirmLabel="Ya, Hapus"
+        confirmClassName="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50 inline-flex items-center gap-2"
+      />
     </div>
   );
 }
