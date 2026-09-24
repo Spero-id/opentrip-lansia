@@ -506,7 +506,7 @@ export const tripRepository: ITripRepository = {
         .from(bookings)
         .where(and(
           eq(bookings.departureId, dep.id),
-          sql`${bookings.status} IN ('pending', 'confirmed')`
+          sql`${bookings.status} IN ('pending', 'confirmed', 'completed')`
         ));
 
       const [quotaResult] = await db
@@ -514,7 +514,7 @@ export const tripRepository: ITripRepository = {
         .from(bookings)
         .where(and(
           eq(bookings.departureId, dep.id),
-          sql`${bookings.status} IN ('pending', 'confirmed')`
+          sql`${bookings.status} IN ('pending', 'confirmed', 'completed')`
         ));
 
       const [galleryCountResult] = await db

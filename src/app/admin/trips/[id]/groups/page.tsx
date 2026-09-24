@@ -20,6 +20,7 @@ import {
   ExternalLink,
   CheckCircle,
 } from "lucide-react";
+import ConfirmAction from "@/app/admin/components/confirm-action";
 
 interface Trip {
   id: string;
@@ -117,6 +118,16 @@ export default function AdminTripGroupsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [completeOpen, setCompleteOpen] = useState(false);
+  const [completingId, setCompletingId] = useState<string | null>(null);
+
+  const [alertModal, setAlertModal] = useState<{ open: boolean; title: string; message: string }>({
+    open: false, title: "", message: "",
+  });
+  function showAlert(title: string, message: string) {
+    setAlertModal({ open: true, title, message });
+  }
+
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const [participants, setParticipants] = useState<GroupParticipant[]>([]);
   const [participantsLoading, setParticipantsLoading] = useState(false);
@@ -206,7 +217,7 @@ export default function AdminTripGroupsPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        alert(`Gagal menyimpan: ${data.error || res.statusText}`);
+        showAlert("Gagal Menyimpan", data.error || res.statusText);
         return;
       }
 
@@ -214,7 +225,7 @@ export default function AdminTripGroupsPage() {
       fetchData();
     } catch (err) {
       console.error("Error saving group:", err);
-      alert("Terjadi kesalahan saat menyimpan");
+      showAlert("Terjadi Kesalahan", "Terjadi kesalahan saat menyimpan");
     } finally {
       setSaving(false);
     }
@@ -227,13 +238,13 @@ export default function AdminTripGroupsPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        alert(`Gagal mengaktifkan: ${data.error || res.statusText}`);
+        showAlert("Gagal Mengaktifkan", data.error || res.statusText);
         return;
       }
       fetchData();
     } catch (err) {
       console.error("Error activating group:", err);
-      alert("Terjadi kesalahan saat mengaktifkan grup");
+      showAlert("Terjadi Kesalahan", "Terjadi kesalahan saat mengaktifkan grup");
     }
   }
 
@@ -245,7 +256,7 @@ export default function AdminTripGroupsPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        alert(`Gagal menghapus: ${data.error || res.statusText}`);
+        showAlert("Gagal Menghapus", data.error || res.statusText);
         return;
       }
       setDeleteOpen(false);
@@ -253,29 +264,25 @@ export default function AdminTripGroupsPage() {
       fetchData();
     } catch (err) {
       console.error("Error deleting group:", err);
-      alert("Terjadi kesalahan saat menghapus");
+      showAlert("Terjadi Kesalahan", "Terjadi kesalahan saat menghapus");
     }
   }
 
   async function handleComplete(groupId: string) {
-    if (!confirm("Tandai grup ini sebagai selesai? Semua booking akan diselesaikan dan peserta dapat memberikan ulasan.")) {
-      return;
+    setCompletingId(groupId);
+    setCompleteOpen(true);
+  }
+
+  async function doComplete() {
+    if (!completingId) return;
+    const res = await fetch(`/api/trips/${tripId}/groups/${completingId}/complete`, {
+      method: "PUT",
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || res.statusText);
     }
-    try {
-      const res = await fetch(`/api/trips/${tripId}/groups/${groupId}/complete`, {
-        method: "PUT",
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        alert(`Gagal menandai selesai: ${data.error || res.statusText}`);
-        return;
-      }
-      alert("Grup telah ditandai selesai! Peserta akan diminta memberikan ulasan.");
-      fetchData();
-    } catch (err) {
-      console.error("Error completing group:", err);
-      alert("Terjadi kesalahan saat menandai selesai");
-    }
+    fetchData();
   }
 
   async function toggleParticipants(groupId: string) {
@@ -410,9 +417,9 @@ export default function AdminTripGroupsPage() {
           {groups.map((group) => (
             <div
               key={group.id}
-              className={`bg-white rounded-3xl border-2 shadow-xs overflow-hidden transition ${
+              className={`bg-white rounded-3xl border shadow-xs overflow-hidden transition ${
                 group.isActive
-                  ? "border-[#1CA6B7] ring-2 ring-[#1CA6B7]/20"
+                  ? "border-slate-200/80 shadow-md"
                   : "border-slate-200/80"
               }`}
             >
@@ -428,7 +435,7 @@ export default function AdminTripGroupsPage() {
                           <h3 className="text-lg font-bold text-slate-900">
                             {formatDate(group.startDate)}
                           </h3>
-                          {group.isActive && (
+                          {group.isActive && group.status !== "completed" && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#1CA6B7]/15 text-[#1CA6B7]">
                               <Check className="w-3 h-3" />
                               AKTIF
@@ -629,7 +636,7 @@ export default function AdminTripGroupsPage() {
                   {group.status !== "completed" && (
                     <button
                       onClick={() => handleComplete(group.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
                       Tandai Selesai
@@ -803,6 +810,27 @@ export default function AdminTripGroupsPage() {
           </div>
         </div>
       )}
+      {/* Complete Confirmation */}
+      <ConfirmAction
+        open={completeOpen}
+        onClose={() => { setCompleteOpen(false); setCompletingId(null); }}
+        onConfirm={doComplete}
+        title="Tandai Grup Selesai"
+        message="Tandai grup ini sebagai selesai? Semua booking akan diselesaikan dan peserta dapat memberikan ulasan."
+        confirmLabel="Ya, Tandai Selesai"
+        confirmClassName="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+      />
+
+      {/* Alert Modal */}
+      <ConfirmAction
+        open={alertModal.open}
+        onClose={() => setAlertModal({ open: false, title: "", message: "" })}
+        onConfirm={async () => setAlertModal({ open: false, title: "", message: "" })}
+        title={alertModal.title}
+        message={alertModal.message}
+        confirmLabel="OK"
+        confirmClassName="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+      />
     </div>
   );
 }

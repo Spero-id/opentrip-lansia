@@ -20,8 +20,8 @@ export async function PUT(
       );
     }
 
-    // Update group status to completed
-    await tripRepository.updateGroup(groupId, { status: "completed" });
+    // Update group status to completed and deactivate it
+    await tripRepository.updateGroup(groupId, { status: "completed", isActive: false });
 
     // Update all bookings for this departure to completed
     await db
