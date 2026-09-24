@@ -7,6 +7,7 @@ import {
 import { bookings, bookingItems, bookingParticipants } from "../booking/booking.schema";
 import { payments } from "../payment/payment.schema";
 import { destinationCategories } from "../master/master.schema";
+import { reviews } from "../review/review.schema";
 import { eq, and, asc, desc, sql, getTableColumns, inArray } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
@@ -207,6 +208,13 @@ export const tripRepository: ITripRepository = {
       const prices = pricesByDeparture.get(row.departureId!) ?? [];
       row.price = pickCanonicalPrice(prices);
       row.activeGroup = activeGroups.get(row.id) ?? null;
+
+      // Enrich with real average rating from approved reviews (default 5.0)
+      const [ratingResult] = await db
+        .select({ avg: sql<number>`ROUND(AVG(${reviews.rating})::numeric, 1)` })
+        .from(reviews)
+        .where(and(eq(reviews.tripId, row.id), eq(reviews.status, "approved")));
+      row.rating = ratingResult?.avg != null ? Number(ratingResult.avg) : 5.0;
     }
 
     return [...byTrip.values()];

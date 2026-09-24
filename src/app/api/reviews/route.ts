@@ -6,8 +6,23 @@ import { db } from "@/shared/db";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    // Public endpoint: GET /api/reviews?tripId=...&status=approved
+    const { searchParams } = req.nextUrl;
+    const statusParam = searchParams.get("status");
+    const tripIdParam = searchParams.get("tripId");
+
+    // Public access: only approved reviews
+    if (statusParam === "approved" || tripIdParam) {
+      const { reviewRepository } = await import("@/modules/review");
+      const data = tripIdParam
+        ? await reviewRepository.findApprovedByTripId(tripIdParam)
+        : await reviewRepository.findApproved();
+      return NextResponse.json(data);
+    }
+
+    // Admin access: all reviews
     const data = await reviewRepository.findAll();
     return NextResponse.json(data);
   } catch (err) {

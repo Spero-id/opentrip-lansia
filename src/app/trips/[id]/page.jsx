@@ -15,6 +15,7 @@ import DestinationTabs from "@/components/destinasi/detail/DestinationTabs";
 import AboutSection from "@/components/destinasi/detail/AboutSection";
 import AccessibilitySection from "@/components/destinasi/detail/AccessibilitySection";
 import ItinerarySection from "@/components/destinasi/detail/ItinerarySection";
+import ReviewsSection from "@/components/destinasi/detail/ReviewsSection";
 import BookingCard from "@/components/destinasi/detail/BookingCard";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 
@@ -110,6 +111,7 @@ export default function DestinationDetailPage({ params }) {
             {activeTab === "tentang" && <AboutSection dest={dest} />}
             {activeTab === "itinerary" && <ItinerarySection dest={dest} shortLocation={shortLocation} />}
             {activeTab === "aksesibilitas" && <AccessibilitySection dest={dest} />}
+            {activeTab === "ulasan" && <ReviewsSection tripId={dest.id} />}
           </div>
         </div>
 
