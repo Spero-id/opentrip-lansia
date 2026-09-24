@@ -12,6 +12,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
 
     // Fetch booking with participants and payments
@@ -26,6 +31,10 @@ export async function GET(
         { error: "Booking tidak ditemukan" },
         { status: 404 }
       );
+    }
+
+    if (booking.userId !== session.user.id && session.user.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Fetch participants
@@ -76,14 +85,7 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await req.json();
-    const { status } = body;
-
-    if (!status || !VALID_STATUSES.includes(status)) {
-      return NextResponse.json(
-        { error: "Status tidak valid" },
-        { status: 400 }
-      );
-    }
+    const { status, adminMessage } = body;
 
     const [existing] = await db
       .select()
@@ -98,12 +100,38 @@ export async function PATCH(
       );
     }
 
+    if (status && !VALID_STATUSES.includes(status)) {
+      return NextResponse.json(
+        { error: "Status tidak valid" },
+        { status: 400 }
+      );
+    }
+
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
+    if (status) updates.status = status;
+    if (adminMessage !== undefined) {
+      if (typeof adminMessage !== "string" || adminMessage.length > 2000) {
+        return NextResponse.json(
+          { error: "Pesan admin tidak valid" },
+          { status: 400 }
+        );
+      }
+      let notesObj: Record<string, unknown> = {};
+      try {
+        notesObj = existing.notes ? JSON.parse(existing.notes) : {};
+      } catch {
+        notesObj = {};
+      }
+      notesObj.adminMessage = adminMessage.trim();
+      updates.notes = JSON.stringify(notesObj);
+    }
+
     await db
       .update(bookings)
-      .set({ status, updatedAt: new Date() })
+      .set(updates)
       .where(eq(bookings.id, id));
 
-    return NextResponse.json({ success: true, status });
+    return NextResponse.json({ success: true, status, adminMessage: updates.adminMessage ?? (updates.notes ? JSON.parse(String(updates.notes)).adminMessage : null) });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";
     console.error("Update booking status error:", err);

@@ -3,7 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
-import { X, LogOut } from "lucide-react";
+import { X, LogOut, User, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
 
@@ -20,9 +20,8 @@ const NAV_LINKS = [
   { name: "Beranda", href: "/" },
   { name: "Destinasi Trip", href: "/trips" },
   { name: "Private Trip", href: "/private" },
-  { name: "Riwayat Pemesanan", href: "/my-trips" },
   { name: "Blog", href: "/blog" },
-  { name: "Tentang Kami", href: "/about" },
+  { name: "Hubungi Kami", href: "/contact" },
 ];
 
 const cn = (...classes) => classes.filter(Boolean).join(" ");
@@ -68,7 +67,7 @@ export default function MobileMenu({ isOpen, setIsOpen, _isScrolled }) {
   }
 
   const mobileMenuClasses = cn(
-    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-3/4 max-w-xs transform overflow-hidden bg-white shadow-2xl transition-transform duration-300 ease-in-out",
+    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-4/5 max-w-sm transform overflow-hidden bg-white shadow-2xl transition-transform duration-300 ease-in-out",
     isOpen ? "translate-x-0" : "-translate-x-full"
   );
 
@@ -77,7 +76,7 @@ export default function MobileMenu({ isOpen, setIsOpen, _isScrolled }) {
     isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
   );
 
-  const sectionLabelClasses = "px-3 text-xs font-medium tracking-wide text-gray-400";
+  const sectionLabelClasses = "px-3 text-sm font-medium tracking-wide text-gray-400";
   const mobileLinkClasses = "block w-full rounded-lg px-3 py-2 text-sm font-medium text-black hover:bg-black/10 transition-colors";
 
   const activeLinkClasses = mobileLinkClasses;
@@ -122,20 +121,20 @@ export default function MobileMenu({ isOpen, setIsOpen, _isScrolled }) {
             {isLoggedIn && (
               <div className="mt-8 space-y-3">
                 <div className={sectionLabelClasses}>Akun</div>
-                <div className="space-y-1">
-                  <MenuItem
-                    href="/my-trips"
-                    onClick={() => setIsOpen(false)}
-                    className={pathname === "/my-trips" ? activeLinkClasses : mobileLinkClasses}
-                  >
-                    Riwayat Pemesanan
-                  </MenuItem>
+                <div className="space-y-3">
                   <MenuItem
                     href="/profile"
                     onClick={() => setIsOpen(false)}
                     className={pathname === "/profile" ? activeLinkClasses : mobileLinkClasses}
                   >
-                    Pengaturan Profil
+                    Profil Saya
+                  </MenuItem>
+                  <MenuItem
+                    href="/my-trips"
+                    onClick={() => setIsOpen(false)}
+                    className={pathname === "/my-trips" ? activeLinkClasses : mobileLinkClasses}
+                  >
+                    Riwayat Trip
                   </MenuItem>
                 </div>
                 <div className="mt-4 pt-4">
@@ -149,12 +148,9 @@ export default function MobileMenu({ isOpen, setIsOpen, _isScrolled }) {
                         await signOut();
                         router.refresh();
                       }}
-                      className="block w-full rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+                      className="block w-full cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
                     >
-                      <div className="flex items-center gap-3">
-                        <LogOut size={16} className="text-red-600" />
-                        <span>Keluar</span>
-                      </div>
+                      Keluar dari Akun
                     </MenuItem>
                   </div>
                 </div>

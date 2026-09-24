@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar, text, integer, boolean, timestamp, date, time, jsonb, doublePrecision } from "drizzle-orm/pg-core";
-import { destinationCategories, meetingPoints } from "../master/master.schema";
+import { destinationCategories } from "../master/master.schema";
 
 export const trips = pgTable("trips", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -12,7 +12,6 @@ export const trips = pgTable("trips", {
   thumbnailId: uuid("thumbnail_id"),
   sourceRequestId: uuid("source_request_id"),
   maxParticipants: integer("max_participants"),
-  meetingPointId: uuid("meeting_point_id").references(() => meetingPoints.id),
   isFeatured: boolean("is_featured").default(false),
   // Destination fields (merged from destinations table)
   categoryId: uuid("category_id").references(() => destinationCategories.id),
@@ -31,6 +30,7 @@ export const trips = pgTable("trips", {
   highlights: jsonb("highlights").$type<string[]>(),
   facilities: jsonb("facilities").$type<(string | { name: string; icon?: string })[]>(),
   itinerary: jsonb("itinerary").$type<{ day: number; title: string; description: string }[]>(),
+  meetingPointId: uuid("meeting_point_id").references(() => destinationCategories.id),
   meetingPointsJson: jsonb("meeting_points").$type<{ time: string; location: string; description: string }[]>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -44,6 +44,7 @@ export const tripDepartures = pgTable("trip_departures", {
   maxParticipants: integer("max_participants").notNull(),
   minParticipants: integer("min_participants").default(1),
   status: varchar("status", { length: 20 }).notNull().default("scheduled"),
+  isActive: boolean("is_active").default(false),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

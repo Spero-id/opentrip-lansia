@@ -1,9 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/shared/db";
+import { hashPassword, verifyPassword } from "@/shared/utils/password";
+import { generateCode } from "@/shared/utils/helpers";
 import { users } from "./auth.schema";
 import { session, account, verification } from "./better-auth.schema";
-import crypto from "crypto";
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
@@ -21,13 +22,8 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
     password: {
-      hash: async (password) => {
-        return crypto.createHash("sha256").update(password).digest("hex");
-      },
-      verify: async ({ password, hash }) => {
-        const hashed = crypto.createHash("sha256").update(password).digest("hex");
-        return hashed === hash;
-      },
+      hash: (password) => hashPassword(password),
+      verify: ({ password, hash }) => verifyPassword(password, hash),
     },
   },
   socialProviders: {
@@ -44,6 +40,21 @@ export const auth = betterAuth({
       referralCode: { type: "string", required: false },
       referredBy: { type: "string", required: false },
       loyaltyPoints: { type: "number", required: false },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const referralCode = generateCode("OTL");
+          return {
+            data: {
+              ...user,
+              referralCode,
+            },
+          };
+        },
+      },
     },
   },
   session: {

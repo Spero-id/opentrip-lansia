@@ -16,7 +16,6 @@ test.describe("Admin Dashboard", () => {
     await expect(sidebar.getByText("Promo")).toBeVisible();
     await expect(sidebar.getByText("Komisi")).toBeVisible();
     await expect(sidebar.getByText("Ulasan")).toBeVisible();
-    await expect(sidebar.getByText("Meeting Point")).toBeVisible();
     await expect(sidebar.getByText("Blog")).toBeVisible();
     await expect(sidebar.getByText("Pesanan")).toBeVisible();
     await expect(sidebar.getByText("Private Trip")).toBeVisible();

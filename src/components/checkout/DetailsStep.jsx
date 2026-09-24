@@ -1,6 +1,7 @@
 "use client";
 
 import VoucherCard from "./VoucherCard";
+import ReferralInput from "./ReferralInput";
 import PriceBreakdown from "./PriceBreakdown";
 import MeetingPointInfo from "./MeetingPointInfo";
 import CustomerForm from "./CustomerForm";
@@ -42,6 +43,16 @@ export default function DetailsStep({ checkout, onNext }) {
           onRemove={checkout.removeVoucher}
           appliedVoucher={checkout.appliedVoucher}
           voucherError={checkout.voucherError}
+          vouchersLoading={checkout.vouchersLoading}
+        />
+
+        <ReferralInput
+          referralCode={checkout.referralCode}
+          setReferralCode={checkout.setReferralCode}
+          appliedReferral={checkout.appliedReferral}
+          referralError={checkout.referralError}
+          onApply={checkout.applyReferral}
+          onRemove={checkout.removeReferral}
         />
       </div>
 
@@ -51,7 +62,6 @@ export default function DetailsStep({ checkout, onNext }) {
           pricePerPax={checkout.destination?.priceMin ?? 0}
           pax={checkout.pax}
           ticketSubtotal={checkout.ticketSubtotal}
-          serviceFee={checkout.serviceFee}
           total={checkout.total}
           discount={checkout.discount}
           appliedVoucher={checkout.appliedVoucher}
@@ -60,6 +70,7 @@ export default function DetailsStep({ checkout, onNext }) {
           canProceed={canProceed}
           onNext={onNext}
           isLoading={checkout.isLoading}
+          error={checkout.error}
         />
       </div>
     </div>

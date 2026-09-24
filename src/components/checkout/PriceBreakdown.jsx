@@ -9,7 +9,6 @@ export default function PriceBreakdown({
   pricePerPax,
   pax,
   ticketSubtotal,
-  serviceFee,
   discount,
   total,
   appliedVoucher,
@@ -19,6 +18,7 @@ export default function PriceBreakdown({
   onNext,
   hideTerms,
   isLoading,
+  error,
 }) {
   const [modalType, setModalType] = useState(null);
 
@@ -44,13 +44,6 @@ export default function PriceBreakdown({
           </div>
           <span className="font-semibold text-gray-700">
             {OrderDomain.formatPrice(ticketSubtotal)}
-          </span>
-        </div>
-
-        <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-600">Biaya layanan</span>
-          <span className="font-semibold text-gray-700">
-            {OrderDomain.formatPrice(serviceFee)}
           </span>
         </div>
 
@@ -97,6 +90,11 @@ export default function PriceBreakdown({
 
       {!hideTerms && (
         <div className="border-t border-gray-100 pt-4 space-y-4">
+          {error && (
+            <div className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+              {error}
+            </div>
+          )}
           <div
             className="flex items-start gap-3 cursor-pointer"
             onClick={() => setModalType("terms")}

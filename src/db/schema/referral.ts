@@ -52,11 +52,11 @@ export const payoutCommissions = pgTable("payout_commissions", {
 
 export const loyaltyTransactions = pgTable("loyalty_transactions", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull(),
+  userId: text("user_id").notNull(),
   points: integer("points").notNull(),
   type: varchar("type", { length: 20 }).notNull(),
   referenceType: varchar("reference_type", { length: 50 }),
-  referenceId: uuid("reference_id"),
+  referenceId: text("reference_id"),
   description: text("description"),
   expiresAt: timestamp("expires_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

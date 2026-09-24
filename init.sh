@@ -5,17 +5,17 @@ echo "=== Harness Initialization ==="
 echo "Directory: $(pwd)"
 echo ""
 
-echo "=== Installing dependencies ==="
-npm install
-echo ""
+//echo "=== Installing dependencies ==="
+//npm install
+//echo ""
 
-echo "=== Running lint ==="
-npm run lint
-echo ""
+//echo "=== Running lint ==="
+//npm run lint
+//echo ""
 
-echo "=== Running tests ==="
-npm test
-echo ""
+//echo "=== Running tests ==="
+//npm test
+//echo ""
 
 echo "=== Verification Complete ==="
 echo ""

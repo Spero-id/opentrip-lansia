@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Eye, EyeOff, Sparkles, Check } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, Sparkles, Check, Users } from "lucide-react";
 import CreatableSelect from "react-select/creatable";
 import { slugify } from "@/shared/utils/helpers";
 import Modal from "../components/modal";
@@ -148,7 +148,9 @@ export default function AdminTrips() {
   const [images, setImages] = useState<string[]>([]);
   const [itineraryList, setItineraryList] = useState<ItineraryItemInput[]>([]);
   const [facilitiesList, setFacilitiesList] = useState<FacilityItemInput[]>([]);
+  
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -161,7 +163,7 @@ export default function AdminTrips() {
   async function fetchData() {
     setLoading(true);
     try {
-      const res = await fetch("/api/trips");
+      const res = await fetch("/api/trips?all=true");
       const data = await res.json();
       if (res.ok && Array.isArray(data)) {
         setRows(data);
@@ -182,7 +184,9 @@ export default function AdminTrips() {
     if (res.ok) {
       const data = await res.json();
       setCategories(data);
+      return data as { id: string; name: string }[];
     }
+    return null;
   }
 
   async function handleCreateCategory(inputValue: string) {
@@ -195,20 +199,28 @@ export default function AdminTrips() {
       const newCategory = await res.json();
       setCategories((prev) => [...prev, newCategory]);
       setForm((prev) => ({ ...prev, categoryId: newCategory.id }));
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.categoryId;
+        return next;
+      });
     }
   }
 
-  function openCreate() {
+  async function openCreate() {
+    if (categories.length === 0) await fetchCategories();
     setEditing(null);
     setForm(emptyForm);
     setImages([]);
     setItineraryList([{ dayNumber: 1, location: "", title: "", description: "" }]);
     setFacilitiesList([{ name: "", icon: "Check" }]);
+    setErrors({});
     setModalOpen(true);
   }
 
-  function openEdit(item: Trip & { image?: string | null; images?: string[] | null }) {
+  async function openEdit(item: Trip & { image?: string | null; images?: string[] | null }) {
     setEditing(item);
+    setErrors({});
     setForm({
       type: "open_trip",
       title: item.title,
@@ -261,11 +273,33 @@ export default function AdminTrips() {
         : []
     );
 
+if (categories.length === 0) await fetchCategories();
+
     setModalOpen(true);
+  }
+
+  function validateForm(): Record<string, string> {
+    const e: Record<string, string> = {};
+    if (!form.title.trim()) e.title = "Judul trip wajib diisi.";
+    if (!form.slug.trim()) e.slug = "Slug wajib diisi.";
+    if (!form.durationDays || form.durationDays < 1) e.durationDays = "Durasi minimal 1 hari.";
+    if (!form.categoryId) e.categoryId = "Pilih atau buat kategori terlebih dahulu.";
+    if (!form.location.trim()) e.location = "Lokasi utama wajib diisi.";
+    if (!form.province) e.province = "Pilih provinsi.";
+    if (!form.price || form.price <= 0) e.price = "Harga wajib diisi dan harus lebih dari 0.";
+    if (!form.meetingPoint.trim()) e.meetingPoint = "Lokasi kumpul wajib diisi.";
+    if (!form.meetingPointTime) e.meetingPointTime = "Jam kumpul wajib diisi.";
+    return e;
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
     setSaving(true);
 
     const payload: Record<string, unknown> = {
@@ -286,6 +320,7 @@ export default function AdminTrips() {
       images: images.length > 0 ? images : undefined,
       priceMin: form.price || undefined,
       priceMax: form.price || undefined,
+      price: form.price || undefined,
       facilities: facilitiesList
         .filter((item) => item.name.trim() !== "")
         .map((item) => ({
@@ -335,14 +370,29 @@ export default function AdminTrips() {
 
   async function handleDelete() {
     if (!deleting) return;
-    await fetch(`/api/trips/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
+    try {
+      const res = await fetch(`/api/trips/${deleting}`, { method: "DELETE" });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        alert(`Gagal menghapus trip: ${errorData.error || res.statusText}`);
+        return;
+      }
+      setDeleteOpen(false);
+      setDeleting(null);
+      fetchData();
+    } catch (err) {
+      console.error("Error deleting trip:", err);
+      alert("Terjadi kesalahan saat menghapus trip.");
+    }
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value, type } = e.target;
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
     setForm((prev) => {
       const val = type === "checkbox" ? (e.target as HTMLInputElement).checked : type === "number" ? Number(value) : value;
       const updated = {
@@ -358,6 +408,11 @@ export default function AdminTrips() {
 
   function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
     const val = parseRupiah(e.target.value);
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.price;
+      return next;
+    });
     setForm((prev) => ({ ...prev, price: val }));
   }
 
@@ -399,6 +454,16 @@ export default function AdminTrips() {
 
   const tripRows = Array.isArray(rows) ? rows : [];
 
+  const fieldClass = (key: string) =>
+    errors[key]
+      ? "mt-1 w-full rounded-lg border border-red-400 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300/30 focus:border-red-400"
+      : "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]";
+
+  const fieldError = (key: string) =>
+    errors[key] ? <p className="mt-1 text-xs font-medium text-red-600">{errors[key]}</p> : null;
+
+  const hasErrors = Object.keys(errors).length > 0;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
@@ -423,10 +488,8 @@ export default function AdminTrips() {
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Tipe</th>
                 <th className="px-6 py-4">Lokasi & Provinsi</th>
-                <th className="px-6 py-4">Hari</th>
                 <th className="px-6 py-4">Harga</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Featured</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
@@ -447,7 +510,6 @@ export default function AdminTrips() {
                     <td className="px-6 py-4 text-slate-500">
                       {[t.location, t.province].filter(Boolean).join(", ") || "-"}
                     </td>
-                    <td className="px-6 py-4 text-slate-500">{t.durationDays}H</td>
                     <td className="px-6 py-4 font-semibold text-slate-900">
                       {t.priceMin ? formatRupiah(t.priceMin) : "-"}
                     </td>
@@ -456,17 +518,13 @@ export default function AdminTrips() {
                         {t.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      {t.isFeatured ? (
-                        <Eye className="w-4 h-4 text-[#1CA6B7]" />
-                      ) : (
-                        <EyeOff className="w-4 h-4 text-slate-300" />
-                      )}
-                    </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
                         <button onClick={() => openEdit(t)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition" title="Kelola Grup">
+                          <Users className="w-4 h-4" />
                         </button>
                         <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
@@ -483,16 +541,30 @@ export default function AdminTrips() {
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Trip" : "Tambah Trip"} size="xl">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {hasErrors && (
+            <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3">
+              <p className="text-xs font-bold text-red-700">
+                Form belum lengkap. Periksa field yang ditandai merah sebelum menyimpan:
+              </p>
+              <ul className="list-disc ml-4 mt-1 space-y-0.5">
+                {Object.values(errors).map((msg, i) => (
+                  <li key={i} className="text-xs text-red-600">{msg}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Judul Trip</label>
               <input name="title" value={form.title} onChange={handleChange} required
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                className={fieldClass("title")} />
+              {fieldError("title")}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Slug</label>
               <input name="slug" value={form.slug} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                className={fieldClass("slug") + " text-slate-500 bg-slate-50"} />
+              {fieldError("slug")}
             </div>
           </div>
 
@@ -500,7 +572,8 @@ export default function AdminTrips() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Durasi (Hari)</label>
               <input name="durationDays" type="number" min={1} value={form.durationDays} onChange={handleChange} required
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                className={fieldClass("durationDays")} />
+              {fieldError("durationDays")}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Status</label>
@@ -528,13 +601,14 @@ export default function AdminTrips() {
                   name="province"
                   value={form.province}
                   onChange={handleChange}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                  className={fieldClass("province")}
                 >
                   <option value="">Pilih Provinsi</option>
                   {PROVINCES.map((p) => (
                     <option key={p} value={p}>{p}</option>
                   ))}
                 </select>
+                {fieldError("province")}
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Lokasi Utama</label>
@@ -543,8 +617,9 @@ export default function AdminTrips() {
                   value={form.location}
                   onChange={handleChange}
                   placeholder="Contoh: Kintamani, Ubud"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                  className={fieldClass("location")}
                 />
+                {fieldError("location")}
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
@@ -565,13 +640,14 @@ export default function AdminTrips() {
                     control: (base) => ({
                       ...base,
                       borderRadius: "0.5rem",
-                      borderColor: "#cbd5e1",
+                      borderColor: errors.categoryId ? "#f87171" : "#cbd5e1",
                       minHeight: "38px",
                       boxShadow: "none",
-                      "&:hover": { borderColor: "#F49D1A" },
+                      "&:hover": { borderColor: errors.categoryId ? "#ef4444" : "#F49D1A" },
                     }),
                   }}
                 />
+                {fieldError("categoryId")}
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Harga (Rp)</label>
@@ -580,8 +656,9 @@ export default function AdminTrips() {
                   value={formatRupiah(form.price)}
                   onChange={handlePriceChange}
                   placeholder="Rp 0"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                  className={fieldClass("price")}
                 />
+                {fieldError("price")}
               </div>
               <div className="md:col-span-2">
                 <ImageManager
@@ -779,13 +856,15 @@ export default function AdminTrips() {
               <div>
                 <label className="block text-sm font-medium text-slate-700">Jam Kumpul *</label>
                 <input name="meetingPointTime" type="time" value={form.meetingPointTime} onChange={handleChange}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  className={fieldClass("meetingPointTime")} />
+                {fieldError("meetingPointTime")}
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-slate-700">Lokasi Kumpul *</label>
                 <input name="meetingPoint" value={form.meetingPoint} onChange={handleChange}
                   placeholder="Contoh: Bandara Soekarno-Hatta Terminal 3"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  className={fieldClass("meetingPoint")} />
+                {fieldError("meetingPoint")}
               </div>
             </div>
             <p className="text-xs text-slate-400 mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>

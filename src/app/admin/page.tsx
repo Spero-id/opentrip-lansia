@@ -181,8 +181,8 @@ export default function AdminDashboard() {
         <div className="lg:col-span-8 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Pemesanan Terbaru</h2>
-            <Link href="/admin/pesanan" className="text-xs font-semibold text-[#F49D1A] hover:underline flex items-center gap-1">
-              <span>Lihat Semua</span>
+            <Link href="/admin/notifications" className="text-xs font-semibold text-[#F49D1A] hover:underline flex items-center gap-1">
+              <span>Lihat Semua Notifikasi</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>

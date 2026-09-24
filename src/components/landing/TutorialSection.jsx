@@ -33,7 +33,7 @@ const steps = [
     icon: CreditCard,
     title: "Lakukan Pembayaran",
     description:
-      "Pilih metode pembayaran yang tersedia (transfer bank, e-wallet, atau kartu kredit). Lakukan pembayaran sesuai nominal yang tertera sebelum batas waktu.",
+      "Lakukan pembayaran melalui transfer bank BCA sesuai dengan nominal yang tertera sebelum batas waktu pembayaran.",
   },
   {
     number: "05",

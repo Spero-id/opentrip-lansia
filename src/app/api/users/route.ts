@@ -1,7 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authService } from "@/modules/auth";
+import { requireAdmin } from "@/shared/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const data = await authService.getAllUsers();
     return NextResponse.json(data);

@@ -64,8 +64,14 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         </label>
         <input
           type="date"
+          max={new Date().toISOString().split("T")[0]}
           value={customer.birthDate || ""}
-          onChange={handleChange("birthDate")}
+          onChange={(e) => {
+            const val = e.target.value;
+            // Batasi panjang tahun max 4 digit
+            if (val && val.split("-")[0] && val.split("-")[0].length > 4) return;
+            setCustomer("birthDate", val);
+          }}
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
         />
       </div>

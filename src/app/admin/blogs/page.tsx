@@ -5,6 +5,7 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 import WysiwygEditor from "../components/wysiwyg-editor";
+import BlogCoverUploader from "../components/blog-cover-uploader";
 
 interface Blog {
   id: string;
@@ -12,6 +13,7 @@ interface Blog {
   slug: string;
   content: string | null;
   excerpt: string | null;
+  coverImage?: string | null;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -22,10 +24,11 @@ interface BlogForm {
   slug: string;
   content: string;
   excerpt: string;
+  coverImage?: string;
   status: string;
 }
 
-const emptyForm: BlogForm = { title: "", slug: "", content: "", excerpt: "", status: "draft" };
+const emptyForm: BlogForm = { title: "", slug: "", content: "", excerpt: "", coverImage: "", status: "draft" };
 
 function slugify(input: string): string {
   return input
@@ -73,7 +76,7 @@ export default function AdminBlogs() {
 
   function openEdit(item: Blog) {
     setEditing(item);
-    setForm({ title: item.title, slug: item.slug, content: item.content || "", excerpt: item.excerpt || "", status: item.status });
+    setForm({ title: item.title, slug: item.slug, content: item.content || "", excerpt: item.excerpt || "", coverImage: item.coverImage || "", status: item.status });
     setSaveError(null);
     setModalOpen(true);
   }
@@ -143,6 +146,7 @@ export default function AdminBlogs() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
               <tr>
+                <th className="px-6 py-4">Sampul</th>
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Tanggal</th>
@@ -151,12 +155,20 @@ export default function AdminBlogs() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-400">Belum ada data blog.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Belum ada data blog.</td></tr>
               ) : (
                 rows.map((b) => (
                   <tr key={b.id} className="hover:bg-slate-50/60 transition">
+                    <td className="px-6 py-4">
+                      {b.coverImage ? (
+                        <img src={b.coverImage} alt="" className="w-16 h-12 object-cover rounded-lg border border-slate-200" />
+                      ) : (
+                        <div className="w-16 h-12 rounded-lg border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-[10px] text-slate-300">-
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 font-bold text-slate-900">{b.title}</td>
                     <td className="px-6 py-4">
                       <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${b.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : "bg-slate-100 text-slate-600"}`}>{b.status}</span>
@@ -202,6 +214,12 @@ export default function AdminBlogs() {
             <WysiwygEditor
               value={form.content}
               onChange={(content) => setForm((prev) => ({ ...prev, content }))}
+            />
+          </div>
+          <div>
+            <BlogCoverUploader
+              value={form.coverImage || null}
+              onChange={(url) => setForm((prev) => ({ ...prev, coverImage: url || "" }))}
             />
           </div>
           <div>

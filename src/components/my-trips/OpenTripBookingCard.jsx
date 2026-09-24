@@ -1,0 +1,342 @@
+"use client";
+
+import { useState } from "react";
+import FeedbackModal from "./FeedbackModal";
+import GalleryModal from "./GalleryModal";
+import {
+  A,
+  OPEN_TRIP_STATUS_LABEL,
+  OPEN_TRIP_STATUS_COLOR,
+  PAYMENT_STATUS_LABEL,
+  PAYMENT_STATUS_COLOR,
+  formatRupiah,
+  icons,
+} from "./constants";
+
+export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+
+  let notesObj = {};
+  if (booking.notes) {
+    try {
+      notesObj = typeof booking.notes === "string" ? JSON.parse(booking.notes) : booking.notes;
+    } catch {
+      notesObj = { raw: booking.notes };
+    }
+  }
+
+  const destinationName  = notesObj.destinationName  || "Paket Open Trip";
+  const travelDate       = notesObj.travelDate       || null;
+  const customerName     = notesObj.customerName     || null;
+  const customerEmail    = notesObj.customerEmail    || null;
+  const customerPhone    = notesObj.customerPhone    || null;
+  const specialRequest   = notesObj.specialRequest   || null;
+  const adminMessage     = notesObj.adminMessage     || null;
+
+  const paymentStatus   = booking.payments?.[0]?.status || booking.status || "confirmed";
+  const paymentMethod   = booking.payments?.[0]?.method || "online";
+  const paymentProof    = booking.payments?.[0]?.proofUrl || booking.payments?.[0]?.gatewayResponse?.proofUrl || null;
+  const paymentAdminNote = booking.payments?.[0]?.adminNote || null;
+
+  const isCompleted = booking.status === "completed";
+  const hasReview = booking.hasReview || feedbackSubmitted;
+
+  // departureId is the groupId for gallery
+  const departureId = booking.departureId || null;
+
+  // tripId comes from booking service (joined from tripDepartures)
+  const tripId = booking.tripId || notesObj.tripId || null;
+
+  const copyCode = (e) => {
+    e.stopPropagation();
+    if (booking.bookingCode) {
+      navigator.clipboard.writeText(booking.bookingCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const showImage = imageUrl && !imgError;
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
+      {/* Header */}
+      <div
+        id={`open-trip-card-${booking.id}`}
+        role="button"
+        tabIndex={0}
+        className="w-full text-left px-5 py-4 flex items-start gap-4 hover:bg-gray-50/70 transition cursor-pointer"
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen((v) => !v); } }}
+      >
+        {showImage ? (
+          <img
+            src={imageUrl}
+            alt={destinationName}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover shrink-0 bg-gray-100"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl shrink-0 bg-gray-100 flex items-center justify-center text-gray-400 font-bold text-lg"
+          >
+            {destinationName.slice(0, 2).toUpperCase()}
+          </div>
+        )}
+        <div className="flex-1 min-w-0 space-y-1.5">
+          <div className="space-y-1">
+            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-[#F49D1A] border border-[#F49D1A]/30">
+              Open Trip
+            </span>
+            <p className="text-sm font-bold text-gray-900 truncate">{destinationName}</p>
+            <p className="text-xs text-gray-500">{booking.totalParticipants} Peserta</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+            <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-gray-100 rounded px-2 py-0.5">
+              {booking.bookingCode}
+              <button onClick={copyCode} title="Salin Kode Booking" className="hover:text-gray-900 transition p-0.5">
+                {copied ? icons.copied : icons.copy}
+              </button>
+            </span>
+            {travelDate && (
+              <span>Tgl Perjalanan: <strong className="text-gray-700">{travelDate}</strong></span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+          <div className="text-right">
+            <p className="text-sm font-extrabold" style={{ color: A }}>
+              {formatRupiah(booking.totalAmount) || "IDR " + booking.totalAmount}
+            </p>
+            <span className={`inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${OPEN_TRIP_STATUS_COLOR[booking.status] || "bg-teal-100 text-teal-800"}`}>
+              {OPEN_TRIP_STATUS_LABEL[booking.status] || booking.status}
+            </span>
+          </div>
+          {booking.status === "pending_payment" && (
+            <a
+              href={`/checkout/pay/${booking.id}`}
+              className="px-4 py-2 bg-[#F49D1A] text-white text-xs font-bold rounded-lg hover:bg-[#c47d12] transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Bayar
+            </a>
+          )}
+          {isCompleted && !hasReview && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setFeedbackOpen(true);
+              }}
+              className="px-4 py-2 bg-[#1CA6B7] text-white text-xs font-bold rounded-lg hover:bg-[#159ba9] transition-colors"
+            >
+              Beri Ulasan
+            </button>
+          )}
+          {isCompleted && hasReview && (
+            <span className="px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded-lg">
+              ✓ Sudah Diulas
+            </span>
+          )}
+          {isCompleted && departureId && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setGalleryOpen(true);
+              }}
+              className="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Lihat Foto
+            </button>
+          )}
+          <span className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+            {icons.chevron}
+          </span>
+        </div>
+      </div>
+
+      {/* Detail */}
+      {open && (
+        <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
+          {/* WhatsApp Admin */}
+          {(() => {
+            const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+            if (!waNumber) return null;
+            const waMsg = encodeURIComponent(
+              `Halo Admin Jelajah Memoria, saya ingin bertanya tentang booking saya.\n\nKode Booking: ${booking.bookingCode}\nDestinasi: ${destinationName}`
+            );
+            return (
+              <a
+                href={`https://wa.me/${waNumber}?text=${waMsg}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#25D366] text-white text-xs font-bold rounded-xl transition"
+              >
+                <img src="/whatsapp-logo.webp" alt="WhatsApp" className="w-6 h-6 object-contain" />
+                Hubungi Admin
+              </a>
+            );
+          })()}
+
+          {/* Rincian Pembayaran */}
+          <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rincian Pembayaran</p>
+            <div className="flex justify-between text-xs text-gray-600">
+              <span>Subtotal ({booking.totalParticipants} pax)</span>
+              <span>{formatRupiah(booking.subtotal) || booking.subtotal}</span>
+            </div>
+            {Number(booking.discountAmount) > 0 && (
+              <div className="flex justify-between text-xs text-teal-600 font-medium">
+                <span>Diskon Voucher</span>
+                <span>-{formatRupiah(booking.discountAmount)}</span>
+              </div>
+            )}
+            <div className="border-t border-gray-100 pt-2 flex justify-between text-sm font-bold text-gray-900">
+              <span>Total Pembayaran</span>
+              <span style={{ color: A }}>{formatRupiah(booking.totalAmount)}</span>
+            </div>
+            <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500">
+              <span>Metode: <strong className="uppercase">{paymentMethod}</strong></span>
+              <span>
+                Status Pembayaran:{" "}
+                <strong className={`capitalize ${PAYMENT_STATUS_COLOR[paymentStatus] || "text-gray-700"}`}>
+                  {PAYMENT_STATUS_LABEL[paymentStatus] || paymentStatus}
+                </strong>
+              </span>
+            </div>
+          </div>
+
+          {/* Bukti Pembayaran */}
+          {paymentProof && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Bukti Pembayaran</p>
+              <a href={paymentProof} target="_blank" rel="noopener noreferrer" className="block">
+                <img src={paymentProof} alt="Bukti pembayaran" className="w-full max-h-64 object-contain bg-gray-50 rounded-lg border border-gray-200" />
+              </a>
+            </div>
+          )}
+
+          {paymentAdminNote && (
+            <div className="bg-white rounded-xl border border-amber-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Admin</p>
+              <p className="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2">{paymentAdminNote}</p>
+            </div>
+          )}
+
+          {adminMessage && (
+            <div className="bg-white rounded-xl border border-blue-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Pesan dari Admin</p>
+              <p className="text-xs text-blue-800 bg-blue-50 rounded-lg px-3 py-2">{adminMessage}</p>
+            </div>
+          )}
+
+          {/* Kontak Pemesan */}
+          {(customerName || customerEmail || customerPhone) && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-1.5">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Kontak Pemesan</p>
+              {customerName && (
+                <div className="flex text-xs">
+                  <span className="w-28 text-gray-400 shrink-0">Nama Pemesan</span>
+                  <span className="font-semibold text-gray-800">{customerName}</span>
+                </div>
+              )}
+              {customerPhone && (
+                <div className="flex text-xs">
+                  <span className="w-28 text-gray-400 shrink-0">No. WhatsApp</span>
+                  <span className="text-gray-700">{customerPhone}</span>
+                </div>
+              )}
+              {customerEmail && (
+                <div className="flex text-xs">
+                  <span className="w-28 text-gray-400 shrink-0">Email</span>
+                  <span className="text-gray-700">{customerEmail}</span>
+                </div>
+              )}
+              {specialRequest && (
+                <div className="flex text-xs pt-1">
+                  <span className="w-28 text-gray-400 shrink-0">Catatan</span>
+                  <span className="text-amber-800 font-medium bg-amber-50 rounded px-2 py-0.5">{specialRequest}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Daftar Peserta */}
+          {booking.participants && booking.participants.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">
+                Daftar Peserta ({booking.participants.length} Orang)
+              </p>
+              <div className="space-y-2">
+                {booking.participants.map((p, idx) => (
+                  <div key={p.id || idx} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg p-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-orange-100 text-[#F49D1A] font-bold text-[10px] flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                      <span className="font-semibold text-gray-800">{p.fullName}</span>
+                      {p.isPrimary && (
+                        <span className="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-full">
+                          Pemesan Utama
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-gray-500">{p.phone || "-"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Gallery Modal */}
+      <GalleryModal
+        open={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        tripId={tripId}
+        departureId={departureId}
+        groupLabel={destinationName}
+      />
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        open={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+        onSubmit={async ({ rating, content }) => {
+          if (!tripId) {
+            throw new Error("Data trip tidak ditemukan. Silakan refresh halaman.");
+          }
+
+          const res = await fetch("/api/reviews", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              bookingId: booking.id,
+              tripId: tripId,
+              rating,
+              content,
+            }),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Gagal mengirim ulasan");
+          }
+          setFeedbackSubmitted(true);
+          setFeedbackOpen(false);
+          alert("Terima kasih! Ulasan Anda telah dikirim.");
+          if (onRefresh) onRefresh();
+        }}
+        tripTitle={destinationName}
+        bookingCode={booking.bookingCode}
+      />
+    </div>
+  );
+}

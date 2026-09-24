@@ -1,4 +1,8 @@
 import { privateTripRepository } from "./private-trip.repository";
+import { notificationService } from "../notification/notification.service";
+import { db } from "@/shared/db";
+import { users } from "../auth/auth.schema";
+import { eq } from "drizzle-orm";
 
 type RequestStatus = "draft" | "submitted" | "reviewed" | "approved" | "rejected" | "revision";
 type ProposalStatus = "pending" | "accepted" | "rejected" | "revised";
@@ -28,13 +32,21 @@ export const privateTripService = {
     specialRequirements?: string;
     budgetEstimate?: string;
   }) {
-    return privateTripRepository.create({
+    const created = await privateTripRepository.create({
       ...data,
       budgetEstimate: data.budgetEstimate || null,
       userId,
       status: "submitted",
       submittedAt: new Date(),
     });
+    // MVP trigger: request private trip
+    void (async () => {
+      try {
+        const [u] = await db.select({ name: users.name, email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
+        await notificationService.onPrivateTripRequested({ requestId: created.id, userName: u?.name || u?.email || userId.slice(0, 8) });
+      } catch (e) { console.error("notify private_trip_request failed", e); }
+    })();
+    return created;
   },
 
   async findByUserId(userId: string) {

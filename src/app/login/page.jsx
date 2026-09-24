@@ -16,8 +16,7 @@ function getClientSnapshot() {
   if (
     redirect &&
     redirect.startsWith("/") &&
-    !redirect.startsWith("//") &&
-    !redirect.startsWith("/admin")
+    !redirect.startsWith("//")
   ) {
     return redirect;
   }

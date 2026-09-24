@@ -7,20 +7,29 @@ export function validate(form) {
   if (!form.phone.trim())
     e.phone = "Wajib diisi";
 
-  if (!form.tanggal)
+  if (!form.tanggal && !form.tanggalFleksibel)
     e.tanggal = "Wajib diisi";
+  else if (form.tanggal && !form.tanggalFleksibel) {
+    const todayStr = new Date().toLocaleDateString("en-CA");
+    if (form.tanggal < todayStr) e.tanggal = "Tanggal tidak boleh sebelum hari ini";
+  }
 
   if (!form.meetingPoint.trim())
     e.meetingPoint = "Wajib diisi";
 
-  if (!form.catatan.trim())
-    e.catatan = "Wajib diisi";
+  if (!form.jumlahPeserta || String(form.jumlahPeserta).trim() === "")
+    e.jumlahPeserta = "Wajib diisi";
 
-  const jumlahPeserta = parseInt(form.jumlahPeserta, 10);
-  if (!form.jumlahPeserta || isNaN(jumlahPeserta) || jumlahPeserta < 6)
-    e.jumlahPeserta = "Jumlah peserta minimal 6 orang";
-  else if (jumlahPeserta > 10)
-    e.jumlahPeserta = "Jumlah peserta maksimal 10 orang";
+  if (!form.durasi || String(form.durasi).trim() === "")
+    e.durasi = "Wajib diisi";
+
+  if (!form.email || !form.email.trim())
+    e.email = "Wajib diisi";
+  else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email.trim()))
+      e.email = "Format email tidak valid";
+  }
 
   if (
     form.tripType === "custom" &&
@@ -39,6 +48,15 @@ export function validate(form) {
     !form.namaInstitusi.trim()
   )
     e.namaInstitusi = "Wajib diisi";
+
+  if (!form.transportNeeds)
+    e.transportNeeds = "Wajib diisi";
+
+  if (!form.standarPenginapan || !String(form.standarPenginapan).trim())
+    e.standarPenginapan = "Wajib diisi";
+
+  if (!form.metodeKontak || !String(form.metodeKontak).trim())
+    e.metodeKontak = "Wajib diisi";
 
   return e;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { OrderDomain } from "../Order";
 
 const initialCustomer = {
@@ -23,8 +23,6 @@ const initialCustomer = {
   mobilityOption: "independent",
 };
 
-const SERVICE_FEE = 15000;
-
 export function useCheckout(initialDestination) {
   const [state, setState] = useState({
     step: "details",
@@ -34,7 +32,10 @@ export function useCheckout(initialDestination) {
     voucherCode: "",
     appliedVoucher: null,
     voucherError: "",
-    paymentMethod: null,
+    referralCode: "",
+    appliedReferral: null,
+    referralError: "",
+    paymentMethod: "BCA",
     proofUrl: "",
     orderId: "",
     totalAmount: 0,
@@ -45,18 +46,32 @@ export function useCheckout(initialDestination) {
   });
 
   const [dbVouchers, setDbVouchers] = useState([]);
+  const [vouchersLoading, setVouchersLoading] = useState(true);
+  const dbVouchersRef = useRef([]);
+  const vouchersLoadingRef = useRef(true);
+
+  // Keep refs in sync with state
+  useEffect(() => { dbVouchersRef.current = dbVouchers; }, [dbVouchers]);
+  useEffect(() => { vouchersLoadingRef.current = vouchersLoading; }, [vouchersLoading]);
 
   // Fetch vouchers from DB on mount
-  useEffect(() => {
+  const fetchVouchers = useCallback(() => {
     fetch("/api/promotions")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
           setDbVouchers(data.filter((v) => v.isActive));
+        } else {
+          setDbVouchers([]);
         }
       })
-      .catch(() => {});
+      .catch(() => setDbVouchers([]))
+      .finally(() => setVouchersLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchVouchers();
+  }, [fetchVouchers]);
 
   const setDestination = useCallback((dest) => {
     setState((prev) => ({ ...prev, destination: dest }));
@@ -106,12 +121,33 @@ export function useCheckout(initialDestination) {
   }, []);
 
   const applyVoucher = useCallback(() => {
+    // Always read from refs to avoid stale closure
+    const currentVouchers = dbVouchersRef.current;
+    const isLoading = vouchersLoadingRef.current;
+
+    // If vouchers haven't loaded yet, re-fetch and show loading
+    if (isLoading) {
+      setState((prev) => ({ ...prev, voucherError: "Memuat data voucher, silakan coba lagi sebentar." }));
+      return;
+    }
+
+    // If vouchers are empty (fetch may have failed), retry fetch
+    if (currentVouchers.length === 0) {
+      fetchVouchers();
+      setState((prev) => ({ ...prev, voucherError: "Memuat ulang data voucher..." }));
+      return;
+    }
+
     setState((prev) => {
       const code = prev.voucherCode.trim().toUpperCase();
       const subtotal = (prev.destination?.priceMin ?? 0) * prev.pax;
 
+      if (!code) {
+        return { ...prev, voucherError: "Masukkan kode voucher.", appliedVoucher: null };
+      }
+
       // Look up in DB vouchers
-      const found = dbVouchers.find((v) => v.code?.toUpperCase() === code);
+      const found = currentVouchers.find((v) => v.code?.trim().toUpperCase() === code);
       if (!found) {
         return { ...prev, voucherError: "Kode voucher tidak valid.", appliedVoucher: null };
       }
@@ -165,10 +201,63 @@ export function useCheckout(initialDestination) {
         voucherError: "",
       };
     });
-  }, [dbVouchers]);
+  }, [fetchVouchers]);
 
   const removeVoucher = useCallback(() => {
     setState((prev) => ({ ...prev, appliedVoucher: null, voucherCode: "" }));
+  }, []);
+
+  const setReferralCode = useCallback((code) => {
+    setState((prev) => ({ ...prev, referralCode: code, referralError: "" }));
+  }, []);
+
+  const applyReferral = useCallback(async () => {
+    const code = state.referralCode.trim();
+    if (!code) return;
+
+    setState((prev) => ({ ...prev, referralError: "" }));
+
+    try {
+      const res = await fetch("/api/checkout/validate-referral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ referralCode: code }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setState((prev) => ({
+          ...prev,
+          referralError: data.error || "Kode referral tidak valid",
+        }));
+        return;
+      }
+
+      setState((prev) => ({
+        ...prev,
+        appliedReferral: {
+          code: code.toUpperCase(),
+          referrerName: data.referrerName,
+          referrerId: data.referrerId,
+        },
+        referralError: "",
+      }));
+    } catch (_err) {
+      setState((prev) => ({
+        ...prev,
+        referralError: "Gagal memvalidasi kode referral",
+      }));
+    }
+  }, [state.referralCode]);
+
+  const removeReferral = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      referralCode: "",
+      appliedReferral: null,
+      referralError: "",
+    }));
   }, []);
 
   const setPaymentMethod = useCallback((method) => {
@@ -203,33 +292,30 @@ export function useCheckout(initialDestination) {
     (s) => {
       const sub = getTicketSubtotal(s);
       const disc = getDiscount(s);
-      return Math.max(0, sub + SERVICE_FEE - disc);
+      return Math.max(0, sub - disc);
     },
     [getTicketSubtotal, getDiscount]
   );
 
   // Save booking to DB when clicking "Lanjut ke Pembayaran"
   const goToPayment = useCallback(async () => {
-    let snapshot = null;
+    if (!state.destination) return;
 
-    setState((prev) => {
-      if (!prev.destination) return prev;
-      snapshot = {
-        orderId: OrderDomain.generateOrderId(),
-        destination: prev.destination,
-        pax: prev.pax,
-        customer: prev.customer,
-        voucherCode: prev.voucherCode,
-        appliedVoucher: prev.appliedVoucher,
-        paymentMethod: prev.paymentMethod,
-        proofUrl: prev.proofUrl,
-        subtotal: (prev.destination?.priceMin ?? 0) * prev.pax,
-        totalAmount: getTotal(prev),
-      };
-      return { ...prev, isLoading: true, error: null, orderId: snapshot.orderId };
-    });
+    const snapshot = {
+      orderId: OrderDomain.generateOrderId(),
+      destination: state.destination,
+      pax: state.pax,
+      customer: state.customer,
+      voucherCode: state.voucherCode,
+      appliedVoucher: state.appliedVoucher,
+      referralCode: state.appliedReferral?.code || null,
+      paymentMethod: state.paymentMethod,
+      proofUrl: state.proofUrl,
+      subtotal: (state.destination?.priceMin ?? 0) * state.pax,
+      totalAmount: getTotal(state),
+    };
 
-    if (!snapshot) return;
+    setState((prev) => ({ ...prev, isLoading: true, error: null, orderId: snapshot.orderId }));
 
     try {
       const res = await fetch("/api/checkout", {
@@ -272,26 +358,30 @@ export function useCheckout(initialDestination) {
         isLoading: false,
       }));
     }
-  }, [getTotal]);
+  }, [state, getTotal]);
 
-  // Upload payment proof and update booking
-  const initiatePayment = useCallback(async (paymentProofFile) => {
-    if (!state.bookingId || !paymentProofFile) return;
+  // Submit payment proof to create a payment record
+  const initiatePayment = useCallback(async () => {
+    if (!state.bookingId || !state.proofUrl) {
+      setState((prev) => ({
+        ...prev,
+        error: "Silakan unggah bukti transfer terlebih dahulu.",
+        isLoading: false,
+      }));
+      return;
+    }
 
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const formData = new FormData();
-      formData.append("bookingId", state.bookingId);
-      formData.append("paymentMethod", state.paymentMethod || "manual");
-      formData.append("totalAmount", String(state.totalAmount));
-      if (paymentProofFile) {
-        formData.append("paymentProof", paymentProofFile);
-      }
-
-      const res = await fetch("/api/payment", {
+      const res = await fetch("/api/payments", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId: state.bookingId,
+          paymentMethod: state.paymentMethod || "manual",
+          proofUrl: state.proofUrl,
+        }),
       });
 
       if (!res.ok) {
@@ -313,7 +403,7 @@ export function useCheckout(initialDestination) {
         isLoading: false,
       }));
     }
-  }, [state.bookingId, state.paymentMethod, state.totalAmount]);
+  }, [state.bookingId, state.paymentMethod, state.proofUrl]);
 
   const reset = useCallback(() => {
     setState({
@@ -324,6 +414,9 @@ export function useCheckout(initialDestination) {
       voucherCode: "",
       appliedVoucher: null,
       voucherError: "",
+      referralCode: "",
+      appliedReferral: null,
+      referralError: "",
       paymentMethod: null,
       proofUrl: "",
       orderId: "",
@@ -348,7 +441,7 @@ export function useCheckout(initialDestination) {
 
   return {
     ...state,
-    serviceFee: SERVICE_FEE,
+    vouchersLoading,
     ticketSubtotal,
     discount,
     total,
@@ -359,6 +452,9 @@ export function useCheckout(initialDestination) {
     setVoucherCode,
     applyVoucher,
     removeVoucher,
+    setReferralCode,
+    applyReferral,
+    removeReferral,
     setPaymentMethod,
     setProofUrl,
     setAgreeToTerms,
@@ -368,3 +464,5 @@ export function useCheckout(initialDestination) {
     goBack,
   };
 }
+
+

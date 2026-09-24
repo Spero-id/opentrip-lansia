@@ -1,16 +1,17 @@
 import "dotenv/config";
-import crypto from "crypto";
+import { hashPassword } from "../shared/utils/password";
 import { db } from "../shared/db";
 import {
   destinationCategories, horecaTypes, horeca,
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
   blogs, blogCategories, contactMessages, promotions
 } from "../db/schema";
+import { paymentAccounts } from "../modules/payment/payment.schema";
 import { account } from "../modules/auth/better-auth.schema";
 import { users } from "../modules/auth/auth.schema";
 
 function hash(pw: string) {
-  return crypto.createHash("sha256").update(pw).digest("hex");
+  return hashPassword(pw);
 }
 
 async function seed() {
@@ -27,10 +28,14 @@ async function seed() {
   ]);
   console.log("  Users: Admin OTL, Siti Agen, Budi Lansia");
 
+  const [adminPassword, agentPassword, userPassword] = await Promise.all([
+    hash("admin"), hash("agent"), hash("user"),
+  ]);
+
   await db.insert(account).values([
-    { id: crypto.randomUUID(), userId: adminId, accountId: adminId, providerId: "credential", password: hash("admin") },
-    { id: crypto.randomUUID(), userId: agentId, accountId: agentId, providerId: "credential", password: hash("agent") },
-    { id: crypto.randomUUID(), userId: userId, accountId: userId, providerId: "credential", password: hash("user") },
+    { id: crypto.randomUUID(), userId: adminId, accountId: adminId, providerId: "credential", password: adminPassword },
+    { id: crypto.randomUUID(), userId: agentId, accountId: agentId, providerId: "credential", password: agentPassword },
+    { id: crypto.randomUUID(), userId: userId, accountId: userId, providerId: "credential", password: userPassword },
   ]);
   console.log("  Credential accounts created");
 
@@ -202,6 +207,11 @@ async function seed() {
     { name: "Ratna", email: "ratna@mail.com", phone: "08222222222", subject: "Pertanyaan Fasilitas", message: "Apakah hotel menyediakan kursi roda?", isRead: true },
   ]);
   console.log("  Contact messages: 2 created");
+
+  await db.insert(paymentAccounts).values([
+    { method: "BCA", bankName: "Bank BCA", accountNumber: "6802082513", accountHolder: "PT. SINERGI INOVASI KARYA", isActive: true },
+  ]);
+  console.log("  Payment accounts: 1 created (BCA)");
 
   console.log("\nSeed complete!");
 }

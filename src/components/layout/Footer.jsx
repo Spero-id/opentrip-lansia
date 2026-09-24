@@ -19,7 +19,7 @@ export default function Footer() {
         );
         setPopular(sorted.slice(0, 5));
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
   return (
     <footer className="relative bg-[#0B0F19] text-white">
@@ -35,7 +35,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3">
               <a
-                href="#"
+                href="https://www.instagram.com/jelajahmemoria/"
                 className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F49D1A] hover:border-[#F49D1A] transition-colors"
                 aria-label="Instagram"
               >
@@ -46,7 +46,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/jelajahmemoria"
                 className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F49D1A] hover:border-[#F49D1A] transition-colors"
                 aria-label="Facebook"
               >
@@ -55,22 +55,12 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@jelajahmemoria"
                 className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F49D1A] hover:border-[#F49D1A] transition-colors"
-                aria-label="Twitter"
+                aria-label="Tiktok"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F49D1A] hover:border-[#F49D1A] transition-colors"
-                aria-label="Youtube"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-                  <path d="m10 15 5-3-5-3z" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/>
                 </svg>
               </a>
             </div>
@@ -137,14 +127,14 @@ export default function Footer() {
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
-                <span>Jl. Merdeka No. 10, Bandung, Jawa Barat</span>
+                <span>Jl. Ratu Bidadari 3 no 2, Ciputat, Tangerang Selatan</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#F49D1A] shrink-0">
                   <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.578 1.238l-.466.397a1 1 0 0 0-.302 1.212 12.06 12.06 0 0 0 6.178 6.121" />
                 </svg>
                 <a href="tel:+6281234567890" className="hover:text-[#F49D1A] transition-colors">
-                  +62 812-3456-7890
+                  +62 851-1051-1403
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -152,8 +142,8 @@ export default function Footer() {
                   <rect width="20" height="16" x="2" y="4" rx="2" />
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                 </svg>
-                <a href="mailto:hello@opentrip.id" className="hover:text-[#F49D1A] transition-colors">
-                  hello@opentrip.id
+                <a href="mailto:jelajahmemoria@gmail" className="hover:text-[#F49D1A] transition-colors">
+                  jelajahmemoria@gmail.com
                 </a>
               </li>
             </ul>
@@ -175,6 +165,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </footer>
+    </footer >
   );
 }

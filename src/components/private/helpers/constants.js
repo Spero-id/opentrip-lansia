@@ -8,8 +8,8 @@ export const TRIP_OPTIONS = [
   },
   {
     id: "explorer",
-    label: "Produk Explorer",
-    desc: "Produk yang ada di Explorer",
+    label: "Produk Jelajah Memoria",
+    desc: "Produk yang tersedia di Jelajah Memoria",
   },
 ];
 

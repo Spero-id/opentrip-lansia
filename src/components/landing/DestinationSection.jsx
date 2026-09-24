@@ -1,27 +1,18 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import DestinationCard from "@/components/destinasi/DestinationCard";
 
-const FALLBACK_IMAGES = [
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw8p4vVW46w8v2EDTYS5ZN08gcBlEyL2Hq2n-oDk588w&s=10",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4HXrHCu5wU0hTKdf2vfJj5ZiXuH3LEUeh5s2vEDS6mYWKlFLeAP91yNQ&s=10",
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80",
-  "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=600&q=80",
-];
-
 const DEFAULT_RATING = 5.0;
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 6;
 
-function toCard(trip, index) {
+function toCard(trip) {
   const image =
     trip.image ||
     (Array.isArray(trip.images) && trip.images[0]) ||
-    FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
+    null;
 
   return {
     id: trip.id,
@@ -41,10 +32,6 @@ export default function DestinationSection() {
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const router = useRouter();
-  const { data: session } = useSession();
-  const isLoggedIn = !!session?.user;
-
   const pageCount = Math.max(1, Math.ceil(destinations.length / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount - 1);
   const visibleDestinations = destinations.slice(
@@ -55,12 +42,6 @@ export default function DestinationSection() {
   function goToPage(nextPage) {
     setPage(Math.min(Math.max(nextPage, 0), pageCount - 1));
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function handleCardClick(e, id) {
-    if (isLoggedIn) return;
-    e.preventDefault();
-    router.push(`/login?redirect=/trips/${id}`);
   }
 
   useEffect(() => {
@@ -84,6 +65,7 @@ export default function DestinationSection() {
       behavior: "smooth",
     });
   };
+
 
   return (
     <section id="destinasi" className="relative bg-white py-10">
@@ -110,13 +92,18 @@ export default function DestinationSection() {
 
       <div
         ref={scrollRef}
-        className="flex md:grid md:grid-cols-4 md:grid-rows-2 md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 scroll-mt-28 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className={`flex md:grid md:max-w-6xl md:mx-auto gap-5 overflow-x-auto md:overflow-visible scroll-smooth snap-x snap-mandatory px-4 sm:px-6 md:px-6 lg:px-8 pb-4 scroll-mt-28 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${
+          visibleDestinations.length <= 3
+            ? "md:grid-cols-3"
+            : visibleDestinations.length === 4
+            ? "md:grid-cols-4"
+            : "md:grid-cols-3 md:grid-rows-2"
+        }`}
       >
         {visibleDestinations.map((dest) => (
           <DestinationCard
             key={dest.id}
             dest={dest}
-            onClick={(e) => handleCardClick(e, dest.id)}
             className="snap-start shrink-0 w-[280px] sm:w-[320px] md:w-auto"
           />
         ))}
@@ -125,9 +112,20 @@ export default function DestinationSection() {
       </div>
 
       {!loading && destinations.length === 0 && (
-        <p className="text-center text-sm text-gray-400 pt-2 pb-6">
-          Belum ada destinasi. Tambahkan dulu lewat halaman admin.
-        </p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6">
+          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-gray-200 bg-white">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+              style={{ backgroundColor: "rgba(223,114,36,0.08)" }}
+            >
+              <MapPin size={24} style={{ color: "#F49D1A" }} />
+            </div>
+            <p className="text-sm font-semibold text-gray-700 mb-1">Belum ada destinasi</p>
+            <p className="text-xs text-gray-400 max-w-xs">
+              Destinasi menarik akan segera hadir. Pantau terus ya!
+            </p>
+          </div>
+        </div>
       )}
 
       {destinations.length > PAGE_SIZE && (

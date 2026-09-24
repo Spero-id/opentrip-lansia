@@ -2,7 +2,7 @@
 
 import { Check, X } from "lucide-react";
 
-export default function VoucherCard({ voucherCode, setVoucherCode, appliedVoucher, voucherError, onApply, onRemove }) {
+export default function VoucherCard({ voucherCode, setVoucherCode, appliedVoucher, voucherError, onApply, onRemove, vouchersLoading }) {
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
       <h2 className="text-base font-bold text-gray-900">Voucher / Kode Promo</h2>
@@ -20,16 +20,18 @@ export default function VoucherCard({ voucherCode, setVoucherCode, appliedVouche
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="Masukkan kode voucher"
+            placeholder={vouchersLoading ? "Memuat voucher..." : "Masukkan kode voucher"}
             value={voucherCode}
             onChange={(e) => setVoucherCode(e.target.value)}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
+            disabled={vouchersLoading}
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 disabled:bg-gray-50 disabled:cursor-not-allowed"
           />
           <button
             onClick={onApply}
-            className="bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors"
+            disabled={vouchersLoading}
+            className="bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            Pakai
+            {vouchersLoading ? "..." : "Pakai"}
           </button>
         </div>
       )}

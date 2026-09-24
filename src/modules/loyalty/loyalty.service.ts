@@ -1,4 +1,5 @@
 import { loyaltyRepository } from "./loyalty.repository";
+import { siteSettingsService } from "@/modules/site-settings/site-settings.service";
 import type { UUID } from "@/shared/types";
 
 const CASHBACK_POINTS = 25_000;
@@ -20,5 +21,23 @@ export const loyaltyService = {
     });
 
     await loyaltyRepository.updateLoyaltyPoints(userId, CASHBACK_POINTS);
+  },
+
+  async creditReferralBonus(referrerId: UUID, referredUserId: UUID) {
+    const referralBonusPoints = await siteSettingsService.getReferralBonusPoints();
+    const expiresAt = new Date();
+    expiresAt.setFullYear(expiresAt.getFullYear() + POINTS_EXPIRY_YEARS);
+
+    await loyaltyRepository.createTransaction({
+      userId: referrerId,
+      points: referralBonusPoints,
+      type: "earn",
+      referenceType: "referral",
+      referenceId: referredUserId,
+      description: `Bonus referral dari pengguna baru`,
+      expiresAt,
+    });
+
+    await loyaltyRepository.updateLoyaltyPoints(referrerId, referralBonusPoints);
   },
 };

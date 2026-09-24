@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, User, ShoppingBag } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { Menu, X, User, ShoppingBag, LogOut, Shield } from "lucide-react";
+import { useSession, signOut } from "@/lib/auth-client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
 const NAV_LINKS = [
@@ -29,6 +30,7 @@ function NavbarLink({ href, children, className, onClick }) {
 }
 
 export default function Navbar() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -109,22 +111,63 @@ export default function Navbar() {
                     onClick={() => setDropdownOpen((v) => !v)}
                     aria-label="Menu akun"
                     aria-expanded={dropdownOpen}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors hover:bg-[#c47d12] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/50 focus:ring-offset-1"
+                    className={cn(
+                      "group relative flex items-center gap-2 rounded-full p-1 sm:pr-3 transition-colors cursor-pointer focus:outline-none",
+                      dropdownOpen
+                    )}
                   >
-                    <span className="text-sm font-semibold">
-                      {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+
+                    <span className="hidden sm:flex flex-col items-end leading-tight text-left">
+                      <span
+                        className={cn(
+                          "max-w-[140px] truncate text-sm font-semibold",
+                          isScrolled ? "text-white" : "text-black"
+                        )}
+                      >
+                        {session.user.name || "Pengguna"}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-[11px] font-medium",
+                          isScrolled ? "text-white/70" : "text-slate-500"
+                        )}
+                      >
+                        {session.user.role === "admin"
+                          ? "Admin"
+                          : session.user.role === "agent"
+                          ? "Agen"
+                          : "Member"}
+                      </span>
                     </span>
+
+                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
+                      {session.user.image ? (
+                        <>
+                          <img
+                            src={session.user.image}
+                            alt="Foto profil"
+                            className="h-full w-full object-cover"
+                          />
+                          <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                        </>
+                      ) : (
+                        <span className="text-sm font-semibold">
+                          {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                        </span>
+                      )}
+                    </span>
+                    
                   </button>
 
                   {/* Dropdown panel */}
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
                       {/* User info */}
-                      <div className="px-4 py-3 border-b border-slate-100">
-                        <p className="text-xs font-bold text-slate-900 truncate">
+                      <div className="px-4 py-3 border-b border-slate-200">
+                        <p className="text-sm font-medium text-slate-900 truncate">
                           {session.user.name || "Pengguna"}
                         </p>
-                        <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                        <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
                           {session.user.email}
                         </p>
                       </div>
@@ -134,23 +177,48 @@ export default function Navbar() {
                         <Link
                           href="/profile"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#F49D1A] transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
                         >
                           <User className="w-4 h-4 shrink-0" />
                           Profil Saya
                         </Link>
+                        {session.user.role === "admin" && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                          >
+                            <Shield className="w-4 h-4 shrink-0" />
+                            Halaman Admin
+                          </Link>
+                        )}
                         <Link
                           href="/my-trips"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-[#F49D1A] transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
                         >
                           <ShoppingBag className="w-4 h-4 shrink-0" />
-                          Histori Trip
+                          Riwayat Trip
                         </Link>
                       </div>
 
                       {/* Logout */}
-                                          </div>
+                      <div className="border-t border-slate-200 py-1.5">
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            setDropdownOpen(false);
+                            await signOut();
+                            router.push("/login");
+                            router.refresh();
+                          }}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-slate-200 cursor-pointer"
+                        >
+                          <LogOut className="w-4 h-4 shrink-0" />
+                          Keluar dari Akun
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : (

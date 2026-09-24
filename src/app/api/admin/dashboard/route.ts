@@ -1,7 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { dashboardService } from "@/modules/booking/dashboard.service";
+import { requireAdmin } from "@/shared/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const [stats, recentBookings] = await Promise.all([
       dashboardService.getStats(),

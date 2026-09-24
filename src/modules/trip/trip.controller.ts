@@ -4,10 +4,25 @@ import { slugify } from "@/shared/utils/helpers";
 
 // --- Next.js Route Handlers ---
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const trips = await tripService.getAllTrips();
+    const all = req.nextUrl.searchParams.get("all") === "true";
+    const trips = all ? await tripService.getAllTrips() : await tripService.getPublishedTrips();
     return NextResponse.json(trips);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+export async function GETById(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const trip = await tripService.getTripWithDepartures(id);
+    if (!trip) {
+      return NextResponse.json({ error: "Trip tidak ditemukan" }, { status: 404 });
+    }
+    return NextResponse.json(trip);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Terjadi kesalahan";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -54,4 +69,4 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
 // --- Object-style export for compatibility ---
 
-export const tripController = { GET, POST, PUT, DELETE };
+export const tripController = { GET, GETById, POST, PUT, DELETE };

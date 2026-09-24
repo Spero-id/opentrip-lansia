@@ -8,7 +8,7 @@ Before writing code:
 
 1. **Confirm working directory** with `pwd`
 2. **Read this file** completely
-3. **Read project docs** — start with `docs/index.md` (central index), then `docs/PRD.md` for requirements, `docs/flow.md` for user flows, and `design.md` for UI specs
+3. **Read project docs** — start with `docs/index.md` (central index), then `docs/PRD.md` for requirements, `docs/flow.md` for user flows, and `design.md` for UI specs. Also check `plan/` folder for active feature specs and roadmap
 4. **Run `./init.sh`** to verify environment is healthy
 5. **Read `feature_list.json`** to see current feature state
 6. **Review recent commits** with `git log --oneline -5`
@@ -52,6 +52,7 @@ OMP maintains a global memory system at `~/.omp/memory/` that persists knowledge
 - `src/components/` — Shared UI components
 - `src/lib/` — Utilities (auth-client, helpers)
 - `docs/` — Product & architecture docs (PRD, flows, ERD)
+- `plan/` — Planning docs: overview, roadmap, spec per fitur (lihat `plan/README.md`)
 
 **Architecture:** Each module under `src/modules/` follows: `*.schema.ts` → `*.repository.ts` → `*.service.ts` → `*.controller.ts` → `index.ts`
 

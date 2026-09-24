@@ -617,3 +617,545 @@ Semua halaman admin menggunakan client components dengan `fetch()` ke API endpoi
 
 
 
+
+## Session 23 - Payment & Booking Security Hardening
+
+**Goal:** Fix broken manual-transfer payment flow (legacy /api/payment returned 401 without auth) and close critical security holes.
+
+**Completed:**
+- New POST /api/payments route: session-auth required, owner-only (403 otherwise), validates payment method + proof URL (must start with /payments/, no ..), amount sourced from booking.totalAmount server-side, creates payment with status pending and flips booking to pending. Idempotent for existing pending payment.
+- Deleted legacy src/app/api/payment/route.ts (unauthenticated, form-data only).
+- useCheckout.initiatePayment and /checkout/pay/[id] now POST JSON to /api/payments using checkout.proofUrl from ProofUploader.
+- Proof upload hardened with magic-byte validation (JPEG/PNG/GIF/WEBP/AVIF) in addition to MIME check.
+- IDOR fix: GET /api/bookings/[id] now requires session + owner or admin (was fully public, leaking PII + proof images).
+- POST /api/bookings no longer trusts spoofable x-user-id header; uses session.user.id.
+- /api/checkout now validates server-side: pax integer bounds, positive prices, subtotal recomputed from trip.priceMin x pax (DB lookup), total recomputed as subtotal + 15000 - discount.
+- Admin /admin/pesanan: approve/reject via /api/payments/[id]/review (reject requires note), shows proofUrl image + admin note; pending_payment badge added.
+- /my-trips: payment status labels, proof image + admin note display, re-pay link now points to /checkout/pay/[id].
+
+**Verification:**
+- 
+px tsc --noEmit passes (only pre-existing e2e/api/endpoints.spec.ts error remains).
+- 
+pm run lint: no new errors; only warnings in touched files.
+
+## Session 24 — Checkout Server-Authoritative Pricing & Voucher (QA Kritikal #1 & #2)
+
+**Goal:** Tutup 2 eksploitasi kritis hasil QA: (1) voucher diskon dikontrol klien (`appliedVoucher` bisa 100%), (2) harga unit dibaca dari `destination.priceMin` yang dikirim klien (bisa `priceMin=1`).
+
+**Completed:**
+- `src/modules/trip/trip.repository.ts`:
+  - `findAllPublished()` sekarang memakai `getTableColumns(trips)` (semua kolom) + `departureId`, `startDate`, `price`, `priceName`; memilih 1 departure terawal per trip dan harga kanonikal (prioritas nama "Dewasa", fallback baris pertama).
+  - Menambah `findCanonicalPriceByDepartureId()` + helper `pickCanonicalPrice()`.
+- `src/modules/trip/trip.controller.ts`: `GET /api/trips` kini menerima `?all=true` (semua trip, untuk admin) — default mengembalikan trip published + harga kanonikal + departureId. `src/app/admin/trips/page.tsx` fetch `?all=true`.
+- `src/lib/Destination.js`: `toDetail()` memakai `price` (harga kanonikal) sebagai `priceMin` dan meneruskan `departureId`.
+- `src/app/api/checkout/route.ts` (rewrite):
+  - Resolusi trip+departure dari DB (wajib UUID trip published; departureId klien hanya diterima jika milik trip, fallback ke departure terawal).
+  - Harga unit = `tripPrices` DB (Dewasa first); subtotal dihitung ulang server; mismatch -> 400.
+  - Voucher: hanya `voucherCode` dipercaya; validasi ke tabel `promotions` (aktif, tanggal, minPurchase, usageLimit, usageLimitPerUser via `promotion_usages`); diskon dihitung server; `promoId` dicatat ke kolom `bookings.promoId` + notes; `usageCount` di-increment & usage dicatat.
+  - `appliedVoucher` dari klien DIABAIKAN sepenuhnya.
+
+**Verification (live di localhost:3000, dev server):**
+- `priceMin=1` -> 400 "Harga pesanan tidak sesuai" ✅
+- voucher palsu 100% via `appliedVoucher` -> 400 ✅
+- kode voucher tidak valid -> 400 ✅
+- checkout normal -> 200 (subtotal 1.500.000, total 1.515.000) ✅
+- voucher asli `LANSIA10` -> 200 (diskon 150.000, total 1.365.000, promoId terisi) ✅
+- total dipaksa kecil meski pakai voucher -> 400 ✅
+- pax 2 + LANSIA10 -> 200 (diskon 300.000) ✅
+- `GET /api/trips` mengembalikan harga kanonikal + departureId; `?all=true` = 7 trip ✅
+- `npx tsc --noEmit` hanya error e2e pra-ada; `eslint` file diubah: 0 error ✅
+- Test booking & usage promo dibersihkan (LANSIA10 usageCount dikembalikan ke 5).
+
+**Risks/Blocker:** `/api/trips` publik sekarang hanya trip published (draft tidak tampil di listing — behavior lama sama karena filter client-side). Trip tanpa departure/price aktif otomatis tidak muncul di publik. Belum ada transaksi DB atomik (neon-http tidak support `db.transaction`) — promo usage dicatat best-effort. Bug kritikal lain belum dikerjakan: SHA-256 tanpa salt, route admin tanpa auth (trips/promotions/horeca/vendors/galleries/commissions, users, admin dashboard), AVIF magic-byte lemah, rate limiting.
+
+## Session 25 — Hapus Data Statis Destinasi + Gambar Hanya dari DB
+
+**Goal:** (1) Hapus seluruh data destinasi statis, (2) trip published tetap tampil meski tanpa harga/jadwal (biar trip ber-gambar DB seperti "TES mantap" muncul di landing), (3) semua gambar hanya dari DB — tanpa fallback foto stok; kalau kosong tampil placeholder "Gambar tidak tersedia".
+
+**Completed:**
+- **Hapus data statis:** `src/lib/destinationsData.js` & `src/infrastructure/data/destinationsData.js` dihapus. Semua import/usage dibersihkan: `checkout/page.jsx` (staticDest dihapus, selalu fetch `/api/trips`, status awal `loading`/`empty`), `trips/page.jsx` & `private/page.jsx` (initial state `[]`), `trips/[id]/page.jsx` (lookup statis dihapus, selalu fetch DB).
+- **`findAllPublished` (trip.repository.ts):** filter `tripPrices.isActive` dipindah ke kondisi JOIN (`on`), bukan `WHERE`, dan loop tak lagi `continue` saat `departureId` null → semua trip published ikut muncul, termasuk tanpa departure/harga aktif (price null). Harga kanonikal tetap hanya dari harga aktif.
+- **Gambar tanpa fallback stok:** `FALLBACK_IMAGES` dihapus dari `Destination.js` (toDetail → `image` null / `images` [] saat DB kosong) dan `DestinationSection.jsx` (toCard → null). `DestinationCard.jsx` (publik) & `DestinationGallery.jsx` (detail) menampilkan placeholder "Gambar tidak tersedia" saat tidak ada gambar.
+
+**Verification (live, dev server :3000):**
+- `GET /api/trips` → 6 trip published; "TES mantap" (gambar, tanpa harga/departure) dan "Trip Senin" (tanpa gambar/harga) kini tampil ✅
+- Playwright (channel chrome): landing menampilkan kartu TES mantap; `/trips` render 5 placeholder "Gambar tidak tersedia" + kartu bergambar; `/trips/{uuid TES}` h1 = "TES mantap"; `/checkout?destination={uuid TES}` tetap berjalan (status found/memuat, server akan 400 saat submit karena tanpa departure — ekspektasi) ✅
+- `npm run lint`: 0 error baru di semua file yang diubah (error repo pre-existing di icon-picker/my-trips/useNotifications/bundle minified); `tsc --noEmit`: hanya error pre-existing e2e/api/endpoints.spec.ts ✅
+
+**Catatan/risiko:**
+- Trip published tanpa harga tetap tampil di publik dengan harga Rp0 — belum ada penanda "Harga menyusul"; checkout ke trip tanpa departure akan 400 di server.
+- Perubahan belum di-commit.
+
+## Session 26 — Tombol Melayang "Hubungi Kami" Jadi Komponen
+
+**Goal:** Ekstrak tombol WhatsApp melayang (kanan bawah) menjadi komponen reusable dan tampilkan di landing, `/trips`, `/private`, `/blog`, dan `/trips/[id]`.
+
+**Completed:**
+- `src/components/layout/WhatsAppFloat.jsx` (baru) — komponen server tanpa hooks: `wa.me/{NEXT_PUBLIC_WHATSAPP_NUMBER}?text={NEXT_PUBLIC_WHATSAPP_MESSAGE}`, gaya sama persis dengan versi inline lama (ikon bulat di mobile, pill "Hubungi Kami" di desktop).
+- Landing `src/app/page.jsx` — blok inline diganti `<WhatsAppFloat />` (import `Link` & konstanta WHATSAPP_* dihapus).
+- `src/app/trips/page.jsx`, `src/app/trips/[id]/page.jsx`, `src/app/private/page.jsx`, `src/app/blog/page.jsx` — import + render `<WhatsAppFloat />` sebelum `</div>` penutup.
+
+**Verifikasi:**
+- Targeted eslint 6 file: 0 error (2 warning pre-existing: `Newspaper` tak terpakai di blog, `<img>` di WhatsAppFloat sesuai pola repo).
+- Playwright (channel chrome, dev server :3000): tombol `a[aria-label="WhatsApp"]` muncul dengan label "Hubungi Kami" di kelima halaman ✅
+- Perubahan belum di-commit.
+## Session 27 - ShadCN Sidebar untuk Admin
+
+**Goal:** Mengganti struktur sidebar admin yang dibuat manual (custom aside) dengan sidebar ShadCN yang sudah terpasang di project, disesuaikan dengan navigasi admin OpenTrip Lansia. Topbar (notifikasi + profil) dipertahankan.
+
+**Completed:**
+- `src/app/admin/components/nav-data.ts` (baru) - ekstraksi array `navGroups` (Dashboard, Trip & Tempat, Pengguna & Partner, Marketing, Order, Konten) dari layout.tsx menjadi modul bertipe (`AdminNavGroup`/`AdminNavItem`, ikon lucide).
+- `src/app/admin/components/admin-sidebar.tsx` (baru) - komponen ShadCN: `Sidebar` (collapsible="icon") + `SidebarHeader` (logo brand) + `SidebarContent` (SidebarGroup/GroupLabel/Menu/MenuButton dari nav-data, active state via usePathname: exact match /admin, startsWith selainnya, `render={<Link/>}` untuk navigasi) + `SidebarFooter` ("Kembali ke Website Utama") + `SidebarRail`. Item aktif di-warnai oranye #F49D1A via `data-active:bg-[#F49D1A]`.
+- `src/app/globals.css` - blok variabel `--sidebar-*` dark scoped `.admin-sidebar-dark` + `[data-mobile="true"][data-sidebar="sidebar"]` (mobile sheet portaled) agar sidebar admin ikut dark mode tanpa memengaruhi area konten/dashboard.
+- `src/app/admin/layout.tsx` - rombak total: hapus custom aside, mobile overlay/hamburger manual, dan state sidebarOpen; kini `SidebarProvider` + `<AdminSidebar />` + `SidebarInset` (bg-slate-100/70); topbar notifikasi + profil dipindah jadi header di dalam SidebarInset dengan `SidebarTrigger` menggantikan hamburger. `useAdminAuth()` tetap.
+
+**Verification:**
+- Targeted eslint (3 file diubah): 0 error, 1 warning `<img>` (pola sama dengan kode asli).
+- `npm run lint` penuh: error/warning hanya pre-existing (use-mobile.ts set-state-in-effect, useNotifications.ts, icon-picker, my-trips, dll.) - tidak ada dari file yang diubah.
+- `tsc --noEmit`: error hanya pre-existing di `e2e/api/endpoints.spec.ts`.
+- Perubahan belum di-commit.
+
+**Risiko:** dark mode hanya di-scope ke sidebar; jika ingin seluruh halaman admin ikut dark, perlu refactor terpisah. `h-15` (Tailwind v4 dynamic spacing) digunakan untuk logo.
+## Session 27b - Softkan Kontras Aktif + Fix Hover Sidebar Admin
+
+**Goal:** (1) Menurunkan kontras item aktif sidebar admin (solid oranye -> tint), (2) memperbaiki bug: hover pada item aktif menimpa warna aktif dengan slate abu-abu.
+
+**Analisis (dikonfirmasi via kompilasi CSS `npx @tailwindcss/cli`):**
+- `.hover\:bg-sidebar-accent:hover` = spesifisitas (0,2,0); `.data-active\:bg-[\#F49D1A]:where(...)` = (0,1,0) karena `:where()` bernilai 0. Hover menang walau posisinya di atas.
+- Fix = stacked variant `data-active:hover:*` yang menghasilkan selector (0,2,0) namun muncul lebih belakang di stylesheet.
+
+**Completed:**
+- `src/app/admin/components/admin-sidebar.tsx` (baris 53) - className `SidebarMenuButton` diubah:
+  - Sebelum: `data-active:bg-[#F49D1A] data-active:text-white data-active:font-semibold`
+  - Sesudah: `data-active:bg-[#F49D1A]/15 data-active:text-[#F49D1A] data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]`
+  - `font-medium` (bukan `font-semibold`) karena warna sudah jadi penanda utama dan konsisten dengan default shadcn.
+  - Hover item aktif menaikkan tint 15%->20%, teks tetap oranye; item non-aktif tetap hover slate normal.
+
+**Verification:**
+- `npx eslint`: 0 error (1 warning `<img>` pre-existing).
+- Kompilasi CSS: `.data-active\:bg-[\#F49D1A]/15` (ln 4906), `.data-active\:text-[\#F49D1A]` (ln 4916), `.data-active\:hover\:bg-[\#F49D1A]/20` (ln 4923) dan `.data-active\:hover\:text-[\#F49D1A]` (ln 4926) semua muncul SETELAH `.hover\:bg-sidebar-accent:hover` (ln 3610) -> stacked variant menang.
+- Perubahan belum di-commit.
+## Session 27c - Breadcrumb Header Admin + Penerapan Ulang Hapus Ikon
+
+**Goal:** (1) Menambahkan breadcrumb di header admin dengan format "Label > Menu", pengecualian Dashboard cukup "Dashboard". (2) Menerapkan ulang penghapusan ikon menu sidebar yang sempat kerevert.
+
+**Completed - Breadcrumb:**
+- `src/app/admin/components/nav-data.ts` - tambah helper `getActiveMenu(pathname)` yang mengembalikan grup + item aktif (logika sama dengan isActive sidebar: exact match /admin, startsWith selainnya).
+- `src/app/admin/layout.tsx` - header kini berisi `SidebarTrigger` + `Separator` vertikal + `Breadcrumb`:
+  - Format: `{label} > {menu}` (mis. "Trip & Tempat > Paket Trip") via `BreadcrumbPage` + `BreadcrumbSeparator` (chevron).
+  - Dashboard (`/admin`): label null -> hanya menampilkan "Dashboard" tanpa separator.
+  - Breadcrumb disembunyikan di mobile (`hidden md:flex`) mengikuti pola halaman dashboard contoh.
+
+**Completed - Re-apply hapus ikon (file sempat kerevert):**
+- `src/app/admin/components/admin-sidebar.tsx` - `<Icon />` dan `const Icon = item.icon` dihapus lagi; `collapsible="icon"` -> `collapsible="offcanvas"` (mode collapse-ikon tak relevan tanpa ikon); class `group-data-[collapsible=icon]:hidden` di logo dihapus.
+- `src/app/admin/components/nav-data.ts` - import lucide + field `icon` dibersihkan ulang dari tipe & data.
+
+**Catatan:** Di antara tugas, `admin-sidebar.tsx` dan `nav-data.ts` kembali ke versi berikon (kemungkinan revert/kembali-commit oleh user); seluruh perubahan diterapkan ulang dan terverifikasi.
+
+**Verification:**
+- `npx eslint` (3 file): 0 error, 1 warning `<img>` pre-existing.
+- `npx tsc --noEmit`: error hanya pre-existing `e2e/api/endpoints.spec.ts`.
+- Perubahan belum di-commit.
+## Session 27d - Fix Error Hidrasi Breadcrumb Admin
+
+**Goal:** Perbaiki hydration error yang muncul di semua halaman `/admin` (dikonfirmasi via Playwright console capture saat login admin).
+
+**Akar masalah:**
+- `src/app/admin/layout.tsx` breadcrumb menaruh `<BreadcrumbSeparator />` (renders `<li>`) DI DALAM `<BreadcrumbItem />` (renders `<li>`) -> HTML invalid `<li>` bersarang `<li>` -> React "Hydration failed ... <li> cannot be a descendant of <li>".
+- Terkonfirmasi: 6 console error + 3 pageerror "Hydration failed" di `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`.
+
+**Solusi (applied):**
+- `src/app/admin/layout.tsx` - susun ulang breadcrumb menjadi dua `BreadcrumbItem` terpisah dengan `BreadcrumbSeparator` sebagai sibling di antaranya (pola sama dengan `src/app/dashboard/page.tsx`). Breadcrumb kini tampil di semua ukuran layar (tidak lagi `hidden md:flex`).
+
+**Catatan selidik (temuan sekunder, tidak diubah):**
+- `src/middleware.ts:23` - redirect login untuk `/admin/*` tanpa session memakai `redirect="/"` bukan path asli (`/login?redirect=/`), sehingga redirect balik ke beranda bukan ke halaman admin yang diminta.
+
+**Verification:**
+- `npx eslint src/app/admin/layout.tsx`: 0 error.
+- Playwright (login admin@otl.id, console capture) pada `/admin`, `/admin/trips`, `/admin/users`, `/admin/pesanan`: 0 console error, 0 pageerror (sebelumnya 6+3).
+- Script verifikasi sementara dihapus.
+- Perubahan belum di-commit.
+
+
+## Session 31 - Payment BCA only, Navbar role, Admin pages secure, Lint clean
+
+**1. Metode pembayaran hanya BCA**
+- `src/app/api/payments/route.ts` — `ALLOWED_METHODS` ditambah `"BCA"`.
+- `src/components/checkout/PaymentStep.jsx` — PaymentSelector jadi satu kartu BCA auto-selected (+`useEffect` set paymentMethod="BCA"); AccountCard ambil dari `payment_accounts` (lookup case-insensitive), fallback banner "Rekening BCA belum diatur".
+- **User action:** insert/upsert BCA ke `payment_accounts` sendiri (query diberikan): `method='BCA'`.
+
+**2. Nama + role di Navbar**
+- `src/components/layout/Navbar.jsx` — avatar dropdown menampilkan nama + role (admin→"Admin", agent→"Agen", lain→"Member") dari `session.user.role`; `hidden sm:flex`, warna ikut `isScrolled`.
+
+**3. Admin pages secure (server-side)**
+- `src/app/admin/layout.tsx` jadi server component: `auth.api.getSession({ headers: await headers() })` → no login redirect `/login`, role != admin redirect `/forbidden`, baru render shell.
+- Shell client dipindah ke `src/app/admin/AdminShell.tsx` (tanpa `useAdminAuth`).
+- `src/middleware.ts` komentar diperbarui.
+- Risk tersisa: API admin (mis. `/api/trips?all=true`, `/api/promotions`) masih publik — scope feat-080.
+
+**4. Lint bersih (303 error → 0)**
+- `eslint.config.mjs` — tambah `public/**` ke globalIgnores (±265 error vendor `public/hugerte` hilang).
+- `src/hooks/use-mobile.ts` — `useSyncExternalStore`.
+- `src/app/admin/components/icon-picker.tsx` — pola `mounted`+effect diganti `useSyncExternalStore`; import `Check` dibuang.
+- `src/hooks/useNotifications.ts` — fetch awal pakai microtask boundary.
+- `src/app/my-trips/page.jsx` — `fetchData` pindah ke atas + `useCallback`; dep `router` ditambah.
+
+**Hasil:** `npm run lint` → 0 errors, 59 warnings (semua `<img>`). `tsc --noEmit` hanya error pre-existing `e2e/api/endpoints.spec.ts`. Belum di-commit.
+
+## Session 28 — Refactor Auth Guard Admin: Helper Server-side + Hapus Duplikasi
+
+**Goal:** Ekstrak logic auth guard di `src/app/admin/layout.tsx` menjadi helper server-side yang reusable, hapus duplikasi `requireAdmin` di API private-trip, dan bersihkan dead code.
+
+**Completed:**
+- **Dikerjakan via 2 sub-agent paralel (pola todo → sub-agent):**
+  - Sub-agent A: `src/shared/auth-server.ts` (baru) — `requireAdminLayout()` membungkus getSession → redirect `/login?redirect=/admin` bila tak login, `/forbidden` bila role ≠ admin, return session.
+  - Sub-agent A: `src/app/admin/layout.tsx` — body layout jadi `await requireAdminLayout(); return <AdminShell>{children}</AdminShell>;` (19 → 7 baris), import `headers`/`redirect`/`auth` yang tak terpakai dihapus.
+  - Sub-agent B: `src/app/api/private-trip/admin/route.ts` & `[id]/route.ts` — hapus definisi lokal `requireAdmin` (duplikat), ganti `import { requireAdmin } from "@/shared/auth"` (pola sama dengan `api/trips/route.ts`).
+  - Sub-agent B: hapus `src/hooks/useAdminAuth.ts` (dead code — tidak ada yang meng-import).
+
+**Verification:**
+- `npx tsc --noEmit`: hanya error pre-existing di `e2e/api/endpoints.spec.ts:21` (tidak disentuh).
+- `npx eslint` targeted pada 4 file berubah + 1 baru: 0 error, 0 warning.
+- `npm run lint` (full): error yang muncul semuanya pre-existing di file lain (icon-picker, use-mobile, useNotifications, my-trips) — bukan di file session ini.
+- Fix minor: trailing newline di `admin/layout.tsx`.
+
+- Perubahan belum di-commit (menunggu review user).
+
+## Session 30 — Verifikasi Fitur Pasca Phase 1 (API Security Lockdown)
+
+**Goal:** Pastikan fitur-fitur tetap berfungsi setelah Phase 1 mengunci 21+ endpoint API dengan `requireAdmin`, dan lakukan smoke test runtime (bukan hanya statis).
+
+**Dikerjakan:**
+- Smoke test live terhadap dev server (:3000) dengan database Neon terhubung.
+- **13 endpoint publik** tanpa auth → semuanya 200: `/api/trips`, `/api/blogs`, `/api/blogs?published=1`, `/api/horeca`, `/api/horeca-types`, `/api/vendors`, `/api/vendor-types`, `/api/promotions`, `/api/reviews`, `/api/galleries`, `/api/meeting-points`, `/api/destinations/categories`, `/api/payments/accounts`.
+- **5 endpoint terkunci** tanpa auth → semuanya 401: `/api/users`, `/api/admin/dashboard`, `/api/admin/notifications`, `/api/commissions`, `/api/bookings`.
+- **Login admin** (`admin@otl.id` / `admin` dari seed) → 200; lalu endpoint admin dengan session → 200 (users, dashboard, notifications, commissions).
+- Blog by-id: admin GET 200, anon GET blog published 200, anon PUT → 401. Halaman blog publik memakai `/api/blogs?published=1` + filter client-side, bukan rute by-id.
+- Catatan: `GET /api/blogs/{non-uuid}` → 500 (artefak test, slug tidak valid utk findById) — bukan regresi.
+
+**Verification:**
+- Smoke test: **PASS** — semua fitur publik tetap terbuka, proteksi admin aktif, admin tetap bisa akses.
+
+**Catatan:**
+- Belum ada commit untuk sesi ini (menunggu review user / lanjut Phase 2).
+
+## Session 31 — Phase 2: Sanitasi XSS Blog & Hardening Upload
+
+**Goal:** Menutup celah keamanan Phase 2: (a) stored XSS pada konten blog (WYSIWYG → `dangerouslySetInnerHTML`), (b) `/api/upload` yang terbuka tanpa auth, menerima SVG, dan tanpa validasi magic-byte.
+
+**Completed — #3 Sanitasi XSS Blog:**
+- `src/shared/utils/sanitize.ts` (baru) — wrapper `sanitize-html` dengan allowlist tag/atribut/kelas, skema http/https/mailto, `transformTags` a→`rel=noopener noreferrer target=_blank`, img hanya terima src http/https atau path lokal.
+- `src/modules/blog/blog.service.ts` — `createBlog` & `updateBlog` kini sanitize `content` & `excerpt` (null dipertahankan).
+- `src/app/api/blogs/route.ts` — POST dialihkan dari `blogRepository.create` langsung ke `blogService.createBlog` (agar sanitasi & slug-unique berjalan); guard `!session.user.id` → 401.
+- `src/app/blog/[slug]/page.jsx` — defense-in-depth: konten di-sanitize lagi saat render (melindungi data lama yang sudah terlanjur di DB).
+- Live test: payload `<script>`/`onclick`/`onerror`/`javascript:` → semua di-strip, `<h2>/<b>` aman dipertahankan.
+
+**Completed — #2 Hardening Upload:**
+- `src/shared/utils/image-guard.ts` (baru) — deteksi magic-byte per format (JPEG/PNG/GIF/WEBP/AVIF dengan brand `avif|avis`), helper `detectImageKind`/`extensionForImage`.
+- `src/app/api/upload/route.ts` — tambah `requireAdmin` (POST & DELETE), **hapus SVG** (XSS vector), validasi magic-byte (tolak file palsu meski MIME/ext palsu), ekstensi file diturunkan dari isi bukan `file.name`, cek file kosong, DELETE kini cek `access()` dulu (404 kalau tidak ada).
+- `src/app/api/payments/upload/route.ts` — pakai shared guard (hilangkan duplikasi magic-byte inline), AVIF lebih ketat (brand-spesifik), ekstensi dari isi file.
+- Live test: anon upload → 401; admin PNG → 200; HTML palsu ber-ext `.png` → 400; SVG → 400.
+
+**Verification:**
+- `npx eslint` penuh: 0 error (58 warning pre-existing `<img>`).
+- `npx tsc --noEmit`: 0 error.
+- `npx next build`: compiled successfully.
+- Live smoke test: semua PASS; data test dibersihkan (blog draft, file upload, session).
+
+**Catatan:**
+- Dep baru: `sanitize-html` (dependencies) + `@types/sanitize-html` (devDependencies).
+- Belum di-commit (menunggu review user).
+- Sisa Phase 2/3 (opsional): quota oversell, DB transaksi multi-step, rate limiting, CSP, money numeric.
+
+## Session 29 — QA + Refactor Sidebar Admin (PR #76) & Hapus Dead Code
+
+**Goal:** Verifikasi refactor sidebar admin (commit 3b32a77) tidak merusak fitur, rapikan duplikasi logika active-matching, lalu hapus file JSX/TSX yang tidak terpakai.
+
+**Completed — QA (subagent qa, read-only):**
+- Verdict **PASS** (0 Critical/High/Medium).
+- Tidak ada dangling link `/dashboard` (halaman dummy sudah dihapus bersih).
+- 12 route nav di `nav-data.ts` semuanya ada; tidak ada prefix collision pada active-state (exact match `/admin`, startsWith selainnya).
+- Collapsible group aman: auto-open grup aktif saat pindah halaman tanpa menutup grup yang dibuka manual; dependency arrays benar (tidak ada stale closure).
+- Mobile sheet dark-mode (`.admin-sidebar-dark` + `[data-mobile=true][data-sidebar=sidebar]`) tidak terganggu.
+- `next build` hijau; catatan: `tsc --noEmit` butuh `.next/types` di-regenerate bila ada stale ref ke page yang dihapus.
+
+**Completed — Refactor (subagent refactor):**
+- `src/app/admin/components/nav-data.ts` — tambah helper `isHrefActive(pathname, href)` sebagai satu sumber kebenaran; `getActiveMenu` memakainya.
+- `src/app/admin/components/admin-sidebar.tsx` — `isActive` useCallback kini panggil `isHrefActive`; non-null assertion `group.label!` diganti narrowing (`const label` + guard) di useEffect dan JSX map.
+- Perilaku/UI tidak berubah (class name, struktur JSX, key, deps callback dipertahankan).
+
+**Completed — Hapus file mati (9 file, diverifikasi 0 referensi di src/e2e/test):**
+- `src/components/checkout/ConfirmationStep.jsx` (tidak diimport page manapun)
+- `src/components/destinasi/detail/UlasanSection.jsx` (tab Ulasan tidak dirender page; file tak terimport)
+- `src/components/landing/ModalsSlider.jsx`
+- `src/components/private/ParticipantsSection.jsx` (digantikan input jumlahPeserta sejak Session 12)
+- `src/components/app-sidebar.tsx`, `search-form.tsx`, `version-switcher.tsx` (demo shadcn sidebar, tidak terimport)
+- `src/components/ui/dropdown-menu.tsx` (hanya dipakai version-switcher), `ui/label.tsx` (hanya dipakai search-form)
+
+**Verification:**
+- `npx eslint` penuh: 0 error (57 warning pre-existing `<img>`).
+- `npx tsc --noEmit`: bersih (0 error).
+- `npx next build`: compiled successfully.
+
+**Catatan:**
+- Perubahan belum di-commit (menunggu review user) — 2 file modified (refactor), 9 file deleted (dead code).
+
+## Session 32 — Phase 2 Security: bcrypt Password Hashing & Quota Atomic
+
+**Goal:** Menutup prioritas #1 (hash SHA-256 tanpa salt) dan #2 (quota oversell) dari catatan temuan.
+
+**Completed — #1 Password hashing (SHA-256 → bcrypt):**
+- Dep baru: `bcryptjs` (v3, types built-in).
+- `src/shared/utils/password.ts` (baru) — `hashPassword` (bcrypt cost 10), `verifyPassword` (auto-detect: bcrypt → compare, 64-hex → fallback SHA-256), `isLegacySha256`.
+- `src/modules/auth/auth.config.ts` — hook `password.hash`/`verify` pakai util; fallback memastikan user lama tetap login.
+- Migrasi hash lama: `auth.repository.ts` tambah `getAccountPassword`/`updateAccountPassword`; `auth.controller.ts` POST wrapper deteksi `/sign-in/email` sukses → re-hash SHA-256 ke bcrypt otomatis (via `rehashLegacyPasswordOnSignIn`). Jalur `/api/auth/[...all]` tetap dipakai client (authService.signIn tidak dipanggil langsung).
+- `src/db/seed.ts` — akun seed admin/agent/user kini bcrypt (Promise.all await).
+
+**Completed — #2 Quota atomic:**
+- `trip.repository.ts updateQuota` — tambah kondisi `sql\`${quotaBooked} + ${qty} <= ${quota}\`` ke WHERE; UPDATE yang melewati kuota tidak mengubah row → return false.
+
+**Verification:**
+- `npx tsc --noEmit`: 0 error. `npx eslint`: 0 error. `npx next build`: success.
+- Live smoke (dev server :3000): login `admin@otl.id`/`admin` → 200 + cookie session; hash DB berubah dari SHA-256 ke `$2b$10$...` (verified via SQL); login kedua tetap 200 (bcrypt path); password salah → 401.
+- Quota: simulasi SQL — `+1` saat kosong → 1 row OK; `+20` saat sisa 19 → 0 row (oversell ditahan); nilai awal di-restore.
+
+**Catatan:**
+- Belum di-commit (menunggu review user).
+- Sisa (prioritas lanjutan): #3 transaksi booking (butuh driver WebSocket karena neon-http tak support `db.transaction()`), #4 rate limiting, #5 security headers, #6 money integer-sen, #7 blogs/[id] non-UUID → 500, #8 Google OAuth credential kosong, #9 npm audit (11 vuln).
+
+## Session 33 — Popup Notifikasi Newsletter Subscribe
+
+**Goal:** Menampilkan popup modal notifikasi/pesan sukses ketika visitor memasukkan email dan melakukan subscribe di newsletter form.
+
+**Completed:**
+- Diperbarui [Subs.jsx](file:///c:/Users/Bhuminindra%20AlHafiz/Documents/opentrip-lansia/src/components/landing/Subs.jsx):
+  - Menambahkan direktif `"use client"` di bagian atas file.
+  - Membuat state untuk input `email` dan `showPopup`.
+  - Mengimplementasikan helper `useEffect` untuk menutup popup ketika tombol Escape ditekan, serta mengunci overflow body (`document.body.style.overflow = "hidden"`) saat popup aktif agar background tidak dapat discroll.
+  - Memperbarui handler form `onSubmit` agar memvalidasi input email sebelum menampilkan popup sukses.
+  - Mendesain popup modal sukses yang premium (menggunakan glassmorphic border, background blur, oranye gradient ornamen, dan checklist micro-animation) dengan tombol "Mulai Jelajah" serta ikon silang `(X)` untuk menutup popup modal.
+  - Menyertakan teks pesan sukses yang tepat sesuai permintaan: `"Selamat bergabung di Keluarga Jelajah Memoria! Kami telah mengirimkan email sambutan untuk Anda. Sampai jumpa di perjalanan seru berikutnya!"`.
+
+**Verification:**
+- `npm run lint` — Berhasil dijalankan (0 errors, 60 warnings pre-existing).
+
+
+## Session (2026-09-04) — Bugfix: Kategori Trip & Admin Login
+
+**Goal:** Perbaiki dua bug: (1) kategori trip selalu tampil "Alam" di halaman publik, (2) login admin@otl.id gagal di localhost.
+
+### Bug 1 — Kategori Trip Selalu "Alam"
+
+**Root cause:** `findAllPublished()` di `trip.repository.ts` menggunakan `getTableColumns(trips)` tanpa JOIN ke `destinationCategories`, sehingga field `categoryName` tidak pernah ada di response API publik. `toDetail()` di `Destination.js` sudah membaca `dest.categoryName` dengan benar, tapi nilainya selalu `undefined` → fallback ke `"Alam"`.
+
+**Fix:** Tambahkan JOIN `destinationCategories` pada `findAllPublished()` dan sertakan `categoryName: destinationCategories.name` di select. Tambahkan `categoryName: string | null` ke interface `TripWithPrice`.
+
+**File diubah:** `src/modules/trip/trip.repository.ts`
+
+### Bug 2 — Admin Login Gagal di Localhost
+
+**Root cause:** Tiga masalah teridentifikasi:
+1. `.env` menetapkan `BETTER_AUTH_URL=https://jelajahmemoria.spero-lab.id/` (production URL). better-auth menggunakan URL ini untuk cookie domain & CSRF check → login selalu gagal di `localhost`.
+2. `middleware.ts` meredirect ke `/login?redirect=/` (hardcoded `/`) bukan `/login?redirect=/admin` saat session tidak ada di halaman admin.
+3. `login/page.jsx` `getClientSnapshot()` memblokir param redirect yang dimulai dengan `/admin` (`!redirect.startsWith("/admin")`), sehingga setelah login sukses admin dikirim ke `/` bukan `/admin`.
+
+**Fix:**
+- Buat `.env.local` dengan `BETTER_AUTH_URL=http://localhost:3000` (override `.env` untuk dev lokal — tidak ter-commit ke production karena `.env.local` ada di `.gitignore`).
+- `middleware.ts`: ganti `redirect=/` → `redirect=/admin`.
+- `login/page.jsx`: hapus kondisi `!redirect.startsWith("/admin")`.
+
+**File diubah/dibuat:** `.env.local`, `src/middleware.ts`, `src/app/login/page.jsx`
+
+### Verifikasi
+- `tsc --noEmit --skipLibCheck` — 0 error
+- `npm run lint` — timeout di shell environment (issue environment, bukan issue kode); perubahan minimal dan tidak memperkenalkan pola baru
+
+### Catatan
+- `.env.local` **tidak boleh di-commit** (sudah ada di `.gitignore`). Setiap developer lokal perlu membuat file ini sendiri.
+- Jika production domain berbeda dari `localhost`, `BETTER_AUTH_URL` di `.env` untuk production tetap menggunakan domain production — hanya lokal yang perlu override.
+
+## Session 26 — User Referral System (feat-073)
+
+**Goal:** Implement user-facing referral system: display referral code in profile with copy/share, add referral code input in checkout, and show referral history in profile.
+
+**Completed:**
+
+### Backend API Routes
+- `GET /api/user/referral` — Returns user's referral code + stats (total referred, converted, pending, total commission)
+- `GET /api/user/referral/history` — Paginated referral history with joined user/booking/trip/commission data
+- `POST /api/checkout/validate-referral` — Validates referral code, checks self-referral, returns referrer info
+- Updated `POST /api/checkout` — Accepts `referralCode`, validates server-side, creates referral record in `referrals` table
+
+### Frontend Components
+- `ReferralCard.jsx` — Profile component showing referral code with copy, WhatsApp share, and link share buttons + stats
+- `ReferralHistory.jsx` — Profile component with expandable referral list, status badges, pagination, and commission info
+- `ReferralInput.jsx` — Checkout component for entering/validating referral code with success/error states
+
+### Updated Existing Components
+- `ProfileStats.jsx` — Added referral code display with copy button, total referral count
+- `profile/page.jsx` — Integrated ReferralCard and ReferralHistory sections
+- `useCheckout.js` — Added referral state (referralCode, appliedReferral, referralError) + applyReferral/removeReferral functions
+- `DetailsStep.jsx` — Added ReferralInput below VoucherCard
+
+**Verification:**
+- `npm run lint` — 0 errors (67 pre-existing warnings)
+- All new files pass lint without introducing new errors
+
+**Files Created:**
+- `src/app/api/user/referral/route.ts`
+- `src/app/api/user/referral/history/route.ts`
+- `src/app/api/checkout/validate-referral/route.ts`
+- `src/components/profile/ReferralCard.jsx`
+- `src/components/profile/ReferralHistory.jsx`
+- `src/components/checkout/ReferralInput.jsx`
+
+**Files Modified:**
+- `src/app/api/checkout/route.ts` — Added referral code handling + referral record creation
+- `src/components/profile/ProfileStats.jsx` — Added referral code display with copy button
+- `src/app/profile/page.jsx` — Added ReferralCard and ReferralHistory sections
+- `src/lib/hooks/useCheckout.js` — Added referral state management
+- `src/components/checkout/DetailsStep.jsx` — Added ReferralInput component
+
+## Session 27 — Hapus Semua Referral History
+
+**Goal:** Menghapus semua data referral history dari database (tabel referrals, commissions, commission_payouts, payout_commissions).
+
+**Completed:**
+- Created `scripts/clear-referral-history.sql` — SQL script untuk menghapus data secara manual
+- Created `scripts/clear-referral-history.ts` — TypeScript script untuk menghapus data via Drizzle ORM
+- Executed SQL cleanup: `DELETE FROM payout_commissions; DELETE FROM commission_payouts; DELETE FROM commissions; DELETE FROM referrals;`
+- Verified deletion: semua tabel terkait referral sudah kosong (0 rows)
+
+**Verification:**
+- SQL query `SELECT COUNT(*) FROM referrals/commissions/commission_payouts/payout_commissions` → semua 0 rows
+
+**Tabel yang dibersihkan:**
+- `referrals` — 0 rows
+- `commissions` — 0 rows
+- `commission_payouts` — 0 rows
+- `payout_commissions` — 0 rows
+
+## Session 34 — Fitur Grup Trip Selesai + Feedback & Rating
+
+**Goal:** Implement fitur penandaan grup trip selesai, feedback/rating dari user, dan tampilan data review yang lebih lengkap di admin.
+
+**Completed:**
+
+### Backend
+- Created `src/app/api/trips/[id]/groups/[groupId]/complete/route.ts` — API endpoint PUT untuk menandai grup selesai:
+  - Update status trip_departures ke "completed"
+  - Update semua booking berstatus "confirmed" untuk departure tersebut ke "completed"
+  - Return success message
+
+### Admin UI — Grup Trip
+- Updated `src/app/admin/trips/[id]/groups/page.tsx`:
+  - Import `CheckCircle` icon dari lucide-react
+  - Tambah tombol "Tandai Selesai" (hanya muncul jika status belum completed)
+  - Tambah fungsi `handleComplete(groupId)` dengan konfirmasi dan fetch ke API complete
+  - Styling: tombol hijau dengan icon CheckCircle
+
+### User UI — My Trips
+- Created `src/components/my-trips/FeedbackModal.jsx` — Modal komponen untuk feedback:
+  - Rating bintang 1-5 dengan interaksi hover
+  - Textarea ulasan (max 2000 karakter)
+  - Submit handler dengan loading state
+  - Styling premium dengan gradient icon
+
+- Updated `src/components/my-trips/OpenTripBookingCard.jsx`:
+  - Import FeedbackModal
+  - Tambah state `feedbackOpen` dan `feedbackSubmitted`
+  - Deteksi status completed dari booking
+  - Cek apakah sudah ada review (`booking.hasReview`)
+  - Tombol "Beri" untuk user memberikan feedback
+  - Label "Sudah Diulas" jika sudah memberikan feedback
+  - Submit feedback ke POST /api/reviews dengan bookingId, tripId, rating, content
+
+### Admin UI — Reviews Page
+- Updated `src/app/admin/reviews/page.tsx`:
+  - Tambah icon User, Calendar, Hash dari lucide-react
+  - Interface Review ditambah: userName, userEmail, tripTitle, groupStartDate, groupEndDate, bookingCode
+  - Tabel kolom baru: Pengguna (avatar + nama + email), Trip & Grup (nama trip + tanggal grup + kode booking), Rating, Ulasan, Status
+  - Hapus kolom Featured (bisa diedit di modal)
+
+### Review Repository
+- Updated `src/modules/review/review.repository.ts`:
+  - Tambah interface ReviewWithDetails dengan data enriched
+  - Method `findAll()` sekarang return data enriched dengan join ke users, trips, tripDepartures, bookings
+  - Tambah method `findByUserId(userId)` untuk cek apakah user sudah review booking tertentu
+
+### Booking Service
+- Updated `src/modules/booking/booking.service.ts`:
+  - Import reviewRepository
+  - Helper `withDetails()` sekarang tambah field `hasReview` (boolean) untuk setiap booking
+  - Cek apakah user sudah membuat review untuk booking tersebut
+
+**Files Created:**
+- `src/app/api/trips/[id]/groups/[groupId]/complete/route.ts`
+- `src/components/my-trips/FeedbackModal.jsx`
+
+**Files Modified:**
+- `src/app/admin/trips/[id]/groups/page.tsx` — Tombol "Tandai Selesai"
+- `src/components/my-trips/OpenTripBookingCard.jsx` — Feedback button + modal
+- `src/app/admin/reviews/page.tsx` — Enhanced table dengan data lengkap
+- `src/modules/review/review.repository.ts` — Enriched findAll() + findByUserId()
+- `src/modules/booking/booking.service.ts` — hasReview field di booking
+- `feature_list.json` — Update feat-011b description dan evidence
+
+**Verification:**
+- `npm run lint` — 0 errors, 79 warnings (pre-existing `<img>` warnings)
+- Semua file baru dan yang diubah pass lint tanpa error
+
+**Alur Fitur:**
+1. Admin klik "Tandai Selesai" di halaman grup trip
+2. Konfirmasi → API update status grup + booking ke completed
+3. User login → lihat status "Selesai" di My Trips
+4. User klik "Beri" → modal feedback muncul
+5. User isi rating + ulasan → submit ke /api/reviews
+6. Admin lihat di /admin/reviews dengan data: nama user, email, nama trip, tanggal grup, kode booking, rating, ulasan
+
+---
+
+### Referral Bonus Points Configurable (feat-072 update)
+
+**Goal:** Referral bonus points bisa diatur admin, bukan hardcoded.
+
+**Completed:**
+1. Created `site_settings` module (schema, repository, service)
+2. Created `site_settings` table via drizzle push
+3. Created API endpoints:
+   - `GET /api/admin/site-settings` — List all settings
+   - `PUT /api/admin/site-settings` — Update setting by key
+   - `GET /api/admin/site-settings/referral-bonus` — Get referral bonus points
+4. Updated `loyalty.service.ts` — `creditReferralBonus()` now reads from `site_settings` instead of hardcoded value
+5. Updated admin referral page (`/admin/referrals`):
+   - Added "Pengaturan Referral" card with input for bonus points
+   - Save button to update setting via API
+   - Status badge shows "+X poin" for converted referrals
+6. Default value: 10,000 points
+
+**Files Created:**
+- `src/modules/site-settings/site-settings.schema.ts`
+- `src/modules/site-settings/site-settings.repository.ts`
+- `src/modules/site-settings/site-settings.service.ts`
+- `src/app/api/admin/site-settings/route.ts`
+- `src/app/api/admin/site-settings/referral-bonus/route.ts`
+- `drizzle/0003_site_settings.sql`
+
+**Files Modified:**
+- `src/db/schema/index.ts` — Export siteSettings schema
+- `src/modules/loyalty/loyalty.service.ts` — Read bonus from settings
+- `src/app/admin/referrals/page.tsx` — Settings UI + poin display
+- `feature_list.json` — Update feat-072 evidence
+
+**Verification:**
+- `npm run lint` — 0 errors, 79 warnings (pre-existing)
+- `drizzle-kit push` — Table created successfully
+
+**Alur:**
+1. Admin buka /admin/referrals
+2. card "Pengaturan Referral" muncul di atas
+3. Admin ubah jumlah poin → klik Simpan
+4. Setting tersimpan di DB (site_settings.key = 'referral_bonus_points')
+5. Saat payment di-approve → referral convert → loyaltyService.creditReferralBonus() baca dari DB → poin sesuai setting
+6. Di tabel referral, status "Berhasil" tampilkan "+X poin" sesuai setting

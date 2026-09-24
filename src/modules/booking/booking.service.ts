@@ -1,7 +1,12 @@
 import { bookingRepository } from "./booking.repository";
 import { tripRepository } from "../trip/trip.repository";
+import { reviewRepository } from "../review/review.repository";
+import { tripDepartures } from "../trip/trip.schema";
+import { db } from "@/shared/db";
+import { eq } from "drizzle-orm";
 import { generateCode } from "@/shared/utils/helpers";
 import type { UUID } from "@/shared/types";
+import { notificationService } from "../notification/notification.service";
 
 export interface BookingItemInput {
   priceId: string;
@@ -55,6 +60,10 @@ export const bookingService = {
           isPrimary: idx === 0,
         }))
       );
+      const primary = participants[0];
+      void notificationService
+        .onParticipantAdded({ bookingCode, bookingId: booking.id, participantName: primary?.fullName || `${totalPax} peserta` })
+        .catch((e) => console.error("notify participant_added failed", e));
     }
 
     return booking;
@@ -83,15 +92,33 @@ export const bookingService = {
 };
 
 async function withDetails(b: typeof import("../booking/booking.schema").bookings.$inferSelect) {
-  const [participants, items, paymentsList] = await Promise.all([
+  const [participants, items, paymentsList, departure] = await Promise.all([
     bookingRepository.findParticipantsByBookingId(b.id),
     bookingRepository.findItemsByBookingId(b.id),
     bookingRepository.findPaymentsByBookingId(b.id),
+    (async () => {
+      const [dep] = await db
+        .select({ tripId: tripDepartures.tripId })
+        .from(tripDepartures)
+        .where(eq(tripDepartures.id, b.departureId))
+        .limit(1);
+      return dep;
+    })(),
   ]);
+
+  let hasReview = false;
+  try {
+    const userReviews = await reviewRepository.findByUserId(b.userId);
+    hasReview = userReviews.some((r) => r.bookingId === b.id);
+  } catch {
+  }
+
   return {
     ...b,
+    tripId: departure?.tripId || null,
     participants,
     items,
     payments: paymentsList,
+    hasReview,
   };
 }

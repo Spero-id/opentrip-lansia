@@ -53,16 +53,6 @@ export const vendors = pgTable("vendors", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const meetingPoints = pgTable("meeting_points", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 255 }).notNull(),
-  address: text("address"),
-  geoPoint: text("geo_point"),
-  description: text("description"),
-  isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
 export const media = pgTable("media", {
   id: uuid("id").primaryKey().defaultRandom(),
   filename: varchar("filename", { length: 255 }),

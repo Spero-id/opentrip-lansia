@@ -2,6 +2,7 @@
 
 import { MapPin, Calendar, Search, ArrowRight, TrendingUp, Users, Award } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const stats = [
@@ -12,11 +13,20 @@ const stats = [
 
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
+  const [query, setQuery] = useState("");
   const rafRef = useRef(null);
+  const router = useRouter();
+
   useEffect(() => {
     rafRef.current = requestAnimationFrame(() => setMounted(true));
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const q = query.trim();
+    router.push(q ? `/trips?q=${encodeURIComponent(q)}` : "/trips");
+  };
 
   return (
     <section
@@ -51,23 +61,25 @@ export default function HeroSection() {
               Temukan pengalaman perjalanan tak terlupakan dengan harga terbaik. Dari Sabang sampai Merauke, kami siap antar kamu.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 max-w-xl">
+            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 max-w-xl">
               <div className="flex-1 flex items-center gap-3 bg-white backdrop-blur-md rounded-2xl px-5 py-3.5 border border-white/20">
                 <Search size={18} className="text-[#F49D1A] shrink-0" />
                 <input
                   type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                   placeholder="Cari destinasi impianmu..."
                   className="bg-transparent text-sm text-black placeholder:text-gray-400 w-full focus:outline-none"
                 />
               </div>
-              <Link
-                href="/trips"
-                className="inline-flex items-center justify-center gap-2 bg-[#F49D1A] hover:bg-[#c47d12] text-white px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-[#F49D1A]/25 whitespace-nowrap"
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center gap-2 bg-[#F49D1A] hover:bg-[#c47d12] text-white px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-[#F49D1A]/25 whitespace-nowrap cursor-pointer"
               >
                 Jelajahi
                 <ArrowRight size={16} />
-              </Link>
-            </div>
+              </button>
+            </form>
 
             <div className="flex flex-wrap gap-3">
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">

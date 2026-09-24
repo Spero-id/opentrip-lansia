@@ -25,8 +25,13 @@ export default function ParticipantCard({ participant, index, onUpdate, onRemove
         </div>
         <input
           type="date"
+          max={new Date().toISOString().split("T")[0]}
           value={participant.birthDate}
-          onChange={(e) => onUpdate(participant.id, "birthDate", e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val && val.split("-")[0] && val.split("-")[0].length > 4) return;
+            onUpdate(participant.id, "birthDate", val);
+          }}
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
         />
         <select

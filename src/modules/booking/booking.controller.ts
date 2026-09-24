@@ -23,9 +23,14 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { departureId, items, participants } = body;
-    const userId = req.headers.get("x-user-id") || "00000000-0000-0000-0000-000000000000";
+    const userId = session.user.id;
 
     const booking = await bookingService.createBooking(userId, departureId, items, participants);
     return NextResponse.json(booking, { status: 201 });

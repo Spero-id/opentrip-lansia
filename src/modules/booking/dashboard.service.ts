@@ -1,12 +1,15 @@
 import { db } from "@/shared/db";
 import { sql } from "drizzle-orm";
+import { trips } from "@/db/schema/trips";
+import { bookings } from "@/db/schema/bookings";
+import { promotions } from "@/db/schema/promotions";
 
 export const dashboardService = {
   async getStats() {
     const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
-    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).toISOString();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
 
     const [
       tripCountResult,
@@ -15,11 +18,25 @@ export const dashboardService = {
       activePromosResult,
       bookingLastMonthResult,
     ] = await Promise.all([
-      db.execute(sql`SELECT COUNT(*)::int AS count FROM trips`),
-      db.execute(sql`SELECT COUNT(*)::int AS count FROM bookings WHERE booking_date >= ${startOfMonth}`),
-      db.execute(sql`SELECT COALESCE(SUM(CAST(total_amount AS numeric)), 0)::text AS total FROM bookings WHERE status IN ('confirmed', 'completed')`),
-      db.execute(sql`SELECT COUNT(*)::int AS count FROM promotions WHERE is_active = true`),
-      db.execute(sql`SELECT COUNT(*)::int AS count FROM bookings WHERE booking_date >= ${startOfLastMonth} AND booking_date <= ${endOfLastMonth}`),
+      db.select({ count: sql<number>`COUNT(*)::int` }).from(trips),
+      db
+        .select({ count: sql<number>`COUNT(*)::int` })
+        .from(bookings)
+        .where(sql`${bookings.bookingDate} >= ${startOfMonth}`),
+      db
+        .select({ total: sql<string>`COALESCE(SUM(CAST(${bookings.totalAmount} AS numeric)), 0)::text` })
+        .from(bookings)
+        .where(sql`${bookings.status} IN ('confirmed', 'completed')`),
+      db
+        .select({ count: sql<number>`COUNT(*)::int` })
+        .from(promotions)
+        .where(sql`${promotions.isActive} = true`),
+      db
+        .select({ count: sql<number>`COUNT(*)::int` })
+        .from(bookings)
+        .where(
+          sql`${bookings.bookingDate} >= ${startOfLastMonth} AND ${bookings.bookingDate} <= ${endOfLastMonth}`
+        ),
     ]);
 
     const totalTrips = Number((tripCountResult.rows[0] as any)?.count ?? 0);
@@ -37,8 +54,8 @@ export const dashboardService = {
       revenueNum >= 1_000_000_000
         ? `Rp ${(revenueNum / 1_000_000_000).toFixed(1)}M`
         : revenueNum >= 1_000_000
-        ? `Rp ${(revenueNum / 1_000_000).toFixed(1)}Jt`
-        : `Rp ${revenueNum.toLocaleString("id-ID")}`;
+          ? `Rp ${(revenueNum / 1_000_000).toFixed(1)}Jt`
+          : `Rp ${revenueNum.toLocaleString("id-ID")}`;
 
     return {
       totalTrips,
@@ -69,7 +86,7 @@ export const dashboardService = {
       LIMIT 5
     `);
 
-    return result.rows.map((b: any) => ({
+    return result.rows.map((b) => ({
       id: b.id as string,
       bookingCode: b.booking_code as string,
       status: b.status as string,

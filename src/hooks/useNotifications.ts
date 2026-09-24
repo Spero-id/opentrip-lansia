@@ -1,5 +1,5 @@
 "use client";
-
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useCallback, useRef } from "react";
 
 interface Notification {
@@ -7,14 +7,31 @@ interface Notification {
   type: string;
   title: string;
   message: string;
-  bookingCode: string;
-  status: string;
-  amount: string;
-  participantCount: number;
-  userName: string;
-  userEmail: string;
-  createdAt: string;
   isRead: boolean;
+  createdAt: string;
+  readAt: string | null;
+  link?: string | null;
+  // legacy optional fields for backward compat with old UI
+  bookingCode?: string | null;
+  status?: string | null;
+  amount?: string | null;
+  participantCount?: number | null;
+  userName?: string | null;
+  userEmail?: string | null;
+}
+
+export function getNotificationHref(n: Pick<Notification, "type" | "link">): string {
+  if (n.link) return n.link;
+  switch (n.type) {
+    case "payment_proof":
+      return "/admin/pesanan";
+    case "private_trip_request":
+      return "/admin/private-trips";
+    case "participant_added":
+      return "/admin/pesanan";
+    default:
+      return "/admin/notifications";
+  }
 }
 
 interface NotificationsResponse {
@@ -28,102 +45,93 @@ export function useNotifications(pollInterval = 30000) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const lastCheckedRef = useRef<string | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Fetch notifications
   const fetchNotifications = useCallback(async (showLoading = true) => {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
     try {
       if (showLoading) setIsLoading(true);
       setError(null);
 
-      const params = new URLSearchParams();
-      if (lastCheckedRef.current) {
-        params.set("since", lastCheckedRef.current);
-      }
-      params.set("limit", "20");
-
-      const response = await fetch(`/api/admin/notifications?${params}`);
-      if (!response.ok) throw new Error("Failed to fetch notifications");
-
-      const data: NotificationsResponse = await response.json();
-
-      // Update notifications
-      if (lastCheckedRef.current) {
-        // Append new notifications to existing ones
-        setNotifications((prev) => {
-          const newNotifications = data.notifications.filter(
-            (n) => !prev.some((existing) => existing.id === n.id)
-          );
-          return [...newNotifications, ...prev].slice(0, 50); // Keep last 50
-        });
-      } else {
-        // Initial load - set all notifications
-        setNotifications(data.notifications);
-      }
-
-      // Update unread count
-      if (lastCheckedRef.current) {
-        // For subsequent fetches, count new items
-        const newCount = data.notifications.filter(
-          (n) => new Date(n.createdAt) > new Date(lastCheckedRef.current!)
-        ).length;
-        setUnreadCount((prev) => prev + newCount);
-      } else {
-        // Initial load - count recent (last 24h)
-        const oneDayAgo = new Date();
-        oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-        const recentCount = data.notifications.filter(
-          (n) => new Date(n.createdAt) > oneDayAgo
-        ).length;
-        setUnreadCount(recentCount);
-      }
-
-      // Update last checked timestamp
-      lastCheckedRef.current = new Date().toISOString();
-    } catch (err) {
+      const res = await fetch(`/api/admin/notifications?limit=20`, {
+        credentials: "include",
+        signal: ctrl.signal,
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: NotificationsResponse = await res.json();
+      setNotifications(data.notifications);
+      setUnreadCount(data.unreadCount);
+    } catch (err: unknown) {
+      if ((err as Error)?.name === "AbortError") return;
       console.error("Error fetching notifications:", err);
       setError("Gagal memuat notifikasi");
     } finally {
-      setIsLoading(false);
+      if (showLoading) setIsLoading(false);
     }
   }, []);
 
-  // Mark notification as read
-  const markAsRead = useCallback((notificationId: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
-    );
+  const markAsRead = useCallback(async (notificationId: string) => {
+    // optimistic
+    setNotifications((prev) => prev.map((n) => (n.id === notificationId ? { ...n, isRead: true, readAt: new Date().toISOString() } : n)));
     setUnreadCount((prev) => Math.max(0, prev - 1));
-  }, []);
-
-  // Mark all as read
-  const markAllAsRead = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    setUnreadCount(0);
-  }, []);
-
-  // Clear all notifications
-  const clearAll = useCallback(() => {
-    setNotifications([]);
-    setUnreadCount(0);
-  }, []);
-
-  // Initial fetch
-  useEffect(() => {
-    fetchNotifications(true);
+    try {
+      const res = await fetch(`/api/admin/notifications/${notificationId}/read`, {
+        method: "PATCH",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    } catch (e) {
+      console.error("markAsRead failed", e);
+      // rollback
+      await fetchNotifications(false);
+    }
   }, [fetchNotifications]);
 
-  // Polling
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      fetchNotifications(false);
-    }, pollInterval);
+  const markAllAsRead = useCallback(async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true, readAt: new Date().toISOString() })));
+    setUnreadCount(0);
+    try {
+      const res = await fetch(`/api/admin/notifications/read-all`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    } catch (e) {
+      console.error("markAllAsRead failed", e);
+      await fetchNotifications(false);
+    }
+  }, [fetchNotifications]);
 
+  const clearAll = useCallback(() => {
+    // legacy: no delete API, alias to markAllAsRead locally
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true, readAt: new Date().toISOString() })));
+    setUnreadCount(0);
+    void fetch(`/api/admin/notifications/read-all`, { method: "POST", credentials: "include" }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    void fetchNotifications(true);
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      abortRef.current?.abort();
+    };
+  }, [fetchNotifications]);
+
+  useEffect(() => {
+    if (typeof document !== "undefined" && document.visibilityState === "hidden") {
+      // don't poll when hidden; resume on visible
+    }
+    const id = setInterval(() => {
+      if (document.visibilityState === "visible") fetchNotifications(false);
+    }, pollInterval);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") fetchNotifications(false);
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [fetchNotifications, pollInterval]);
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { masterRepository } from "@/modules/master";
+import { requireAdmin } from "@/shared/auth";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -14,6 +15,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const { id } = await params;
     const body = await req.json();
@@ -26,7 +30,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const { id } = await params;
     await masterRepository.deleteHoreca(id);
