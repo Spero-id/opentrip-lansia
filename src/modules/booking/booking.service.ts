@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { generateCode } from "@/shared/utils/helpers";
 import type { UUID } from "@/shared/types";
 import { notificationService } from "../notification/notification.service";
+import { ConflictError } from "@/shared/errors/app-error";
 
 export interface BookingItemInput {
   priceId: string;
@@ -27,7 +28,7 @@ export const bookingService = {
 
     for (const item of items) {
       const ok = await tripRepository.updateQuota(item.priceId as UUID, item.qty);
-      if (!ok) throw new Error(`Quota habis untuk item ${item.priceId}`);
+      if (!ok) throw new ConflictError(`Quota habis untuk item ${item.priceId}`);
     }
 
     const bookingCode = generateCode("OTL");

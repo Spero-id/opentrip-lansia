@@ -5,6 +5,7 @@ import { requireAdmin } from "@/shared/auth";
 import { detectImageKind, extensionForImage } from "@/shared/utils/image-guard";
 import { db } from "@/shared/db";
 import { media } from "@/db/schema/master";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ id: mediaRecord.id, url: `/api/uploads/${safeName}` });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan saat upload.";
+    const message = toPublicError(err, "Terjadi kesalahan saat upload.");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -84,7 +85,7 @@ export async function DELETE(req: NextRequest) {
     await unlink(filePath);
     return NextResponse.json({ success: true });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan saat menghapus file.";
+    const message = toPublicError(err, "Terjadi kesalahan saat menghapus file.");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

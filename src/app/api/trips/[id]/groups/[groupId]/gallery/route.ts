@@ -4,6 +4,7 @@ import { db } from "@/shared/db";
 import { tripGalleries, galleryMedia } from "@/modules/trip/trip.schema";
 import { media } from "@/db/schema/master";
 import { eq } from "drizzle-orm";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(
   _req: NextRequest,
@@ -40,7 +41,7 @@ export async function GET(
 
     return NextResponse.json({ gallery, media: mediaItems });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -81,7 +82,7 @@ export async function POST(
 
     return NextResponse.json({ gallery }, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

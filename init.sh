@@ -5,17 +5,21 @@ echo "=== Harness Initialization ==="
 echo "Directory: $(pwd)"
 echo ""
 
-//echo "=== Installing dependencies ==="
-//npm install
-//echo ""
+echo "=== Installing dependencies ==="
+npm install --no-audit --no-fund
+echo ""
 
-//echo "=== Running lint ==="
-//npm run lint
-//echo ""
+echo "=== Running lint ==="
+npm run lint
+echo ""
 
-//echo "=== Running tests ==="
-//npm test
-//echo ""
+echo "=== Type check ==="
+npx tsc --noEmit -p tsconfig.json
+echo ""
+
+echo "=== Running tests ==="
+npx jest --passWithNoTests
+echo ""
 
 echo "=== Verification Complete ==="
 echo ""

@@ -4,6 +4,7 @@ import { bookings, bookingParticipants, healthDeclarations } from "@/modules/boo
 import { payments } from "@/modules/payment/payment.schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 const VALID_STATUSES = ["pending", "awaiting_verification", "confirmed", "cancelled", "completed"] as const;
 
@@ -67,7 +68,7 @@ export async function GET(
       payments: paymentRecords,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     console.error("Get booking error:", err);
     return NextResponse.json({ error: message }, { status: 500 });
   }
@@ -133,7 +134,7 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, status, adminMessage: updates.adminMessage ?? (updates.notes ? JSON.parse(String(updates.notes)).adminMessage : null) });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     console.error("Update booking status error:", err);
     return NextResponse.json({ error: message }, { status: 500 });
   }

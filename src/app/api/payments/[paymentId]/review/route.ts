@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { paymentService } from "@/modules/payment/payment.service";
 import { paymentRepository } from "@/modules/payment/payment.repository";
 import { auth } from "@/modules/auth/auth.config";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ paymentId: string }> }) {
   try {
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pay
 
     return NextResponse.json(payment);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -2,12 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { tripRepository } from "@/modules/trip/trip.repository";
 import { bookings } from "@/modules/booking/booking.schema";
 import { db } from "@/shared/db";
+import { requireAdmin } from "@/shared/auth";
 import { eq, and } from "drizzle-orm";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; groupId: string }> }
 ) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const { id: tripId, groupId } = await params;
 
@@ -36,7 +41,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true, message: "Grup telah ditandai selesai" });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

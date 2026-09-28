@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bookingService } from "./booking.service";
 import { auth } from "../auth/auth.config";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 // --- Next.js Route Handlers ---
 
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
         : await bookingService.getUserBookings(session.user.id, session.user.email);
     return NextResponse.json(bookings);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
     const booking = await bookingService.createBooking(userId, departureId, items, participants);
     return NextResponse.json(booking, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

@@ -4,6 +4,7 @@ import { db } from "@/shared/db";
 import { galleryMedia } from "@/modules/trip/trip.schema";
 import { tripGalleries } from "@/modules/trip/trip.schema";
 import { eq } from "drizzle-orm";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function POST(
   req: NextRequest,
@@ -54,7 +55,7 @@ export async function POST(
 
     return NextResponse.json({ media }, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
