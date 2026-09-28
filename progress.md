@@ -1159,3 +1159,74 @@ pm run lint: no new errors; only warnings in touched files.
 4. Setting tersimpan di DB (site_settings.key = 'referral_bonus_points')
 5. Saat payment di-approve → referral convert → loyaltyService.creditReferralBonus() baca dari DB → poin sesuai setting
 6. Di tabel referral, status "Berhasil" tampilkan "+X poin" sesuai setting
+
+## Session 35 — Bugfix: Error 500 Halaman Dashboard Admin
+
+**Goal:** Analisis & perbaiki HTTP 500 pada `/admin` (banner "Gagal memuat data dashboard: HTTP 500").
+
+**Root cause:**
+- `src/app/admin/page.tsx` memanggil `GET /api/admin/dashboard`; route memanggil `dashboardService.getStats()` lalu `catch` → `NextResponse.json({error}, {status: 500})`.
+- Di `src/modules/booking/dashboard.service.ts`, `getStats()` memakai `db.select({...}).from(...)` (query builder Drizzle) tetapi membaca hasilnya sebagai `result.rows[0]`.
+- Query builder Drizzle mengembalikan **array row**, bukan `QueryResult` — `.rows` = `undefined`, sehingga `undefined[0]` melempar `TypeError: Cannot read properties of undefined (reading '0')` → ditangkap route → 500.
+- Bug ini muncul dari merge commit `beb2a65`: `ce8c60e` mengubah akses ke `.rows[...]` (untuk `db.execute`), lalu `c08127a` mengganti query menjadi `db.select(...)` tanpa menyesuaikan akses hasilnya.
+- `npx tsc --noEmit` mengonfirmasi: 5x `TS2339: Property 'rows' does not exist on type '{ count: number; }[]'` (lint tidak menangkap karena type-check ESLint nonaktif).
+
+**Fix:**
+- `src/modules/booking/dashboard.service.ts` — `result.rows[0]` → `result[0]?.count` / `result[0]?.total` (5 baris).
+- `getRecentBookings()` tetap memakai `db.execute(...).rows` — benar, karena `db.execute` memang mengembalikan `QueryResult`.
+
+**Regression test (baru):**
+- `src/modules/booking/dashboard.service.test.ts` — 4 test: aggregate dari array, `bookingChange`, empty result set, mapping `getRecentBookings`.
+
+**Artifact repair:**
+- `feature_list.json` — JSON rusak sejak HEAD (duplikat `},` baris 77-78 dari merge) → diperbaiki, sekarang valid; evidence feat-040 diperbarui.
+
+**Verification:**
+- `npx tsc --noEmit` — 0 error di `src/` (sisa hanya `.next/types/validator.ts` stale, pre-existing)
+- `npm run lint` — 0 errors, 79 warnings (pre-existing)
+- `npx jest` — 1 suite, 4/4 tests passing
+- Catatan: `DATABASE_URL` tidak tersedia di environment lokal ini, jadi verifikasi end-to-end terhadap DB belum dijalankan.
+
+**Risks:**
+- `./init.sh` saat ini hanya echo (checklist lint/test sudah dikomentari) — verifikasi dijalankan manual via `npm run lint` / `npx jest`.
+- Tidak ada test lain di repo (`npm test` → "No tests found" sebelum session ini).
+
+## Session 36 — Pre-Deploy Audit: Hardening & Repair Harness
+
+**Goal:** Audit kesiapan deploy (target: VPS self-hosted via pm2 / `ecosystem.config.cjs`), perbaiki celah kritikal.
+
+**Hasil audit (live smoke test terhadap Neon dev DB):**
+
+| Temuan | Severity | Status |
+|---|---|---|
+| `PUT /api/trips/[id]/groups/[groupId]/complete` menulis DB **tanpa auth** (200) | CRITICAL | ✅ ditambal → 401 |
+| `GET .../groups/[groupId]/participants` bocorkan nama+telepon peserta tanpa auth | CRITICAL | ✅ ditambal → 401 |
+| `GET /api/reviews` tanpa filter kembalikan semua review + **email user** tanpa auth | HIGH | ✅ ditambal → 401 (jalur publik `?tripId&status=approved` tetap 200) |
+| `./init.sh` rusak — sintaks JS `//echo` di bash → exit 127, verifikasi tidak pernah jalan | HIGH | ✅ diperbaiki (lint + tsc + jest) |
+| `feature_list.json` JSON invalid (duplikat `},` akibat merge) | HIGH | ✅ diperbaiki, parse OK |
+| Error handler route bocorkan `err.message` mentah (query SQL + params ke client) | MEDIUM | ⚠️ belum — lihat Risiko |
+| `BETTER_AUTH_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL` di `.env` = `http://localhost:3000` | HIGH (deploy) | ⚠️ wajib diganti saat deploy |
+| `npm audit`: 14 vuln (1 critical `next` RCE di Windows/AVIF, 6 high) | HIGH | ⚠️ `next` 16.2.11 → 16.3.6 |
+| Tidak ada rate-limit kustom (bawaan better-auth sudah 429 setelah 3 login gagal — terverifikasi) | INFO | ✅ cukup |
+| Upload ditulis ke `process.cwd()/uploads` (local FS) — hilang di serverless, perlu volume/backups di VPS | MEDIUM | ⚠️ catatan deploy |
+
+**Integritas data:** tes exploit `complete` sempat mengubah `trip_departures.updated_at` pada 1 grup dev. Booking TIDAK berubah (keduanya bukan `confirmed` — diverifikasi ulang: `TRV-MUFN9Z5Y-WFY3` = completed, `TRV-MUGDOVRH-OQNT` = pending, `updated_at` masih 2026-09-24). Tidak ada data lain tersentuh.
+
+**Files Modified:**
+- `src/app/api/trips/[id]/groups/[groupId]/complete/route.ts` — `requireAdmin(req)` di awal PUT
+- `src/app/api/trips/[id]/groups/[groupId]/participants/route.ts` — `requireAdmin(req)` di awal GET
+- `src/app/api/reviews/route.ts` — cabang "semua review" wajib admin; cabang publik tidak berubah
+- `init.sh` — ganti `//echo` → `echo`, aktifkan `npm install` / `lint` / `tsc` / `jest`
+- `feature_list.json` — JSON repair + evidence feat-040 & feat-080
+
+**Verification:**
+- `bash ./init.sh` → EXIT 0 (lint 0 errors, tsc 0 errors, jest 4/4)
+- `npm run build` → ✓ Compiled successfully, 62/62 static pages
+- Smoke test live: 401 tanpa auth / 200 dengan admin session untuk 3 endpoint; `GET /api/admin/dashboard` → **200** (bug 500 Session 35 terkonfirmasi teratasi end-to-end)
+
+**Risks / belum dikerjakan:**
+1. **Bocor `err.message` mentah** di ±78 tempat `catch` (terbukti: `GET /api/trips/x/groups` mengembalikan query SQL + params ke client). Solusi: helper `toPublicError(e)` yang hanya meneruskan pesan `AppError`, generic sisanya.
+2. **Ganti semua secret saat deploy**: `BETTER_AUTH_URL`, `NEXT_PUBLIC_BETTER_AUTH_URL` (harus domain produksi, bukan localhost), `BETTER_AUTH_SECRET` baru, dan **ganti password seed `admin@otl.id`/`admin`** (bcrypt cost 10, tapi kredensial publik di repo/seed).
+3. **`npm audit fix`** → naikkan `next` ke 16.3.6 (critical RCE advisory).
+4. Jalankan migrasi `drizzle/*.sql` manual di server (tidak ada runner otomatis di build).
+5. `uploads/` perlu backup/volume di VPS; jangan pakai Vercel tanpa object storage.

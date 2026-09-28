@@ -75,7 +75,6 @@
           ],
           "evidence": "Schema: tripDepartures.isActive column added. Repository: findAllGroupsByTripId, createGroup, updateGroup, deleteGroup, activateGroup, getActiveGroupWithPrice methods. Service: getTripGroups, createGroup, updateGroup, deleteGroup, activateGroup, getActiveGroupInfo. API: GET/POST /api/trips/[id]/groups, PUT/DELETE /api/trips/[id]/groups/[groupId], PUT activate, GET active-group, gallery CRUD, PUT complete. Admin UI: /admin/trips/[id]/groups page with list, create/edit modal, activate button, 'Tandai Selesai' button. /admin/trips/[id]/groups/[groupId]/gallery page with upload. Checkout route updated to use active group. BookingCard shows active group info with quota progress bar. User can submit feedback/rating when trip completed. Admin reviews page shows user name, trip title, group dates, booking code."
         },
-        },
         {
           "id": "feat-012",
           "title": "Trip pricing (multi-tier) & quota",
@@ -249,9 +248,11 @@
             "feat-001"
           ],
           "verification": [
-            "npm run lint"
+            "npm run lint",
+            "npx tsc --noEmit",
+            "npx jest src/modules/booking/dashboard.service.test.ts"
           ],
-          "evidence": "Admin layout with ShadCN sidebar (admin-sidebar.tsx), dashboard page with KPI cards"
+          "evidence": "Admin layout with ShadCN sidebar (admin-sidebar.tsx), dashboard page with KPI cards. Bugfix 2026-09: /api/admin/dashboard 500 (HTTP 500 di banner halaman) — dashboard.service.getStats() membaca hasil db.select() sebagai result.rows[0]; drizzle select mengembalikan array, sehingga undefined[0] melempar TypeError yang ditangkap route menjadi 500. Diperbaiki ke result[0]?.count/total; regression test ditambahkan (4 passing)."
         },
         {
           "id": "feat-041",
@@ -591,9 +592,11 @@
             "feat-001"
           ],
           "verification": [
-            "npm run lint"
+            "npm run lint",
+            "npx tsc --noEmit",
+            "bash ./init.sh"
           ],
-          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Admin PAGES kini server-side guard via helper reusable requireAdminLayout() di src/shared/auth-server.ts (dipakai /admin/layout.tsx; non-admin → /forbidden). Duplikasi requireAdmin di api/private-trip/admin dihapus — kini import dari src/shared/auth. Endpoint API admin lain masih perlu diaudit/dilindungi.",
+          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Admin PAGES kini server-side guard via helper reusable requireAdminLayout() di src/shared/auth-server.ts (dipakai /admin/layout.tsx; non-admin → /forbidden). Duplikasi requireAdmin di api/private-trip/admin dihapus — kini import dari src/shared/auth. Endpoint API admin lain masih perlu diaudit/dilindungi. | Audit 2026-09-28 (smoke test live): 3 endpoint admin public terbukti EXPLOIT tanpa auth — PUT /api/trips/[id]/groups/[groupId]/complete (menulis DB, 200), GET .../participants (bocor nama+telepon peserta), GET /api/reviews tanpa filter (bocor semua review + email user). Ketiganya kini pakai requireAdmin() → 401 tanpa session, 200 dengan admin session, jalur publik (?tripId&status=approved) tetap 200. Sisa endpoint public by-design: /api/trips, /api/horeca-types, /api/vendor-types, /api/contact, /api/newsletter, /api/payments/accounts, /api/auth/*.",
           "critical": true
         },
         {
