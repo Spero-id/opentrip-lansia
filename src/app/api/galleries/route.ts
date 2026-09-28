@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripRepository } from "@/modules/trip";
 import { requireAdmin } from "@/shared/auth";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET() {
   try {
     const data = await tripRepository.findAllGalleries();
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     const data = await tripRepository.createGallery(body);
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

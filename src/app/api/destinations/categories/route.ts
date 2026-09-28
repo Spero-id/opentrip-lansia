@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { masterRepository } from "@/modules/master";
 import { requireAdmin } from "@/shared/auth";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET() {
   try {
     const data = await masterRepository.getDestinationCategories();
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
     const category = await masterRepository.createDestinationCategory(body.name.trim());
     return NextResponse.json(category);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

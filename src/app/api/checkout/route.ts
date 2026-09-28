@@ -9,6 +9,7 @@ import { auth } from "@/modules/auth/auth.config";
 import { promotionRepository } from "@/modules/promotion";
 import { tripRepository } from "@/modules/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -325,7 +326,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, booking });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     console.error("Checkout error:", err);
     return NextResponse.json({ error: message }, { status: 500 });
   }

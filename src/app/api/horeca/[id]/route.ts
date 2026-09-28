@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { masterRepository } from "@/modules/master";
 import { requireAdmin } from "@/shared/auth";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -9,7 +10,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     if (!data) return NextResponse.json({ error: "HORECA tidak ditemukan" }, { status: 404 });
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -25,7 +26,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!data) return NextResponse.json({ error: "HORECA tidak ditemukan" }, { status: 404 });
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
@@ -39,7 +40,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     await masterRepository.deleteHoreca(id);
     return NextResponse.json({ success: true });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

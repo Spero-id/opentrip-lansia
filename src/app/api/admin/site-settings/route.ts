@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/shared/auth";
 import { siteSettingsService } from "@/modules/site-settings/site-settings.service";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin(req);
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
     const settings = await siteSettingsService.getAllSettings();
     return NextResponse.json(settings);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -39,7 +40,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

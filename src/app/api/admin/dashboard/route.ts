@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dashboardService } from "@/modules/booking/dashboard.service";
 import { requireAdmin } from "@/shared/auth";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin(req);
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
     ]);
     return NextResponse.json({ stats, recentBookings });
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Unknown error";
+    const message = toPublicError(e, "Unknown error");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

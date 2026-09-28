@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripService } from "@/modules/trip/trip.service";
 import { requireAdmin } from "@/shared/auth";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(
   req: NextRequest,
@@ -14,7 +15,7 @@ export async function GET(
     const participants = await tripService.getGroupParticipants(groupId);
     return NextResponse.json(participants);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -1,12 +1,13 @@
 import { promotionRepository } from "./promotion.repository";
+import { ConflictError, ValidationError } from "@/shared/errors/app-error";
 
 export const promotionService = {
   async applyPromo(code: string, userId: string, bookingId: string, subtotal: string) {
     const promo = await promotionRepository.findByCode(code);
-    if (!promo) throw new Error("Kode promo tidak valid");
+    if (!promo) throw new ValidationError("Kode promo tidak valid");
 
     if (promo.usageLimit !== null && promo.usageLimit !== undefined && (promo.usageCount ?? 0) >= promo.usageLimit) {
-      throw new Error("Kuota promo habis");
+      throw new ConflictError("Kuota promo habis");
     }
 
     let discount = 0;

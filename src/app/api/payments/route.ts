@@ -5,6 +5,7 @@ import { bookings } from "@/modules/booking/booking.schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";
 import { notificationService } from "@/modules/notification/notification.service";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 const ALLOWED_METHODS = new Set(["BCA", "BRI", "MANDIRI", "GOPAY", "OVO", "DANA", "QRIS"]);
 
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, payment });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     console.error("Payment create error:", err);
     return NextResponse.json({ error: message }, { status: 500 });
   }

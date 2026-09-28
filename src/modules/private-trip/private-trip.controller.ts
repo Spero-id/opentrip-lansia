@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { privateTripService } from "./private-trip.service";
 import { auth } from "../auth/auth.config";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 interface ValidationError {
   field: string;
@@ -84,7 +85,7 @@ export const privateTripController = {
         submittedAt: result.submittedAt,
       }, { status: 201 });
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Gagal menyimpan request";
+      const message = toPublicError(e, "Gagal menyimpan request");
       return NextResponse.json({ error: message }, { status: 500 });
     }
   },
@@ -146,7 +147,7 @@ export const privateTripController = {
       const result = await privateTripService.updateStatus(params.id, body.action);
       return NextResponse.json(result);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Unknown error";
+      const message = toPublicError(e, "Unknown error");
       return NextResponse.json({ error: message }, { status: 400 });
     }
   },
@@ -179,7 +180,7 @@ export const privateTripController = {
       });
       return NextResponse.json(proposal, { status: 201 });
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Unknown error";
+      const message = toPublicError(e, "Unknown error");
       return NextResponse.json({ error: message }, { status: 400 });
     }
   },
@@ -207,7 +208,7 @@ export const privateTripController = {
       );
       return NextResponse.json(result);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Unknown error";
+      const message = toPublicError(e, "Unknown error");
       return NextResponse.json({ error: message }, { status: 400 });
     }
   },

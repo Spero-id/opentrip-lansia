@@ -6,6 +6,7 @@ import { db } from "@/shared/db";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";
 import { requireAdmin } from "@/shared/auth";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   try {
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest) {
     const data = await reviewRepository.findAll();
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

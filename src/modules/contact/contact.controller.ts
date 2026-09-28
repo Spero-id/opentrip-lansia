@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactService } from "./contact.service";
 import { AppError } from "@/shared/errors/app-error";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 export const contactController = {
   async create(req: NextRequest) {
@@ -12,7 +13,7 @@ export const contactController = {
       if (err instanceof AppError) {
         return NextResponse.json({ error: err.message }, { status: err.status });
       }
-      const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+      const message = toPublicError(err, "Terjadi kesalahan");
       return NextResponse.json({ error: message }, { status: 500 });
     }
   },

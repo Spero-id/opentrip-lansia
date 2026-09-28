@@ -2,6 +2,7 @@ import { tripRepository } from "./trip.repository";
 import type { UUID } from "@/shared/types";
 import type { trips, itineraryItems } from "./trip.schema";
 import type { GroupCreateInput } from "./trip.repository";
+import { ConflictError, NotFoundError, ValidationError } from "@/shared/errors/app-error";
 
 type TripInsert = typeof trips.$inferInsert;
 type ItineraryInsert = typeof itineraryItems.$inferInsert;
@@ -127,7 +128,7 @@ export const tripService = {
   // Group Trip Management
   async getTripGroups(tripId: UUID) {
     const trip = await tripRepository.findById(tripId);
-    if (!trip) throw new Error("Trip tidak ditemukan");
+    if (!trip) throw new NotFoundError("Trip");
     const groups = await tripRepository.findAllGroupsByTripId(tripId);
     return { trip, groups };
   },
@@ -138,13 +139,13 @@ export const tripService = {
 
   async createGroup(tripId: UUID, data: GroupCreateInput) {
     const trip = await tripRepository.findById(tripId);
-    if (!trip) throw new Error("Trip tidak ditemukan");
+    if (!trip) throw new NotFoundError("Trip");
     return tripRepository.createGroup(tripId, data);
   },
 
   async updateGroup(groupId: UUID, data: Partial<GroupCreateInput>) {
     const group = await tripRepository.findGroupById(groupId);
-    if (!group) throw new Error("Grup tidak ditemukan");
+    if (!group) throw new NotFoundError("Grup");
 
     const updateData: Record<string, unknown> = {};
     if (data.startDate) updateData.startDate = data.startDate;
@@ -158,12 +159,12 @@ export const tripService = {
 
   async deleteGroup(groupId: UUID) {
     const group = await tripRepository.findGroupById(groupId);
-    if (!group) throw new Error("Grup tidak ditemukan");
+    if (!group) throw new NotFoundError("Grup");
 
     // Check if there are active bookings
     const bookingCount = await tripRepository.countBookingsByDepartureId(groupId);
     if (bookingCount > 0) {
-      throw new Error("Tidak bisa menghapus grup yang sudah memiliki booking aktif");
+      throw new ConflictError("Tidak bisa menghapus grup yang sudah memiliki booking aktif");
     }
 
     return tripRepository.deleteGroup(groupId);
@@ -171,16 +172,16 @@ export const tripService = {
 
   async activateGroup(tripId: UUID, groupId: UUID) {
     const trip = await tripRepository.findById(tripId);
-    if (!trip) throw new Error("Trip tidak ditemukan");
+    if (!trip) throw new NotFoundError("Trip");
 
     const group = await tripRepository.findGroupById(groupId);
-    if (!group) throw new Error("Grup tidak ditemukan");
+    if (!group) throw new NotFoundError("Grup");
 
-    if (group.tripId !== tripId) throw new Error("Grup tidak termasuk dalam trip ini");
+    if (group.tripId !== tripId) throw new ValidationError("Grup tidak termasuk dalam trip ini");
 
     // Only scheduled or confirmed groups can be activated
     if (!["scheduled", "confirmed"].includes(group.status)) {
-      throw new Error("Hanya grup dengan status scheduled atau confirmed yang bisa diaktifkan");
+      throw new ValidationError("Hanya grup dengan status scheduled atau confirmed yang bisa diaktifkan");
     }
 
     return tripRepository.activateGroup(tripId, groupId);

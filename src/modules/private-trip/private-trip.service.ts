@@ -3,6 +3,7 @@ import { notificationService } from "../notification/notification.service";
 import { db } from "@/shared/db";
 import { users } from "../auth/auth.schema";
 import { eq } from "drizzle-orm";
+import { AppError, ConflictError, UnauthorizedError, ValidationError } from "@/shared/errors/app-error";
 
 type RequestStatus = "draft" | "submitted" | "reviewed" | "approved" | "rejected" | "revision";
 type ProposalStatus = "pending" | "accepted" | "rejected" | "revised";
@@ -63,13 +64,13 @@ export const privateTripService = {
 
   async updateStatus(id: string, action: string) {
     const req = await privateTripRepository.findById(id);
-    if (!req) throw new Error("Request not found");
+    if (!req) throw new AppError("Request not found", "NOT_FOUND", 404);
 
     const newStatus = isValidTransition(REQUEST_TRANSITIONS, req.status, action);
-    if (!newStatus) throw new Error(`Cannot perform "${action}" on request with status "${req.status}"`);
+    if (!newStatus) throw new ValidationError(`Cannot perform "${action}" on request with status "${req.status}"`);
 
     const terminal = ["approved", "rejected"];
-    if (terminal.includes(req.status)) throw new Error(`Cannot change status of ${req.status} requests`);
+    if (terminal.includes(req.status)) throw new ValidationError(`Cannot change status of ${req.status} requests`);
 
     return privateTripRepository.updateStatus(id, newStatus);
   },
@@ -102,22 +103,22 @@ export const privateTripService = {
 
   async respondToProposal(requestId: string, proposalId: string, userId: string, action: string, revisionNote?: string) {
     const req = await privateTripRepository.findById(requestId);
-    if (!req) throw new Error("Request not found");
-    if (req.userId !== userId) throw new Error("Unauthorized");
+    if (!req) throw new AppError("Request not found", "NOT_FOUND", 404);
+    if (req.userId !== userId) throw new UnauthorizedError();
 
     if (action !== "accept" && action !== "reject" && action !== "revise") {
-      throw new Error(`Invalid action: ${action}`);
+      throw new ValidationError(`Invalid action: ${action}`);
     }
 
     const requestAction = action === "accept" ? "approve" : action === "reject" ? "reject" : "request_revision";
     const newReqStatus = isValidTransition(REQUEST_TRANSITIONS, req.status, requestAction);
 
     const prop = await privateTripRepository.findProposalById(proposalId);
-    if (!prop) throw new Error("Proposal not found");
-    if (prop.status !== "pending" && prop.status !== "revised") throw new Error("Proposal is not actionable");
+    if (!prop) throw new AppError("Proposal not found", "NOT_FOUND", 404);
+    if (prop.status !== "pending" && prop.status !== "revised") throw new ConflictError("Proposal is not actionable");
 
     const newPropStatus = isValidTransition(PROPOSAL_TRANSITIONS, prop.status, action);
-    if (!newPropStatus) throw new Error(`Cannot "${action}" proposal with status "${prop.status}"`);
+    if (!newPropStatus) throw new ValidationError(`Cannot "${action}" proposal with status "${prop.status}"`);
 
     if (newReqStatus) {
       await privateTripRepository.updateStatus(requestId, newReqStatus);

@@ -1230,3 +1230,56 @@ pm run lint: no new errors; only warnings in touched files.
 3. **`npm audit fix`** → naikkan `next` ke 16.3.6 (critical RCE advisory).
 4. Jalankan migrasi `drizzle/*.sql` manual di server (tidak ada runner otomatis di build).
 5. `uploads/` perlu backup/volume di VPS; jangan pakai Vercel tanpa object storage.
+
+## Session 37 — Sanitasi Pesan Error API (Allowlist)
+
+**Goal:** Tutup kebocoran internals ke response API. Sebelumnya terbukti live: `GET /api/trips/x/groups` mengembalikan **query SQL mentah + params** ke browser.
+
+**Pendekatan: ALLOWLIST, bukan blocklist.**
+Blocklist tidak akan pernah lengkap (setiap error type baru = leak baru). Sebagai gantinya: hanya pesan yang memang **ditulis developer untuk user** (`AppError` & subclass) yang boleh lewat; sisanya dipastikan tidak pernah bocor — tapi **tetap di-log penuh ke server console** (`console.error("[api] non-AppError caught:", err)`) supaya tetap bisa didebug.
+
+**Perubahan:**
+1. **`src/shared/errors/to-public-error.ts` (baru)** — `toPublicError(err, fallback)`:
+   - `AppError` → teruskan `err.message` apa adanya
+   - selainnya → `fallback` (generik) + log penuh di server
+2. **82 catch block di 45 file** (route handler + controller) diganti dari
+   `err instanceof Error ? err.message : "Terjadi kesalahan"` → `toPublicError(err, "...")`.
+   Fallback khusus (`"Terjadi kesalahan saat upload."`, `"Gagal menyimpan request"`, dll) dipertahankan per lokasi.
+3. **21 `throw new Error(...)` di 4 service dimigrasi ke `AppError`** — ini wajib, karena allowlist hanya meneruskan `AppError`, kalau tidak pesan bisnis ikut tersensor.
+   - `trip.service.ts` → `NotFoundError("Trip"/"Grup")`, `ValidationError`, `ConflictError`
+   - `promotion.service.ts` → `ValidationError("Kode promo tidak valid")`, `ConflictError("Kuota promo habis")`
+   - `booking.service.ts` → `ConflictError("Quota habis...")`
+   - `private-trip.service.ts` → `AppError("Request not found"/"Proposal not found", "NOT_FOUND", 404)`, `ValidationError`, `ConflictError`, `UnauthorizedError`
+
+**Jaminan keputusan: teks yang sampai ke user100% identik.**
+`NotFoundError("Trip")` menghasilkan `"Trip tidak ditemukan"` (identik ✓), tapi `NotFoundError("Request")` akan menghasilkan `"Request tidak ditemukan"` (berubah ✗) → untuk itu dipakai `AppError` langsung dengan teks asli. Verifikasi live: `"Grup tidak ditemukan"` tetap tampil persis.
+
+**Sengaja TIDAK disentuh:**
+- `src/shared/db/retry.ts` — `.message` dipakai untuk **regex kontrol alur** (`isTransientError`), bukan untuk response
+- 6 client component `src/app/admin/*` — error mereka berasal dari fetch (respons server sudah tersensor) atau pesan jaringan generik, bukan internals
+
+**Bukti live (server jalan, Neon dev DB):**
+| Endpoint | Sebelum | Sesudah |
+|---|---|---|
+| `GET /api/trips/nonexistent/groups` | `Failed query: select "id"... params: y` | `Terjadi kesalahan` |
+| `GET /api/blogs/not-a-uuid` | (drizzle error mentah) | `Terjadi kesalahan` |
+| `POST /api/contact` (zod invalid) | pesan zod | **tetap** `Invalid input: ... Email tidak valid, Pesan wajib diisi` |
+| `POST /api/newsletter` (email invalid) | — | **tetap** `Email tidak valid` |
+| `PUT .../groups/[id]/complete` (admin, tak ada) | — | **tetap** `Grup tidak ditemukan` |
+| `PUT .../complete` (tanpa session) | 200 (exploit) | `Unauthorized` |
+
+**Files Created:**
+- `src/shared/errors/to-public-error.ts`
+- `src/shared/errors/to-public-error.test.ts` (12 test: pesan AppError lewat, SQL/connection/path/TypeError/JSON disensor, fallback khusus, selalu log)
+
+**Files Modified:** 45 route/controller (codemod) + 4 service (migrasi throw)
+
+**Verification:**
+- `bash ./init.sh` → EXIT 0
+- `npm run lint` → 0 errors, 79 warnings (pre-existing)
+- `npx tsc --noEmit` → 0 errors
+- `npx jest` → 2 suites, **16/16 passing**
+- `npm run build` → ✓ Compiled, 62/62 pages
+- Smoke test live → tabel bukti di atas
+
+**Catatan:** `retry.ts` sengaja tetap memakai pola lama karena ia **meng-parse** pesan error DB untuk menentukan retry — menggantinya akan memutus fitur retry.

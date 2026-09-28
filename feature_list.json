@@ -670,6 +670,22 @@
             "npm run build"
           ],
           "evidence": "tsc 0 error, eslint 0 error, build sukses; live: login admin 200 + hash migrasi ke \\ (verified via SQL), password salah 401; quota: +1 OK, oversell +20 ditahan 0 row, restore OK"
+        },
+        {
+          "id": "feat-086",
+          "title": "Phase 2 Security: sanitasi pesan error API (allowlist)",
+          "description": "Semua catch block route handler/controller dulu melakukan err instanceof Error ? err.message : fallback, sehingga internals kekirim ke client. Terbukti live: GET /api/trips/x/groups membocorkan query SQL mentah + params. Sekarang pakai toPublicError() — ALLOWLIST: hanya AppError (ditulis developer untuk user) yang lewat, sisanya jadi pesan generik TAPI tetap console.error penuh ke server. 82 catch block di 45 file diganti; 21 throw new Error di 4 service dimigrasi ke AppError/NotFoundError/ValidationError/ConflictError/UnauthorizedError supaya pesan bisnis tidak ikut tersensor.",
+          "status": "completed",
+          "priority": 1,
+          "depends_on": [
+            "feat-085"
+          ],
+          "verification": [
+            "npm run lint",
+            "npm run build",
+            "npx jest"
+          ],
+          "evidence": "src/shared/errors/to-public-error.ts (+ 12 test); 45 file route/controller; 4 service; tsc 0 error, lint 0 error/79 warning, jest 16/16, build 62/62. Live: /api/trips/nonexistent/groups sekarang {\"error\":\"Terjadi kesalahan\"} (dulu: Failed query: select ... params: y); pesan bisnis tetap identik — zod \"Email tidak valid\", zod contact, \"Grup tidak ditemukan\". retry.ts sengaja TIDAK disentuh (pakai .message utk regex isTransientError)"
         }
       ]
     },

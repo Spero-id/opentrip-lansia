@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripService } from "./trip.service";
 import { slugify } from "@/shared/utils/helpers";
+import { toPublicError } from "@/shared/errors/to-public-error";
 
 // --- Next.js Route Handlers ---
 
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
     const trips = all ? await tripService.getAllTrips() : await tripService.getPublishedTrips();
     return NextResponse.json(trips);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -24,7 +25,7 @@ export async function GETById(_req: NextRequest, { params }: { params: Promise<{
     }
     return NextResponse.json(trip);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
     const trip = await tripService.createTrip({ ...body, slug });
     return NextResponse.json(trip, { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
@@ -51,7 +52,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
     return NextResponse.json(trip);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
@@ -62,7 +63,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     await tripService.deleteTrip(id);
     return NextResponse.json({ success: true });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+    const message = toPublicError(err, "Terjadi kesalahan");
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
