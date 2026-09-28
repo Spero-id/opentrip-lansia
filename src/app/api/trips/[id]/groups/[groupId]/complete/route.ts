@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { tripRepository } from "@/modules/trip/trip.repository";
 import { bookings } from "@/modules/booking/booking.schema";
 import { db } from "@/shared/db";
+import { requireAdmin } from "@/shared/auth";
 import { eq, and } from "drizzle-orm";
 
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; groupId: string }> }
 ) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const { id: tripId, groupId } = await params;
 
