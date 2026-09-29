@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Check, X, AlertCircle, ShoppingCart } from "lucide-react";
 import { useNotifications, getNotificationHref } from "@/hooks/useNotifications";
+import { useSession } from "@/lib/auth-client";
 import { AdminSidebar } from "./components/admin-sidebar";
 import { getActiveMenu } from "./components/nav-data";
 import {
@@ -28,6 +29,21 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(15000);
+  const { data: session } = useSession();
+
+  // Identitas admin diambil dari session, bukan string hardcode — sebelumnya
+  // setiap admin melihat "Admin Master / admin@opentrip.co.id" (tidak ada
+  // di DB), padahal akun yang login berbeda-beda.
+  const adminName = session?.user?.name?.trim() || "Admin";
+  const adminEmail = session?.user?.email || "";
+  const adminInitials =
+    adminName
+      .split(/\s+/)
+      .map((w) => w[0])
+      .filter(Boolean)
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "A";
 
   const handleNotificationClick = (n: { id: string; type: string; link?: string | null }) => {
     void markAsRead(n.id);
@@ -225,11 +241,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-[#F49D1A]/15 text-[#F49D1A] font-bold text-xs flex items-center justify-center border border-[#F49D1A]/20">
-                ADM
+                {adminInitials}
               </div>
               <div className="hidden sm:block text-left">
-                <span className="block text-xs font-bold text-slate-900 leading-tight">Admin Master</span>
-                <span className="block text-[11px] text-slate-400 leading-tight">admin@opentrip.co.id</span>
+                <span className="block text-xs font-bold text-slate-900 leading-tight">{adminName}</span>
+                <span className="block text-[11px] text-slate-400 leading-tight">{adminEmail}</span>
               </div>
             </div>
           </div>

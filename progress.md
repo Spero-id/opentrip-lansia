@@ -1546,3 +1546,30 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
 - **Tidak disentuh**: 3 tabel yatim di DB (`destinations`, `meeting_points`,
   `newsletter_subscribers`) — tidak ada kode yang memakai, tapi penghapusan tabel
   tidak ada gunanya menjelang deploy.
+
+### 2026-08-09 — Pemeriksaan visual (screenshot) + fix identitas header admin
+- **Cara verifikasi visual**: alih-alih `npx playwright test` (78 test, boros RAM —
+  laptop dev tidak sanggup), jalankan **satu tab Chrome serial**: server → `page.goto`
+  → screenshot → tutup. Hemat memori, cukup untuk menilai tampilan.
+  Screenshot tersimpan di `test-results/vis-*.png` (gitignore).
+- **Jujur soal E2E**: selama sesi audit ini yang dijalankan adalah **uji API
+  (curl/fetch) + query DB + screenshot**, BUKAN suite `npx playwright test`
+  (78 test) maupun `npm run test` (Jest). Run terakhir suite = 2026-09-28 10:01,
+  **sebelum** 6 commit di branch `deployment`. Belum dijalankan ulang.
+- **Terbukti di layar**: `/trips` → Labuan Bajo `★ 4.0`, Bali & Yogyakarta
+  **"Belum ada ulasan"**; detail → `4.0 (1 ulasan)`; profil → kartu Poin Loyalitas
+  dan Total Referral tampil (0, bukan kosong); admin ▸ ulasan → 1 baris sesuai DB;
+  admin ▸ komisi → "Belum ada data komisi."
+- **Temuan baru**: `AdminShell.tsx` menampilkan **identitas hardcode**
+  `Admin Master / admin@opentrip.co.id` — tidak ada di DB (admin asli
+  `admin@otl.id`), dan file itu nol `useSession`. Semua admin melihat identitas
+  orang lain. **Diperbaiki**: baca `useSession()`, nama/email/inisial diturunkan
+  dari akun login, fallback `"Admin"` (bukan string identitas siapapun).
+- **Salah baca sendiri**: screenshot pertama sebenarnya sudah menampilkan hasil
+  baru (`AO` / `Admin OTL`), tapi saya menyimpulkan "masih lama" tanpa benar-benar
+  membacanya → saya telusuri ke source → bundle (`Admin Master` tidak ada di
+  `.next/static`, hanya di `.map` akibat komentar) → DOM (langsung
+  `Admin OTL` / `admin@otl.id`). Pelajaran: bukti bertentangan = periksa sumber,
+  jangan menyalahi kode.
+- **Verifikasi**: tsc 0; lint 0 err/79 warning; build OK; `./init.sh` EXIT 0;
+  server dimatikan.
