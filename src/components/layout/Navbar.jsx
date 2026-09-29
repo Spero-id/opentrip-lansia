@@ -141,20 +141,24 @@ export default function Navbar() {
                     </span>
 
                     <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
-                      {session.user.image ? (
-                        <>
-                          <img
-                            src={session.user.image}
-                            alt="Foto profil"
-                            className="h-full w-full object-cover"
-                          />
-                          <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-                        </>
-                      ) : (
-                        <span className="text-sm font-semibold">
-                          {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
-                        </span>
+                      {/* Inisial di belakang sebagai fallback; kalau foto gagal
+                          dimuat, onError menyembunyikan <img> sehingga inisial
+                          yang tampil — bukan alt text. */}
+                      <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
+                        {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                      </span>
+                      {session.user.image && (
+                        <img
+                          key={session.user.image}
+                          src={session.user.image}
+                          alt=""
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
                       )}
+                      <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                     </span>
                     
                   </button>

@@ -14,16 +14,22 @@ export default function ProfileHeader({ user }) {
         </p>
       </div>
 
-      {user?.image ? (
+      {/* Inisial selalu dirender di belakang sebagai fallback, foto menimpanya.
+          Kalau foto gagal dimuat, onError menyembunyikan <img> sehingga inisial
+          yang tampil — bukan alt text / ikon gambar rusak. */}
+      <div className="absolute left-5 top-14 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-[#F49D1A] text-2xl font-bold text-white shadow-sm sm:left-7 sm:top-16">
+        {initial}
+      </div>
+      {user?.image && (
         <img
+          key={user.image}
           src={user.image}
-          alt={user?.name}
+          alt=""
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
           className="absolute left-5 top-14 h-20 w-20 rounded-full border-4 border-white object-cover shadow-sm sm:left-7 sm:top-16"
         />
-      ) : (
-        <div className="absolute left-5 top-14 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-[#F49D1A] text-2xl font-bold text-white shadow-sm sm:left-7 sm:top-16">
-          {initial}
-        </div>
       )}
 
       <div className="px-5 pb-6 pt-4 sm:px-7">

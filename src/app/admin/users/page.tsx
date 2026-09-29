@@ -246,17 +246,25 @@ export default function AdminUsersPage() {
                     <tr key={u.id} className="hover:bg-slate-50/60 transition">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          {u.image ? (
-                            <img
-                              src={u.image}
-                              alt={u.name}
-                              className="w-9 h-9 rounded-full object-cover border border-slate-200"
-                            />
-                          ) : (
-                            <div className="w-9 h-9 rounded-full bg-[#0D238E]/10 text-[#0D238E] font-bold text-xs flex items-center justify-center shrink-0 border border-[#0D238E]/20">
+                          {/* Inisial di belakang sebagai fallback; kalau foto gagal
+                              dimuat, onError menyembunyikan <img> sehingga inisial
+                              yang tampil — bukan alt text / ikon gambar rusak. */}
+                          <div className="relative w-9 h-9 shrink-0 rounded-full border border-[#0D238E]/20 bg-[#0D238E]/10">
+                            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[#0D238E]">
                               {initial}
-                            </div>
-                          )}
+                            </span>
+                            {u.image && (
+                              <img
+                                key={u.image}
+                                src={u.image}
+                                alt=""
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                                className="absolute inset-0 h-9 w-9 rounded-full object-cover"
+                              />
+                            )}
+                          </div>
                           <div>
                             <div className="font-bold text-slate-900">
                               <span>{u.name}</span>

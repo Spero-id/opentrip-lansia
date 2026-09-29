@@ -1320,3 +1320,54 @@ Blocklist tidak akan pernah lengkap (setiap error type baru = leak baru). Sebaga
 3. **`uploads/` harus persisten** — pm2 di VPS biasa aman; Docker wajib mount volume.
 4. **`vercel.json` masih ada** padahal target pm2/VPS — kontradiktif, belum diputuskan dihapus atau tidak.
 5. 79 lint warning pre-existing (mayoritas `<img>` bukan `next/image`) — tidak mempengaruhi fungsi, tidak dikerjakan sesi ini.
+
+## Session 39 — Fix: Foto Profil Kadang Tidak Muncul (alt text menggantikan foto)
+
+**Laporan:** "Foto profil terkadang tidak muncul saat pertama buka website, menampilkan teks alternatif. Setelah refresh bisa."
+
+**Diagnosis (diverifikasi, bukan asumsi):**
+
+Yang tampil adalah **alt text**, bukan fallback inisial huruf. Di 3 tempat foto profil dirender
+(`ProfileHeader.jsx:19`, `Navbar.jsx:147`, `admin/users/page.tsx:251`) **tidak ada satu pun `onError`**.
+Fallback-nya hanya mengecek *"apakah `image` ada di data?"*, bukan *"apakah gambarnya berhasil dimuat?"*:
+
+```
+image === null          → inisial huruf     ✅
+image ada, load OK      → foto tampil       ✅
+image ada, load GAGAL   → alt text permanen ❌  (inisial tidak pernah muncul)
+```
+
+Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "terkadang, bisa setelah refresh".
+
+**Bukti:** screenshot `test-results/A-normal.png` (sebelum) vs `test-results/fix-A-diblokir.png` (sesudah).
+
+**Yang sudah dibuktikan BUKAN penyebab** (diuji langsung sampai ke DB & server):
+- Data `image` — `get-session` selalu mengembalikannya benar (diuji dengan akun probe)
+- Cookie cache session basi — `cookieCache` hanya untuk setup tanpa database; respons tanpa `Set-Cookie`
+- Halaman `/profile` di-prerender (`x-nextjs-prerender: 1`), tapi avatar dirender di client setelah session datang
+- URL Google mati — semua 200, responsif 0.17–0.25s
+- Form edit admin menghapus foto — hanya kirim `name, phone, role, loyaltyPoints`
+- Diblokir `next/image` / CSP — pakai `<img>` biasa, tidak ada CSP
+
+**Perbaikan (3 file):**
+- Inisial huruf kini **selalu dirender di belakang** sebagai lapisan fallback
+- `<img>` di atasnya dengan `onError` → `display:none` → inisial langsung terlihat saat gambar gagal
+- `alt=""` — sebelumnya `alt={nama}` yang justru jadi "teks alternatif" yang dilaporkan. `alt=""` benar secara a11y karena nama sudah tampil berdampingan (foto profil bersifat dekoratif)
+- `key={url}` — kalau nanti ada fitur ganti foto, elemen di-remount sehingga status `display:none` tidak tertinggal
+
+**Files Modified:**
+- `src/components/profile/ProfileHeader.jsx`
+- `src/components/layout/Navbar.jsx`
+- `src/app/admin/users/page.tsx`
+
+**Verification:**
+- `bash ./init.sh` → **EXIT 0** (lint 0 errors / **79 warning — identik dengan sebelumnya**, tsc 0 errors, jest 16/16)
+- `npm run build` → ✓ Compiled, 62/62 pages
+- **Playwright reproduksi A/B** (akun probe dengan foto, `lh3.googleusercontent.com` diblokir):
+  - A) gambar diblokir → `<img>` `visible:false` (onError aktif), inisial "P" tampil rapi ✅
+  - B) gambar normal → `naturalWidth:96`, foto tampil seperti biasa ✅
+- Data test dibersihkan: akun probe dihapus, DB kembali 13 user, server dimatikan, tree bersih
+
+**Risks / catatan:**
+1. **Penyebab kegagalan memuat di kunjungan pertama tidak bisa direproduksi dari mesin dev** (URL selalu 200). Yang diperbaiki adalah *dampaknya* — sekarang selalu jatuh ke inisial, tidak pernah alt text. Kalau perlu tahu akar jaringannya: DevTools → Network → Disable cache, cek status request `lh3.googleusercontent.com` saat kunjungan pertama.
+2. **Foto profil hanya bisa diisi oleh Google OAuth** — tidak ada endpoint/form upload avatar (9 dari 13 user ber-`image: NULL`). Fitur upload avatar jadi usulan lanjutan, infrastruktur `/api/upload` sudah ada.
