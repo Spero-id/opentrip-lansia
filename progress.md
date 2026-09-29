@@ -1283,3 +1283,40 @@ Blocklist tidak akan pernah lengkap (setiap error type baru = leak baru). Sebaga
 - Smoke test live → tabel bukti di atas
 
 **Catatan:** `retry.ts` sengaja tetap memakai pola lama karena ia **meng-parse** pesan error DB untuk menentukan retry — menggantinya akan memutus fitur retry.
+
+## Session 38 — Pre-Deploy Audit & Kesiapan VPS (2026-09-29)
+
+**Goal:** Tentukan apa yang harus diperbaiki sebelum kode di-deploy ke VPS. Bukan fitur baru — audit kesiapan.
+
+**Temuan utama:**
+
+1. **Kode sudah ke-merge.** Branch `fix/dashboard-admin` (4 commit) sudah masuk `origin/main` lewat PR #100 — `git merge-base --is-ancestor HEAD origin/main` = true. Tidak ada yang tertinggal untuk di-push.
+2. **Security kode sudah rapi, tidak ada yang perlu diperbaiki.** Diverifikasi langsung:
+   - 9 route `/api/**admin**` semua pakai `requireAdmin` (loop satu-satu, nol yang tanpa auth)
+   - `toPublicError` dipakai di 47 file; sisa `err.message` mentah tinggal `retry.ts` (sengaja) + file test
+   - Upload: `requireAdmin` + cek magic-bytes asli (`detectImageKind`), bukan cuma ekstensi; nama file digenerate random; max 5MB
+   - Baca file: guard `..` + `startsWith(UPLOADS_DIR)`
+   - Query: semua Drizzle parameterized
+   - Booking & private-trip: session dicek di controller, ownership dicek di service
+3. **Migrasi DB adalah risiko terbesar untuk server baru.** Tabel auth `session`/`account`/`verification` **tidak ada di file SQL manapun** — dibuat via `drizzle-kit push` selama pengembangan. `drizzle/meta/_journal.json` juga cuma memuat 3 dari 7 file SQL, jadi `drizzle-kit migrate` akan melewatkan 4 file terakhir. **Keputusan: pakai `drizzle-kit push` untuk DB baru, lewati kalau DB lama. JANGAN pakai `migrate`.**
+4. **`.env` harus diisi sebelum `npm run build`** — `NEXT_PUBLIC_*` di-bake saat build. Kalau diisi sesudah, harus build ulang.
+
+**Perubahan:**
+- `npm audit fix` → `next` 16.2.11 → **16.3.6**. Vulnerabilities: 16 (1 critical, 6 high) → **5 moderate**. Sisa 5 semuanya di dependency dev (`drizzle-kit`, `nodemailer` transitif) — `--force` justru menurunkan `drizzle-kit` ke versi breaking, sengaja tidak dipakai. `package.json` tidak berubah, hanya `package-lock.json`.
+- `feature_list.json` — summary salah hitung akibat merge: deklarasi `in_review:20 / completed:23 / to_do:13`, aktual `17 / 22 / 16`. Diperbaiki.
+- `.gitignore` — tambah `/test-results/`, `/playwright-report/`, `/uploads/`, `/public/uploads/`
+- **`uploads/` sengaja TIDAK dihapus dari git** (61 file tetap ter-track). Alasan: URL `/api/uploads/<nama>` tersimpan di DB; kalau file ikut hilang dari clone, gambar lama 404. `.gitignore` hanya mencegah file **baru** ikut ter-commit.
+- `docs/DEPLOY.md` (baru) — checklist deploy siap-jalan untuk teman yang menangani VPS, termasuk 3 hal yang paling sering kelupaan (password admin, persistensi `uploads/`, urutan `.env` vs build)
+
+**Verification:**
+- `bash ./init.sh` → **EXIT 0** (lint 0 errors / 79 warnings pre-existing, `tsc` 0 errors, jest 16/16)
+- `npm run build` → ✓ Compiled di `next` 16.3.6, semua route OK
+- `npm audit --omit=dev` → sisa 5 moderate, 0 critical / 0 high
+- `feature_list.json` divalidasi ulang lewat script: summary == hitungan aktual
+
+**Risks / catatan:**
+1. **Password `admin@otl.id` / `admin` masih berlaku** — ada di repo publik (`src/db/seed.ts`). Wajib diganti via UI profile SETELAH deploy; mengubah seed saja tidak cukup karena user sudah ada di DB.
+2. **`BETTER_AUTH_SECRET` harus baru** di server, dan `BETTER_AUTH_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL` harus ganti dari `http://localhost:3000` ke domain produksi.
+3. **`uploads/` harus persisten** — pm2 di VPS biasa aman; Docker wajib mount volume.
+4. **`vercel.json` masih ada** padahal target pm2/VPS — kontradiktif, belum diputuskan dihapus atau tidak.
+5. 79 lint warning pre-existing (mayoritas `<img>` bukan `next/image`) — tidak mempengaruhi fungsi, tidak dikerjakan sesi ini.

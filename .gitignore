@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
 
 # next.js
 /.next/
@@ -44,5 +46,13 @@ next-env.d.ts
 
 # hugerte static assets
 /public/hugerte
+
+# user-uploaded files (dipublish via route /api/uploads/[...path], bukan static)
+# CATATAN: file yang SUDAH ter-track tetap ikut clone — jangan dihapus dari git,
+# karena URL /api/uploads/<nama> tersimpan di DB dan akan 404 kalau file ikut hilang.
+/uploads/
+
+# local development uploads (duplikat dari /uploads, jangan di-commit)
+/public/uploads/
 
 nul
