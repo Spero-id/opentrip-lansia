@@ -1450,3 +1450,53 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
   - `review-integrity.sql` dijalankan ulang → tidak ada error (idempoten).
 - **Bersih**: probe dihapus (DB 13 user, 1 review, 0 booking probe), server dimatikan,
   evidence `test-results/fix-review-label.png`.
+
+### 2026-08-09 — Audit & perbaikan domain Poin Referral (branch `deployment`)
+- **Audit** menemukan 3 kesalahan wajib + temuan lain (semua bukti runtime, bukan asumsi):
+  - `GET /api/user/referral` **500** — `sum(commissions.amount)` pada kolom varchar
+    (`function sum(character varying) does not exist`). Dipakai `profile/page.jsx` &
+    `ProfileStats` → "Poin Loyalitas"/"Total Referral" selalu tampil 0.
+  - Bonus referral **tidak bisa diberikan**: tabel `site_settings` tidak ada di DB
+    (drift) → `getReferralBonusPoints()` gagal **setelah** referral ditandai converted,
+    dan route menolak retry ("Pembayaran sudah diproses sebelumnya") → poin hilang
+    permanen.
+  - Pemberian poin **non-atomic**: `createTransaction` + `updateLoyaltyPoints` dua
+    operasi terpisah tanpa transaksi.
+- **Fix (wajib)**:
+  - `src/shared/db/utils.ts`: `withTransaction` kini **meneruskan `tx`** ke callback
+    (sebelumnya callback tidak pernah menerima tx — semua query tetap jalan di
+    koneksi terpisah, jadi helper itu menyesatkan); export tipe `Tx`.
+  - `payment.service.reviewPayment`: satu `withTransaction` untuk payment + booking +
+    referral + poin. Urutan diperbaiki: **baca konfigurasi di luar transaksi →
+    poin dulu → `converted` kemudian**. Gagal = seluruh transaksi rollback.
+  - `loyalty.repository`: method menerima `target?: db | tx`; `loyalty.service`
+    `creditReferralBonus(tx, ..., points)` wajib dalam transaksi; `creditCashback`
+    ikut dibungkus transaksi.
+  - `api/user/referral`: `sum(x::numeric)` + `coalesce`.
+- **Bug ke-4 terungkap saat uji**: `loyalty_transactions.reference_id` bertipe `uuid`
+  di DB tapi nilainya better-auth user id → `invalid input syntax for type uuid`,
+  kredit poin selalu gagal. Kode (`text`) sudah benar, DB-nya yang disesuaikan →
+  `docs/database/referral-integrity.sql` (idempoten).
+- **DB dev**: `site_settings` dibuat via `drizzle/0003_site_settings.sql`
+  (default `referral_bonus_points=10000`); `reference_id` → text.
+- **`docs/DEPLOY.md` 4b** ditambah 2 skrip: `0003_site_settings.sql`,
+  `referral-integrity.sql` + kolom "kalau dilewat".
+- **Verifikasi**: tsc 0; lint 0 err/79 warning; build OK; `./init.sh` EXIT 0.
+- **Bukti fungsional (server produksi + Chrome, probe dibersihkan)**:
+  - `GET /api/user/referral` 200 (dulu 500); `admin/site-settings/referral-bonus`
+    200 `{referralBonusPoints:10000}` (dulu 500).
+  - Skenario A — `site_settings` disembunyikan saat approve: 500 dengan
+    `payment=pending booking=pending referral=pending poin=0 ledger=0`
+    (**nol perubahan**, dulu payment & referral terlanjur berubah).
+  - Skenario B — approve sukses: 200, semua berubah bersamaan
+    `payment=paid booking=confirmed referral=converted poin=10000 ledger=1`.
+  - Skenario C — retry: 400, poin tetap 10000 (tidak dobel).
+- **Temuan audit lain yang BELUM dikerjakan**: poin tidak punya alur tukar/pakai
+  (hanya `type:"earn"`, `expiresAt` tak pernah dievaluasi); `creditCashback`
+  hardcoded 25.000 & tak pernah dipanggil; kode referral salah diabaikan diam-diam di
+  checkout; endpoint `checkout/validate-referral` tak pernah dipanggil UI; insert
+  referral gagal hanya `console.error`; N+1 di `/api/referrals/history`; kode mati
+  `payment.controller` + `confirmPayment`/`getPaymentsByBooking`;
+  `referralService.getAgentCommissions`; 10/13 user tanpa `referral_code`
+  (`src/db/backfill-referral-codes.ts` belum dijalankan); 3 tabel yatim di DB.
+- **Bersih**: probe dihapus (13 user, 0 ledger, 0 referrals), server dimatikan.

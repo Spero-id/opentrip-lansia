@@ -97,12 +97,17 @@ Jalankan **dua-duanya** — keduanya idempoten, aman dijalankan berulang:
 ```bash
 psql "$DATABASE_URL" -f docs/database/backfill-review-stats.sql
 psql "$DATABASE_URL" -f docs/database/review-integrity.sql
+# Hanya kalau tabel ini belum ada (DB lama yang belum pernah di-push):
+psql "$DATABASE_URL" -f drizzle/0003_site_settings.sql
+psql "$DATABASE_URL" -f docs/database/referral-integrity.sql
 ```
 
 | Skrip | Fungsi | Kalau dilewat |
 |---|---|---|
 | `backfill-review-stats.sql` | Sinkronkan `trips.rating` & `trips.review_count` dengan ulasan approved | Trip yang sudah punya ulasan tampil "(0 ulasan)" dan rating `null` |
 | `review-integrity.sql` | PK composite di `review_media`, FK `ON DELETE CASCADE`, `is_verified_purchase = true` | Junction tanpa PK (melanggar PANDUAN_DATABASE.md); label "N ulasan terverifikasi" tidak konsisten dengan data |
+| `drizzle/0003_site_settings.sql` | Tabel `site_settings` + default `referral_bonus_points` | `GET /api/admin/site-settings/referral-bonus` 500, dan **bonus poin referral tidak bisa diberikan** saat admin menyetujui pembayaran |
+| `referral-integrity.sql` | `loyalty_transactions.reference_id` dari `uuid` → `text` | Kredit poin referral **selalu gagal** (`invalid input syntax for type uuid`) karena nilainya better-auth user id |
 
 Database **baru** hasil `push` otomatis sudah punya PK/FK dari schema, tapi skrip
 tetap dijalankan supaya idempoten dan konsisten.
