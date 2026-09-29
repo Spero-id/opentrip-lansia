@@ -44,21 +44,32 @@ export default function ReferralInput({
           </button>
         </div>
       ) : (
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Masukkan kode referral"
-            value={referralCode}
-            onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 uppercase"
-          />
-          <button
-            onClick={onApply}
-            disabled={!referralCode.trim()}
-            className="bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Pakai
-          </button>
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Masukkan kode referral"
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 uppercase"
+            />
+            <button
+              onClick={onApply}
+              disabled={!referralCode.trim()}
+              className="bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Pakai
+            </button>
+          </div>
+
+          {/* Kode yang diketik tapi belum ditekan "Pakai" tidak ikut terkirim
+              ke server — beri tahu, jangan biarkan pengguna mengira sudah terpakai. */}
+          {referralCode.trim() && (
+            <p className="text-[11px] text-amber-600">
+              Tekan <span className="font-semibold">Pakai</span> agar kode ini ikut
+              tercatat saat pesanan dibuat.
+            </p>
+          )}
         </div>
       )}
 

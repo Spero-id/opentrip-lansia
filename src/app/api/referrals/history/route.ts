@@ -3,9 +3,9 @@ import { requireAdmin } from "@/shared/auth";
 import { db } from "@/shared/db";
 import { referrals } from "@/modules/referral/referral.schema";
 import { bookings } from "@/modules/booking/booking.schema";
-import { trips } from "@/modules/trip/trip.schema";
+import { tripDepartures, trips } from "@/modules/trip/trip.schema";
 import { users } from "@/modules/auth/auth.schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
@@ -13,7 +13,6 @@ export async function GET(req: NextRequest) {
   if (denied) return denied;
 
   try {
-    // Get all referrals with user names and booking info
     const allReferrals = await db
       .select({
         id: referrals.id,
@@ -30,64 +29,68 @@ export async function GET(req: NextRequest) {
       .leftJoin(users, eq(referrals.referrerId, users.id))
       .orderBy(desc(referrals.createdAt));
 
-    // Enrich with referred user names and trip info
-    const enriched = await Promise.all(
-      allReferrals.map(async (ref) => {
-        let referredUserName: string | null = null;
-        let referredUserEmail: string | null = null;
-        let tripTitle: string | null = null;
-        let bookingCode: string | null = null;
+    if (allReferrals.length === 0) return NextResponse.json([]);
 
-        if (ref.referredUserId) {
-          const [referredUser] = await db
-            .select({ name: users.name, email: users.email })
+    // Batch enrichment: 5 query untuk SELURUH baris, bukan 4 query tiap baris (N+1)
+    const referredIds = [
+      ...new Set(allReferrals.map((r) => r.referredUserId).filter((v): v is string => !!v)),
+    ];
+    const bookingIds = [
+      ...new Set(allReferrals.map((r) => r.bookingId).filter((v): v is string => !!v)),
+    ];
+
+    const [referredUsers, bookingRows] = await Promise.all([
+      referredIds.length
+        ? db
+            .select({ id: users.id, name: users.name, email: users.email })
             .from(users)
-            .where(eq(users.id, ref.referredUserId))
-            .limit(1);
-          referredUserName = referredUser?.name ?? null;
-          referredUserEmail = referredUser?.email ?? null;
-        }
-
-        if (ref.bookingId) {
-          const [booking] = await db
-            .select({ bookingCode: bookings.bookingCode, tripId: bookings.departureId })
+            .where(inArray(users.id, referredIds))
+        : Promise.resolve([]),
+      bookingIds.length
+        ? db
+            .select({ id: bookings.id, bookingCode: bookings.bookingCode, departureId: bookings.departureId })
             .from(bookings)
-            .where(eq(bookings.id, ref.bookingId))
-            .limit(1);
-          bookingCode = booking?.bookingCode ?? null;
+            .where(inArray(bookings.id, bookingIds))
+        : Promise.resolve([]),
+    ]);
 
-          if (booking?.tripId) {
-            // Try to find trip via departures
-            const { tripDepartures } = await import("@/modules/trip/trip.schema");
-            const [departure] = await db
-              .select({ tripId: tripDepartures.tripId })
-              .from(tripDepartures)
-              .where(eq(tripDepartures.id, booking.tripId))
-              .limit(1);
-            if (departure?.tripId) {
-              const [trip] = await db
-                .select({ title: trips.title })
-                .from(trips)
-                .where(eq(trips.id, departure.tripId))
-                .limit(1);
-              tripTitle = trip?.title ?? null;
-            }
-          }
-        }
+    const departureIds = [...new Set(bookingRows.map((b) => b.departureId).filter((v): v is string => !!v))];
 
-        return {
-          id: ref.id,
-          referrerName: ref.referrerName ?? "Unknown",
-          referrerEmail: ref.referrerEmail ?? "-",
-          referredUserName: referredUserName ?? "Belum booking",
-          referredUserEmail: referredUserEmail ?? "-",
-          bookingCode,
-          tripTitle,
-          status: ref.status,
-          createdAt: ref.createdAt,
-        };
-      })
-    );
+    const departureRows = departureIds.length
+      ? await db
+          .select({ id: tripDepartures.id, tripId: tripDepartures.tripId })
+          .from(tripDepartures)
+          .where(inArray(tripDepartures.id, departureIds))
+      : [];
+
+    const tripIds = [...new Set(departureRows.map((d) => d.tripId).filter((v): v is string => !!v))];
+
+    const tripRows = tripIds.length
+      ? await db.select({ id: trips.id, title: trips.title }).from(trips).where(inArray(trips.id, tripIds))
+      : [];
+
+    const referredById = new Map(referredUsers.map((u) => [u.id, u]));
+    const bookingById = new Map(bookingRows.map((b) => [b.id, b]));
+    const tripIdByDeparture = new Map(departureRows.map((d) => [d.id, d.tripId]));
+    const titleByTrip = new Map(tripRows.map((t) => [t.id, t.title]));
+
+    const enriched = allReferrals.map((ref) => {
+      const referredUser = ref.referredUserId ? referredById.get(ref.referredUserId) : undefined;
+      const booking = ref.bookingId ? bookingById.get(ref.bookingId) : undefined;
+      const tripId = booking?.departureId ? tripIdByDeparture.get(booking.departureId) : undefined;
+
+      return {
+        id: ref.id,
+        referrerName: ref.referrerName ?? "Unknown",
+        referrerEmail: ref.referrerEmail ?? "-",
+        referredUserName: referredUser?.name ?? "Belum booking",
+        referredUserEmail: referredUser?.email ?? "-",
+        bookingCode: booking?.bookingCode ?? null,
+        tripTitle: tripId ? (titleByTrip.get(tripId) ?? null) : null,
+        status: ref.status,
+        createdAt: ref.createdAt,
+      };
+    });
 
     return NextResponse.json(enriched);
   } catch (err) {

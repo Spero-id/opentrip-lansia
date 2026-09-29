@@ -1500,3 +1500,49 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
   `referralService.getAgentCommissions`; 10/13 user tanpa `referral_code`
   (`src/db/backfill-referral-codes.ts` belum dijalankan); 3 tabel yatim di DB.
 - **Bersih**: probe dihapus (13 user, 0 ledger, 0 referrals), server dimatikan.
+
+### 2026-08-09 — Audit poin referral: temuan "sebaiknya" (branch `deployment`)
+- **Dikeluarkan dari daftar**: alur tukar/pakai poin = fitur baru (butuh keputusan
+  produk), bukan perbaikan — tidak layak masuk menjelang deploy.
+- **2 temuan audit gugur setelah dicek ulang** (salah saya waktu audit, dicatat agar
+  tidak diulang): endpoint `checkout/validate-referral` **sudah dipakai**
+  `useCheckout.js:applyReferral` (filter grep saya menghapusnya), dan `ReferralInput`
+  **sudah** punya validasi real-time via `onApply`.
+- **Kode referral salah tak lagi diabaikan diam-diam** (`api/checkout`): dulu kode yang
+  tidak ditemukan → `referrerId=null` → checkout tetap sukses. Kini validasi server-side
+  SEBELUM menulis apa pun → 400 "Kode referral tidak ditemukan" / "…kode referral
+  sendiri".
+- **Checkout jadi atomik**: booking + peserta + deklarasi kesehatan + catatan referral
+  dalam 1 `withTransaction` (dulu referral insert terpisah dengan `catch` yang hanya
+  `console.error` → booking bisa terbentuk tanpa referral). Statistik voucher sengaja
+  tetap di luar transaksi (gagal tidak boleh membatalkan booking) — dikomentari.
+- **N+1 di `/api/referrals/history` (admin)**: ~4 query per baris → 5 query total
+  (batch `inArray` untuk users, bookings, departures, trips; `await import()` di dalam
+  loop dihapus).
+- **Whitelist `POST` + `PUT /api/commissions`**: hanya `agentId`/`bookingId`/`amount`/
+  `status` dengan validasi (uuid, angka, enum `pending/approved/paid/rejected`) — dulu
+  body diteruskan apa adanya (mass assignment) termasuk `ruleId`/`referralId`.
+- **Kode mati dihapus**: `payment.controller.ts`, `referral.service.ts` +
+  export-nya, `paymentService.createPayment`/`confirmPayment`/`getPaymentsByBooking`,
+  `paymentRepository.create`/`findByBookingId`,
+  `referralRepository.getCommissionsByAgent`, `loyaltyService.creditCashback`
+  (hardcoded 25.000, nol pemakai, tidak disebut PRD/feature_list).
+- **`backfill-referral-codes.ts`**: jalankan di dev → 10 user kini punya kode
+  (sebelumnya 10/13 tanpa kode). File juga diberi `import "dotenv/config"` — tanpa ini
+  perintah yang tertulis di komentar file-nya sendiri gagal `ECONNREFUSED`.
+- **UI `ReferralInput`**: hint muncul kalau kode diketik tapi belum ditekan "Pakai"
+  (kode seperti itu memang tidak ikut dikirim — `referralCode: appliedReferral?.code`).
+- **Verifikasi**: tsc 0; lint 0 err/79 warning (tidak bertambah); build OK;
+  `./init.sh` EXIT 0.
+- **Bukti fungsional (server produksi + Chrome, semua probe dibersihkan)**:
+  - Checkout: tanpa referral 200 (booking+peserta terbentuk); kode salah →
+    **400 tanpa booking baru**; kode sendiri → 400; kode valid → 200 dengan
+    **1 referral row status pending** — booking/peserta/referral terbentuk bersamaan.
+  - `GET /api/referrals/history` → enrich batch menghasilkan `referrerName`,
+    `referredUserName`, `bookingCode`, `tripTitle` (null karena 38 booking dev memang
+    menunjuk departure yang sudah dihapus — diverifikasi, bukan bug).
+  - Komisi: `{}` → 400; `amount:"10.000"` → 400; `status:"siap"` → 400;
+    `ruleId` di PUT → 400 (tertolak whitelist); valid → 201/200.
+- **Tidak disentuh**: 3 tabel yatim di DB (`destinations`, `meeting_points`,
+  `newsletter_subscribers`) — tidak ada kode yang memakai, tapi penghapusan tabel
+  tidak ada gunanya menjelang deploy.

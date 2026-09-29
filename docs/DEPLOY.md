@@ -133,6 +133,7 @@ pm2 save && pm2 startup       # supaya ikut nyala saat server reboot
 - [ ] Buka `/` → landing tampil
 - [ ] Buka `/trips` → daftar trip muncul
 - [ ] Login `admin@otl.id` → berhasil, redirect ke `/admin`
+- [ ] Buka Profil → **kode referral tampil** (bukan null) dan "Poin Loyalitas" menampilkan angka, bukan kosong
 - [ ] Upload gambar di admin → file muncul di `./uploads`, gambar tampil
 - [ ] Cek `pm2 logs otl` → tidak ada error berulang
 

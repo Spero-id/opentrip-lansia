@@ -1,8 +1,7 @@
 import { loyaltyRepository } from "./loyalty.repository";
-import { withTransaction, type Tx } from "@/shared/db/utils";
+import type { Tx } from "@/shared/db/utils";
 import type { UUID } from "@/shared/types";
 
-const CASHBACK_POINTS = 25_000;
 const POINTS_EXPIRY_YEARS = 1;
 
 function buildExpiry(): Date {
@@ -12,28 +11,6 @@ function buildExpiry(): Date {
 }
 
 export const loyaltyService = {
-  async creditCashback(userId: UUID, bookingId: UUID) {
-    // Ledger dan saldo dalam SATU transaksi — kalau salah satu gagal, keduanya
-    // ikut batal sehingga users.loyalty_points tidak pernah menyimpang dari
-    // loyalty_transactions.
-    await withTransaction(async (tx) => {
-      await loyaltyRepository.createTransaction(
-        {
-          userId,
-          points: CASHBACK_POINTS,
-          type: "earn",
-          referenceType: "booking",
-          referenceId: bookingId,
-          description: `Cashback pembayaran booking`,
-          expiresAt: buildExpiry(),
-        },
-        tx
-      );
-
-      await loyaltyRepository.updateLoyaltyPoints(userId, CASHBACK_POINTS, tx);
-    });
-  },
-
   /**
    * Beri bonus referral. Wajib dipanggil dari dalam `withTransaction` —
    * `tx` diteruskan ke repository supaya ledger dan saldo ikut rollback

@@ -7,7 +7,6 @@ export interface IReferralRepository {
   createReferral(data: typeof referrals.$inferInsert): Promise<typeof referrals.$inferSelect>;
   findByReferrer(referrerId: UUID): Promise<(typeof referrals.$inferSelect)[]>;
   createCommission(data: typeof commissions.$inferInsert): Promise<typeof commissions.$inferSelect>;
-  getCommissionsByAgent(agentId: UUID): Promise<(typeof commissions.$inferSelect)[]>;
   findAllCommissions(): Promise<(typeof commissions.$inferSelect)[]>;
   findCommissionById(id: UUID): Promise<typeof commissions.$inferSelect | null>;
   updateCommission(id: UUID, data: Partial<typeof commissions.$inferInsert>): Promise<void>;
@@ -27,10 +26,6 @@ export const referralRepository: IReferralRepository = {
   async createCommission(data) {
     const [comm] = await db.insert(commissions).values(data).returning();
     return comm;
-  },
-
-  async getCommissionsByAgent(agentId) {
-    return db.select().from(commissions).where(eq(commissions.agentId, agentId));
   },
 
   async findAllCommissions() {
