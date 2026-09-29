@@ -90,6 +90,23 @@ Jangan menjalankan apa pun — schema sudah sinkron. Langkah ini dilewati.
 **Kalau ragu:** kemungkinan besar B, karena selama pengembangan schema selalu di-push
 ke DB dev. Tanyakan dulu sebelum menjalankan `push` ke database yang ada isinya.
 
+### 4b. Skrip SQL domain ulasan (berlaku untuk SEMUA kondisi database)
+
+Jalankan **dua-duanya** — keduanya idempoten, aman dijalankan berulang:
+
+```bash
+psql "$DATABASE_URL" -f docs/database/backfill-review-stats.sql
+psql "$DATABASE_URL" -f docs/database/review-integrity.sql
+```
+
+| Skrip | Fungsi | Kalau dilewat |
+|---|---|---|
+| `backfill-review-stats.sql` | Sinkronkan `trips.rating` & `trips.review_count` dengan ulasan approved | Trip yang sudah punya ulasan tampil "(0 ulasan)" dan rating `null` |
+| `review-integrity.sql` | PK composite di `review_media`, FK `ON DELETE CASCADE`, `is_verified_purchase = true` | Junction tanpa PK (melanggar PANDUAN_DATABASE.md); label "N ulasan terverifikasi" tidak konsisten dengan data |
+
+Database **baru** hasil `push` otomatis sudah punya PK/FK dari schema, tapi skrip
+tetap dijalankan supaya idempoten dan konsisten.
+
 ### 5. Seed (hanya database baru)
 
 ```bash
@@ -170,4 +187,5 @@ lewat Neon SQL editor.
 | pm2, bukan Vercel | upload tulis ke local FS |
 | `drizzle-kit push`, bukan `migrate` | journal tidak lengkap; tabel auth tidak ada di file SQL |
 | `npm audit fix` tanpa `--force` | `--force` menurunkan `drizzle-kit` ke versi lama (breaking) |
+| Skrip SQL ulasan dijalankan manual (`docs/database/*.sql`) | `drizzle-kit migrate` tidak dipakai, jadi perubahan data & constraint tidak ikut otomatis |
 | Sisa 5 vuln dibiarkan | semuanya di dependency dev (drizzle-kit, nodemailer transitif) |

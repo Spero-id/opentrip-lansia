@@ -3,7 +3,7 @@ import { reviews } from "./review.schema";
 import { bookings } from "../booking/booking.schema";
 import { tripDepartures, trips } from "../trip/trip.schema";
 import { users } from "../auth/auth.schema";
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, inArray } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
 export interface ReviewWithDetails {
@@ -30,6 +30,7 @@ export interface PublicReview {
   rating: number;
   content: string | null;
   isFeatured: boolean;
+  isVerifiedPurchase: boolean;
   createdAt: Date;
   userName: string | null;
   tripTitle: string | null;
@@ -40,7 +41,6 @@ export interface IReviewRepository {
   findAll(): Promise<ReviewWithDetails[]>;
   findApproved(): Promise<PublicReview[]>;
   findApprovedByTripId(tripId: UUID): Promise<PublicReview[]>;
-  findAverageRatingByTripId(tripId: UUID): Promise<number | null>;
   findById(id: UUID): Promise<typeof reviews.$inferSelect | null>;
   create(data: typeof reviews.$inferInsert): Promise<typeof reviews.$inferSelect>;
   findByTripId(tripId: UUID): Promise<(typeof reviews.$inferSelect)[]>;
@@ -67,6 +67,7 @@ async function fetchApproved(tripId?: string): Promise<PublicReview[]> {
       rating: reviews.rating,
       content: reviews.content,
       isFeatured: reviews.isFeatured,
+      isVerifiedPurchase: reviews.isVerifiedPurchase,
       createdAt: reviews.createdAt,
       userId: reviews.userId,
       tripId: reviews.tripId,
@@ -75,30 +76,30 @@ async function fetchApproved(tripId?: string): Promise<PublicReview[]> {
     .where(whereClause)
     .orderBy(desc(reviews.createdAt));
 
-  const result: PublicReview[] = [];
-  for (const r of rows) {
-    const [user] = await db
-      .select({ name: users.name })
-      .from(users)
-      .where(eq(users.id, r.userId))
-      .limit(1);
-    const [trip] = await db
-      .select({ title: trips.title })
-      .from(trips)
-      .where(eq(trips.id, r.tripId))
-      .limit(1);
-    result.push({
-      id: r.id,
-      rating: r.rating,
-      content: r.content,
-      isFeatured: r.isFeatured ?? false,
-      createdAt: r.createdAt,
-      userName: user?.name ?? null,
-      tripTitle: trip?.title ?? null,
-      tripId: r.tripId,
-    });
-  }
-  return result;
+  if (rows.length === 0) return [];
+
+  // Batch: 2 query untuk seluruh baris, bukan 2 query tiap baris (N+1)
+  const userIds = [...new Set(rows.map((r) => r.userId))];
+  const tripIds = [...new Set(rows.map((r) => r.tripId))];
+
+  const [userRows, tripRows] = await Promise.all([
+    db.select({ id: users.id, name: users.name }).from(users).where(inArray(users.id, userIds)),
+    db.select({ id: trips.id, title: trips.title }).from(trips).where(inArray(trips.id, tripIds)),
+  ]);
+  const nameByUserId = new Map(userRows.map((u) => [u.id, u.name]));
+  const titleByTripId = new Map(tripRows.map((t) => [t.id, t.title]));
+
+  return rows.map((r) => ({
+    id: r.id,
+    rating: r.rating,
+    content: r.content,
+    isFeatured: r.isFeatured ?? false,
+    isVerifiedPurchase: r.isVerifiedPurchase ?? false,
+    createdAt: r.createdAt,
+    userName: nameByUserId.get(r.userId) ?? null,
+    tripTitle: titleByTripId.get(r.tripId) ?? null,
+    tripId: r.tripId,
+  }));
 }
 
 export const reviewRepository: IReviewRepository = {
@@ -108,14 +109,6 @@ export const reviewRepository: IReviewRepository = {
 
   async findApprovedByTripId(tripId: UUID) {
     return fetchApproved(tripId);
-  },
-
-  async findAverageRatingByTripId(tripId: UUID): Promise<number | null> {
-    const [result] = await db
-      .select({ avg: sql<number>`ROUND(AVG(${reviews.rating})::numeric, 1)` })
-      .from(reviews)
-      .where(and(eq(reviews.tripId, tripId), eq(reviews.status, "approved")));
-    return result?.avg ?? null;
   },
 
   async findAll() {
@@ -135,79 +128,72 @@ export const reviewRepository: IReviewRepository = {
       .from(reviews)
       .orderBy(desc(reviews.createdAt));
 
-    // Enrich with user, trip, and departure info
-    const enriched: ReviewWithDetails[] = [];
-    for (const r of data) {
-      let userName: string | null = null;
-      let userEmail: string | null = null;
-      let tripTitle: string | null = null;
-      let groupStartDate: string | null = null;
-      let groupEndDate: string | null = null;
-      let bookingCode: string | null = null;
+    if (data.length === 0) return [];
 
-      // Get user info
-      const [user] = await db
-        .select({ name: users.name, email: users.email })
+    // Batch: 4 query untuk seluruh baris, bukan 4 query tiap baris (N+1)
+    const userIds = [...new Set(data.map((r) => r.userId))];
+    const tripIds = [...new Set(data.map((r) => r.tripId))];
+    const departureIds = [
+      ...new Set(data.map((r) => r.departureId).filter((v): v is string => !!v)),
+    ];
+    const bookingIds = [
+      ...new Set(data.map((r) => r.bookingId).filter((v): v is string => !!v)),
+    ];
+
+    const [userRows, tripRows, departureRows, bookingRows] = await Promise.all([
+      db
+        .select({ id: users.id, name: users.name, email: users.email })
         .from(users)
-        .where(eq(users.id, r.userId))
-        .limit(1);
-      if (user) {
-        userName = user.name;
-        userEmail = user.email;
-      }
+        .where(inArray(users.id, userIds)),
+      db.select({ id: trips.id, title: trips.title }).from(trips).where(inArray(trips.id, tripIds)),
+      departureIds.length
+        ? db
+            .select({
+              id: tripDepartures.id,
+              startDate: tripDepartures.startDate,
+              endDate: tripDepartures.endDate,
+            })
+            .from(tripDepartures)
+            .where(inArray(tripDepartures.id, departureIds))
+        : Promise.resolve([]),
+      bookingIds.length
+        ? db
+            .select({ id: bookings.id, bookingCode: bookings.bookingCode })
+            .from(bookings)
+            .where(inArray(bookings.id, bookingIds))
+        : Promise.resolve([]),
+    ]);
 
-      // Get trip info
-      const [trip] = await db
-        .select({ title: trips.title })
-        .from(trips)
-        .where(eq(trips.id, r.tripId))
-        .limit(1);
-      if (trip) {
-        tripTitle = trip.title;
-      }
+    const userById = new Map(userRows.map((u) => [u.id, u]));
+    const tripTitleById = new Map(tripRows.map((t) => [t.id, t.title]));
+    const departureById = new Map(
+      departureRows.map((d) => [d.id, d])
+    );
+    const bookingCodeById = new Map(
+      bookingRows.map((b) => [b.id, b.bookingCode])
+    );
 
-      // Get departure/group info
-      if (r.departureId) {
-        const [departure] = await db
-          .select({ startDate: tripDepartures.startDate, endDate: tripDepartures.endDate })
-          .from(tripDepartures)
-          .where(eq(tripDepartures.id, r.departureId))
-          .limit(1);
-        if (departure) {
-          groupStartDate = departure.startDate;
-          groupEndDate = departure.endDate;
-        }
-      }
+    return data.map((r) => {
+      const user = userById.get(r.userId);
+      const departure = r.departureId ? departureById.get(r.departureId) : undefined;
 
-      // Get booking code
-      if (r.bookingId) {
-        const [booking] = await db
-          .select({ bookingCode: bookings.bookingCode })
-          .from(bookings)
-          .where(eq(bookings.id, r.bookingId))
-          .limit(1);
-        if (booking) {
-          bookingCode = booking.bookingCode;
-        }
-      }
-
-      enriched.push({
+      return {
         id: r.id,
         rating: r.rating,
         content: r.content,
         status: r.status ?? "pending",
         isFeatured: r.isFeatured ?? false,
         createdAt: r.createdAt,
-        userName,
-        userEmail,
-        tripTitle,
-        groupStartDate,
-        groupEndDate,
-        bookingCode,
-      });
-    }
-
-    return enriched;
+        userName: user?.name ?? null,
+        userEmail: user?.email ?? null,
+        tripTitle: tripTitleById.get(r.tripId) ?? null,
+        groupStartDate: departure?.startDate ?? null,
+        groupEndDate: departure?.endDate ?? null,
+        bookingCode: r.bookingId
+          ? (bookingCodeById.get(r.bookingId) ?? null)
+          : null,
+      };
+    });
   },
 
   async findById(id) {

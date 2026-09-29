@@ -1411,3 +1411,42 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
     booking `completed` → 201 (user sah tidak diblokir).
 - **Bersih**: akun & booking probe dihapus (DB 13 user, 1 review, 0 booking probe),
   server dimatikan, evidence di `test-results/fix-review-*.png`.
+
+### 2026-08-09 — Lanjutan audit ulasan: temuan "sebaiknya" (branch `deployment`)
+- **Motivasi**: user meminta seluruh temuan prioritas rendah/sedang dari audit domain
+  Reviews dikerjakan, tetap di branch `deployment`.
+- **Whitelist `PUT /api/reviews/[id]`**: hanya `status` (enum pending/approved/rejected)
+  dan `isFeatured` (boolean) yang diterima; field lain → 400. Sebelumnya body diteruskan
+  apa adanya ke `update()`, sehingga `userId`/`bookingId`/`tripId` bisa diubah admin
+  dan status bisa diisi nilai apa pun.
+- **Review duplikat → 409**: cek `booking_id` sebelum insert → 409
+  "Anda sudah mengulas booking ini" (sebelumnya kena unique constraint → pesan generik 400).
+- **`is_verified_purchase` dihidupkan**: POST kini `true` (server sudah memastikan booking
+  completed + milik user), dan `ReviewsSection` menghitung label dari
+  `isVerifiedPurchase` — kata "terverifikasi" hanya muncul kalau semuanya terverifikasi.
+- **Kode mati dihapus (3 file)**: `review.controller.ts` (never used, berisi `...body`
+  tanpa auth = celah mass-assignment), `review.service.ts` (hanya wrapper
+  `createReview` tanpa pemakai) + export-nya di `index.ts`, `src/db/schema/reviews.ts`
+  (duplikat dengan schema module, `userId: uuid` — salah), dan `findAverageRatingByTripId`.
+- **`review_media`**: ditambahkan composite PK `(review_id, media_id)` sesuai
+  `docs/database/PANDUAN_DATABASE.md`, FK diubah jadi `ON DELETE CASCADE`
+  (tanpa ini hapus review yang punya media akan gagal). Diterapkan via SQL di DB dev
+  + `docs/database/review-integrity.sql` (idempoten) untuk produksi.
+- **N+1 dihilangkan** (query per baris → batch `inArray`):
+  `fetchApproved` 2/baris → 2 total; `findAll` 4/baris → 4 total;
+  `findAllPublished` 1 AVG per trip → 1 query `GROUP BY`.
+- **`docs/DEPLOY.md`**: langkah baru **4b** — jalankan 2 skrip SQL
+  (`backfill-review-stats.sql`, `review-integrity.sql`) untuk SEMUA kondisi database.
+- **Verifikasi**: tsc 0; lint 0 err/79 warning (tidak bertambah); `npm run build` OK;
+  `./init.sh` EXIT 0.
+- **Bukti fungsional (server produksi + Chrome)**:
+  - PUT: `userId` → 400; `status` invalid → 400 "Status tidak valid"; body kosong → 400;
+    `isFeatured` string → 400; `status+isFeatured` valid → 200 + recompute tetap jalan
+    (trip Labuan Bajo tetap rating=4 count=1).
+  - POST: ulasan pertama → 201 `is_verified_purchase=true`; duplikat → 409.
+  - GET admin: enrich batch menghasilkan field identik (userName, userEmail, tripTitle,
+    groupStartDate, groupEndDate, bookingCode).
+  - UI: tab Ulasan menampilkan "1 ulasan terverifikasi" + tidak ada error halaman.
+  - `review-integrity.sql` dijalankan ulang → tidak ada error (idempoten).
+- **Bersih**: probe dihapus (DB 13 user, 1 review, 0 booking probe), server dimatikan,
+  evidence `test-results/fix-review-label.png`.

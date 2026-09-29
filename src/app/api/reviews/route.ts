@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { reviewRepository } from "@/modules/review";
 import { bookings } from "@/modules/booking/booking.schema";
+import { reviews } from "@/modules/review/review.schema";
 import { tripDepartures } from "@/modules/trip/trip.schema";
 import { db } from "@/shared/db";
 import { eq, and } from "drizzle-orm";
@@ -91,6 +92,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "tripId tidak cocok dengan booking" }, { status: 400 });
     }
 
+    // Satu booking hanya boleh mengulas satu kali (unique di level DB juga,
+    // tapi dicek dulu supaya dapat pesan yang jelas, bukan error 400 generik)
+    const [existing] = await db
+      .select({ id: reviews.id })
+      .from(reviews)
+      .where(eq(reviews.bookingId, bookingId))
+      .limit(1);
+    if (existing) {
+      return NextResponse.json({ error: "Anda sudah mengulas booking ini" }, { status: 409 });
+    }
+
     // Field kepercayaan dipaksa dari server, bukan dari client
     const data = await reviewRepository.create({
       bookingId,
@@ -99,7 +111,8 @@ export async function POST(req: NextRequest) {
       departureId: booking.departureId,
       rating,
       content,
-      isVerifiedPurchase: false,
+      // Booking sudah dipastikan completed & milik user di atas → terverifikasi
+      isVerifiedPurchase: true,
       isFeatured: false,
       status: "pending",
     });
