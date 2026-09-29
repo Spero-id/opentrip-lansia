@@ -1573,3 +1573,38 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
   jangan menyalahi kode.
 - **Verifikasi**: tsc 0; lint 0 err/79 warning; build OK; `./init.sh` EXIT 0;
   server dimatikan.
+
+### 2026-08-09 — Sidebar admin diganti template shadcn (branch `deployment`)
+- `AdminShell` kini memakai `AppSidebar` (template dashboard shadcn) menggantikan
+  `AdminSidebar` kustom — diminta eksplisit oleh user ("ganti sepenuhnya").
+- Isi tab = menu admin (6 grup: Menu Utama, Trip & Tempat, Pengguna & Partner,
+  Marketing, Order, Konten) + ikon lucide yang sudah ada; tanpa logo/ikon baru.
+- Struktur listing dipertahankan persis template (NavMain collapsible + chevron);
+  satu-satunya deviasi: judul tab disembunyikan saat collapse (perbaikan teks
+  bocor), dan `gap-2` antar blok tab (kompensasi section Projects yang dihapus).
+- Tema gelap + teks putih via class `.admin-sidebar-dark` (sudah ada di
+  globals.css); label grup dikecualikan agar tetap redup seperti template.
+- Header sidebar = logo brand + "Panel Admin"; footer = link "Lihat Website"
+  (tab baru, konvensi View Site); section Projects contoh + NavUser contoh
+  dihapus; TeamSwitcher contoh dihapus.
+- Navbar admin kanan-atas = lingkaran foto profil saja (buka dropdown persis
+  Navbar utama: Profil Saya, Halaman Admin, Riwayat Trip, Keluar).
+- Tombol lonceng disamakan dengan SidebarTrigger (ghost icon-sm); panel
+  notifikasi digaya DropdownMenu shadcn (radius-md, baris rounded-sm, separator,
+  ikon muted); daftar punya p-1 agar tidak menempel kontainer.
+- Fix scroll horizontal: `SidebarInset` + konten `min-w-0`, konten
+  `overflow-x-clip`, header `left-0` — tabel scroll di dalam, header diam,
+  profil/lonceng selalu terlihat (terbukti di /admin/private-trips).
+- `next.config.ts`: izinkan `lh3.googleusercontent.com` (avatar Google login
+  OAuth) — perbaiki error "Invalid src prop" di next/image.
+- `use-mobile.ts`: bungkus setState awal dengan queueMicrotask (hilangkan
+  1 lint error bawaan file template shadcn).
+- File template shadcn (dashboard, app-sidebar, nav-*, team-switcher, ui/*,
+  package.json + `cn`) ditambahkan ke tree oleh user/rekan sebelum sesi ini;
+  ikut di-commit karena build bergantung padanya.
+- Pelajaran sesi: 3x salah baca screenshot — angka DOM lebih andal; proses
+  server basi berulang (wajib loop-kill + cek start time); 2 batch edit
+  "sukses" hilang dari file (sebab tak teridentifikasi) — verifikasi grep
+  langsung setiap edit sejak itu.
+- Verifikasi: tsc 0; lint 0 err/78 warning; build OK; `./init.sh` EXIT 0;
+  E2E suite 78 test tetap belum dijalankan (laptop dev tidak sanggup).

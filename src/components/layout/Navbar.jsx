@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X, User, ShoppingBag, LogOut, Shield } from "lucide-react";
@@ -90,7 +91,7 @@ export default function Navbar() {
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <Link href="/" className={logoClasses}>
-              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-24 w-auto" />
+              <Image src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" width={96} height={96} priority className="h-24 w-auto" />
             </Link>
           </div>
 
