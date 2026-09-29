@@ -1371,3 +1371,43 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
 **Risks / catatan:**
 1. **Penyebab kegagalan memuat di kunjungan pertama tidak bisa direproduksi dari mesin dev** (URL selalu 200). Yang diperbaiki adalah *dampaknya* — sekarang selalu jatuh ke inisial, tidak pernah alt text. Kalau perlu tahu akar jaringannya: DevTools → Network → Disable cache, cek status request `lh3.googleusercontent.com` saat kunjungan pertama.
 2. **Foto profil hanya bisa diisi oleh Google OAuth** — tidak ada endpoint/form upload avatar (9 dari 13 user ber-`image: NULL`). Fitur upload avatar jadi usulan lanjutan, infrastruktur `/api/upload` sudah ada.
+
+### 2026-08-09 — Audit domain ulasan & perbaikan rating/statistik trip
+- **Motivasi**: audit domain Reviews atas permintaan user setelah selesai audit pre-deploy.
+- **Audit (tanpa ubah kode) menemukan 3 kesalahan nyata dengan bukti DB**:
+  1. Rating palsu 5.0 — `trip.repository.ts` fallback `5.0` untuk trip tanpa ulasan (Bali &
+     Yogyakarta menampilkan ★5.0 padahal 0 ulasan), plus 6 fallback hardcoded lain
+     (`DEFAULT_RATING`, `"4.8"`, `?? 5.0`) di kartu/landing/private.
+  2. `trips.rating` & `trips.review_count` tidak pernah ditulis → labuan Bajo tampil
+     "4.0 (0 ulasan)" (AVG realtime vs kolom basi).
+  3. `POST /api/reviews` tidak mengecek status booking — guard "harus completed" hanya
+     di client (`OpenTripBookingCard`), bisa di-bypass.
+- **Temuan lain (belum diperbaiki)**: PUT `/api/reviews/[id]` tanpa whitelist field;
+  review duplikat menghasilkan pesan generik 400 (harusnya 409); label "N ulasan
+  terverifikasi" padahal `is_verified_purchase` selalu false; duplikasi schema
+  `src/db/schema/reviews.ts` (userId uuid — salah) yang dead code; `review_media` tanpa
+  PK/FK di DB; N+1 query di `fetchApproved`/`findAll`/`findAllPublished`; kode mati
+  `reviewController` + `reviewService.createReview` + `findAverageRatingByTripId`.
+- **Fix diterapkan (11 file)**:
+  - `trip.repository.ts`: fallback `5.0` → `null`.
+  - `lib/Destination.js`, `DestinationCard`, `DestinationHeader`,
+    `landing/DestinationSection`, `private/DestinationCard`, `private/SelectedDestination`,
+    `private/page.jsx`: rating null → teks "Belum ada ulasan" (juga menghapus
+    fallback "4.8"/"5.0" palsu).
+  - `review.repository.ts`: fungsi baru `recomputeTripStats(tripId)` → hitung ulang
+    `trips.review_count` + `trips.rating` dari ulasan approved.
+  - `api/reviews/[id]`: panggil recompute di PUT & DELETE (setelah ambil tripId lama).
+  - `api/reviews` POST: booking wajib `status === "completed"`.
+  - `docs/database/backfill-review-stats.sql`: backfill idempoten — **harus dijalankan
+    1x di DB produksi setelah deploy**.
+- **Verifikasi**: tsc 0; lint 0 err/79 warning (tidak bertambah); `npm run build` OK;
+  `./init.sh` EXIT 0, jest 16/16.
+- **Bukti fungsional (server produksi + Chrome)**:
+  - API `/api/trips`: Labuan Bajo rating=4 count=1; Bali & Yogyakarta rating=null count=0.
+  - Kartu /trips: Bali & Yogyakarta menampilkan "Belum ada ulasan" (bukan ★5.0);
+    detail Labuan Bajo: "4.0 (1 ulasan)" (bukan "0 ulasan").
+  - Recompute: PUT status pending → rating=null count=0; PUT approved → 4 / 1 (kembali).
+  - Guard: booking `pending` → 400 "Ulasan hanya bisa diberikan setelah trip selesai";
+    booking `completed` → 201 (user sah tidak diblokir).
+- **Bersih**: akun & booking probe dihapus (DB 13 user, 1 review, 0 booking probe),
+  server dimatikan, evidence di `test-results/fix-review-*.png`.

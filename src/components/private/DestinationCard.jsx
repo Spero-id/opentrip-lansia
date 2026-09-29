@@ -7,7 +7,7 @@ export default function DestinationCard({
   onSelect,
 }) {
   const title = dest.title || dest.name || "Destinasi";
-  const rating = typeof dest.rating === "number" ? dest.rating.toFixed(1) : "5.0";
+  const rating = typeof dest.rating === "number" ? dest.rating.toFixed(1) : null;
 
   return (
     <button
@@ -38,9 +38,15 @@ export default function DestinationCard({
           className="text-xs font-semibold flex items-center gap-1.5"
           style={{ color: A }}
         >
-          <Star className="w-3.5 h-3.5 fill-current shrink-0" />
-          <span>{rating}</span>
-          <span>·</span>
+          {rating ? (
+            <>
+              <Star className="w-3.5 h-3.5 fill-current shrink-0" />
+              <span>{rating}</span>
+              <span>·</span>
+            </>
+          ) : (
+            <span className="font-medium text-gray-500">Belum ada ulasan</span>
+          )}
           <span>{formatRupiah(dest.priceMin)}</span>
         </p>
         {dest.isSeniorFriendly && (

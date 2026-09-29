@@ -47,6 +47,13 @@ export interface IReviewRepository {
   findByUserId(userId: string): Promise<(typeof reviews.$inferSelect)[]>;
   update(id: UUID, data: Partial<typeof reviews.$inferInsert>): Promise<void>;
   delete(id: UUID): Promise<void>;
+  /**
+   * Sinkronkan trips.review_count & trips.rating dengan ulasan approved.
+   * Dipanggil setiap kali status review berubah (approve/reject) atau review
+   * dihapus — kalau tidak, kedua kolom itu tetap basi dan UI menampilkan
+   * "(0 ulasan)" padahal ada ulasan.
+   */
+  recomputeTripStats(tripId: UUID): Promise<void>;
 }
 
 async function fetchApproved(tripId?: string): Promise<PublicReview[]> {
@@ -227,5 +234,23 @@ export const reviewRepository: IReviewRepository = {
 
   async delete(id) {
     await db.delete(reviews).where(eq(reviews.id, id));
+  },
+
+  async recomputeTripStats(tripId) {
+    const [agg] = await db
+      .select({
+        count: sql<number>`count(*)::int`,
+        avg: sql<number | null>`ROUND(AVG(${reviews.rating})::numeric, 1)`,
+      })
+      .from(reviews)
+      .where(and(eq(reviews.tripId, tripId), eq(reviews.status, "approved")));
+
+    const count = Number(agg?.count ?? 0);
+    const avg = agg?.avg != null ? Number(agg.avg) : null;
+
+    await db
+      .update(trips)
+      .set({ reviewCount: count, rating: avg })
+      .where(eq(trips.id, tripId));
   },
 };

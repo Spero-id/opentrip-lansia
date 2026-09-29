@@ -209,12 +209,13 @@ export const tripRepository: ITripRepository = {
       row.price = pickCanonicalPrice(prices);
       row.activeGroup = activeGroups.get(row.id) ?? null;
 
-      // Enrich with real average rating from approved reviews (default 5.0)
+      // Enrich dengan rata-rata ulasan approved. Tanpa ulasan → null
+      // (bukan 5.0) supaya trip baru tidak menampilkan rating palsu.
       const [ratingResult] = await db
         .select({ avg: sql<number>`ROUND(AVG(${reviews.rating})::numeric, 1)` })
         .from(reviews)
         .where(and(eq(reviews.tripId, row.id), eq(reviews.status, "approved")));
-      row.rating = ratingResult?.avg != null ? Number(ratingResult.avg) : 5.0;
+      row.rating = ratingResult?.avg != null ? Number(ratingResult.avg) : null;
     }
 
     return [...byTrip.values()];

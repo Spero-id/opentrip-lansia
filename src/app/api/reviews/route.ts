@@ -65,12 +65,20 @@ export async function POST(req: NextRequest) {
 
     // Booking harus milik user yang login
     const [booking] = await db
-      .select({ departureId: bookings.departureId })
+      .select({ departureId: bookings.departureId, status: bookings.status })
       .from(bookings)
       .where(and(eq(bookings.id, bookingId), eq(bookings.userId, session.user.id)))
       .limit(1);
     if (!booking) {
       return NextResponse.json({ error: "Booking tidak ditemukan atau bukan milik Anda" }, { status: 403 });
+    }
+
+    // Ulasan hanya setelah trip selesai — guard client-side bisa di-bypass
+    if (booking.status !== "completed") {
+      return NextResponse.json(
+        { error: "Ulasan hanya bisa diberikan setelah trip selesai" },
+        { status: 400 }
+      );
     }
 
     // tripId harus cocok dengan trip dari departure booking tersebut

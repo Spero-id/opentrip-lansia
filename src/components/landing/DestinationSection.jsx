@@ -5,7 +5,6 @@ import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MapPin }
 import Link from "next/link";
 import DestinationCard from "@/components/destinasi/DestinationCard";
 
-const DEFAULT_RATING = 5.0;
 const PAGE_SIZE = 6;
 
 function toCard(trip) {
@@ -18,7 +17,7 @@ function toCard(trip) {
     id: trip.id,
     title: trip.title,
     location: trip.location || "Indonesia",
-    rating: trip.rating || DEFAULT_RATING,
+    rating: trip.rating ?? null,
     priceMin: trip.priceMin || 0,
     category: trip.categoryName || "Alam",
     isSeniorFriendly: trip.isSeniorFriendly !== undefined ? trip.isSeniorFriendly : true,
