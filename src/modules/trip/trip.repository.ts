@@ -204,17 +204,26 @@ export const tripRepository: ITripRepository = {
       }
     }
 
+    // Satu query agregat untuk semua trip, bukan satu query AVG per trip (N+1).
+    // Tanpa baris → rating null (bukan 5.0) supaya trip baru tidak menampilkan
+    // rating palsu.
+    const ratingRows = await db
+      .select({
+        tripId: reviews.tripId,
+        avg: sql<number | null>`ROUND(AVG(${reviews.rating})::numeric, 1)`,
+      })
+      .from(reviews)
+      .where(eq(reviews.status, "approved"))
+      .groupBy(reviews.tripId);
+    const ratingByTripId = new Map(
+      ratingRows.map((r) => [r.tripId, r.avg != null ? Number(r.avg) : null])
+    );
+
     for (const row of byTrip.values()) {
       const prices = pricesByDeparture.get(row.departureId!) ?? [];
       row.price = pickCanonicalPrice(prices);
       row.activeGroup = activeGroups.get(row.id) ?? null;
-
-      // Enrich with real average rating from approved reviews (default 5.0)
-      const [ratingResult] = await db
-        .select({ avg: sql<number>`ROUND(AVG(${reviews.rating})::numeric, 1)` })
-        .from(reviews)
-        .where(and(eq(reviews.tripId, row.id), eq(reviews.status, "approved")));
-      row.rating = ratingResult?.avg != null ? Number(ratingResult.avg) : 5.0;
+      row.rating = ratingByTripId.get(row.id) ?? null;
     }
 
     return [...byTrip.values()];

@@ -3,7 +3,7 @@ import { auth } from "@/modules/auth/auth.config";
 import { db } from "@/shared/db";
 import { referrals, commissions } from "@/modules/referral/referral.schema";
 import { users } from "@/modules/auth/auth.schema";
-import { eq, count, sum, and } from "drizzle-orm";
+import { eq, count, sql } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,19 +34,21 @@ export async function GET(req: NextRequest) {
         count: count(),
       })
       .from(referrals)
-      .where(and(eq(referrals.referrerId, userId), eq(referrals.status, "converted")));
+      .where(sql`${referrals.referrerId} = ${userId} AND ${referrals.status} = 'converted'`);
 
     const [pendingStats] = await db
       .select({
         count: count(),
       })
       .from(referrals)
-      .where(and(eq(referrals.referrerId, userId), eq(referrals.status, "pending")));
+      .where(sql`${referrals.referrerId} = ${userId} AND ${referrals.status} = 'pending'`);
 
-    // Get total commission
+    // Get total commission. `commissions.amount` bertipe varchar, jadi harus
+    // di-cast ke numeric — sum(varchar) tidak ada di Postgres dan menyebabkan
+    // 500 pada endpoint ini.
     const [commissionStats] = await db
       .select({
-        totalCommission: sum(commissions.amount),
+        totalCommission: sql<number>`coalesce(sum(${commissions.amount}::numeric), 0)`,
       })
       .from(commissions)
       .where(eq(commissions.agentId, userId));

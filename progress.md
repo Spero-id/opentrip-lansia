@@ -1283,3 +1283,328 @@ Blocklist tidak akan pernah lengkap (setiap error type baru = leak baru). Sebaga
 - Smoke test live → tabel bukti di atas
 
 **Catatan:** `retry.ts` sengaja tetap memakai pola lama karena ia **meng-parse** pesan error DB untuk menentukan retry — menggantinya akan memutus fitur retry.
+
+## Session 38 — Pre-Deploy Audit & Kesiapan VPS (2026-09-29)
+
+**Goal:** Tentukan apa yang harus diperbaiki sebelum kode di-deploy ke VPS. Bukan fitur baru — audit kesiapan.
+
+**Temuan utama:**
+
+1. **Kode sudah ke-merge.** Branch `fix/dashboard-admin` (4 commit) sudah masuk `origin/main` lewat PR #100 — `git merge-base --is-ancestor HEAD origin/main` = true. Tidak ada yang tertinggal untuk di-push.
+2. **Security kode sudah rapi, tidak ada yang perlu diperbaiki.** Diverifikasi langsung:
+   - 9 route `/api/**admin**` semua pakai `requireAdmin` (loop satu-satu, nol yang tanpa auth)
+   - `toPublicError` dipakai di 47 file; sisa `err.message` mentah tinggal `retry.ts` (sengaja) + file test
+   - Upload: `requireAdmin` + cek magic-bytes asli (`detectImageKind`), bukan cuma ekstensi; nama file digenerate random; max 5MB
+   - Baca file: guard `..` + `startsWith(UPLOADS_DIR)`
+   - Query: semua Drizzle parameterized
+   - Booking & private-trip: session dicek di controller, ownership dicek di service
+3. **Migrasi DB adalah risiko terbesar untuk server baru.** Tabel auth `session`/`account`/`verification` **tidak ada di file SQL manapun** — dibuat via `drizzle-kit push` selama pengembangan. `drizzle/meta/_journal.json` juga cuma memuat 3 dari 7 file SQL, jadi `drizzle-kit migrate` akan melewatkan 4 file terakhir. **Keputusan: pakai `drizzle-kit push` untuk DB baru, lewati kalau DB lama. JANGAN pakai `migrate`.**
+4. **`.env` harus diisi sebelum `npm run build`** — `NEXT_PUBLIC_*` di-bake saat build. Kalau diisi sesudah, harus build ulang.
+
+**Perubahan:**
+- `npm audit fix` → `next` 16.2.11 → **16.3.6**. Vulnerabilities: 16 (1 critical, 6 high) → **5 moderate**. Sisa 5 semuanya di dependency dev (`drizzle-kit`, `nodemailer` transitif) — `--force` justru menurunkan `drizzle-kit` ke versi breaking, sengaja tidak dipakai. `package.json` tidak berubah, hanya `package-lock.json`.
+- `feature_list.json` — summary salah hitung akibat merge: deklarasi `in_review:20 / completed:23 / to_do:13`, aktual `17 / 22 / 16`. Diperbaiki.
+- `.gitignore` — tambah `/test-results/`, `/playwright-report/`, `/uploads/`, `/public/uploads/`
+- **`uploads/` sengaja TIDAK dihapus dari git** (61 file tetap ter-track). Alasan: URL `/api/uploads/<nama>` tersimpan di DB; kalau file ikut hilang dari clone, gambar lama 404. `.gitignore` hanya mencegah file **baru** ikut ter-commit.
+- `docs/DEPLOY.md` (baru) — checklist deploy siap-jalan untuk teman yang menangani VPS, termasuk 3 hal yang paling sering kelupaan (password admin, persistensi `uploads/`, urutan `.env` vs build)
+
+**Verification:**
+- `bash ./init.sh` → **EXIT 0** (lint 0 errors / 79 warnings pre-existing, `tsc` 0 errors, jest 16/16)
+- `npm run build` → ✓ Compiled di `next` 16.3.6, semua route OK
+- `npm audit --omit=dev` → sisa 5 moderate, 0 critical / 0 high
+- `feature_list.json` divalidasi ulang lewat script: summary == hitungan aktual
+
+**Risks / catatan:**
+1. **Password `admin@otl.id` / `admin` masih berlaku** — ada di repo publik (`src/db/seed.ts`). Wajib diganti via UI profile SETELAH deploy; mengubah seed saja tidak cukup karena user sudah ada di DB.
+2. **`BETTER_AUTH_SECRET` harus baru** di server, dan `BETTER_AUTH_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL` harus ganti dari `http://localhost:3000` ke domain produksi.
+3. **`uploads/` harus persisten** — pm2 di VPS biasa aman; Docker wajib mount volume.
+4. **`vercel.json` masih ada** padahal target pm2/VPS — kontradiktif, belum diputuskan dihapus atau tidak.
+5. 79 lint warning pre-existing (mayoritas `<img>` bukan `next/image`) — tidak mempengaruhi fungsi, tidak dikerjakan sesi ini.
+
+## Session 39 — Fix: Foto Profil Kadang Tidak Muncul (alt text menggantikan foto)
+
+**Laporan:** "Foto profil terkadang tidak muncul saat pertama buka website, menampilkan teks alternatif. Setelah refresh bisa."
+
+**Diagnosis (diverifikasi, bukan asumsi):**
+
+Yang tampil adalah **alt text**, bukan fallback inisial huruf. Di 3 tempat foto profil dirender
+(`ProfileHeader.jsx:19`, `Navbar.jsx:147`, `admin/users/page.tsx:251`) **tidak ada satu pun `onError`**.
+Fallback-nya hanya mengecek *"apakah `image` ada di data?"*, bukan *"apakah gambarnya berhasil dimuat?"*:
+
+```
+image === null          → inisial huruf     ✅
+image ada, load OK      → foto tampil       ✅
+image ada, load GAGAL   → alt text permanen ❌  (inisial tidak pernah muncul)
+```
+
+Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "terkadang, bisa setelah refresh".
+
+**Bukti:** screenshot `test-results/A-normal.png` (sebelum) vs `test-results/fix-A-diblokir.png` (sesudah).
+
+**Yang sudah dibuktikan BUKAN penyebab** (diuji langsung sampai ke DB & server):
+- Data `image` — `get-session` selalu mengembalikannya benar (diuji dengan akun probe)
+- Cookie cache session basi — `cookieCache` hanya untuk setup tanpa database; respons tanpa `Set-Cookie`
+- Halaman `/profile` di-prerender (`x-nextjs-prerender: 1`), tapi avatar dirender di client setelah session datang
+- URL Google mati — semua 200, responsif 0.17–0.25s
+- Form edit admin menghapus foto — hanya kirim `name, phone, role, loyaltyPoints`
+- Diblokir `next/image` / CSP — pakai `<img>` biasa, tidak ada CSP
+
+**Perbaikan (3 file):**
+- Inisial huruf kini **selalu dirender di belakang** sebagai lapisan fallback
+- `<img>` di atasnya dengan `onError` → `display:none` → inisial langsung terlihat saat gambar gagal
+- `alt=""` — sebelumnya `alt={nama}` yang justru jadi "teks alternatif" yang dilaporkan. `alt=""` benar secara a11y karena nama sudah tampil berdampingan (foto profil bersifat dekoratif)
+- `key={url}` — kalau nanti ada fitur ganti foto, elemen di-remount sehingga status `display:none` tidak tertinggal
+
+**Files Modified:**
+- `src/components/profile/ProfileHeader.jsx`
+- `src/components/layout/Navbar.jsx`
+- `src/app/admin/users/page.tsx`
+
+**Verification:**
+- `bash ./init.sh` → **EXIT 0** (lint 0 errors / **79 warning — identik dengan sebelumnya**, tsc 0 errors, jest 16/16)
+- `npm run build` → ✓ Compiled, 62/62 pages
+- **Playwright reproduksi A/B** (akun probe dengan foto, `lh3.googleusercontent.com` diblokir):
+  - A) gambar diblokir → `<img>` `visible:false` (onError aktif), inisial "P" tampil rapi ✅
+  - B) gambar normal → `naturalWidth:96`, foto tampil seperti biasa ✅
+- Data test dibersihkan: akun probe dihapus, DB kembali 13 user, server dimatikan, tree bersih
+
+**Risks / catatan:**
+1. **Penyebab kegagalan memuat di kunjungan pertama tidak bisa direproduksi dari mesin dev** (URL selalu 200). Yang diperbaiki adalah *dampaknya* — sekarang selalu jatuh ke inisial, tidak pernah alt text. Kalau perlu tahu akar jaringannya: DevTools → Network → Disable cache, cek status request `lh3.googleusercontent.com` saat kunjungan pertama.
+2. **Foto profil hanya bisa diisi oleh Google OAuth** — tidak ada endpoint/form upload avatar (9 dari 13 user ber-`image: NULL`). Fitur upload avatar jadi usulan lanjutan, infrastruktur `/api/upload` sudah ada.
+
+### 2026-08-09 — Audit domain ulasan & perbaikan rating/statistik trip
+- **Motivasi**: audit domain Reviews atas permintaan user setelah selesai audit pre-deploy.
+- **Audit (tanpa ubah kode) menemukan 3 kesalahan nyata dengan bukti DB**:
+  1. Rating palsu 5.0 — `trip.repository.ts` fallback `5.0` untuk trip tanpa ulasan (Bali &
+     Yogyakarta menampilkan ★5.0 padahal 0 ulasan), plus 6 fallback hardcoded lain
+     (`DEFAULT_RATING`, `"4.8"`, `?? 5.0`) di kartu/landing/private.
+  2. `trips.rating` & `trips.review_count` tidak pernah ditulis → labuan Bajo tampil
+     "4.0 (0 ulasan)" (AVG realtime vs kolom basi).
+  3. `POST /api/reviews` tidak mengecek status booking — guard "harus completed" hanya
+     di client (`OpenTripBookingCard`), bisa di-bypass.
+- **Temuan lain (belum diperbaiki)**: PUT `/api/reviews/[id]` tanpa whitelist field;
+  review duplikat menghasilkan pesan generik 400 (harusnya 409); label "N ulasan
+  terverifikasi" padahal `is_verified_purchase` selalu false; duplikasi schema
+  `src/db/schema/reviews.ts` (userId uuid — salah) yang dead code; `review_media` tanpa
+  PK/FK di DB; N+1 query di `fetchApproved`/`findAll`/`findAllPublished`; kode mati
+  `reviewController` + `reviewService.createReview` + `findAverageRatingByTripId`.
+- **Fix diterapkan (11 file)**:
+  - `trip.repository.ts`: fallback `5.0` → `null`.
+  - `lib/Destination.js`, `DestinationCard`, `DestinationHeader`,
+    `landing/DestinationSection`, `private/DestinationCard`, `private/SelectedDestination`,
+    `private/page.jsx`: rating null → teks "Belum ada ulasan" (juga menghapus
+    fallback "4.8"/"5.0" palsu).
+  - `review.repository.ts`: fungsi baru `recomputeTripStats(tripId)` → hitung ulang
+    `trips.review_count` + `trips.rating` dari ulasan approved.
+  - `api/reviews/[id]`: panggil recompute di PUT & DELETE (setelah ambil tripId lama).
+  - `api/reviews` POST: booking wajib `status === "completed"`.
+  - `docs/database/backfill-review-stats.sql`: backfill idempoten — **harus dijalankan
+    1x di DB produksi setelah deploy**.
+- **Verifikasi**: tsc 0; lint 0 err/79 warning (tidak bertambah); `npm run build` OK;
+  `./init.sh` EXIT 0, jest 16/16.
+- **Bukti fungsional (server produksi + Chrome)**:
+  - API `/api/trips`: Labuan Bajo rating=4 count=1; Bali & Yogyakarta rating=null count=0.
+  - Kartu /trips: Bali & Yogyakarta menampilkan "Belum ada ulasan" (bukan ★5.0);
+    detail Labuan Bajo: "4.0 (1 ulasan)" (bukan "0 ulasan").
+  - Recompute: PUT status pending → rating=null count=0; PUT approved → 4 / 1 (kembali).
+  - Guard: booking `pending` → 400 "Ulasan hanya bisa diberikan setelah trip selesai";
+    booking `completed` → 201 (user sah tidak diblokir).
+- **Bersih**: akun & booking probe dihapus (DB 13 user, 1 review, 0 booking probe),
+  server dimatikan, evidence di `test-results/fix-review-*.png`.
+
+### 2026-08-09 — Lanjutan audit ulasan: temuan "sebaiknya" (branch `deployment`)
+- **Motivasi**: user meminta seluruh temuan prioritas rendah/sedang dari audit domain
+  Reviews dikerjakan, tetap di branch `deployment`.
+- **Whitelist `PUT /api/reviews/[id]`**: hanya `status` (enum pending/approved/rejected)
+  dan `isFeatured` (boolean) yang diterima; field lain → 400. Sebelumnya body diteruskan
+  apa adanya ke `update()`, sehingga `userId`/`bookingId`/`tripId` bisa diubah admin
+  dan status bisa diisi nilai apa pun.
+- **Review duplikat → 409**: cek `booking_id` sebelum insert → 409
+  "Anda sudah mengulas booking ini" (sebelumnya kena unique constraint → pesan generik 400).
+- **`is_verified_purchase` dihidupkan**: POST kini `true` (server sudah memastikan booking
+  completed + milik user), dan `ReviewsSection` menghitung label dari
+  `isVerifiedPurchase` — kata "terverifikasi" hanya muncul kalau semuanya terverifikasi.
+- **Kode mati dihapus (3 file)**: `review.controller.ts` (never used, berisi `...body`
+  tanpa auth = celah mass-assignment), `review.service.ts` (hanya wrapper
+  `createReview` tanpa pemakai) + export-nya di `index.ts`, `src/db/schema/reviews.ts`
+  (duplikat dengan schema module, `userId: uuid` — salah), dan `findAverageRatingByTripId`.
+- **`review_media`**: ditambahkan composite PK `(review_id, media_id)` sesuai
+  `docs/database/PANDUAN_DATABASE.md`, FK diubah jadi `ON DELETE CASCADE`
+  (tanpa ini hapus review yang punya media akan gagal). Diterapkan via SQL di DB dev
+  + `docs/database/review-integrity.sql` (idempoten) untuk produksi.
+- **N+1 dihilangkan** (query per baris → batch `inArray`):
+  `fetchApproved` 2/baris → 2 total; `findAll` 4/baris → 4 total;
+  `findAllPublished` 1 AVG per trip → 1 query `GROUP BY`.
+- **`docs/DEPLOY.md`**: langkah baru **4b** — jalankan 2 skrip SQL
+  (`backfill-review-stats.sql`, `review-integrity.sql`) untuk SEMUA kondisi database.
+- **Verifikasi**: tsc 0; lint 0 err/79 warning (tidak bertambah); `npm run build` OK;
+  `./init.sh` EXIT 0.
+- **Bukti fungsional (server produksi + Chrome)**:
+  - PUT: `userId` → 400; `status` invalid → 400 "Status tidak valid"; body kosong → 400;
+    `isFeatured` string → 400; `status+isFeatured` valid → 200 + recompute tetap jalan
+    (trip Labuan Bajo tetap rating=4 count=1).
+  - POST: ulasan pertama → 201 `is_verified_purchase=true`; duplikat → 409.
+  - GET admin: enrich batch menghasilkan field identik (userName, userEmail, tripTitle,
+    groupStartDate, groupEndDate, bookingCode).
+  - UI: tab Ulasan menampilkan "1 ulasan terverifikasi" + tidak ada error halaman.
+  - `review-integrity.sql` dijalankan ulang → tidak ada error (idempoten).
+- **Bersih**: probe dihapus (DB 13 user, 1 review, 0 booking probe), server dimatikan,
+  evidence `test-results/fix-review-label.png`.
+
+### 2026-08-09 — Audit & perbaikan domain Poin Referral (branch `deployment`)
+- **Audit** menemukan 3 kesalahan wajib + temuan lain (semua bukti runtime, bukan asumsi):
+  - `GET /api/user/referral` **500** — `sum(commissions.amount)` pada kolom varchar
+    (`function sum(character varying) does not exist`). Dipakai `profile/page.jsx` &
+    `ProfileStats` → "Poin Loyalitas"/"Total Referral" selalu tampil 0.
+  - Bonus referral **tidak bisa diberikan**: tabel `site_settings` tidak ada di DB
+    (drift) → `getReferralBonusPoints()` gagal **setelah** referral ditandai converted,
+    dan route menolak retry ("Pembayaran sudah diproses sebelumnya") → poin hilang
+    permanen.
+  - Pemberian poin **non-atomic**: `createTransaction` + `updateLoyaltyPoints` dua
+    operasi terpisah tanpa transaksi.
+- **Fix (wajib)**:
+  - `src/shared/db/utils.ts`: `withTransaction` kini **meneruskan `tx`** ke callback
+    (sebelumnya callback tidak pernah menerima tx — semua query tetap jalan di
+    koneksi terpisah, jadi helper itu menyesatkan); export tipe `Tx`.
+  - `payment.service.reviewPayment`: satu `withTransaction` untuk payment + booking +
+    referral + poin. Urutan diperbaiki: **baca konfigurasi di luar transaksi →
+    poin dulu → `converted` kemudian**. Gagal = seluruh transaksi rollback.
+  - `loyalty.repository`: method menerima `target?: db | tx`; `loyalty.service`
+    `creditReferralBonus(tx, ..., points)` wajib dalam transaksi; `creditCashback`
+    ikut dibungkus transaksi.
+  - `api/user/referral`: `sum(x::numeric)` + `coalesce`.
+- **Bug ke-4 terungkap saat uji**: `loyalty_transactions.reference_id` bertipe `uuid`
+  di DB tapi nilainya better-auth user id → `invalid input syntax for type uuid`,
+  kredit poin selalu gagal. Kode (`text`) sudah benar, DB-nya yang disesuaikan →
+  `docs/database/referral-integrity.sql` (idempoten).
+- **DB dev**: `site_settings` dibuat via `drizzle/0003_site_settings.sql`
+  (default `referral_bonus_points=10000`); `reference_id` → text.
+- **`docs/DEPLOY.md` 4b** ditambah 2 skrip: `0003_site_settings.sql`,
+  `referral-integrity.sql` + kolom "kalau dilewat".
+- **Verifikasi**: tsc 0; lint 0 err/79 warning; build OK; `./init.sh` EXIT 0.
+- **Bukti fungsional (server produksi + Chrome, probe dibersihkan)**:
+  - `GET /api/user/referral` 200 (dulu 500); `admin/site-settings/referral-bonus`
+    200 `{referralBonusPoints:10000}` (dulu 500).
+  - Skenario A — `site_settings` disembunyikan saat approve: 500 dengan
+    `payment=pending booking=pending referral=pending poin=0 ledger=0`
+    (**nol perubahan**, dulu payment & referral terlanjur berubah).
+  - Skenario B — approve sukses: 200, semua berubah bersamaan
+    `payment=paid booking=confirmed referral=converted poin=10000 ledger=1`.
+  - Skenario C — retry: 400, poin tetap 10000 (tidak dobel).
+- **Temuan audit lain yang BELUM dikerjakan**: poin tidak punya alur tukar/pakai
+  (hanya `type:"earn"`, `expiresAt` tak pernah dievaluasi); `creditCashback`
+  hardcoded 25.000 & tak pernah dipanggil; kode referral salah diabaikan diam-diam di
+  checkout; endpoint `checkout/validate-referral` tak pernah dipanggil UI; insert
+  referral gagal hanya `console.error`; N+1 di `/api/referrals/history`; kode mati
+  `payment.controller` + `confirmPayment`/`getPaymentsByBooking`;
+  `referralService.getAgentCommissions`; 10/13 user tanpa `referral_code`
+  (`src/db/backfill-referral-codes.ts` belum dijalankan); 3 tabel yatim di DB.
+- **Bersih**: probe dihapus (13 user, 0 ledger, 0 referrals), server dimatikan.
+
+### 2026-08-09 — Audit poin referral: temuan "sebaiknya" (branch `deployment`)
+- **Dikeluarkan dari daftar**: alur tukar/pakai poin = fitur baru (butuh keputusan
+  produk), bukan perbaikan — tidak layak masuk menjelang deploy.
+- **2 temuan audit gugur setelah dicek ulang** (salah saya waktu audit, dicatat agar
+  tidak diulang): endpoint `checkout/validate-referral` **sudah dipakai**
+  `useCheckout.js:applyReferral` (filter grep saya menghapusnya), dan `ReferralInput`
+  **sudah** punya validasi real-time via `onApply`.
+- **Kode referral salah tak lagi diabaikan diam-diam** (`api/checkout`): dulu kode yang
+  tidak ditemukan → `referrerId=null` → checkout tetap sukses. Kini validasi server-side
+  SEBELUM menulis apa pun → 400 "Kode referral tidak ditemukan" / "…kode referral
+  sendiri".
+- **Checkout jadi atomik**: booking + peserta + deklarasi kesehatan + catatan referral
+  dalam 1 `withTransaction` (dulu referral insert terpisah dengan `catch` yang hanya
+  `console.error` → booking bisa terbentuk tanpa referral). Statistik voucher sengaja
+  tetap di luar transaksi (gagal tidak boleh membatalkan booking) — dikomentari.
+- **N+1 di `/api/referrals/history` (admin)**: ~4 query per baris → 5 query total
+  (batch `inArray` untuk users, bookings, departures, trips; `await import()` di dalam
+  loop dihapus).
+- **Whitelist `POST` + `PUT /api/commissions`**: hanya `agentId`/`bookingId`/`amount`/
+  `status` dengan validasi (uuid, angka, enum `pending/approved/paid/rejected`) — dulu
+  body diteruskan apa adanya (mass assignment) termasuk `ruleId`/`referralId`.
+- **Kode mati dihapus**: `payment.controller.ts`, `referral.service.ts` +
+  export-nya, `paymentService.createPayment`/`confirmPayment`/`getPaymentsByBooking`,
+  `paymentRepository.create`/`findByBookingId`,
+  `referralRepository.getCommissionsByAgent`, `loyaltyService.creditCashback`
+  (hardcoded 25.000, nol pemakai, tidak disebut PRD/feature_list).
+- **`backfill-referral-codes.ts`**: jalankan di dev → 10 user kini punya kode
+  (sebelumnya 10/13 tanpa kode). File juga diberi `import "dotenv/config"` — tanpa ini
+  perintah yang tertulis di komentar file-nya sendiri gagal `ECONNREFUSED`.
+- **UI `ReferralInput`**: hint muncul kalau kode diketik tapi belum ditekan "Pakai"
+  (kode seperti itu memang tidak ikut dikirim — `referralCode: appliedReferral?.code`).
+- **Verifikasi**: tsc 0; lint 0 err/79 warning (tidak bertambah); build OK;
+  `./init.sh` EXIT 0.
+- **Bukti fungsional (server produksi + Chrome, semua probe dibersihkan)**:
+  - Checkout: tanpa referral 200 (booking+peserta terbentuk); kode salah →
+    **400 tanpa booking baru**; kode sendiri → 400; kode valid → 200 dengan
+    **1 referral row status pending** — booking/peserta/referral terbentuk bersamaan.
+  - `GET /api/referrals/history` → enrich batch menghasilkan `referrerName`,
+    `referredUserName`, `bookingCode`, `tripTitle` (null karena 38 booking dev memang
+    menunjuk departure yang sudah dihapus — diverifikasi, bukan bug).
+  - Komisi: `{}` → 400; `amount:"10.000"` → 400; `status:"siap"` → 400;
+    `ruleId` di PUT → 400 (tertolak whitelist); valid → 201/200.
+- **Tidak disentuh**: 3 tabel yatim di DB (`destinations`, `meeting_points`,
+  `newsletter_subscribers`) — tidak ada kode yang memakai, tapi penghapusan tabel
+  tidak ada gunanya menjelang deploy.
+
+### 2026-08-09 — Pemeriksaan visual (screenshot) + fix identitas header admin
+- **Cara verifikasi visual**: alih-alih `npx playwright test` (78 test, boros RAM —
+  laptop dev tidak sanggup), jalankan **satu tab Chrome serial**: server → `page.goto`
+  → screenshot → tutup. Hemat memori, cukup untuk menilai tampilan.
+  Screenshot tersimpan di `test-results/vis-*.png` (gitignore).
+- **Jujur soal E2E**: selama sesi audit ini yang dijalankan adalah **uji API
+  (curl/fetch) + query DB + screenshot**, BUKAN suite `npx playwright test`
+  (78 test) maupun `npm run test` (Jest). Run terakhir suite = 2026-09-28 10:01,
+  **sebelum** 6 commit di branch `deployment`. Belum dijalankan ulang.
+- **Terbukti di layar**: `/trips` → Labuan Bajo `★ 4.0`, Bali & Yogyakarta
+  **"Belum ada ulasan"**; detail → `4.0 (1 ulasan)`; profil → kartu Poin Loyalitas
+  dan Total Referral tampil (0, bukan kosong); admin ▸ ulasan → 1 baris sesuai DB;
+  admin ▸ komisi → "Belum ada data komisi."
+- **Temuan baru**: `AdminShell.tsx` menampilkan **identitas hardcode**
+  `Admin Master / admin@opentrip.co.id` — tidak ada di DB (admin asli
+  `admin@otl.id`), dan file itu nol `useSession`. Semua admin melihat identitas
+  orang lain. **Diperbaiki**: baca `useSession()`, nama/email/inisial diturunkan
+  dari akun login, fallback `"Admin"` (bukan string identitas siapapun).
+- **Salah baca sendiri**: screenshot pertama sebenarnya sudah menampilkan hasil
+  baru (`AO` / `Admin OTL`), tapi saya menyimpulkan "masih lama" tanpa benar-benar
+  membacanya → saya telusuri ke source → bundle (`Admin Master` tidak ada di
+  `.next/static`, hanya di `.map` akibat komentar) → DOM (langsung
+  `Admin OTL` / `admin@otl.id`). Pelajaran: bukti bertentangan = periksa sumber,
+  jangan menyalahi kode.
+- **Verifikasi**: tsc 0; lint 0 err/79 warning; build OK; `./init.sh` EXIT 0;
+  server dimatikan.
+
+### 2026-08-09 — Sidebar admin diganti template shadcn (branch `deployment`)
+- `AdminShell` kini memakai `AppSidebar` (template dashboard shadcn) menggantikan
+  `AdminSidebar` kustom — diminta eksplisit oleh user ("ganti sepenuhnya").
+- Isi tab = menu admin (6 grup: Menu Utama, Trip & Tempat, Pengguna & Partner,
+  Marketing, Order, Konten) + ikon lucide yang sudah ada; tanpa logo/ikon baru.
+- Struktur listing dipertahankan persis template (NavMain collapsible + chevron);
+  satu-satunya deviasi: judul tab disembunyikan saat collapse (perbaikan teks
+  bocor), dan `gap-2` antar blok tab (kompensasi section Projects yang dihapus).
+- Tema gelap + teks putih via class `.admin-sidebar-dark` (sudah ada di
+  globals.css); label grup dikecualikan agar tetap redup seperti template.
+- Header sidebar = logo brand + "Panel Admin"; footer = link "Lihat Website"
+  (tab baru, konvensi View Site); section Projects contoh + NavUser contoh
+  dihapus; TeamSwitcher contoh dihapus.
+- Navbar admin kanan-atas = lingkaran foto profil saja (buka dropdown persis
+  Navbar utama: Profil Saya, Halaman Admin, Riwayat Trip, Keluar).
+- Tombol lonceng disamakan dengan SidebarTrigger (ghost icon-sm); panel
+  notifikasi digaya DropdownMenu shadcn (radius-md, baris rounded-sm, separator,
+  ikon muted); daftar punya p-1 agar tidak menempel kontainer.
+- Fix scroll horizontal: `SidebarInset` + konten `min-w-0`, konten
+  `overflow-x-clip`, header `left-0` — tabel scroll di dalam, header diam,
+  profil/lonceng selalu terlihat (terbukti di /admin/private-trips).
+- `next.config.ts`: izinkan `lh3.googleusercontent.com` (avatar Google login
+  OAuth) — perbaiki error "Invalid src prop" di next/image.
+- `use-mobile.ts`: bungkus setState awal dengan queueMicrotask (hilangkan
+  1 lint error bawaan file template shadcn).
+- File template shadcn (dashboard, app-sidebar, nav-*, team-switcher, ui/*,
+  package.json + `cn`) ditambahkan ke tree oleh user/rekan sebelum sesi ini;
+  ikut di-commit karena build bergantung padanya.
+- Pelajaran sesi: 3x salah baca screenshot — angka DOM lebih andal; proses
+  server basi berulang (wajib loop-kill + cek start time); 2 batch edit
+  "sukses" hilang dari file (sebab tak teridentifikasi) — verifikasi grep
+  langsung setiap edit sejak itu.
+- Verifikasi: tsc 0; lint 0 err/78 warning; build OK; `./init.sh` EXIT 0;
+  E2E suite 78 test tetap belum dijalankan (laptop dev tidak sanggup).

@@ -5,7 +5,7 @@ import { MapPin, Star, ArrowRight, Heart } from "lucide-react";
 import { formatRupiah } from "@/lib/formatRupiah";
 
 export default function DestinationCard({ dest, onClick, className = "" }) {
-  const ratingVal = typeof dest.rating === "number" ? dest.rating.toFixed(1) : "4.8";
+  const ratingVal = typeof dest.rating === "number" ? dest.rating.toFixed(1) : null;
 
   return (
     <Link
@@ -26,10 +26,14 @@ export default function DestinationCard({ dest, onClick, className = "" }) {
           </div>
         )}
         <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-xs">
-          <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
-          <span className="text-xs font-semibold text-gray-900">
-            {ratingVal}
-          </span>
+          {ratingVal ? (
+            <>
+              <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
+              <span className="text-xs font-semibold text-gray-900">{ratingVal}</span>
+            </>
+          ) : (
+            <span className="text-xs font-medium text-gray-500">Belum ada ulasan</span>
+          )}
         </div>
 
         <div className="absolute top-3 right-3 flex items-center gap-1.5 flex-wrap justify-end">

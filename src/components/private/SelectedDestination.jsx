@@ -7,7 +7,7 @@ export default function SelectedDestination({
   onClear,
 }) {
   const title = destination.title || destination.name || "Destinasi";
-  const rating = typeof destination.rating === "number" ? destination.rating.toFixed(1) : "5.0";
+  const rating = typeof destination.rating === "number" ? destination.rating.toFixed(1) : null;
 
   return (
     <div
@@ -36,9 +36,15 @@ export default function SelectedDestination({
           className="text-xs font-semibold flex items-center gap-1.5"
           style={{ color: A }}
         >
-          <Star className="w-3.5 h-3.5 fill-current shrink-0" />
-          <span>{rating}</span>
-          <span>·</span>
+          {rating ? (
+            <>
+              <Star className="w-3.5 h-3.5 fill-current shrink-0" />
+              <span>{rating}</span>
+              <span>·</span>
+            </>
+          ) : (
+            <span className="font-medium text-gray-500">Belum ada ulasan</span>
+          )}
           <span>{formatRupiah(destination.priceMin)}</span>
         </p>
         {destination.isSeniorFriendly && (

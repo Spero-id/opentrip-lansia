@@ -150,7 +150,7 @@ export default function PrivateTripPage() {
               priceMin: item.priceMin ?? 0,
               priceMax: item.priceMax ?? 0,
               location: item.location || "Indonesia",
-              rating: item.rating ?? 5.0,
+              rating: item.rating ?? null,
             }));
             setDestinations(normalized);
           }

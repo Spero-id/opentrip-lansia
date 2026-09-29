@@ -40,7 +40,7 @@ export function toDetail(dest) {
     location: dest.location || "Indonesia",
     category: categoryName,
     isSeniorFriendly,
-    rating: dest.rating || DEFAULT_RATING,
+    rating: dest.rating ?? null,
     reviewCount: dest.reviewCount || 0,
     priceMin: Number(dest.price ?? dest.priceMin) || 0,
     priceMax: Number(dest.priceMax) || 0,

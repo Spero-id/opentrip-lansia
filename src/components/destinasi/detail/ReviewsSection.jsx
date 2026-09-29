@@ -62,6 +62,9 @@ export default function ReviewsSection({ tripId }) {
   }
 
   const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  // Kata "terverifikasi" hanya muncul kalau SEMUA ulasan memang terverifikasi
+  // (booking completed milik user sendiri) — kalau tidak, jangan mengklaim.
+  const allVerified = reviews.every((r) => r.isVerifiedPurchase);
 
   return (
     <div className="space-y-5">
@@ -73,7 +76,9 @@ export default function ReviewsSection({ tripId }) {
         </div>
         <div>
           <StarDisplay rating={Math.round(avgRating)} />
-          <p className="text-xs text-gray-400 mt-1">{reviews.length} ulasan terverifikasi</p>
+          <p className="text-xs text-gray-400 mt-1">
+            {reviews.length} ulasan{allVerified ? " terverifikasi" : ""}
+          </p>
         </div>
       </div>
 

@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "vectorseek.com",
       },
+      // Avatar Google (login OAuth) — tanpa ini next/image menolak
+      // session.user.image dengan error "hostname is not configured".
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
 };

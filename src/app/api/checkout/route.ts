@@ -10,6 +10,7 @@ import { promotionRepository } from "@/modules/promotion";
 import { tripRepository } from "@/modules/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";
+import { withTransaction } from "@/shared/db/utils";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -232,69 +233,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- Persist booking with server-computed amounts ---
-    const [booking] = await db.insert(bookings).values({
-      bookingCode: orderId,
-      userId,
-      departureId,
-      status: "pending_payment",
-      totalParticipants: paxNum,
-      subtotal: String(expectedSubtotal),
-      discountAmount: String(discount),
-      totalAmount: String(expectedTotal),
-      promoId,
-      notes: JSON.stringify({
-        destinationName: destination.title ?? destination.name,
-        destinationId: trip.id,
-        departureId,
-        voucherCode: code || null,
-        promoId,
-        customerName: customer?.fullName,
-        customerPhone: customer?.phone,
-        customerAddress: customer?.address,
-        emergencyContactName: customer?.emergencyContactName,
-        emergencyContactPhone: customer?.emergencyContactPhone,
-      }),
-    }).returning();
-
-    const [participant] = await db.insert(bookingParticipants).values({
-      bookingId: booking.id,
-      fullName: customer?.fullName || "",
-      phone: customer?.phone || "",
-      dateOfBirth: customer?.birthDate || null,
-      address: customer?.address || null,
-      emergencyContactName: customer?.emergencyContactName || null,
-      emergencyContactPhone: customer?.emergencyContactPhone || null,
-      isPrimary: true,
-    }).returning();
-
-    if (participant && customer?.healthConditions) {
-      const hc = customer.healthConditions;
-      await db.insert(healthDeclarations).values({
-        participantId: participant.id,
-        hasHypertension: hc.hypertension || false,
-        hasDiabetes: hc.diabetes || false,
-        hasHeartDisease: hc.heart || false,
-        hasAsthma: hc.asthma || false,
-        hasVertigo: hc.vertigo || false,
-        hasJointBoneDisease: hc.jointBone || false,
-        noConditions: hc.none || false,
-        medications: customer.medications || "Tidak ada",
-        mobilityOption: customer.mobilityOption || "independent",
-        isDeclaredTrue: true,
-      });
-    }
-
-    if (promoId) {
-      try {
-        await promotionRepository.incrementUsage(promoId);
-        await promotionRepository.recordUsage(promoId, userId, booking.id);
-      } catch (e) {
-        console.error("Failed to record promotion usage:", e);
-      }
-    }
-
-    // --- Validate and record referral if provided ---
+    // --- Validasi referral (server-authoritative, SEBELUM menulis apa pun) ---
+    // Dulu: kode yang tidak ditemukan diam-diam diabaikan (referrerId = null)
+    // dan checkout tetap sukses, jadi pengguna mengira kodenya terpakai padahal
+    // tidak — dan referrer tidak pernah mendapat bonus.
     const refCode = String(referralCode ?? "").trim().toUpperCase();
     let referrerId: string | null = null;
 
@@ -305,22 +247,99 @@ export async function POST(req: NextRequest) {
         .where(eq(users.referralCode, refCode))
         .limit(1);
 
-      if (referrer && referrer.id !== userId) {
-        referrerId = referrer.id;
+      if (!referrer) {
+        return NextResponse.json(
+          { error: "Kode referral tidak ditemukan. Periksa kembali kode Anda." },
+          { status: 400 }
+        );
       }
+      if (referrer.id === userId) {
+        return NextResponse.json(
+          { error: "Tidak bisa menggunakan kode referral sendiri." },
+          { status: 400 }
+        );
+      }
+      referrerId = referrer.id;
     }
 
-    // Create referral record if valid referrer exists
-    if (referrerId) {
-      try {
-        await db.insert(referrals).values({
+    // --- Persist booking dengan jumlah hasil hitungan server ---
+    // Booking, peserta, deklarasi kesehatan, dan catatan referral dalam SATU
+    // transaksi: dulu referral di-insert terpisah dengan catch yang hanya
+    // console.error, sehingga booking bisa terbentuk tanpa referral (bonus
+    // referrer hilang diam-diam tanpa jejak).
+    const booking = await withTransaction(async (tx) => {
+      const [created] = await tx.insert(bookings).values({
+        bookingCode: orderId,
+        userId,
+        departureId,
+        status: "pending_payment",
+        totalParticipants: paxNum,
+        subtotal: String(expectedSubtotal),
+        discountAmount: String(discount),
+        totalAmount: String(expectedTotal),
+        promoId,
+        notes: JSON.stringify({
+          destinationName: destination.title ?? destination.name,
+          destinationId: trip.id,
+          departureId,
+          voucherCode: code || null,
+          promoId,
+          customerName: customer?.fullName,
+          customerPhone: customer?.phone,
+          customerAddress: customer?.address,
+          emergencyContactName: customer?.emergencyContactName,
+          emergencyContactPhone: customer?.emergencyContactPhone,
+        }),
+      }).returning();
+
+      const [participant] = await tx.insert(bookingParticipants).values({
+        bookingId: created.id,
+        fullName: customer?.fullName || "",
+        phone: customer?.phone || "",
+        dateOfBirth: customer?.birthDate || null,
+        address: customer?.address || null,
+        emergencyContactName: customer?.emergencyContactName || null,
+        emergencyContactPhone: customer?.emergencyContactPhone || null,
+        isPrimary: true,
+      }).returning();
+
+      if (participant && customer?.healthConditions) {
+        const hc = customer.healthConditions;
+        await tx.insert(healthDeclarations).values({
+          participantId: participant.id,
+          hasHypertension: hc.hypertension || false,
+          hasDiabetes: hc.diabetes || false,
+          hasHeartDisease: hc.heart || false,
+          hasAsthma: hc.asthma || false,
+          hasVertigo: hc.vertigo || false,
+          hasJointBoneDisease: hc.jointBone || false,
+          noConditions: hc.none || false,
+          medications: customer.medications || "Tidak ada",
+          mobilityOption: customer.mobilityOption || "independent",
+          isDeclaredTrue: true,
+        });
+      }
+
+      if (referrerId) {
+        await tx.insert(referrals).values({
           referrerId,
           referredUserId: userId,
-          bookingId: booking.id,
+          bookingId: created.id,
           status: "pending",
         });
+      }
+
+      return created;
+    });
+
+    // Statistik pemakaian voucher: sengaja DI LUAR transaksi. Kalau gagal,
+    // booking tetap harus terbentuk — yang hilang hanya catatan statistik.
+    if (promoId) {
+      try {
+        await promotionRepository.incrementUsage(promoId);
+        await promotionRepository.recordUsage(promoId, userId, booking.id);
       } catch (e) {
-        console.error("Failed to create referral record:", e);
+        console.error("Failed to record promotion usage:", e);
       }
     }
 

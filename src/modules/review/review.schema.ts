@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, integer, boolean, timestamp, primaryKey } from "drizzle-orm/pg-core";
 
 export const reviews = pgTable("reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -14,8 +14,12 @@ export const reviews = pgTable("reviews", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Junction review ↔ media: wajib punya composite PK (aturan
+// docs/database/PANDUAN_DATABASE.md) supaya baris duplikat tidak mungkin masuk.
 export const reviewMedia = pgTable("review_media", {
-  reviewId: uuid("review_id").notNull().references(() => reviews.id),
+  reviewId: uuid("review_id").notNull().references(() => reviews.id, { onDelete: "cascade" }),
   mediaId: uuid("media_id").notNull(),
   sortOrder: integer("sort_order").default(0),
-});
+}, (t) => ({
+  pk: primaryKey({ columns: [t.reviewId, t.mediaId] }),
+}));

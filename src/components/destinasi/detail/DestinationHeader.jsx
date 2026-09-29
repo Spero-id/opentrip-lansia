@@ -8,9 +8,18 @@ export default function DestinationHeader({ dest }) {
         <span className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-white bg-[#F49D1A]">
           {dest.category}
         </span>
-        <span className="flex items-center gap-1 text-[#F49D1A] font-bold bg-[#FEF6E7] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
-          <Star className="w-3.5 h-3.5 fill-current" /> {Number(dest.rating).toFixed(1)} <span className="text-gray-500 font-normal">({formatNumber(dest.reviewCount)} ulasan)</span>
-        </span>
+        {dest.rating != null ? (
+          <span className="flex items-center gap-1 text-[#F49D1A] font-bold bg-[#FEF6E7] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
+            <Star className="w-3.5 h-3.5 fill-current" /> {Number(dest.rating).toFixed(1)}{" "}
+            <span className="text-gray-500 font-normal">
+              ({formatNumber(dest.reviewCount ?? 0)} ulasan)
+            </span>
+          </span>
+        ) : (
+          <span className="flex items-center gap-1 text-gray-500 font-normal bg-gray-100 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
+            Belum ada ulasan
+          </span>
+        )}
       </div>
       <h1 className="text-3xl sm:text-5xl font-bold mb-2 tracking-tight text-gray-900">
         {dest.title}

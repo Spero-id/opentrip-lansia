@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { reviewRepository } from "@/modules/review";
 import { bookings } from "@/modules/booking/booking.schema";
+import { reviews } from "@/modules/review/review.schema";
 import { tripDepartures } from "@/modules/trip/trip.schema";
 import { db } from "@/shared/db";
 import { eq, and } from "drizzle-orm";
@@ -65,12 +66,20 @@ export async function POST(req: NextRequest) {
 
     // Booking harus milik user yang login
     const [booking] = await db
-      .select({ departureId: bookings.departureId })
+      .select({ departureId: bookings.departureId, status: bookings.status })
       .from(bookings)
       .where(and(eq(bookings.id, bookingId), eq(bookings.userId, session.user.id)))
       .limit(1);
     if (!booking) {
       return NextResponse.json({ error: "Booking tidak ditemukan atau bukan milik Anda" }, { status: 403 });
+    }
+
+    // Ulasan hanya setelah trip selesai — guard client-side bisa di-bypass
+    if (booking.status !== "completed") {
+      return NextResponse.json(
+        { error: "Ulasan hanya bisa diberikan setelah trip selesai" },
+        { status: 400 }
+      );
     }
 
     // tripId harus cocok dengan trip dari departure booking tersebut
@@ -83,6 +92,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "tripId tidak cocok dengan booking" }, { status: 400 });
     }
 
+    // Satu booking hanya boleh mengulas satu kali (unique di level DB juga,
+    // tapi dicek dulu supaya dapat pesan yang jelas, bukan error 400 generik)
+    const [existing] = await db
+      .select({ id: reviews.id })
+      .from(reviews)
+      .where(eq(reviews.bookingId, bookingId))
+      .limit(1);
+    if (existing) {
+      return NextResponse.json({ error: "Anda sudah mengulas booking ini" }, { status: 409 });
+    }
+
     // Field kepercayaan dipaksa dari server, bukan dari client
     const data = await reviewRepository.create({
       bookingId,
@@ -91,7 +111,8 @@ export async function POST(req: NextRequest) {
       departureId: booking.departureId,
       rating,
       content,
-      isVerifiedPurchase: false,
+      // Booking sudah dipastikan completed & milik user di atas → terverifikasi
+      isVerifiedPurchase: true,
       isFeatured: false,
       status: "pending",
     });
