@@ -29,6 +29,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Static/vendor assets — never lint (e.g. public/hugerte editor bundle)
     "public/**",
+    // Generated coverage report (mirrors .gitignore /coverage)
+    "coverage/**",
   ]),
 ]);
 

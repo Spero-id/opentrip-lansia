@@ -1898,3 +1898,40 @@ server).
 **Dipush & PR:** branch `restructure/fase-0` → PR
 https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-0
 (base `main`, berisi seluruh commit Fase 0).
+
+---
+
+## Session 45 — Restructure Fase 0.5: Error & 404 root (2026-09-30)
+
+**Cabang:** `restructure/fase-0.5` dari `main` `2606da7` (merge **PR #105**
+Fase 0).
+
+**0.5.1–0.5.2 (komit `1396b01`):** `src/app/error.tsx` + `src/app/not-found.tsx`
+(keduanya belum pernah ada). **Temuan Next 16**: prop error boundary kini
+**`retry`** (stabil sejak 16.3); `reset` masih ada tapi docs menyarankan
+`retry()` (re-fetch + re-render). Copy UI bahasa Indonesia; 404 menampilkan
+tombol/link "Ke Beranda".
+
+**Perkakas (ikut komit):**
+- `eslint.config.mjs` += ignore `coverage/**` — output run coverage (0.10)
+ter-lint sehingga warning naik 78→79; setelah ignore kembali **78**.
+- **Blind spot R8 tercatat**: wordlist R8 kena **prosa JSX** — `mask()` hanya
+  menutup string & komentar, teks antar-tag tak ikut (kata seperti
+  `yang/kembali/cari/dihapus/alamat` dari teks UI ikut terhitung). Copy UI
+  Fase 0.5 ditulis menghindari kata terdaftar → R8 tetap **480** (ratchet
+  tak boleh naik). **Perbaikan mask → backlog Fase 11** — hati-hati: jangan
+  sekadar `>[^<]*<` (bisa menimpa kode `a > b`); perlu desain hati-hati.
+
+**0.5.3 (bukti):** `npm run build` EXIT 0; prod server: `/url-tak-dikenal-9f8g7`
+& `/definitely/not/route` → **HTTP 404** + konten kustom; `/blog/tidak-ada` →
+200 (streamed `notFound()` — status sesuai perilaku Next, konten kustom ✓).
+Ladder: tsc **0** · lint **0E/78W** · vitest **6/50** · check-* dalam baseline ·
+`./init.sh` **EXIT 0**.
+
+**0.5.4:** commit `1396b01`; centang 4/4 task + tabel Progres.
+
+**Progres:** Fase 0.5 = **4/4** → total **21/127**.
+
+**Dipush & PR:** branch `restructure/fase-0.5` → PR
+https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-0.5
+(base `main`).
