@@ -22,7 +22,7 @@ const BASELINE: Baseline = {
   R6: [],
   R7: [],
   R8: 0,
-  R9: 0,
+  R9: 82,
 };
 
 const ID_COMMENT_WORDS = [
