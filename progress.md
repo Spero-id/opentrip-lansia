@@ -1608,3 +1608,65 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
   langsung setiap edit sejak itu.
 - Verifikasi: tsc 0; lint 0 err/78 warning; build OK; `./init.sh` EXIT 0;
   E2E suite 78 test tetap belum dijalankan (laptop dev tidak sanggup).
+
+## Session 40 — Bugfix: Voucher promo bikin checkout gagal "Total pembayaran tidak sesuai"
+
+**Laporan:** "Isi kode promo lalu klik Lanjut ke Pembayaran, tiba-tiba muncul error"
+(`400 Total pembayaran tidak sesuai. Silakan muat ulang halaman.`) dan
+"UI should display the discounted price" — ringkasan harga tidak pernah
+menampilkan baris diskon.
+
+**Diagnosis (diverifikasi sampai ke DB, bukan asumsi):**
+
+Log server menunjukkan `clientTotal 2200000` vs `expectedTotal 2100000`
+(subtotal sama, jadi bedanya murni diskon: client 0, server 100000).
+Query langsung ke `promotions`:
+
+```
+code AEZAKMI | type percentage | value "70%" | max_discount "100000" | min_purchase "100000"
+```
+
+Kolom `value` bertipe varchar dan admin mengisinya bebas
+(placeholder lama: "20% atau 100000"). Tiga parser berbeda membaca nilai itu:
+
+| Lokasi | Ekspresi | "70%" |
+|---|---|---|
+| client `useCheckout.js` | `Number(value) \|\| 0` | **0** → diskon 0, UI tanpa baris diskon |
+| server `api/checkout/route.ts` | `toNumber()` (buang non-angka) | **70** → 70% dari 2.200.000 = 1.540.000, di-cap max 100.000 |
+| `promotion.service.ts` | `parseInt()` | 70 |
+
+Client kirim total penuh (2.200.000), server mengharapkan 2.100.000 → 400.
+Itu sebabnya error tetap muncul walau voucher sudah ditekan "Pakai".
+
+**Perbaikan:**
+
+- `src/shared/promo/promo-value.ts` (baru) — `parseMoney()` + `parsePromoValue()`
+  parser tunggal: `"70%"→70`, `"7.5%"→7.5`, `"100.000"/"Rp100.000"→100000`,
+  barang tak terbaca → 0 (bukan NaN).
+- `src/shared/promo/promo-discount.ts` (baru) — `computePromoDiscount()`
+  satu-satunya rumus diskon; dipakai ketiga titik di atas sehingga angka client
+  dan server mustahil beda.
+- `src/lib/hooks/useCheckout.js` — `resolveVoucher()` diekstrak (dipakai tombol
+  "Pakai" & auto-apply saat klik Lanjut), `getDiscount()` sekarang memakai rumus
+  bersama (ikut berubah saat pax berubah), payload hanya mengirim voucher yang
+  benar-benar applied.
+- `src/app/api/checkout/route.ts` — validasi voucher tetap server-authoritative,
+  perhitungan diskon delegasi ke `computePromoDiscount`.
+- `src/modules/promotion/promotion.service.ts` — ikut pakai parser & rumus sama
+  (dulu `parseInt` + `Math.floor`, beda dengan checkout).
+- `src/components/checkout/VoucherCard.jsx` — Enter menerapkan kode voucher.
+- `src/app/admin/promotions/page.tsx` — validasi + normalisasi `value`,
+  `minPurchase`, `maxDiscount` sebelum disimpan; pesan error di form; placeholder
+  dipisah per tipe ("20 atau 20%" vs "100000").
+- `jest.config.cjs` — tambah transform `babel-jest` untuk `.js/.jsx`
+  (`@babel/plugin-transform-modules-commonjs`); sebelumnya Jest gagal memuat
+  modul client ESM seperti `useCheckout.js`.
+
+**Tests:** `src/shared/promo/promo-value.test.ts` (baru) mengunci kasus nyata
+AEZAKMI: client total === server total === 2.100.000, plus parser & min-purchase.
+
+**Verifikasi:** `npx jest` → 3 suites / 22 tests pass; `npx tsc --noEmit` → 0 error;
+`npm run lint` → 0 error / 78 warning (baseline tidak berubah).
+
+**Belum diverifikasi manual:** alur checkout end-to-end di browser (isi voucher →
+klik Lanjut → pembayaran) karena butuh dev server + session login.

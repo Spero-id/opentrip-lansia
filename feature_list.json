@@ -1,11 +1,11 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-09-09",
+  "last_updated": "2026-09-30",
   "summary": {
     "total_features": 55,
-    "in_review": 17,
+    "in_review": 18,
     "completed": 22,
-    "to_do": 16,
+    "to_do": 15,
     "not_started": 0
   },
   "phases": [
@@ -206,15 +206,16 @@
           "id": "feat-033",
           "title": "Promo code integration in booking",
           "description": "Apply promo code with validation, discount calculation (percentage/fixed), usage limit, max discount. Service exists, UI + API endpoint needed.",
-          "status": "to_do",
+          "status": "in_review",
           "priority": 33,
           "depends_on": [
             "feat-030"
           ],
           "verification": [
-            "npm run lint"
+            "npm run lint",
+            "npx jest src/shared/promo"
           ],
-          "evidence": "promotion.service.ts with full applyPromo logic"
+          "evidence": "UI voucher ada di checkout (VoucherCard/ReferralInput/PriceBreakdown), API: GET /api/promotions + POST /api/checkout (validasi server-side). Bugfix 2026-09-30: sebelumnya client memakai Number(\"70%\")=0 sementara server toNumber(\"70%\")=70 -> \"Total pembayaran tidak sesuai\" 400 dan diskon tidak tampil di UI. Kini parser & rumus diskon dibagikan di src/shared/promo/{promo-value,promo-discount}.ts (dipakai useCheckout.js, api/checkout/route.ts, promotion.service.ts) + admin form divalidasi. jest src/shared/promo 3 test pass; lint 0 error; tsc 0 error."
         },
         {
           "id": "feat-034",

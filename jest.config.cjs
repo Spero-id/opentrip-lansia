@@ -8,6 +8,16 @@ module.exports = {
         tsconfig: "tsconfig.jest.json",
       },
     ],
+    // File .js/.jsx proyek memakai sintaks ESM (import/export); tanpa transform
+    // ini Jest gagal memuat modul client seperti src/lib/hooks/useCheckout.js
+    "^.+\\.(js|jsx)$": [
+      "babel-jest",
+      {
+        babelrc: false,
+        configFile: false,
+        plugins: ["@babel/plugin-transform-modules-commonjs"],
+      },
+    ],
   },
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",

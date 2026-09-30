@@ -23,6 +23,12 @@ export default function VoucherCard({ voucherCode, setVoucherCode, appliedVouche
             placeholder={vouchersLoading ? "Memuat voucher..." : "Masukkan kode voucher"}
             value={voucherCode}
             onChange={(e) => setVoucherCode(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                onApply();
+              }
+            }}
             disabled={vouchersLoading}
             className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 disabled:bg-gray-50 disabled:cursor-not-allowed"
           />
