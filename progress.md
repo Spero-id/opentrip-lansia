@@ -1845,3 +1845,56 @@ tablenya **tidak ada**; meeting points hanya ada sebagai jsonb
 dicatat sebagai `feat-102` (to_do, phase-5); halaman dibiarkan apa adanya;
 keputusan akhir (bangun backend vs hapus halaman) milik PRD. **Paket 8 jangan
 merombak halaman ini sebelum keputusan.**
+
+**0.8 — Gate dipasang ke `init.sh` (komit `5bc9849`):** `check:structure` +
+`check:schema-drift` + `check:routes` (kondisional: jalan bila
+`.next/app-path-routes-manifest.json` ada — init tidak build).
+
+**0.9 — Baseline dibekukan (komit `ec84e8e`):** `check:structure` BASELINE
+R1=250, R2=95, R3=0, R4=8, R5=46, R6=8, R7=2, R8=480, **R9=82** (81 import
+`../` + 1 `typeof import()` — angka nyata; angka 80 di rencana = estimasi
+audit awal). `check-schema-drift` dapat `KNOWN_DRIFT` = 4 tabel
+(`booking_participants`, `health_declarations`, `payments`,
+`terms_acceptances`) → tak gagalkan sampai Fase 2 (task 2.7); drift baru
+tetap gagal. Snapshot routes = 96 app path.
+
+**0.9b — Jest → Vitest (komit `84281e4`, tick `6ca24f3`):** 6 suite / 50
+test hijau. Keputusan dependency: vitest sempat terpasang di lini **v5**
+lalu **di-pin ke v4** karena peer better-auth 1.6.23 hanya `^2||^3||^4`
+(setelah pin, full `npm install` hijau); `@vitejs/plugin-react` di-pin **^5**
+(v6 menarik babel 8, bentrok babel 7 milik shadcn); `@types/node` ^20 →
+**^24** (mengikuti runtime Node 24). Dihapus: jest, ts-jest,
+jest-environment-jsdom, @types/jest, identity-obj-proxy, `jest.config.cjs`,
+`tsconfig.jest.json`. Temuan: 9 mapper mock `src/__mocks__/*` menunjuk
+folder yang **tidak pernah ada** (dead config — tak dipindah). Quirk tercatat:
+force-kill dev server bisa **merusak `.next/dev/types/*`** (validator.ts
+tertulis terpotong) sehingga build gagal tipe — solusi: hapus
+`.next/dev/types` (bukan bug upgrade).
+
+**0.9c — better-auth 1.6.23 → 1.7.6 (komit `5ddf2e2`):** changelog 1.6.24–
+1.7.6 diaudit dari upstream. **Backfill `Account.issuer` BATAL — tidak
+perlu**: 1.7.3 (#2220ee7) memulihkan kompatibilitas DB 1.6 (identitas akun
+kembali `(providerId, accountId)`, syarat issuer dihapus); DB kita tak punya
+kolom `issuer` dan tak pernah lewat 1.7.0–1.7.2. `npx auth generate`:
+kolom users/session/account/verification **identik** dengan skema kita →
+tanpa migrasi drizzle (`drizzle/` beku; saran opsional `*_userId_idx` +
+`$onUpdate(updated_at)` → backlog). Smoke live di dev server: sign-in admin
+**200** (role admin + additionalFields utuh), get-session **200** (cookie),
+user **200**, sandi salah **401**, log bersih dari error validasi skema
+runtime (aktif default sejak 1.7.3).
+
+**0.10 — Coverage baseline (`npx vitest run --coverage`, exit 0):**
+Statements **47.65%** (274/575) · Branches **55.98%** (215/384) · Functions
+**29.67%** (46/155) · Lines **50.81%** (250/492) — patokan jangan-turun
+untuk setelah rewrite test (1.3b); tanpa threshold gate.
+
+**0.11 — Fase 0 SELESAI: 14/14 task** (+Persiapan 3/3 → total **17/127**).
+Ladder terakhir: `npx tsc --noEmit` 0 · lint **0 error / 78 warning** ·
+vitest **6 suite / 50 test** · `npm run build` EXIT 0 · `./init.sh`
+**EXIT 0** (tiga gate baru aktif). Belum diuji via browser (Playwright
+ditiadakan — konfirmasi visual checkout fix & login = milik user di dev
+server).
+
+**Dipush & PR:** branch `restructure/fase-0` → PR
+https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-0
+(base `main`, berisi seluruh commit Fase 0).

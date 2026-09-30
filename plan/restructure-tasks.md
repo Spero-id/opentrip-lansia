@@ -25,7 +25,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Bagian | Selesai | Total |
 |---|---|---|
 | Persiapan (commit plan & buka cabang) | 3 | 3 |
-| Fase 0 — Tools & baseline | 11 | 14 |
+| Fase 0 — Tools & baseline | 14 | 14 |
 | Fase 0.5 — Boundary root | 0 | 4 |
 | Fase 1 — Komentar & pesan error | 0 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 0 | 8 |
@@ -36,7 +36,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **14** | **127** |
+| **Total** | **17** | **127** |
 
 ---
 
@@ -53,9 +53,9 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 - [x] **0.8** Pasang ketiga `check-*` ke `package.json` **dan** `./init.sh` (check:routes kondisional — jalan bila manifest build ada; komit terpisah)
 - [x] **0.9** Tools hijau di kondisi sekarang (daftar baseline tersimpan) — `./init.sh` EXIT 0 **(dikerjakan sebelum 0.8 agar wiring langsung hijau)**
 - [x] **0.9b** **Migrasi runner test Jest → Vitest** (D-19; ikuti panduan resmi Next `node_modules/next/dist/docs/01-app/02-guides/testing/vitest.md`): install `vitest` `@vitejs/plugin-react` `jsdom` `vite-tsconfig-paths` `@vitest/coverage-v8` (+ `@testing-library/dom` bila jadi peer) — **menggantikan 4 dep Jest**; buat `vitest.config.mts` (jsdom, `globals:true`, `setupFiles`, **`exclude: e2e`**, mock → `resolve.alias`, `@/*` via tsconfig-paths); port 6 suite (`jest.*` → `vi.*` ~19 panggilan, setup → `@testing-library/jest-dom/vitest`, hati-hati hoisting `vi.mock`); hapus `jest.config.cjs` + `tsconfig.jest.json` + dep `jest`/`ts-jest`/`jest-environment-jsdom`/`@types/jest`; script `test`/`test:watch`/`test:coverage` → vitest; `init.sh` → `npx vitest run --passWithNoTests`; **wajib: 6 suite / 50 test hijau + `./init.sh` EXIT 0** — ✅ komit `84281e4`: vitest di-pin ke lini **v4** (peer better-auth 1.6.23 hanya ^2–^4), `@types/node` ^20 → ^24 (mengikuti runtime Node 24); 9 mapper mock lama ternyata menunjuk `src/__mocks__` yang **tidak pernah ada** (dead, tak dipindah); `identity-obj-proxy` ikut dihapus (tak ada test yang import css); 6 suite / 50 test + `./init.sh` EXIT 0
-- [ ] **0.9c** **Upgrade better-auth 1.6.23 → 1.7.6** (D-20; support diverifikasi — peer next^16 / drizzle^0.45.2 ✓): baca changelog 1.7 penuh → audit `src/modules/auth/auth.config.ts` (joins/captcha/MCP tidak dipakai ✓; **Google OAuth → jalankan backfill `Account.issuer`** sesuai 1.7 upgrade guide) → `npx auth@latest generate` (regenerasi schema better-auth) → **smoke login live** (admin `admin@otl.id` + user, dev server) → `npx vitest run` + `./init.sh` EXIT 0; **commit terpisah**
-- [ ] **0.10** Catat baseline `npx vitest run --coverage` (informasi awal; coverage & jumlah test tidak boleh turun — §5.7)
-- [ ] **0.11** Commit (pesan Inggris) + update `progress.md`
+- [x] **0.9c** **Upgrade better-auth 1.6.23 → 1.7.6** (D-20; support diverifikasi — peer next^16 / drizzle^0.45.2 ✓): baca changelog 1.7 penuh → audit `src/modules/auth.auth.config.ts` → `npx auth@latest generate` → **smoke login live** (admin `admin@otl.id` + user, dev server) → `npx vitest run` + `./init.sh` EXIT 0; **commit terpisah** — ✅ komit `5ddf2e2`: **backfill `Account.issuer` BATAL tidak perlu** — 1.7.3 memulihkan kompatibilitas DB 1.6 (identitas akun kembali `(providerId, accountId)`; kita tak pernah lewat 1.7.0–1.7.2, DB tanpa kolom `issuer`); `npx auth generate` membuktikan kolom 4 tabel **identik** (tak ada migrasi drizzle; index `*_userId_idx` + `$onUpdate` = saran opsional → backlog); validasi skema runtime 1.7.3 **lulus** (smoke: admin 200 + get-session 200, user 200, salah sandi 401, log bersih); build sempat gagal karena `.next/dev/types/validator.ts` **korup akibat taskkill di tengah write** — hapus folder itu lalu build hijau (quirk tooling, bukan upgrade)
+- [x] **0.10** Catat baseline `npx vitest run --coverage` (informasi awal; coverage & jumlah test tidak boleh turun — §5.7) — ✅ 2026-09-30: **Statements 47.65% (274/575) · Branches 55.98% (215/384) · Functions 29.67% (46/155) · Lines 50.81% (250/492)**, exit 0 (tanpa threshold — patokan jangan-turun pasca-rewrite test 1.3b)
+- [x] **0.11** Commit (pesan Inggris) + update `progress.md` — ✅ penutup Fase 0: 14/14, `./init.sh` EXIT 0, Session 44 lengkap di `progress.md`
 
 ## Fase 0.5 — Error & 404 root (D-12)
 
