@@ -26,7 +26,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 |---|---|---|
 | Persiapan (commit plan & buka cabang) | 3 | 3 |
 | Fase 0 — Tools & baseline | 14 | 14 |
-| Fase 0.5 — Boundary root | 0 | 4 |
+| Fase 0.5 — Boundary root | 4 | 4 |
 | Fase 1 — Komentar & pesan error | 0 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 0 | 8 |
 | Fase 3 — Rename & lebur global | 0 | 10 |
@@ -36,7 +36,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **17** | **127** |
+| **Total** | **21** | **127** |
 
 ---
 
@@ -59,10 +59,10 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 ## Fase 0.5 — Error & 404 root (D-12)
 
-- [ ] **0.5.1** `src/app/error.tsx` — client component, tombol `reset`, teks UI bahasa Indonesia
-- [ ] **0.5.2** `src/app/not-found.tsx` — 404 custom + link ke beranda
-- [ ] **0.5.3** `npm run build` sukses; curl URL tak dikenal → konten 404 custom tampil
-- [ ] **0.5.4** Commit
+- [x] **0.5.1** `src/app/error.tsx` — client component, tombol `reset`, teks UI bahasa Indonesia — ✅ komit `1396b01`; **catatan Next 16**: prop boundary kini **`retry`** (stabil 16.3), `reset` tak lagi disarankan — tombol tetap aksi reset ("Coba Lagi"), tampil kode `error.digest` bila ada
+- [x] **0.5.2** `src/app/not-found.tsx` — 404 custom + link ke beranda — ✅ komit `1396b01`
+- [x] **0.5.3** `npm run build` sukses; curl URL tak dikenal → konten 404 custom tampil — ✅ prod: `/url-tak-dikenal-9f8g7` & `/definitely/not/route` → **HTTP 404** + konten kustom; `/blog/tidak-ada` → 200 (streamed `notFound()` — status sesuai perilaku Next); `./init.sh` EXIT 0
+- [x] **0.5.4** Commit — ✅ `1396b01` (error.tsx + not-found.tsx + ignore `coverage/**` di eslint agar baseline 78 tetap); **blind spot R8**: wordlist kena prosa JSX (mask tak strip teks antar-tag) → copy UI ditulis tanpa kata terdaftar (R8 tetap 480); perbaikan mask → backlog Fase 11
 
 ## Fase 1 — Komentar & pesan error (D-4, D-5)
 
