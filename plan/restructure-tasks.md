@@ -25,7 +25,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Bagian | Selesai | Total |
 |---|---|---|
 | Persiapan (commit plan & buka cabang) | 3 | 3 |
-| Fase 0 — Tools & baseline | 4 | 14 |
+| Fase 0 — Tools & baseline | 7 | 14 |
 | Fase 0.5 — Boundary root | 0 | 4 |
 | Fase 1 — Komentar & pesan error | 0 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 0 | 8 |
@@ -46,9 +46,9 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 - [x] **0.2** `scripts/check-routes.ts` — mode `--snapshot` & diff manifest `appPathRoutes` + mode crawl + npm script `check:routes`
 - [x] **0.3** `scripts/check-schema-drift.ts` — deteksi `pgTable` kembar di `db/schema` vs `modules` + selisih kolom + npm script `check:schema-drift`
 - [x] **0.4** Baseline: `npm run build` sukses pertama kali; simpan snapshot manifest rute (`npm run check:routes -- --snapshot`)
-- [ ] **0.5** Simpan baseline ratchet impor `../` = **80** (dipakai R9; disimpan di file baseline script)
-- [ ] **0.6** Audit dead code: `team-switcher.tsx`, `nav-user.tsx`, `nav-projects.tsx` — buktikan 0 pemakai → hapus (commit terpisah) atau catat alasan dipertahankan
-- [ ] **0.6b** **Bersih-bersih artefak root (hasil audit folder)**: hapus `nul` + baris `nul` di `.gitignore`, `test.md` (0 byte), folder `anti-slop/` (kosong); `todo.md` → serap 2 idenya (Master Trip: max peserta & master meeting point) ke catatan lalu hapus; `jira-export.json` → arsip `docs/archive/` atau hapus; `migrate-schema.ts` → hapus bila migrasi `is_senior_friendly` sudah pernah jalan (cek riwayat) atau pindah `scripts/`; **rename package `temp-app` → `opentrip-lansia`**; catat di `progress.md`: `.agents/` `.commandcode/` = tooling pribadi, `uploads/` = data runtime (jangan disentuh); `plan/roadmap.md` **kosong (0 baris)** padahal dirujuk `README.md` + `overview.md` — isi ringkas urutan kerja atau hapus rujukannya; **commit terpisah**
+- [x] **0.5** Simpan baseline ratchet impor `../` = **82 (ukuran alat; angka plan 80 = audit awal — rinci: 81 `from` + 1 type-import, 73 ts/tsx + 8 js/jsx)** (dipakai R9; disimpan di `BASELINE` `scripts/check-structure.ts`, komit `25adfd7`)
+- [x] **0.6** Audit dead code: `team-switcher.tsx`, `nav-user.tsx`, `nav-projects.tsx` — **bukti 0 pemakai (grep src+e2e) → dihapus** (komit `4e2f0aa`); `app-sidebar` & `nav-main` dipertahankan (dipakai admin & dashboard)
+- [x] **0.6b** **Bersih-bersih artefak root (hasil audit folder)**: hapus `nul` + baris `nul` di `.gitignore`, `test.md` (0 byte), folder `anti-slop/` (kosong); `todo.md` → serap 2 idenya (Master Trip: max peserta & master meeting point) ke catatan lalu hapus; `jira-export.json` → arsip `docs/archive/` atau hapus; `migrate-schema.ts` → hapus bila migrasi `is_senior_friendly` sudah pernah jalan (cek riwayat) atau pindah `scripts/`; **rename package `temp-app` → `opentrip-lansia`**; catat di `progress.md`: `.agents/` `.commandcode/` = tooling pribadi, `uploads/` = data runtime (jangan disentuh); `plan/roadmap.md` **kosong (0 baris)** padahal dirujuk `README.md` + `overview.md` — isi ringkas urutan kerja atau hapus rujukannya; **commit terpisah**
 - [ ] **0.7** Audit `/api/meeting-points` (halaman admin memanggil route yang tak ada) — putuskan: buat route atau tandai halaman; catat ke `progress.md` + `feature_list.json`
 - [ ] **0.8** Pasang ketiga `check-*` ke `package.json` **dan** `./init.sh`
 - [ ] **0.9** Tools hijau di kondisi sekarang (atau baseline list tersimpan) — `./init.sh` EXIT 0
