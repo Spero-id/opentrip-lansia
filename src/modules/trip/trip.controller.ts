@@ -8,7 +8,12 @@ import { toPublicError } from "@/shared/errors/to-public-error";
 export async function GET(req: NextRequest) {
   try {
     const all = req.nextUrl.searchParams.get("all") === "true";
-    const trips = all ? await tripService.getAllTrips() : await tripService.getPublishedTrips();
+    const featured = req.nextUrl.searchParams.get("featured") === "true";
+    const trips = all
+      ? await tripService.getAllTrips()
+      : featured
+      ? await tripService.getFeaturedTrips()
+      : await tripService.getPublishedTrips();
     return NextResponse.json(trips);
   } catch (err) {
     const message = toPublicError(err, "Terjadi kesalahan");

@@ -32,6 +32,7 @@ export type TripWithCategory = typeof trips.$inferSelect & { categoryName: strin
 
 export interface ITripRepository {
   findAllPublished(): Promise<TripWithPrice[]>;
+  findFeatured(): Promise<TripWithPrice[]>;
   findAll(): Promise<TripWithCategory[]>;
   findBySlug(slug: string): Promise<typeof trips.$inferSelect | null>;
   findById(id: UUID): Promise<typeof trips.$inferSelect | null>;
@@ -253,6 +254,67 @@ export const tripRepository: ITripRepository = {
 
   async findPricesByDepartureId(departureId) {
     return db.select().from(tripPrices).where(eq(tripPrices.departureId, departureId));
+  },
+
+  async findFeatured() {
+    const rows = await db
+      .select({
+        ...getTableColumns(trips),
+        startDate: tripDepartures.startDate,
+        departureId: tripDepartures.id,
+        price: tripPrices.price,
+        priceName: tripPrices.name,
+        categoryName: destinationCategories.name,
+        isActiveDeparture: tripDepartures.isActive,
+        departureEndDate: tripDepartures.endDate,
+        departureMaxParticipants: tripDepartures.maxParticipants,
+        departureStatus: tripDepartures.status,
+      })
+      .from(trips)
+      .leftJoin(destinationCategories, eq(trips.categoryId, destinationCategories.id))
+      .leftJoin(tripDepartures, eq(trips.id, tripDepartures.tripId))
+      .leftJoin(tripPrices, and(eq(tripDepartures.id, tripPrices.departureId), eq(tripPrices.isActive, true)))
+      .where(and(eq(trips.status, "published"), eq(trips.isFeatured, true)))
+      .orderBy(asc(tripDepartures.startDate));
+
+    const byTrip = new Map<string, TripWithPrice>();
+    const pricesByDeparture = new Map<string, { name: string; price: string }[]>();
+    const activeGroups = new Map<string, { id: string; startDate: string; endDate: string; maxParticipants: number; status: string; quotaBooked: number }>();
+
+    for (const r of rows) {
+      if (r.departureId) {
+        if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
+        pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
+        if (r.isActiveDeparture && !activeGroups.has(r.id)) {
+          activeGroups.set(r.id, {
+            id: r.departureId,
+            startDate: r.startDate ?? "",
+            endDate: r.departureEndDate ?? "",
+            maxParticipants: r.departureMaxParticipants ?? 0,
+            status: r.departureStatus ?? "scheduled",
+            quotaBooked: 0,
+          });
+        }
+      }
+      if (!byTrip.has(r.id)) {
+        byTrip.set(r.id, {
+          ...r,
+          startDate: r.startDate,
+          departureId: r.departureId,
+          categoryName: r.categoryName ?? null,
+          price: null,
+          activeGroup: null,
+        });
+      }
+    }
+
+    for (const row of byTrip.values()) {
+      const prices = pricesByDeparture.get(row.departureId!) ?? [];
+      row.price = pickCanonicalPrice(prices);
+      row.activeGroup = activeGroups.get(row.id) ?? null;
+    }
+
+    return [...byTrip.values()];
   },
 
   async findAll() {

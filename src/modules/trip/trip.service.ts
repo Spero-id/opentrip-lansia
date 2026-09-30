@@ -29,6 +29,10 @@ export const tripService = {
     return tripRepository.findAllPublished();
   },
 
+  async getFeaturedTrips() {
+    return tripRepository.findFeatured();
+  },
+
   async getAllTrips() {
     return tripRepository.findAll();
   },

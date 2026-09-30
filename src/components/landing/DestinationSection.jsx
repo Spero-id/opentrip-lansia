@@ -44,13 +44,10 @@ export default function DestinationSection() {
   }
 
   useEffect(() => {
-    fetch("/api/trips")
+    fetch("/api/trips?featured=true")
       .then((res) => res.json())
       .then((data) => {
-        const active = Array.isArray(data)
-          ? data.filter((d) => d.status === "published")
-          : [];
-        setDestinations(active.map(toCard));
+        setDestinations(Array.isArray(data) ? data.map(toCard) : []);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
