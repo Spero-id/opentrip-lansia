@@ -1819,3 +1819,21 @@ dipakai setelah Anda login." (bukan loop "Memuat ulang data voucher...").
 **Dipush & PR:** branch `feat/api-auth-middleware-rbac` → **PR #103**
 (https://github.com/Spero-id/opentrip-lansia/pull/103, base `main`),
 berisi commit `718d4f4` (chore Playwright hemat RAM) + `df78b96` (feat-080).
+
+---
+
+## Session 44 — Restructure Fase 0 (2026-09-30, berjalan)
+
+**Catatan root (task 0.6b):**
+- `.agents/`, `.commandcode/` = tooling pribadi agent — di luar cakupan, jangan disentuh.
+- `uploads/` = **data runtime aktif** (bukti pembayaran, disajikan `/api/uploads/[...path]`) — luar cakupan restructure.
+- `todo.md` dihapus, 2 idenya diserap ke backlog ini: **(1) Master Trip: field
+  maksimal peserta**, **(2) Master meeting point** (terkait temuan
+  `/api/meeting-points` yang route-nya tidak ada).
+- Root dibersihkan: `nul`, `test.md` (0 byte), `jira-export.json`,
+  `migrate-schema.ts` (migrasi `is_senior_friendly` terbukti sudah jalan →
+  SQL di `drizzle/0001` + kolom di `src/db/schema/trips.ts`), folder `anti-slop/`.
+- Package rename: `temp-app` → **`opentrip-lansia`**.
+
+**Progres:** plan restructure via **PR #104** → `main` (`f967ae7`); branch
+`restructure/fase-0`; task 0.1–0.6b selesai (centang di `plan/restructure-tasks.md`).
