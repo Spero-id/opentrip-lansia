@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin, requireSession } from "@/shared/auth";
 import { db } from "@/shared/db";
 import { tripGalleries, galleryMedia } from "@/modules/trip/trip.schema";
 import { media } from "@/db/schema/master";
@@ -7,9 +7,12 @@ import { eq } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string; groupId: string }> }
 ) {
+  // Galeri keberangkatan dipakai My Trips (pengguna login) & admin.
+  const denied = await requireSession(req);
+  if (denied) return denied;
   try {
     const { groupId } = await params;
 

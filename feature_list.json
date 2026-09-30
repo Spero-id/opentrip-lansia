@@ -4,8 +4,8 @@
   "summary": {
     "total_features": 55,
     "in_review": 18,
-    "completed": 22,
-    "to_do": 15,
+    "completed": 23,
+    "to_do": 14,
     "not_started": 0
   },
   "phases": [
@@ -587,7 +587,7 @@
           "id": "feat-080",
           "title": "API auth middleware & RBAC",
           "description": "Protect all API endpoints with Better Auth session. Implement role-based access (user/agent/admin). CRITICAL : saat ini 57 endpoint 100% public.",
-          "status": "to_do",
+          "status": "completed",
           "priority": 2,
           "depends_on": [
             "feat-001"
@@ -597,7 +597,7 @@
             "npx tsc --noEmit",
             "bash ./init.sh"
           ],
-          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Admin PAGES kini server-side guard via helper reusable requireAdminLayout() di src/shared/auth-server.ts (dipakai /admin/layout.tsx; non-admin → /forbidden). Duplikasi requireAdmin di api/private-trip/admin dihapus — kini import dari src/shared/auth. Endpoint API admin lain masih perlu diaudit/dilindungi. | Audit 2026-09-28 (smoke test live): 3 endpoint admin public terbukti EXPLOIT tanpa auth — PUT /api/trips/[id]/groups/[groupId]/complete (menulis DB, 200), GET .../participants (bocor nama+telepon peserta), GET /api/reviews tanpa filter (bocor semua review + email user). Ketiganya kini pakai requireAdmin() → 401 tanpa session, 200 dengan admin session, jalur publik (?tripId&status=approved) tetap 200. Sisa endpoint public by-design: /api/trips, /api/horeca-types, /api/vendor-types, /api/contact, /api/newsletter, /api/payments/accounts, /api/auth/*.",
+          "evidence": "Booking/payment flow di-hardening: GET /api/bookings/[id] (owner/admin), POST /api/bookings (session), POST /api/payments (owner), /api/checkout (session + validasi harga server-side). Admin PAGES kini server-side guard via helper reusable requireAdminLayout() di src/shared/auth-server.ts (dipakai /admin/layout.tsx; non-admin → /forbidden). Duplikasi requireAdmin di api/private-trip/admin dihapus — kini import dari src/shared/auth. Endpoint API admin lain masih perlu diaudit/dilindungi. | Audit 2026-09-28 (smoke test live): 3 endpoint admin public terbukti EXPLOIT tanpa auth — PUT /api/trips/[id]/groups/[groupId]/complete (menulis DB, 200), GET .../participants (bocor nama+telepon peserta), GET /api/reviews tanpa filter (bocor semua review + email user). Ketiganya kini pakai requireAdmin() → 401 tanpa session, 200 dengan admin session, jalur publik (?tripId&status=approved) tetap 200. Sisa endpoint public by-design: /api/trips, /api/horeca-types, /api/vendor-types, /api/contact, /api/newsletter, /api/payments/accounts, /api/auth/*. | Audit menyeluruh 2026-09-30 (feat-080): pemindai src/shared/auth/api-auth-audit.ts membaca 92 handler route.ts (termasuk resolusi export ulang ke controller) -> 83 guarded, 9 public-by-design, 4 proteksi di controller private-trip, 0 pelanggaran. Kebijakan jadi satu sumber di src/shared/auth/api-policy.ts (API_ACCESS public/admin eksplisit, default session fail-closed; DELEGATED_GUARD; resolveApiAccess utk edge). Guard baru: requireAdmin utk GET horeca(+[id]), vendors(+[id]), galleries(+[id]), promotions/[id], trips/[id]/groups, trips/[id]/active-group; requireSession utk GET promotions dan GET trips/[id]/groups/[groupId]/gallery. src/shared/auth.ts: getSessionUser/requireSession/requireRole (AppRole=UserRole). src/proxy.ts matcher +/api/:path* -> cookie check saja (validasi session+role tetap di handler). Regresi dikunci test src/__tests__/api-auth-audit.test.ts (10 test). Verifikasi live via curl: anonim public 200/201 & terlindungi 401; user session 200 & admin-route 403; admin 200 semua; cookie palsu 401; halaman / dan /trips tetap 200. ./init.sh EXIT 0, tsc 0, lint 0 error/78 warning (baseline), jest 6 suites/50 tests. Catatan: role agent belum punya hak akses khusus di endpoint mana pun (terkait feat-070); ketemu juga admin/meeting-points memanggil /api/meeting-points yang route-nya tidak ada (di luar scope, dicatat di progress.md Session 43).",
           "critical": true
         },
         {

@@ -104,6 +104,8 @@ export function useCheckout(initialDestination) {
   const [vouchersLoading, setVouchersLoading] = useState(true);
   const dbVouchersRef = useRef([]);
   const vouchersLoadingRef = useRef(true);
+  // true kalau /api/promotions menolak karena belum login (401).
+  const vouchersLockedRef = useRef(false);
 
   // Keep refs in sync with state
   useEffect(() => { dbVouchersRef.current = dbVouchers; }, [dbVouchers]);
@@ -112,7 +114,15 @@ export function useCheckout(initialDestination) {
   // Fetch vouchers from DB on mount
   const fetchVouchers = useCallback(() => {
     fetch("/api/promotions")
-      .then((res) => res.json())
+      .then((res) => {
+        // Daftar promo sekarang butuh login (feat-080). Jangan dianggap
+        // kegagalan biasa — pesannya beda dan tak perlu di-retry.
+        if (res.status === 401) {
+          vouchersLockedRef.current = true;
+          return [];
+        }
+        return res.json();
+      })
       .then((data) => {
         if (Array.isArray(data)) {
           setDbVouchers(data.filter((v) => v.isActive));
@@ -188,6 +198,13 @@ export function useCheckout(initialDestination) {
 
     // If vouchers are empty (fetch may have failed), retry fetch
     if (currentVouchers.length === 0) {
+      if (vouchersLockedRef.current) {
+        setState((prev) => ({
+          ...prev,
+          voucherError: "Voucher hanya bisa dipakai setelah Anda login.",
+        }));
+        return;
+      }
       fetchVouchers();
       setState((prev) => ({ ...prev, voucherError: "Memuat ulang data voucher..." }));
       return;
@@ -313,10 +330,12 @@ export function useCheckout(initialDestination) {
     const typedCode = state.voucherCode.trim();
     if (typedCode && !applied) {
       if (vouchersLoadingRef.current || dbVouchersRef.current.length === 0) {
-        fetchVouchers();
+        if (!vouchersLockedRef.current) fetchVouchers();
         setState((prev) => ({
           ...prev,
-          error: "Data voucher belum tersedia. Mohon tunggu sebentar lalu coba lagi.",
+          error: vouchersLockedRef.current
+            ? "Silakan login dulu untuk memakai voucher."
+            : "Data voucher belum tersedia. Mohon tunggu sebentar lalu coba lagi.",
         }));
         return;
       }

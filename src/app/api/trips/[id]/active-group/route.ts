@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripService } from "@/modules/trip/trip.service";
+import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
   try {
     const { id } = await params;
     const activeGroup = await tripService.getActiveGroupInfo(id);
