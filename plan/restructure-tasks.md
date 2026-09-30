@@ -12,9 +12,9 @@ File ini = daftar tugas yang dicentang saat selesai.
 
 ## Persiapan — urutan eksekusi pertama
 
-- [ ] **P-1** Commit kedua dokumen plan (`plan/restructure-bulletproof.md` + `plan/restructure-tasks.md`) di branch **`docs/restructure-plan`** (dari `main`) → push → PR
-- [ ] **P-2** PR plan digabung ke `main` (PR #103 feat-080 **sudah merge** — `a5268af`, 30 Sep)
-- [ ] **P-3** Buka branch **`restructure/fase-0`** dari `main` → mulai task 0.1 (`check-structure.ts`)
+- [x] **P-1** Commit kedua dokumen plan (`plan/restructure-bulletproof.md` + `plan/restructure-tasks.md`) di branch **`docs/restructure-plan`** (dari `main`) → push → PR
+- [x] **P-2** PR plan digabung ke `main` (PR #104 — `f967ae7`; PR #103 feat-080 sebelumnya `a5268af`)
+- [x] **P-3** Buka branch **`restructure/fase-0`** dari `main` → mulai task 0.1 (`check-structure.ts`)
 
 Catatan: PR #103 **sudah merge** (`a5268af`) — tak ada blocker antar-PR; `main` lokal **sudah di-sync** dengan origin (audit 30 Sep).
 Pembagian kerja: langkah mekanis & verifikasi alat = agent + tangga §8; **verifikasi
@@ -24,7 +24,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 | Bagian | Selesai | Total |
 |---|---|---|
-| Persiapan (commit plan & buka cabang) | 0 | 3 |
+| Persiapan (commit plan & buka cabang) | 3 | 3 |
 | Fase 0 — Tools & baseline | 0 | 14 |
 | Fase 0.5 — Boundary root | 0 | 4 |
 | Fase 1 — Komentar & pesan error | 0 | 7 |
