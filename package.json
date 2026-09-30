@@ -10,6 +10,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test e2e/public --reporter=list",
+    "verify:checkout": "tsx --env-file=.env scripts/verify-payment-and-promo.ts",
     "postinstall": "node -e \"require('node:fs').cpSync('node_modules/hugerte','public/hugerte',{recursive:true,force:true})\""
   },
   "dependencies": {
@@ -62,6 +65,7 @@
     "jest-environment-jsdom": "^30.4.1",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.12",
+    "tsx": "^4.23.1",
     "typescript": "^5",
     "whatwg-fetch": "^3.6.20"
   },

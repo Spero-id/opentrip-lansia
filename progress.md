@@ -1715,3 +1715,37 @@ jest 5 suites / 40 tests pass.
 
 **Belum diverifikasi manual:** tampilan di browser pada kondisi DB tanpa baris
 BCA (perlu dev server + data `payment_accounts` dimodifikasi).
+
+## Session 42 — Verifikasi tanpa browser (mesin 8GB) + Playwright mode hemat
+
+**Kendala:** user menjalankan laptop 8GB / Ryzen 5 2500U → suite Playwright
+(dev server Next + Chromium) berisiko bikin machine swap. Diputuskan: **tidak
+menjalankan Playwright sekarang**, dan konfigurasinya disesuaikan agar aman
+dipakai nanti.
+
+**`playwright.config.ts` (disesuaikan untuk mesin rendah):**
+- `trace: "off"`, `video: "off"` (artefak paling boros), `screenshot` tetap
+  hanya-saat-gagal
+- reporter `html` dengan `open: "never"` (tidak auto-buka browser)
+- `reuseExistingServer: true` — boleh jalankan `npm run dev` sendiri sekali,
+  Playwright tidak menduplikasi proses Next (hemat ~0,5–1GB)
+- tetap `workers: 1`, `fullyParallel: false`, headless (chromium_headless_shell)
+- npm scripts baru: `test:e2e`, `test:e2e:smoke` (hanya `e2e/public`)
+
+**Verifikasi alternatif (read-only, tanpa dev server, 1 proses node):**
+- Baru: `scripts/verify-payment-and-promo.ts` + npm script `verify:checkout`
+  (butuh `tsx` — kini dideklarasikan eksplisit di devDependencies, selama ini
+  hanya ikut terpasang sebagai dependensi drizzle-kit)
+- Hasil live:
+  - `payment_accounts`: 7 baris, semua lengkap → keputusan UI `[BCA, QRIS]`,
+    kartu BCA **tampil** (memang sudah ada nomornya) ✓
+  - `promotions`: `AEZAKMI value="70%"` → parser baru 70, parser client lama
+    `Number("70%")` = **0** → terbukti langsung dari DB sebagai penyebab
+    400 "Total pembayaran tidak sesuai"; diskon 100000 (cap), total 2.100.000 ✓
+  - 4 promo lain: nilai lama == nilai baru → tanpa regresi ✓
+- `./init.sh` EXIT 0 (lint 0 error / 78 warning, tsc 0, jest 5 suites / 40 tests)
+
+**Status:** `feat-033` & `feat-101` tetap `in_review` — perilaku sudah dibuktikan
+lewat unit/component test + pemeriksaan data live; sisa pass browser (lihat
+`payment_accounts` di-null-kan → opsi BCA hilang) ditunda karena keterbatasan
+hardware.
