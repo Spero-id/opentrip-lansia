@@ -25,7 +25,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Bagian | Selesai | Total |
 |---|---|---|
 | Persiapan (commit plan & buka cabang) | 3 | 3 |
-| Fase 0 — Tools & baseline | 3 | 14 |
+| Fase 0 — Tools & baseline | 4 | 14 |
 | Fase 0.5 — Boundary root | 0 | 4 |
 | Fase 1 — Komentar & pesan error | 0 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 0 | 8 |
@@ -45,7 +45,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 - [x] **0.1** `scripts/check-structure.ts` — aturan R1–R9 (§9 dokumen strategi) + npm script `check:structure`
 - [x] **0.2** `scripts/check-routes.ts` — mode `--snapshot` & diff manifest `appPathRoutes` + mode crawl + npm script `check:routes`
 - [x] **0.3** `scripts/check-schema-drift.ts` — deteksi `pgTable` kembar di `db/schema` vs `modules` + selisih kolom + npm script `check:schema-drift`
-- [ ] **0.4** Baseline: `npm run build` sukses pertama kali; simpan snapshot manifest rute (`npm run check:routes -- --snapshot`)
+- [x] **0.4** Baseline: `npm run build` sukses pertama kali; simpan snapshot manifest rute (`npm run check:routes -- --snapshot`)
 - [ ] **0.5** Simpan baseline ratchet impor `../` = **80** (dipakai R9; disimpan di file baseline script)
 - [ ] **0.6** Audit dead code: `team-switcher.tsx`, `nav-user.tsx`, `nav-projects.tsx` — buktikan 0 pemakai → hapus (commit terpisah) atau catat alasan dipertahankan
 - [ ] **0.6b** **Bersih-bersih artefak root (hasil audit folder)**: hapus `nul` + baris `nul` di `.gitignore`, `test.md` (0 byte), folder `anti-slop/` (kosong); `todo.md` → serap 2 idenya (Master Trip: max peserta & master meeting point) ke catatan lalu hapus; `jira-export.json` → arsip `docs/archive/` atau hapus; `migrate-schema.ts` → hapus bila migrasi `is_senior_friendly` sudah pernah jalan (cek riwayat) atau pindah `scripts/`; **rename package `temp-app` → `opentrip-lansia`**; catat di `progress.md`: `.agents/` `.commandcode/` = tooling pribadi, `uploads/` = data runtime (jangan disentuh); `plan/roadmap.md` **kosong (0 baris)** padahal dirujuk `README.md` + `overview.md` — isi ringkas urutan kerja atau hapus rujukannya; **commit terpisah**
