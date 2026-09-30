@@ -2,20 +2,13 @@
 module.exports = {
   testEnvironment: "jsdom",
   transform: {
-    "^.+\\.(ts|tsx)$": [
+    // ts-jest juga memproses .js/.jsx proyek (allowJs + jsx: react-jsx di
+    // tsconfig) — file client seperti PaymentStep.jsx memakai sintaks ESM+JSX
+    // yang tidak bisa dimuat Jest tanpa transform.
+    "^.+\\.(ts|tsx|js|jsx)$": [
       "ts-jest",
       {
         tsconfig: "tsconfig.jest.json",
-      },
-    ],
-    // File .js/.jsx proyek memakai sintaks ESM (import/export); tanpa transform
-    // ini Jest gagal memuat modul client seperti src/lib/hooks/useCheckout.js
-    "^.+\\.(js|jsx)$": [
-      "babel-jest",
-      {
-        babelrc: false,
-        configFile: false,
-        plugins: ["@babel/plugin-transform-modules-commonjs"],
       },
     ],
   },

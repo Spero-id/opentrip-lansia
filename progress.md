@@ -1670,3 +1670,48 @@ AEZAKMI: client total === server total === 2.100.000, plus parser & min-purchase
 
 **Belum diverifikasi manual:** alur checkout end-to-end di browser (isi voucher →
 klik Lanjut → pembayaran) karena butuh dev server + session login.
+
+## Session 41 — Bugfix: Sembunyikan rekening BCA kalau nomornya belum ada
+
+**Laporan:** "Rekening BCA kalau belum ada nomor rekeningnya tolong disembunyikan aja."
+
+**Diagnosis (diverifikasi ke schema & pemakaian):**
+
+- `payment_accounts.accountNumber` `NOT NULL` tapi tetap bisa `""`/`" "`; baris
+  bisa juga tidak ada sama sekali (tabel hanya diisi lewat `src/db/seed.ts:211`,
+  **tidak ada UI admin** untuk rekening).
+- `PaymentStep.jsx:78` hanya menentukan *kartu* tampil atau tidak
+  (`bcaAccount && isBCA`), sedangkan **label opsi BCA selalu dirender** → tiga
+  keadaan rusak: baris tidak ada (BCA tanpa tujuan transfer), nomor `""`
+  (baris "Nomor" kosong + tombol Salin menyalin string kosong), dan fetch
+  gagal/`loading` tidak bisa dibedakan dari "tidak ada".
+- `useCheckout.js:93` default `paymentMethod: "BCA"` → kalau BCA disembunyikan,
+  pilihan tetap menunjuk metode tersembunyi sementara tombol kirim hanya cek
+  truthiness → user bisa submit bukti dengan metode yang tak pernah ia lihat.
+
+**Perbaikan:**
+
+- `src/shared/payment/payment-account.ts` (baru) — aturan tunggal:
+  `isCompleteAccount()` (trim, bank+nomor+pemilik), `findAccountByMethod()`
+  (case-insensitive), `availableMethods()` (`null` hanya saat loading; gagal
+  muat → fail-closed `["QRIS"]`), `resolveActiveMethod()` (pilihan tersembunyi
+  jatuh ke metode pertama).
+- `PaymentStep.jsx` — fetch rekening diangkat ke komponen induk; skeleton BCA
+  selama `loading` (tanpa flicker); label BCA hanya dirender kalau lengkap;
+  `useEffect` mengoreksi `paymentMethod` (BCA → QRIS); tombol **Kirim Bukti
+  Pembayaran** menunggu `accountsStatus !== "loading"`; `AccountCard` merender
+  baris yang kosong dan menonaktifkan Salin kalau nomor kosong.
+- `/api/payments/accounts` — menyaring rekening tak lengkap sebelum dikirim ke
+  client (server & client sepakat lewat helper yang sama).
+- `jest.config.cjs` — transform ts-jest juga untuk `.js/.jsx` (modul client
+  ESM+JSX belum bisa dimuat Jest; babel-jest tanpa preset JSX gagal parse).
+
+**Tests baru:** `src/shared/payment/payment-account.test.ts` (8) +
+`src/components/checkout/PaymentStep.test.tsx` (4: rekening tak ada, nomor
+kosong, rekening lengkap, API gagal).
+
+**Verifikasi:** `./init.sh` EXIT 0 → lint 0 error / 78 warning (baseline), tsc 0,
+jest 5 suites / 40 tests pass.
+
+**Belum diverifikasi manual:** tampilan di browser pada kondisi DB tanpa baris
+BCA (perlu dev server + data `payment_accounts` dimodifikasi).
