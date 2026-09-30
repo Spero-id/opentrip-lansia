@@ -25,7 +25,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Bagian | Selesai | Total |
 |---|---|---|
 | Persiapan (commit plan & buka cabang) | 3 | 3 |
-| Fase 0 — Tools & baseline | 8 | 14 |
+| Fase 0 — Tools & baseline | 10 | 14 |
 | Fase 0.5 — Boundary root | 0 | 4 |
 | Fase 1 — Komentar & pesan error | 0 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 0 | 8 |
@@ -50,8 +50,8 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 - [x] **0.6** Audit dead code: `team-switcher.tsx`, `nav-user.tsx`, `nav-projects.tsx` — **bukti 0 pemakai (grep src+e2e) → dihapus** (komit `4e2f0aa`); `app-sidebar` & `nav-main` dipertahankan (dipakai admin & dashboard)
 - [x] **0.6b** **Bersih-bersih artefak root (hasil audit folder)**: hapus `nul` + baris `nul` di `.gitignore`, `test.md` (0 byte), folder `anti-slop/` (kosong); `todo.md` → serap 2 idenya (Master Trip: max peserta & master meeting point) ke catatan lalu hapus; `jira-export.json` → arsip `docs/archive/` atau hapus; `migrate-schema.ts` → hapus bila migrasi `is_senior_friendly` sudah pernah jalan (cek riwayat) atau pindah `scripts/`; **rename package `temp-app` → `opentrip-lansia`**; catat di `progress.md`: `.agents/` `.commandcode/` = tooling pribadi, `uploads/` = data runtime (jangan disentuh); `plan/roadmap.md` **kosong (0 baris)** padahal dirujuk `README.md` + `overview.md` — isi ringkas urutan kerja atau hapus rujukannya; **commit terpisah**
 - [x] **0.7** Audit `/api/meeting-points` (halaman admin memanggil route yang tak ada) — **putusan: buat backend di luar scope → `feat-102` (to_do)**; halaman = yatim tanpa nav; catat ke `progress.md` + `feature_list.json`
-- [ ] **0.8** Pasang ketiga `check-*` ke `package.json` **dan** `./init.sh`
-- [ ] **0.9** Tools hijau di kondisi sekarang (atau baseline list tersimpan) — `./init.sh` EXIT 0
+- [x] **0.8** Pasang ketiga `check-*` ke `package.json` **dan** `./init.sh` (check:routes kondisional — jalan bila manifest build ada; komit terpisah)
+- [x] **0.9** Tools hijau di kondisi sekarang (daftar baseline tersimpan) — `./init.sh` EXIT 0 **(dikerjakan sebelum 0.8 agar wiring langsung hijau)**
 - [ ] **0.9b** **Migrasi runner test Jest → Vitest** (D-19; ikuti panduan resmi Next `node_modules/next/dist/docs/01-app/02-guides/testing/vitest.md`): install `vitest` `@vitejs/plugin-react` `jsdom` `vite-tsconfig-paths` `@vitest/coverage-v8` (+ `@testing-library/dom` bila jadi peer) — **menggantikan 4 dep Jest**; buat `vitest.config.mts` (jsdom, `globals:true`, `setupFiles`, **`exclude: e2e`**, mock → `resolve.alias`, `@/*` via tsconfig-paths); port 6 suite (`jest.*` → `vi.*` ~19 panggilan, setup → `@testing-library/jest-dom/vitest`, hati-hati hoisting `vi.mock`); hapus `jest.config.cjs` + `tsconfig.jest.json` + dep `jest`/`ts-jest`/`jest-environment-jsdom`/`@types/jest`; script `test`/`test:watch`/`test:coverage` → vitest; `init.sh` → `npx vitest run --passWithNoTests`; **wajib: 6 suite / 50 test hijau + `./init.sh` EXIT 0**
 - [ ] **0.9c** **Upgrade better-auth 1.6.23 → 1.7.6** (D-20; support diverifikasi — peer next^16 / drizzle^0.45.2 ✓): baca changelog 1.7 penuh → audit `src/modules/auth/auth.config.ts` (joins/captcha/MCP tidak dipakai ✓; **Google OAuth → jalankan backfill `Account.issuer`** sesuai 1.7 upgrade guide) → `npx auth@latest generate` (regenerasi schema better-auth) → **smoke login live** (admin `admin@otl.id` + user, dev server) → `npx vitest run` + `./init.sh` EXIT 0; **commit terpisah**
 - [ ] **0.10** Catat baseline `npx vitest run --coverage` (informasi awal; coverage & jumlah test tidak boleh turun — §5.7)
