@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { OrderDomain } from "../Order";
+import { parseMoney, parsePromoValue } from "@/shared/promo/promo-value";
+import { computePromoDiscount } from "@/shared/promo/promo-discount";
 
 const initialCustomer = {
   fullName: "",
@@ -22,6 +24,59 @@ const initialCustomer = {
   medications: "",
   mobilityOption: "independent",
 };
+
+// Pure voucher resolver: single source of truth for client-side voucher rules.
+// Used by both the "Pakai" button and goToPayment auto-apply, so the discount
+// shown in the price breakdown is always the one sent to /api/checkout.
+export function resolveVoucher(rawCode, vouchers, subtotal) {
+  const code = String(rawCode ?? "").trim().toUpperCase();
+  if (!code) {
+    return { appliedVoucher: null, voucherError: "Masukkan kode voucher." };
+  }
+
+  const found = vouchers.find((v) => v.code?.trim().toUpperCase() === code);
+  if (!found) {
+    return { appliedVoucher: null, voucherError: "Kode voucher tidak valid." };
+  }
+
+  const minPurchase = parseMoney(found.minPurchase);
+  if (minPurchase > 0 && subtotal < minPurchase) {
+    return {
+      appliedVoucher: null,
+      voucherError: `Minimal order ${OrderDomain.formatPrice(minPurchase)} untuk voucher ini.`,
+    };
+  }
+
+  if (found.usageLimit && found.usageCount >= found.usageLimit) {
+    return { appliedVoucher: null, voucherError: "Voucher sudah mencapai batas pemakaian." };
+  }
+
+  const now = new Date();
+  if (found.validFrom && new Date(found.validFrom) > now) {
+    return { appliedVoucher: null, voucherError: "Voucher belum aktif." };
+  }
+  if (found.validUntil && new Date(found.validUntil) < now) {
+    return { appliedVoucher: null, voucherError: "Voucher sudah kedaluwarsa." };
+  }
+
+  const value = parsePromoValue(found.value, found.type);
+  const maxDiscount = parseMoney(found.maxDiscount);
+  // Rumus yang sama persis dengan server (src/shared/promo/promo-discount.ts)
+  const discount = computePromoDiscount(found, subtotal);
+
+  return {
+    appliedVoucher: {
+      code: found.code,
+      label: found.title || found.code,
+      discount,
+      type: found.type,
+      value,
+      percentageValue: found.type === "percentage" ? value : 0,
+      maxDiscount,
+    },
+    voucherError: "",
+  };
+}
 
 export function useCheckout(initialDestination) {
   const [state, setState] = useState({
@@ -139,67 +194,13 @@ export function useCheckout(initialDestination) {
     }
 
     setState((prev) => {
-      const code = prev.voucherCode.trim().toUpperCase();
       const subtotal = (prev.destination?.priceMin ?? 0) * prev.pax;
-
-      if (!code) {
-        return { ...prev, voucherError: "Masukkan kode voucher.", appliedVoucher: null };
-      }
-
-      // Look up in DB vouchers
-      const found = currentVouchers.find((v) => v.code?.trim().toUpperCase() === code);
-      if (!found) {
-        return { ...prev, voucherError: "Kode voucher tidak valid.", appliedVoucher: null };
-      }
-
-      // Check min purchase
-      const minPurchase = Number(found.minPurchase) || 0;
-      if (minPurchase > 0 && subtotal < minPurchase) {
-        return {
-          ...prev,
-          voucherError: `Minimal order ${OrderDomain.formatPrice(minPurchase)} untuk voucher ini.`,
-          appliedVoucher: null,
-        };
-      }
-
-      // Check usage limit
-      if (found.usageLimit && found.usageCount >= found.usageLimit) {
-        return { ...prev, voucherError: "Voucher sudah mencapai batas pemakaian.", appliedVoucher: null };
-      }
-
-      // Check validity period
-      const now = new Date();
-      if (found.validFrom && new Date(found.validFrom) > now) {
-        return { ...prev, voucherError: "Voucher belum aktif.", appliedVoucher: null };
-      }
-      if (found.validUntil && new Date(found.validUntil) < now) {
-        return { ...prev, voucherError: "Voucher sudah kedaluwarsa.", appliedVoucher: null };
-      }
-
-      // Calculate discount
-      const value = Number(found.value) || 0;
-      let discount = 0;
-      if (found.type === "percentage") {
-        discount = Math.round(subtotal * (value / 100));
-        const maxDiscount = Number(found.maxDiscount) || 0;
-        if (maxDiscount > 0) discount = Math.min(discount, maxDiscount);
-      } else {
-        discount = value;
-      }
-      discount = Math.min(discount, subtotal);
-
-      return {
-        ...prev,
-        appliedVoucher: {
-          code: found.code,
-          label: found.title || found.code,
-          discount,
-          type: found.type,
-          value,
-          percentageValue: found.type === "percentage" ? value : 0,
-        },
-        voucherError: "",
-      };
+      const { appliedVoucher, voucherError } = resolveVoucher(
+        prev.voucherCode,
+        currentVouchers,
+        subtotal
+      );
+      return { ...prev, appliedVoucher, voucherError };
     });
   }, [fetchVouchers]);
 
@@ -280,10 +281,13 @@ export function useCheckout(initialDestination) {
     (s) => {
       if (!s.appliedVoucher) return 0;
       const subtotal = getTicketSubtotal(s);
-      if (s.appliedVoucher.type === "percentage") {
-        return Math.round(subtotal * ((s.appliedVoucher.percentageValue ?? 0) / 100));
-      }
-      return s.appliedVoucher.discount;
+      const av = s.appliedVoucher;
+      // Hitung ulang dengan rumus bersama agar ikut berubah saat pax berubah,
+      // dan hasilnya selalu sama dengan yang dihitung server.
+      return computePromoDiscount(
+        { type: av.type, value: av.value, maxDiscount: av.maxDiscount },
+        subtotal
+      );
     },
     [getTicketSubtotal]
   );
@@ -301,18 +305,51 @@ export function useCheckout(initialDestination) {
   const goToPayment = useCallback(async () => {
     if (!state.destination) return;
 
+    // Auto-apply a typed-but-not-applied voucher so the price breakdown and
+    // the payload sent to /api/checkout always carry the same discount.
+    // Without this the server applies the discount itself and rejects the
+    // request with a total mismatch (400).
+    let applied = state.appliedVoucher;
+    const typedCode = state.voucherCode.trim();
+    if (typedCode && !applied) {
+      if (vouchersLoadingRef.current || dbVouchersRef.current.length === 0) {
+        fetchVouchers();
+        setState((prev) => ({
+          ...prev,
+          error: "Data voucher belum tersedia. Mohon tunggu sebentar lalu coba lagi.",
+        }));
+        return;
+      }
+      const subtotal = (state.destination?.priceMin ?? 0) * state.pax;
+      const resolved = resolveVoucher(typedCode, dbVouchersRef.current, subtotal);
+      if (!resolved.appliedVoucher) {
+        setState((prev) => ({
+          ...prev,
+          appliedVoucher: null,
+          voucherError: resolved.voucherError,
+          error: resolved.voucherError,
+        }));
+        return;
+      }
+      applied = resolved.appliedVoucher;
+      // Surface the discounted price in the breakdown before moving on
+      setState((prev) => ({ ...prev, appliedVoucher: applied, voucherError: "" }));
+    }
+
+    const pricingState = applied ? { ...state, appliedVoucher: applied } : state;
+
     const snapshot = {
       orderId: OrderDomain.generateOrderId(),
       destination: state.destination,
       pax: state.pax,
       customer: state.customer,
-      voucherCode: state.voucherCode,
-      appliedVoucher: state.appliedVoucher,
+      voucherCode: applied?.code ?? null,
+      appliedVoucher: applied,
       referralCode: state.appliedReferral?.code || null,
       paymentMethod: state.paymentMethod,
       proofUrl: state.proofUrl,
       subtotal: (state.destination?.priceMin ?? 0) * state.pax,
-      totalAmount: getTotal(state),
+      totalAmount: getTotal(pricingState),
     };
 
     setState((prev) => ({ ...prev, isLoading: true, error: null, orderId: snapshot.orderId }));
@@ -358,7 +395,7 @@ export function useCheckout(initialDestination) {
         isLoading: false,
       }));
     }
-  }, [state, getTotal]);
+  }, [state, getTotal, fetchVouchers]);
 
   // Submit payment proof to create a payment record
   const initiatePayment = useCallback(async () => {

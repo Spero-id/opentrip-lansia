@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, CheckCircle2, XCircle } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { parseMoney, parsePromoValue } from "@/shared/promo/promo-value";
 
 interface Promotion {
   id: string;
@@ -40,6 +41,7 @@ export default function AdminPromotions() {
   const [editing, setEditing] = useState<Promotion | null>(null);
   const [form, setForm] = useState<PromotionForm>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -61,6 +63,7 @@ export default function AdminPromotions() {
   function openCreate() {
     setEditing(null);
     setForm(emptyForm);
+    setFormError("");
     setModalOpen(true);
   }
 
@@ -76,17 +79,53 @@ export default function AdminPromotions() {
       usageLimit: item.usageLimit,
       isActive: item.isActive,
     });
+    setFormError("");
     setModalOpen(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Normalisasi & validasi sebelum disimpan: kolom `value` varchar bebas
+    // diisi (mis. "70%"), dan checkout menghitung diskon dari nilai ini.
+    // Nilai yang tidak terbaca membuat UI mengirim total tanpa diskon sementara
+    // server memotong harga -> 400 "Total pembayaran tidak sesuai."
+    const payload: PromotionForm = {
+      ...form,
+      code: form.code.trim().toUpperCase(),
+      value: String(form.value).trim(),
+      minPurchase: form.minPurchase.trim(),
+      maxDiscount: form.maxDiscount.trim(),
+    };
+
+    if (parsePromoValue(payload.value, payload.type) <= 0) {
+      setFormError(
+        payload.type === "percentage"
+          ? "Nilai diskon persentase tidak valid (contoh: 20 atau 20%)."
+          : "Nilai diskon nominal tidak valid (contoh: 100000)."
+      );
+      return;
+    }
+    if (payload.type === "percentage" && parsePromoValue(payload.value, payload.type) > 100) {
+      setFormError("Persentase diskon tidak boleh lebih dari 100.");
+      return;
+    }
+    if (payload.minPurchase && parseMoney(payload.minPurchase) <= 0) {
+      setFormError("Min. Pembelian tidak valid (contoh: 100000). ");
+      return;
+    }
+    if (payload.maxDiscount && parseMoney(payload.maxDiscount) <= 0) {
+      setFormError("Maks. Diskon tidak valid (contoh: 100000).");
+      return;
+    }
+
+    setFormError("");
     setSaving(true);
     const url = editing ? `/api/promotions/${editing.id}` : "/api/promotions";
     await fetch(url, {
       method: editing ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
     setSaving(false);
     setModalOpen(false);
@@ -199,7 +238,8 @@ export default function AdminPromotions() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Nilai Diskon</label>
               <input name="value" value={form.value} onChange={handleChange} required
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" placeholder="20% atau 100000" />
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                placeholder={form.type === "percentage" ? "20 atau 20%" : "100000"} />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Judul Promo</label>
@@ -231,6 +271,9 @@ export default function AdminPromotions() {
               className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
             <span className="font-medium text-slate-700">Aktif</span>
           </label>
+          {formError && (
+            <p className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{formError}</p>
+          )}
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">

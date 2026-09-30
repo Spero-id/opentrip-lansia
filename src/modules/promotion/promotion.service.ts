@@ -1,5 +1,7 @@
 import { promotionRepository } from "./promotion.repository";
 import { ConflictError, ValidationError } from "@/shared/errors/app-error";
+import { computePromoDiscount } from "@/shared/promo/promo-discount";
+import { parseMoney } from "@/shared/promo/promo-value";
 
 export const promotionService = {
   async applyPromo(code: string, userId: string, bookingId: string, subtotal: string) {
@@ -10,17 +12,8 @@ export const promotionService = {
       throw new ConflictError("Kuota promo habis");
     }
 
-    let discount = 0;
-    const sub = parseInt(subtotal);
-    if (promo.type === "percentage") {
-      discount = Math.floor(sub * (parseInt(promo.value) / 100));
-    } else {
-      discount = parseInt(promo.value);
-    }
-
-    if (promo.maxDiscount) {
-      discount = Math.min(discount, parseInt(promo.maxDiscount));
-    }
+    const sub = parseMoney(subtotal);
+    const discount = computePromoDiscount(promo, sub);
 
     await promotionRepository.incrementUsage(promo.id);
     await promotionRepository.recordUsage(promo.id, userId, bookingId);

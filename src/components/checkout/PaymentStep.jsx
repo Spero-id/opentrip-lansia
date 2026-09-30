@@ -5,13 +5,51 @@ import BookingSummary from "./BookingSummary";
 import PriceBreakdown from "./PriceBreakdown";
 import Image from "next/image";
 import { Upload } from "lucide-react";
+import {
+  availableMethods,
+  findAccountByMethod,
+  isCompleteAccount,
+  resolveActiveMethod,
+} from "@/shared/payment/payment-account";
 
 export default function PaymentStep({ checkout, onPay, onBack }) {
+  // Daftar rekening bank diambil sekali di sini (bukan di PaymentSelector)
+  // supaya tombol "Kirim Bukti Pembayaran" bisa menunggu hasilnya — kalau tidak,
+  // user bisa submit dengan metode default "BCA" sebelum sempat disembunyikan.
+  const [accounts, setAccounts] = useState([]);
+  const [accountsStatus, setAccountsStatus] = useState("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/payments/accounts")
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then((data) => {
+        if (cancelled) return;
+        if (Array.isArray(data)) {
+          setAccounts(data);
+          setAccountsStatus("ready");
+        } else {
+          setAccountsStatus("error");
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        // Fail-closed: tanpa data rekening, opsi bank disembunyikan (QRIS tetap ada)
+        setAccountsStatus("error");
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
       <div className="lg:col-span-3 space-y-6">
         <BookingSummary destination={checkout.destination} />
-        <PaymentSelector paymentMethod={checkout.paymentMethod} setPaymentMethod={checkout.setPaymentMethod} />
+        <PaymentSelector
+          paymentMethod={checkout.paymentMethod}
+          setPaymentMethod={checkout.setPaymentMethod}
+          accounts={accounts}
+          status={accountsStatus}
+        />
         <ProofUploader checkout={checkout} />
 
         {checkout.error && (
@@ -29,7 +67,12 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
           </button>
           <button
             onClick={onPay}
-            disabled={!checkout.paymentMethod || !checkout.proofUrl || checkout.isLoading}
+            disabled={
+              !checkout.paymentMethod ||
+              !checkout.proofUrl ||
+              checkout.isLoading ||
+              accountsStatus === "loading"
+            }
             className="flex-1 bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {checkout.isLoading ? (
@@ -60,25 +103,26 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
   );
 }
 
-function PaymentSelector({ paymentMethod, setPaymentMethod }) {
-  const [accounts, setAccounts] = useState([]);
+function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) {
+  const bcaAccount = findAccountByMethod(accounts, "BCA");
 
+  // null = data rekening masih dimuat (keputusan ditahan dulu)
+  const visible = availableMethods(accounts, status);
+  const showBCA = visible?.includes("BCA") ?? false;
+  const selected = resolveActiveMethod(paymentMethod, visible);
+
+  // Default useCheckout adalah "BCA". Bila BCA disembunyikan (rekening belum
+  // ada / nomornya kosong), pilihan dialihkan ke QRIS sehingga user tidak
+  // pernah mengirim bukti dengan metode yang tidak ia lihat.
   useEffect(() => {
-    let cancelled = false;
-    fetch("/api/payments/accounts")
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled || !Array.isArray(data)) return;
-        setAccounts(data);
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
+    if (!visible) return;
+    if (!visible.includes(paymentMethod)) {
+      setPaymentMethod?.(visible[0] ?? null);
+    }
+  }, [visible, paymentMethod, setPaymentMethod]);
 
-  const bcaAccount = accounts.find((a) => a.method?.toLowerCase() === "bca") || null;
-
-  const isBCA = paymentMethod === "BCA";
-  const isQRIS = paymentMethod === "QRIS";
+  const isBCA = selected === "BCA";
+  const isQRIS = selected === "QRIS";
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
@@ -90,32 +134,52 @@ function PaymentSelector({ paymentMethod, setPaymentMethod }) {
       </div>
 
       <div className="space-y-3">
-        {/* BCA Option */}
-        <label
-          className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
-          onClick={() => setPaymentMethod?.("BCA")}
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-14 h-9 flex items-center justify-center">
-              <Image src="https://vectorseek.com/wp-content/uploads/2022/07/vectorseek.com-BCA-Bank-Logo-Vector.png" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">BCA</p>
-              <p className="text-[11px] text-gray-500">Transfer Bank BCA</p>
-            </div>
-          </div>
-          <span className="w-5 h-5 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: isBCA ? "#F49D1A" : "transparent", border: isBCA ? "none" : "2px solid #D1D5DB" }}
+        {/* BCA Option — hanya tampil kalau rekeningnya lengkap.
+            Selama data masih dimuat, tampilkan skeleton agar baris tidak
+            mendadak muncul/hilang (flicker). */}
+        {status === "loading" && (
+          <div
+            aria-hidden="true"
+            className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 p-4 animate-pulse"
           >
-            {isBCA && (
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            )}
-          </span>
-        </label>
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-9 rounded bg-gray-200" />
+              <div className="space-y-1.5">
+                <div className="h-3 w-12 rounded bg-gray-200" />
+                <div className="h-2.5 w-24 rounded bg-gray-200" />
+              </div>
+            </div>
+            <div className="h-5 w-5 rounded-full border-2 border-gray-200" />
+          </div>
+        )}
 
-        {bcaAccount && isBCA && (
+        {showBCA && (
+          <label
+            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
+            onClick={() => setPaymentMethod?.("BCA")}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-9 flex items-center justify-center">
+                <Image src="https://vectorseek.com/wp-content/uploads/2022/07/vectorseek.com-BCA-Bank-Logo-Vector.png" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-gray-900">BCA</p>
+                <p className="text-[11px] text-gray-500">Transfer Bank BCA</p>
+              </div>
+            </div>
+            <span className="w-5 h-5 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: isBCA ? "#F49D1A" : "transparent", border: isBCA ? "none" : "2px solid #D1D5DB" }}
+            >
+              {isBCA && (
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </span>
+          </label>
+        )}
+
+        {showBCA && isBCA && bcaAccount && isCompleteAccount(bcaAccount) && (
           <AccountCard account={bcaAccount} />
         )}
 
@@ -172,9 +236,17 @@ function PaymentSelector({ paymentMethod, setPaymentMethod }) {
 function AccountCard({ account }) {
   const [copied, setCopied] = useState(false);
 
+  // Baris hanya dirender kalau nilainya benar-benar terisi — kolom varchar
+  // NOT NULL tetap bisa berisi "" / spasi, dan baris "Nomor" kosong + tombol
+  // Salin yang menyalin string kosong justru yang dilaporkan user.
+  const bankName = String(account.bankName ?? "").trim();
+  const accountHolder = String(account.accountHolder ?? "").trim();
+  const accountNumber = String(account.accountNumber ?? "").trim();
+
   const copy = async () => {
+    if (!accountNumber) return;
     try {
-      await navigator.clipboard.writeText(account.accountNumber);
+      await navigator.clipboard.writeText(accountNumber);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -182,29 +254,37 @@ function AccountCard({ account }) {
     }
   };
 
+  if (!bankName && !accountHolder && !accountNumber) return null;
+
   return (
     <div className="rounded-xl border border-[#1CA6B7]/20 bg-[#1CA6B7]/5 p-4 space-y-2">
       <p className="text-xs font-bold text-gray-900">Transfer ke:</p>
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-gray-500">Bank</span>
-        <span className="font-semibold text-gray-800">{account.bankName}</span>
-      </div>
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-gray-500">Atas Nama</span>
-        <span className="font-semibold text-gray-800">{account.accountHolder}</span>
-      </div>
-      <div className="flex items-center justify-between gap-2 text-xs bg-white rounded-lg px-3 py-2">
-        <span className="text-gray-500">Nomor</span>
-        <div className="flex items-center gap-2">
-          <span className="font-mono font-bold text-[#F49D1A] tracking-wide">{account.accountNumber}</span>
-          <button
-            onClick={copy}
-            className="text-[11px] font-semibold text-[#1CA6B7] hover:underline"
-          >
-            {copied ? "Tersalin" : "Salin"}
-          </button>
+      {bankName && (
+        <div className="flex justify-between text-xs">
+          <span className="text-gray-500">Bank</span>
+          <span className="font-semibold text-gray-800">{bankName}</span>
         </div>
-      </div>
+      )}
+      {accountHolder && (
+        <div className="flex justify-between text-xs">
+          <span className="text-gray-500">Atas Nama</span>
+          <span className="font-semibold text-gray-800">{accountHolder}</span>
+        </div>
+      )}
+      {accountNumber && (
+        <div className="flex justify-between gap-2 text-xs bg-white rounded-lg px-3 py-2">
+          <span className="text-gray-500">Nomor</span>
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-bold text-[#F49D1A] tracking-wide">{accountNumber}</span>
+            <button
+              onClick={copy}
+              className="text-[11px] font-semibold text-[#1CA6B7] hover:underline"
+            >
+              {copied ? "Tersalin" : "Salin"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

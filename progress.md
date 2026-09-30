@@ -1608,3 +1608,110 @@ Kegagalan memuat di kunjungan pertama + retry sukses di refresh = ciri persis "t
   langsung setiap edit sejak itu.
 - Verifikasi: tsc 0; lint 0 err/78 warning; build OK; `./init.sh` EXIT 0;
   E2E suite 78 test tetap belum dijalankan (laptop dev tidak sanggup).
+
+## Session 40 — Bugfix: Voucher promo bikin checkout gagal "Total pembayaran tidak sesuai"
+
+**Laporan:** "Isi kode promo lalu klik Lanjut ke Pembayaran, tiba-tiba muncul error"
+(`400 Total pembayaran tidak sesuai. Silakan muat ulang halaman.`) dan
+"UI should display the discounted price" — ringkasan harga tidak pernah
+menampilkan baris diskon.
+
+**Diagnosis (diverifikasi sampai ke DB, bukan asumsi):**
+
+Log server menunjukkan `clientTotal 2200000` vs `expectedTotal 2100000`
+(subtotal sama, jadi bedanya murni diskon: client 0, server 100000).
+Query langsung ke `promotions`:
+
+```
+code AEZAKMI | type percentage | value "70%" | max_discount "100000" | min_purchase "100000"
+```
+
+Kolom `value` bertipe varchar dan admin mengisinya bebas
+(placeholder lama: "20% atau 100000"). Tiga parser berbeda membaca nilai itu:
+
+| Lokasi | Ekspresi | "70%" |
+|---|---|---|
+| client `useCheckout.js` | `Number(value) \|\| 0` | **0** → diskon 0, UI tanpa baris diskon |
+| server `api/checkout/route.ts` | `toNumber()` (buang non-angka) | **70** → 70% dari 2.200.000 = 1.540.000, di-cap max 100.000 |
+| `promotion.service.ts` | `parseInt()` | 70 |
+
+Client kirim total penuh (2.200.000), server mengharapkan 2.100.000 → 400.
+Itu sebabnya error tetap muncul walau voucher sudah ditekan "Pakai".
+
+**Perbaikan:**
+
+- `src/shared/promo/promo-value.ts` (baru) — `parseMoney()` + `parsePromoValue()`
+  parser tunggal: `"70%"→70`, `"7.5%"→7.5`, `"100.000"/"Rp100.000"→100000`,
+  barang tak terbaca → 0 (bukan NaN).
+- `src/shared/promo/promo-discount.ts` (baru) — `computePromoDiscount()`
+  satu-satunya rumus diskon; dipakai ketiga titik di atas sehingga angka client
+  dan server mustahil beda.
+- `src/lib/hooks/useCheckout.js` — `resolveVoucher()` diekstrak (dipakai tombol
+  "Pakai" & auto-apply saat klik Lanjut), `getDiscount()` sekarang memakai rumus
+  bersama (ikut berubah saat pax berubah), payload hanya mengirim voucher yang
+  benar-benar applied.
+- `src/app/api/checkout/route.ts` — validasi voucher tetap server-authoritative,
+  perhitungan diskon delegasi ke `computePromoDiscount`.
+- `src/modules/promotion/promotion.service.ts` — ikut pakai parser & rumus sama
+  (dulu `parseInt` + `Math.floor`, beda dengan checkout).
+- `src/components/checkout/VoucherCard.jsx` — Enter menerapkan kode voucher.
+- `src/app/admin/promotions/page.tsx` — validasi + normalisasi `value`,
+  `minPurchase`, `maxDiscount` sebelum disimpan; pesan error di form; placeholder
+  dipisah per tipe ("20 atau 20%" vs "100000").
+- `jest.config.cjs` — tambah transform `babel-jest` untuk `.js/.jsx`
+  (`@babel/plugin-transform-modules-commonjs`); sebelumnya Jest gagal memuat
+  modul client ESM seperti `useCheckout.js`.
+
+**Tests:** `src/shared/promo/promo-value.test.ts` (baru) mengunci kasus nyata
+AEZAKMI: client total === server total === 2.100.000, plus parser & min-purchase.
+
+**Verifikasi:** `npx jest` → 3 suites / 22 tests pass; `npx tsc --noEmit` → 0 error;
+`npm run lint` → 0 error / 78 warning (baseline tidak berubah).
+
+**Belum diverifikasi manual:** alur checkout end-to-end di browser (isi voucher →
+klik Lanjut → pembayaran) karena butuh dev server + session login.
+
+## Session 41 — Bugfix: Sembunyikan rekening BCA kalau nomornya belum ada
+
+**Laporan:** "Rekening BCA kalau belum ada nomor rekeningnya tolong disembunyikan aja."
+
+**Diagnosis (diverifikasi ke schema & pemakaian):**
+
+- `payment_accounts.accountNumber` `NOT NULL` tapi tetap bisa `""`/`" "`; baris
+  bisa juga tidak ada sama sekali (tabel hanya diisi lewat `src/db/seed.ts:211`,
+  **tidak ada UI admin** untuk rekening).
+- `PaymentStep.jsx:78` hanya menentukan *kartu* tampil atau tidak
+  (`bcaAccount && isBCA`), sedangkan **label opsi BCA selalu dirender** → tiga
+  keadaan rusak: baris tidak ada (BCA tanpa tujuan transfer), nomor `""`
+  (baris "Nomor" kosong + tombol Salin menyalin string kosong), dan fetch
+  gagal/`loading` tidak bisa dibedakan dari "tidak ada".
+- `useCheckout.js:93` default `paymentMethod: "BCA"` → kalau BCA disembunyikan,
+  pilihan tetap menunjuk metode tersembunyi sementara tombol kirim hanya cek
+  truthiness → user bisa submit bukti dengan metode yang tak pernah ia lihat.
+
+**Perbaikan:**
+
+- `src/shared/payment/payment-account.ts` (baru) — aturan tunggal:
+  `isCompleteAccount()` (trim, bank+nomor+pemilik), `findAccountByMethod()`
+  (case-insensitive), `availableMethods()` (`null` hanya saat loading; gagal
+  muat → fail-closed `["QRIS"]`), `resolveActiveMethod()` (pilihan tersembunyi
+  jatuh ke metode pertama).
+- `PaymentStep.jsx` — fetch rekening diangkat ke komponen induk; skeleton BCA
+  selama `loading` (tanpa flicker); label BCA hanya dirender kalau lengkap;
+  `useEffect` mengoreksi `paymentMethod` (BCA → QRIS); tombol **Kirim Bukti
+  Pembayaran** menunggu `accountsStatus !== "loading"`; `AccountCard` merender
+  baris yang kosong dan menonaktifkan Salin kalau nomor kosong.
+- `/api/payments/accounts` — menyaring rekening tak lengkap sebelum dikirim ke
+  client (server & client sepakat lewat helper yang sama).
+- `jest.config.cjs` — transform ts-jest juga untuk `.js/.jsx` (modul client
+  ESM+JSX belum bisa dimuat Jest; babel-jest tanpa preset JSX gagal parse).
+
+**Tests baru:** `src/shared/payment/payment-account.test.ts` (8) +
+`src/components/checkout/PaymentStep.test.tsx` (4: rekening tak ada, nomor
+kosong, rekening lengkap, API gagal).
+
+**Verifikasi:** `./init.sh` EXIT 0 → lint 0 error / 78 warning (baseline), tsc 0,
+jest 5 suites / 40 tests pass.
+
+**Belum diverifikasi manual:** tampilan di browser pada kondisi DB tanpa baris
+BCA (perlu dev server + data `payment_accounts` dimodifikasi).

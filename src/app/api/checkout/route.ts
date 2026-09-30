@@ -7,6 +7,7 @@ import { referrals } from "@/modules/referral/referral.schema";
 import { users } from "@/modules/auth/auth.schema";
 import { auth } from "@/modules/auth/auth.config";
 import { promotionRepository } from "@/modules/promotion";
+import { computePromoDiscount } from "@/shared/promo/promo-discount";
 import { tripRepository } from "@/modules/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";
@@ -212,15 +213,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      const value = toNumber(promo.value);
-      if (promo.type === "percentage") {
-        discount = Math.round((expectedSubtotal * value) / 100);
-        const maxDiscount = toNumber(promo.maxDiscount);
-        if (maxDiscount > 0) discount = Math.min(discount, maxDiscount);
-      } else {
-        discount = value;
-      }
-      discount = Math.min(discount, expectedSubtotal);
+      discount = computePromoDiscount(promo, expectedSubtotal);
       promoId = promo.id;
     }
 

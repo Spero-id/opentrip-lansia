@@ -1,11 +1,11 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-09-09",
+  "last_updated": "2026-09-30",
   "summary": {
     "total_features": 55,
-    "in_review": 17,
+    "in_review": 18,
     "completed": 22,
-    "to_do": 16,
+    "to_do": 15,
     "not_started": 0
   },
   "phases": [
@@ -206,15 +206,16 @@
           "id": "feat-033",
           "title": "Promo code integration in booking",
           "description": "Apply promo code with validation, discount calculation (percentage/fixed), usage limit, max discount. Service exists, UI + API endpoint needed.",
-          "status": "to_do",
+          "status": "in_review",
           "priority": 33,
           "depends_on": [
             "feat-030"
           ],
           "verification": [
-            "npm run lint"
+            "npm run lint",
+            "npx jest src/shared/promo"
           ],
-          "evidence": "promotion.service.ts with full applyPromo logic"
+          "evidence": "UI voucher ada di checkout (VoucherCard/ReferralInput/PriceBreakdown), API: GET /api/promotions + POST /api/checkout (validasi server-side). Bugfix 2026-09-30: sebelumnya client memakai Number(\"70%\")=0 sementara server toNumber(\"70%\")=70 -> \"Total pembayaran tidak sesuai\" 400 dan diskon tidak tampil di UI. Kini parser & rumus diskon dibagikan di src/shared/promo/{promo-value,promo-discount}.ts (dipakai useCheckout.js, api/checkout/route.ts, promotion.service.ts) + admin form divalidasi. jest src/shared/promo 3 test pass; lint 0 error; tsc 0 error."
         },
         {
           "id": "feat-034",
@@ -861,9 +862,10 @@
           "priority": 101,
           "depends_on": [],
           "verification": [
-            "npm run lint"
+            "npm run lint",
+            "npx jest src/shared/payment src/components/checkout"
           ],
-          "evidence": "PaymentSelector (PaymentStep.jsx) satu kartu BCA + auto-select; ALLOWED_METHODS berisi BCA; query SQL INSERT/upsert payment_accounts diserahkan ke user"
+          "evidence": "PaymentSelector (PaymentStep.jsx) satu kartu BCA + auto-select; ALLOWED_METHODS berisi BCA; query SQL INSERT/upsert payment_accounts diserahkan ke user | 2026-09-30 (permintaan: sembunyikan rekening BCA kalau nomornya belum ada): opsi BCA kini hanya tampil jika payment_accounts lengkap (bank+nomor+pemilik, cek trim — varchar NOT NULL bisa berisi \"\"); saat loading pakai skeleton (tanpa flicker), saat fetch gagal fail-closed hanya QRIS; pilihan default useCheckout \"BCA\" dialihkan ke QRIS (resolveActiveMethod) supaya user tidak submit metode yang tak terlihat; tombol bayar menunggu status rekening; /api/payments/accounts menyaring rekening tak lengkap. Aturan dibagi di src/shared/payment/payment-account.ts. Tests: 4 unit + 4 komponen pass. ./init.sh EXIT 0; tsc 0; lint 0 err."
         }
       ]
     }
