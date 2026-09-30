@@ -3,7 +3,9 @@ import { tripRepository } from "@/modules/trip";
 import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
   try {
     const data = await tripRepository.findAllGalleries();
     return NextResponse.json(data);

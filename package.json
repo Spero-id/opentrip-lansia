@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test e2e/public --reporter=list",
     "verify:checkout": "tsx --env-file=.env scripts/verify-payment-and-promo.ts",
+    "audit:api": "tsx scripts/api-auth-audit.ts",
     "postinstall": "node -e \"require('node:fs').cpSync('node_modules/hugerte','public/hugerte',{recursive:true,force:true})\""
   },
   "dependencies": {

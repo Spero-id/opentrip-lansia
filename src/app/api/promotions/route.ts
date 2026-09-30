@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promotionRepository } from "@/modules/promotion";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin, requireSession } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Daftar promo dipakai checkout (voucher) → wajib login; halaman admin juga login.
+  const denied = await requireSession(req);
+  if (denied) return denied;
   try {
     const data = await promotionRepository.findAll();
     return NextResponse.json(data);

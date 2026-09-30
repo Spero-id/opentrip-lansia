@@ -1749,3 +1749,69 @@ dipakai nanti.
 lewat unit/component test + pemeriksaan data live; sisa pass browser (lihat
 `payment_accounts` di-null-kan → opsi BCA hilang) ditunda karena keterbatasan
 hardware.
+
+## Session 43 — feat-080: API auth middleware & RBAC
+
+**Masalah:** temuan audit lama — ±57 endpoint API 100% public, 3 di antaranya
+pernah terbukti bisa dieksploit tanpa auth. Fitur `feat-080` (critical, prioritas 2).
+
+**Audit dulu, baru dikunci.** `src/shared/auth/api-auth-audit.ts` memindai semua
+`src/app/api/**/route.ts` (92 handler) + resolusi delegasi ke controller
+(`export { GET } from "..."` → `src/modules/booking/booking.controller.ts`, dsb).
+Hasil: 83 punya guard, sisanya 9 public-by-design + 4 proteksi ada di
+controller private-trip. **0 pelanggaran.**
+
+**Kebijakan jadi satu sumber:** `src/shared/auth/api-policy.ts` —
+`API_ACCESS` (public/admin eksplisit, default **session** = fail-closed),
+`DELEGATED_GUARD`, dan `resolveApiAccess(method, path)` yang menerjemahkan pola
+route (`[id]` → 1 segmen, `[...x]` → sisa path) untuk dipakai di edge.
+
+**Guard baru di handler (11 route):**
+- `requireAdmin` → GET `horeca`, `horeca/[id]`, `vendors`, `vendors/[id]`,
+  `galleries`, `galleries/[id]`, `promotions/[id]`, `trips/[id]/groups`,
+  `trips/[id]/active-group` (endpoint ini ternyata belum dipakai mana pun)
+- `requireSession` → GET `promotions` (dipakai checkout + halaman admin),
+  GET `trips/[id]/groups/[groupId]/gallery` (dipakai My Trips + admin)
+- `src/shared/auth.ts` kini punya `getSessionUser` / `requireSession` /
+  `requireRole(req, roles)` (`AppRole = UserRole`, sudah termasuk `agent`);
+  `requireAdmin` = `requireRole(req, ["admin"])` — perilaku & pesan lama tetap.
+
+**Edge layer:** `src/proxy.ts` matcher ditambah `/api/:path*`. Cuma cek
+keberadaan session cookie (edge-safe, tanpa DB) — public lewat, selain itu 401.
+Validasi session asli + role tetap di handler, jadi cookie palsu tetap ketahuan.
+
+**Regresi dikunci:** `src/__tests__/api-auth-audit.test.ts` (10 test) —
+tiap handler wajib terlindungi/public, level ≥ kebijakan (public<session<admin),
+entri kebijakan tidak basi, modul delegated masih mengecek session, dan pola
+regex proxy benar (`/api/horeca` ≠ `/api/horeca-types`, `/api/upload` ≠
+`/api/uploads`). Reporter: `npm run audit:api`.
+
+**Konsekuensi UX yang ditangani:** GET `/api/promotions` kini 401 untuk anonim →
+`useCheckout` menandai `vouchersLockedRef` dan menampilkan "Voucher hanya bisa
+dipakai setelah Anda login." (bukan loop "Memuat ulang data voucher...").
+
+**Verifikasi live (dev server + curl, tanpa browser — aman untuk 8GB):**
+- anonim: `trips/blogs/horeca-types/payments/accounts` → 200; `POST /api/contact` → 201;
+  `POST /api/newsletter` → 201; `/api/uploads/...` → 404 (bukan 401);
+  `horeca/galleries/vendors/promotions/users/admin.dashboard/private-trips/
+  commissions/trips/[id]/groups` → **401**
+- login `user@otl.id`: `promotions` & `private-trips` → **200**;
+  `horeca/users/commissions` → **403**
+- login `admin@otl.id`: semua → **200**
+- cookie palsu → **401** (lewat proxy, ditahan handler)
+- halaman publik `/` dan `/trips` tetap 200
+
+**Verifikasi:** `./init.sh` EXIT 0; `npx tsc --noEmit` 0; `npm run lint`
+0 error / 78 warning (baseline); `npx jest` 6 suites / 50 tests
+(10 di antaranya test audit ini).
+
+**Temuan di luar scope (belum ditangani):**
+1. `src/app/admin/meeting-points/page.tsx` memanggil `/api/meeting-points*`
+   yang **tidak ada** route-nya → halaman admin itu pasti 404 sejak awal.
+2. Path id bukan UUID (`/api/trips/abc/groups/x/gallery`) → 500
+   (`22P02 invalid input syntax for type uuid`) alih-alih 404 — pre-existing,
+   sebelum perubahan ini pun sama (kini minimal anonim dapat 401 dulu).
+3. Hak akses khusus role `agent` belum ada di endpoint mana pun (saat ini agent
+   = user biasa di API); terkait `feat-070` (Agent dashboard, in_review).
+
+**Status:** `feat-080` → `completed`.
