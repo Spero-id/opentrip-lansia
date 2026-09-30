@@ -4,6 +4,7 @@
  * Kasus laporan: "Rekening BCA kalau belum ada nomor rekeningnya tolong
  * disembunyikan aja."
  */
+import { afterEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import PaymentStep from "./PaymentStep";
 
@@ -27,19 +28,19 @@ function makeCheckout(setPaymentMethod: Setter, overrides: Record<string, unknow
 }
 
 function mockAccountsApi(body: unknown, ok = true) {
-  (global as never as { fetch: unknown }).fetch = jest.fn().mockResolvedValue({
+  (global as never as { fetch: unknown }).fetch = vi.fn().mockResolvedValue({
     ok,
     json: async () => body,
   });
 }
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 it("menyembunyikan opsi BCA saat rekening belum ada di server", async () => {
   mockAccountsApi([]);
-  const setPaymentMethod = jest.fn();
+  const setPaymentMethod = vi.fn();
 
   render(
     <PaymentStep
@@ -67,7 +68,7 @@ it("menyembunyikan opsi BCA saat nomor rekening kosong", async () => {
       isActive: true,
     },
   ]);
-  const setPaymentMethod = jest.fn();
+  const setPaymentMethod = vi.fn();
 
   render(
     <PaymentStep
@@ -95,7 +96,7 @@ it("menampilkan BCA beserta kartu rekening ketika rekening lengkap", async () =>
       isActive: true,
     },
   ]);
-  const setPaymentMethod = jest.fn();
+  const setPaymentMethod = vi.fn();
 
   render(
     <PaymentStep
@@ -115,10 +116,10 @@ it("menampilkan BCA beserta kartu rekening ketika rekening lengkap", async () =>
 });
 
 it("menyembunyikan BCA (fail-closed) kalau API rekening gagal dimuat", async () => {
-  (global as never as { fetch: unknown }).fetch = jest
+  (global as never as { fetch: unknown }).fetch = vi
     .fn()
     .mockRejectedValue(new Error("network down"));
-  const setPaymentMethod = jest.fn();
+  const setPaymentMethod = vi.fn();
 
   render(
     <PaymentStep

@@ -18,7 +18,7 @@ npx tsc --noEmit -p tsconfig.json
 echo ""
 
 echo "=== Running tests ==="
-npx jest --passWithNoTests
+npx vitest run --passWithNoTests
 echo ""
 
 echo "=== Structure checks ==="
