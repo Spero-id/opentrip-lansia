@@ -1837,3 +1837,11 @@ berisi commit `718d4f4` (chore Playwright hemat RAM) + `df78b96` (feat-080).
 
 **Progres:** plan restructure via **PR #104** → `main` (`f967ae7`); branch
 `restructure/fase-0`; task 0.1–0.6b selesai (centang di `plan/restructure-tasks.md`).
+
+**0.7 — `/api/meeting-points` (audit, putusan):** halaman admin = **yatim**
+(tidak ada link nav kemana pun), fetch 4 endpoint CRUD yang route/module/
+tablenya **tidak ada**; meeting points hanya ada sebagai jsonb
+`trips.meeting_points`. **Keputusan: dibangun di luar scope restructure** →
+dicatat sebagai `feat-102` (to_do, phase-5); halaman dibiarkan apa adanya;
+keputusan akhir (bangun backend vs hapus halaman) milik PRD. **Paket 8 jangan
+merombak halaman ini sebelum keputusan.**
