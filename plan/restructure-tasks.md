@@ -25,7 +25,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Bagian | Selesai | Total |
 |---|---|---|
 | Persiapan (commit plan & buka cabang) | 3 | 3 |
-| Fase 0 — Tools & baseline | 0 | 14 |
+| Fase 0 — Tools & baseline | 1 | 14 |
 | Fase 0.5 — Boundary root | 0 | 4 |
 | Fase 1 — Komentar & pesan error | 0 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 0 | 8 |
@@ -42,7 +42,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 ## Fase 0 — Tools & baseline (risiko nol)
 
-- [ ] **0.1** `scripts/check-structure.ts` — aturan R1–R9 (§9 dokumen strategi) + npm script `check:structure`
+- [x] **0.1** `scripts/check-structure.ts` — aturan R1–R9 (§9 dokumen strategi) + npm script `check:structure`
 - [ ] **0.2** `scripts/check-routes.ts` — mode `--snapshot` & diff manifest `appPathRoutes` + mode crawl + npm script `check:routes`
 - [ ] **0.3** `scripts/check-schema-drift.ts` — deteksi `pgTable` kembar di `db/schema` vs `modules` + selisih kolom + npm script `check:schema-drift`
 - [ ] **0.4** Baseline: `npm run build` sukses pertama kali; simpan snapshot manifest rute (`npm run check:routes -- --snapshot`)
