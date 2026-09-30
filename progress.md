@@ -1815,3 +1815,7 @@ dipakai setelah Anda login." (bukan loop "Memuat ulang data voucher...").
    = user biasa di API); terkait `feat-070` (Agent dashboard, in_review).
 
 **Status:** `feat-080` → `completed`.
+
+**Dipush & PR:** branch `feat/api-auth-middleware-rbac` → **PR #103**
+(https://github.com/Spero-id/opentrip-lansia/pull/103, base `main`),
+berisi commit `718d4f4` (chore Playwright hemat RAM) + `df78b96` (feat-080).
