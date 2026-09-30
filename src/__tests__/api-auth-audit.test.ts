@@ -13,6 +13,7 @@
  *  5. Pola route diterjemahkan benar ke regex untuk src/proxy.ts
  *     (guard edge memakai resolveApiAccess).
  */
+import { describe, expect, test } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { auditRoutes, isAllowedByPolicy } from "@/shared/auth/api-auth-audit";

@@ -10,16 +10,18 @@
  * Sekarang semua route memakai toPublicError() — allowlist: hanya AppError
  * (yang memang ditulis developer untuk user) yang boleh lewat.
  */
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { MockInstance } from "vitest";
 import { AppError, NotFoundError, ValidationError, ConflictError } from "./app-error";
 import { toPublicError } from "./to-public-error";
 
 describe("toPublicError", () => {
-  let errorSpy: jest.SpyInstance;
+  let errorSpy: MockInstance;
 
   beforeEach(() => {
     // toPublicError console.error untuk kasus non-AppError — bisukan supaya
     // output test bersih.
-    errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
   afterEach(() => errorSpy.mockRestore());
 

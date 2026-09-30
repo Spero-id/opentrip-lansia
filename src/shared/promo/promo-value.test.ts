@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { parseMoney, parsePromoValue } from "./promo-value";
 import { computePromoDiscount } from "./promo-discount";
 import { resolveVoucher } from "../../lib/hooks/useCheckout";

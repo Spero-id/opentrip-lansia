@@ -18,7 +18,17 @@ npx tsc --noEmit -p tsconfig.json
 echo ""
 
 echo "=== Running tests ==="
-npx jest --passWithNoTests
+npx vitest run --passWithNoTests
+echo ""
+
+echo "=== Structure checks ==="
+npm run check:structure
+npm run check:schema-drift
+if [ -f .next/app-path-routes-manifest.json ]; then
+  npm run check:routes
+else
+  echo "check:routes: skipped (no build manifest; run npm run build first)"
+fi
 echo ""
 
 echo "=== Verification Complete ==="

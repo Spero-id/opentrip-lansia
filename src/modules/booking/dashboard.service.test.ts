@@ -7,30 +7,32 @@
  * `undefined[0]` threw a TypeError that `src/app/api/admin/dashboard/route.ts`
  * turned into HTTP 500.
  */
-jest.mock("@/shared/db", () => ({
+vi.mock("@/shared/db", () => ({
   db: {
-    select: jest.fn(),
-    execute: jest.fn(),
+    select: vi.fn(),
+    execute: vi.fn(),
   },
 }));
 
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Mock } from "vitest";
 import { db } from "@/shared/db";
 import { dashboardService } from "./dashboard.service";
 
-const mockedSelect = db.select as jest.Mock;
-const mockedExecute = db.execute as jest.Mock;
+const mockedSelect = db.select as Mock;
+const mockedExecute = db.execute as Mock;
 
 /** Mimics a drizzle select query: awaiting it yields rows, `.where()` too. */
 function selectResult(rows: unknown[]) {
   const promise = Promise.resolve(rows) as Promise<unknown> & {
-    where: jest.Mock;
+    where: Mock;
   };
-  promise.where = jest.fn(() => Promise.resolve(rows));
+  promise.where = vi.fn(() => Promise.resolve(rows));
   return promise;
 }
 
 describe("dashboardService.getStats", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => vi.clearAllMocks());
 
   it("reads aggregates from drizzle select results (arrays, not .rows)", async () => {
     // Call order: trips, bookings this month, revenue, active promos, bookings last month
@@ -43,7 +45,7 @@ describe("dashboardService.getStats", () => {
     ];
     let call = 0;
     mockedSelect.mockImplementation(() => ({
-      from: jest.fn(() => selectResult(results[call++])),
+      from: vi.fn(() => selectResult(results[call++])),
     }));
 
     const stats = await dashboardService.getStats();
@@ -59,7 +61,7 @@ describe("dashboardService.getStats", () => {
     const results = [[{ count: 1 }], [{ count: 0 }], [{ total: "0" }], [{ count: 0 }], [{ count: 0 }]];
     let call = 0;
     mockedSelect.mockImplementation(() => ({
-      from: jest.fn(() => selectResult(results[call++])),
+      from: vi.fn(() => selectResult(results[call++])),
     }));
 
     const stats = await dashboardService.getStats();
@@ -71,7 +73,7 @@ describe("dashboardService.getStats", () => {
 
   it("tolerates empty result sets instead of throwing", async () => {
     mockedSelect.mockImplementation(() => ({
-      from: jest.fn(() => selectResult([])),
+      from: vi.fn(() => selectResult([])),
     }));
 
     const stats = await dashboardService.getStats();

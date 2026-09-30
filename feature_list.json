@@ -2,10 +2,10 @@
   "project": "OpenTrip Lansia (OTL)",
   "last_updated": "2026-09-30",
   "summary": {
-    "total_features": 55,
+    "total_features": 56,
     "in_review": 18,
     "completed": 23,
-    "to_do": 14,
+    "to_do": 15,
     "not_started": 0
   },
   "phases": [
@@ -380,6 +380,18 @@
             "npm run lint"
           ],
           "evidence": "/admin/users page, GET/PUT/DELETE /api/users endpoints, auth repository methods, e2e/admin/users.spec.ts"
+        },
+        {
+          "id": "feat-102",
+          "title": "Meeting points admin backend (or remove orphan page)",
+          "description": "Admin page /admin/meeting-points fetches CRUD /api/meeting-points but no route, module, or table exists, and no nav links to it. Decide: build table+API+module, or remove the page. Paket 8 must not rework this page until decided.",
+          "status": "to_do",
+          "priority": 102,
+          "verification": [
+            "npm run lint",
+            "npm run check:routes"
+          ],
+          "evidence": "Fase 0 audit (task 0.7, 2026-09-30): 4 endpoints tanpa backend; meeting points hanya ada sebagai jsonb trips.meeting_points; 0 link nav. Ditunda di luar scope restructure."
         }
       ]
     },

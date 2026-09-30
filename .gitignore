@@ -55,4 +55,3 @@ next-env.d.ts
 # local development uploads (duplikat dari /uploads, jangan di-commit)
 /public/uploads/
 
-nul
