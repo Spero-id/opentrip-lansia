@@ -107,7 +107,6 @@ const BASELINE: Baseline = {
     "src/lib/Destination.js",
     "src/lib/Order.js",
     "src/lib/data.js",
-    "src/lib/design-tokens.js",
     "src/lib/format.js",
     "src/lib/formatRupiah.js",
     "src/lib/hooks/useCheckout.js",

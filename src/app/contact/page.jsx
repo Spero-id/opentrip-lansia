@@ -16,7 +16,12 @@ const WA_MESSAGE =
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
-import { A, A_HOVER, baseInput, normalBorder } from "@/lib/design-tokens";
+
+const A = "#F49D1A";
+const A_HOVER = "#c47d12";
+const baseInput =
+    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
+const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
 
 export default function ContactPage() {
     const [submitted, setSubmitted] = useState(false);
