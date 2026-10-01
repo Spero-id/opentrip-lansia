@@ -31,12 +31,12 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 2 — Skema Drizzle tunggal | 8 | 8 |
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
-| Fase 3c — Chrome ke root layout | 0 | 6 |
+| Fase 3c — Chrome ke root layout | 6 | 6 |
 | Paket domain 1–8 | 0 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **48** | **127** |
+| **Total** | **54** | **127** |
 
 ---
 
@@ -105,12 +105,12 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 ## Fase 3c — Chrome global ke root layout (temuan #17, D-17)
 
-- [ ] **3c.1** Buat `src/components/layout/SiteChrome.tsx` (client): render Navbar + Footer; daftar path tersembunyi: `/login`, `/register`, `/forbidden`, `/admin`, `/dashboard` (berbasis `usePathname`, prefix-safe — `/admin` ≠ `/administrator`)
-- [ ] **3c.2** Root layout (`layout.tsx`, setelah task 3.6) render `<SiteChrome>{children}</SiteChrome>` — layout admin (`admin/layout.tsx`) tetap sendiri, tidak kena
-- [ ] **3c.3** Hapus impor Navbar/Footer dari **11 halaman** + `components/private/SuccessState.jsx` (sekalian periksa & perbaiki render dobel di alur sukses private trip)
-- [ ] **3c.4** WhatsAppFloat = **opsi A (dipilih, D-17)**: 5 path lama (`/`, `/blog` list saja, `/private`, `/trips` + detail) — tetap dirender `SiteChrome`, konfigurasi di satu tempat
-- [ ] **3c.5** R10 aktif di `check:structure`: `Navbar`/`Footer`/`WhatsAppFloat` hanya boleh diimpor `SiteChrome`/file layout — grep lokal wajib 0
-- [ ] **3c.6** Verifikasi: grep 0 impor per-halaman · `check:routes` manifest identik · **cek visual**: 11 halaman publik (Navbar+Footer muncul) · `login`/`register`/`forbidden` (tanpa chrome) · admin (sidebar sendiri) · WA di path sesuai opsi · commit
+- [x] **3c.1** Buat `src/components/layout/SiteChrome.tsx` (client): render Navbar + Footer; daftar path tersembunyi: `/login`, `/register`, `/forbidden`, `/admin`, `/dashboard` (berbasis `usePathname`, prefix-safe — `/admin` ≠ `/administrator`)
+- [x] **3c.2** Root layout (`layout.tsx`, setelah task 3.6) render `<SiteChrome>{children}</SiteChrome>` — layout admin (`admin/layout.tsx`) tetap sendiri, tidak kena
+- [x] **3c.3** Hapus impor Navbar/Footer dari **11 halaman** + `components/private/SuccessState.jsx` (sekalian periksa & perbaiki render dobel di alur sukses private trip) — 65 baris (29 import + 36 tag); dobel navbar di success state hilang bersama impornya
+- [x] **3c.4** WhatsAppFloat = **opsi A (dipilih, D-17)**: 5 path lama (`/`, `/blog` list saja, `/private`, `/trips` + detail) — tetap dirender `SiteChrome`, konfigurasi di satu tempat (exact `/`,`/blog`,`/private` + prefix `/trips`)
+- [x] **3c.5** R10 aktif di `check:structure`: `Navbar`/`Footer`/`WhatsAppFloat` hanya boleh diimpor `SiteChrome`/file layout — grep lokal wajib 0 (probe: suntik import → FAIL 1 vs 0 → revert hijau)
+- [x] **3c.6** Verifikasi: grep 0 impor per-halaman · `check:routes` manifest identik · **cek visual**: 11 halaman publik (Navbar+Footer muncul) · `login`/`register`/`forbidden` (tanpa chrome) · admin (sidebar sendiri) · WA di path sesuai opsi · commit — tsc 0 · lint 0E/78W · vitest 6/50 · build 0 · routes 96→96 · drift 0 · structure 10/10 · init 0 · curl `/` ada logo+Float · visual browser = user
 
 ---
 
