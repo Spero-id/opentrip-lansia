@@ -6,8 +6,15 @@ import PriceBreakdown from "./PriceBreakdown";
 import MeetingPointInfo from "./MeetingPointInfo";
 import CustomerForm from "./CustomerForm";
 import BookingSummary from "./BookingSummary";
+import type { useCheckout } from "../hooks/use-checkout";
 
-export default function DetailsStep({ checkout, onNext }) {
+export default function DetailsStep({
+  checkout,
+  onNext,
+}: {
+  checkout: ReturnType<typeof useCheckout>;
+  onNext: () => void;
+}) {
   const canProceed =
     checkout.destination &&
     checkout.customer?.fullName &&

@@ -1,6 +1,8 @@
 "use client";
 
-export default function BookingCard({ destination }) {
+import type { DestinationSummary } from "../types";
+
+export default function BookingCard({ destination }: { destination: DestinationSummary }) {
   return (
     <div className="flex items-center gap-4 bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl p-4 shadow-sm">
       <img src={destination.image} alt={destination.title} className="w-16 h-16 rounded-xl object-cover shrink-0" />

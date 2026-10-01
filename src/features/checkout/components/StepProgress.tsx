@@ -1,6 +1,6 @@
 "use client";
 
-export default function StepProgress({ currentStep }) {
+export default function StepProgress({ currentStep }: { currentStep: string }) {
   const steps = [
     { key: "details", label: "Detail Pesanan" },
     { key: "payment", label: "Pembayaran" },

@@ -1,8 +1,25 @@
 "use client";
 
 import { Check, X } from "lucide-react";
+import type { AppliedVoucher } from "../types";
 
-export default function VoucherCard({ voucherCode, setVoucherCode, appliedVoucher, voucherError, onApply, onRemove, vouchersLoading }) {
+export default function VoucherCard({
+  voucherCode,
+  setVoucherCode,
+  appliedVoucher,
+  voucherError,
+  onApply,
+  onRemove,
+  vouchersLoading,
+}: {
+  voucherCode: string;
+  setVoucherCode: (value: string) => void;
+  appliedVoucher?: AppliedVoucher | null;
+  voucherError?: string | null;
+  onApply: () => void;
+  onRemove: () => void;
+  vouchersLoading: boolean;
+}) {
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
       <h2 className="text-base font-bold text-gray-900">Voucher / Kode Promo</h2>

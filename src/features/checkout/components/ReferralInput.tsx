@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, X, AlertCircle } from "lucide-react";
+import type { AppliedReferral } from "../types";
 
 export default function ReferralInput({
   referralCode,
@@ -9,6 +10,13 @@ export default function ReferralInput({
   referralError,
   onApply,
   onRemove,
+}: {
+  referralCode: string;
+  setReferralCode: (value: string) => void;
+  appliedReferral?: AppliedReferral | null;
+  referralError?: string | null;
+  onApply: () => void;
+  onRemove: () => void;
 }) {
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">

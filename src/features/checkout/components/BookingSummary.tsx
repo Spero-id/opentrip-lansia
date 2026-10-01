@@ -1,6 +1,8 @@
 "use client";
 
-export default function BookingSummary({ destination }) {
+import type { DestinationSummary } from "../types";
+
+export default function BookingSummary({ destination }: { destination?: DestinationSummary | null }) {
   if (!destination) {
     return (
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import BookingSummary from "./BookingSummary";
 import PriceBreakdown from "./PriceBreakdown";
 import Image from "next/image";
@@ -11,10 +11,20 @@ import {
   isCompleteAccount,
   resolveActiveMethod,
 } from "@/features/payment/payment-account";
+import type { AccountsStatus, PaymentAccountLike } from "@/features/payment/payment-account";
+import type { useCheckout } from "../hooks/use-checkout";
 
-export default function PaymentStep({ checkout, onPay, onBack }) {
-  const [accounts, setAccounts] = useState([]);
-  const [accountsStatus, setAccountsStatus] = useState("loading");
+export default function PaymentStep({
+  checkout,
+  onPay,
+  onBack,
+}: {
+  checkout: ReturnType<typeof useCheckout>;
+  onPay: () => void;
+  onBack: () => void;
+}) {
+  const [accounts, setAccounts] = useState<PaymentAccountLike[]>([]);
+  const [accountsStatus, setAccountsStatus] = useState<AccountsStatus>("loading");
 
   useEffect(() => {
     let cancelled = false;
@@ -99,7 +109,17 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
   );
 }
 
-function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) {
+function PaymentSelector({
+  paymentMethod,
+  setPaymentMethod,
+  accounts,
+  status,
+}: {
+  paymentMethod?: string | null;
+  setPaymentMethod?: (method: string | null) => void;
+  accounts: PaymentAccountLike[];
+  status: AccountsStatus;
+}) {
   const bcaAccount = findAccountByMethod(accounts, "BCA");
 
   const visible = availableMethods(accounts, status);
@@ -108,7 +128,7 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
 
   useEffect(() => {
     if (!visible) return;
-    if (!visible.includes(paymentMethod)) {
+    if (!visible.includes(paymentMethod ?? "")) {
       setPaymentMethod?.(visible[0] ?? null);
     }
   }, [visible, paymentMethod, setPaymentMethod]);
@@ -220,7 +240,7 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
   );
 }
 
-function AccountCard({ account }) {
+function AccountCard({ account }: { account: PaymentAccountLike }) {
   const [copied, setCopied] = useState(false);
 
   const bankName = String(account.bankName ?? "").trim();
@@ -272,12 +292,12 @@ function AccountCard({ account }) {
   );
 }
 
-function ProofUploader({ checkout }) {
-  const fileInputRef = useRef(null);
+function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> }) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
-  async function handleFile(e) {
+  async function handleFile(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);

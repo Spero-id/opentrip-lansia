@@ -11,9 +11,9 @@ function PayContent() {
   const params = useParams();
   const bookingId = params.id;
 
-  const [booking, setBooking] = useState(null);
+  const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const checkout = useCheckout(null);
 
@@ -28,7 +28,7 @@ function PayContent() {
         }
         const data = await res.json();
 
-        let notesObj = {};
+        let notesObj: Record<string, any> = {};
         if (data.notes) {
           try {
             notesObj = typeof data.notes === "string" ? JSON.parse(data.notes) : data.notes;
@@ -46,7 +46,8 @@ function PayContent() {
         checkout.setDestination(destination);
         checkout.setPax(data.totalParticipants);
 
-        const primaryParticipant = data.participants?.find(p => p.isPrimary) || data.participants?.[0];
+        const participants: any[] = data.participants ?? [];
+        const primaryParticipant = participants.find((p) => p.isPrimary) || participants[0];
         if (primaryParticipant) {
           const customer = {
             fullName: primaryParticipant.fullName || "",
@@ -78,8 +79,8 @@ function PayContent() {
 
         setBooking(data);
         setLoading(false);
-      } catch (err) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Booking tidak ditemukan");
         setLoading(false);
       }
     };
@@ -152,8 +153,7 @@ function PayContent() {
       }
 
       router.push("/my-trips");
-    } catch (err) {
-      console.error("Gagal memproses pembayaran:", err);
+    } catch {
       alert("Terjadi kesalahan jaringan. Silakan coba lagi.");
     }
   };

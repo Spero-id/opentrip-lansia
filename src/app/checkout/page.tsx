@@ -23,7 +23,7 @@ function CheckoutContent() {
   const checkout = useCheckout(null);
   const setDestination = checkout.setDestination;
 
-  const [status, setStatus] = useState(destId ? "loading" : "empty");
+  const [status, setStatus] = useState<"loading" | "empty" | "found" | "notfound">(destId ? "loading" : "empty");
 
   useEffect(() => {
     if (!destId) return;
