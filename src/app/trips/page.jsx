@@ -2,13 +2,10 @@
 
 import { Suspense, useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
 import FilterPanel from "@/components/destinasi/FilterPanel";
 import DestinasiHeader from "@/components/destinasi/DestinasiHeader";
 import DestinationGrid from "@/components/destinasi/DestinationGrid";
-import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { toDetail } from "@/lib/destination";
 
 function DestisasiContent() {
@@ -99,7 +96,6 @@ function DestisasiContent() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
 
       <main className="min-h-screen bg-white">
         <DestinasiHeader search={search} setSearch={setSearch} />
@@ -135,8 +131,6 @@ function DestisasiContent() {
       </main>
 
       <Subs />
-      <Footer />
-      <WhatsAppFloat />
     </div>
   );
 }

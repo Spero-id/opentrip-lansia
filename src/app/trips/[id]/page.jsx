@@ -3,8 +3,6 @@
 import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
 import { DestinationDomain, toDetail } from "@/lib/destination";
 
@@ -17,7 +15,6 @@ import AccessibilitySection from "@/components/destinasi/detail/AccessibilitySec
 import ItinerarySection from "@/components/destinasi/detail/ItinerarySection";
 import ReviewsSection from "@/components/destinasi/detail/ReviewsSection";
 import BookingCard from "@/components/destinasi/detail/BookingCard";
-import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 
 export default function DestinationDetailPage({ params }) {
   const resolvedParams = use(params);
@@ -59,7 +56,6 @@ export default function DestinationDetailPage({ params }) {
   if (status !== "found" || !dest) {
     return (
       <div className="min-h-screen bg-white">
-        <Navbar />
         <div className="flex items-center justify-center min-h-[60vh] text-sm text-gray-400">
           Memuat...
         </div>
@@ -80,7 +76,6 @@ export default function DestinationDetailPage({ params }) {
         />
       )}
 
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-6">
         <Link
@@ -121,8 +116,6 @@ export default function DestinationDetailPage({ params }) {
       </main>
 
       <Subs />
-      <Footer />
-      <WhatsAppFloat />
     </div>
   );
 }

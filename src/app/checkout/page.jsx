@@ -12,8 +12,6 @@ import StepProgress from "../../components/checkout/StepProgress";
 import DetailsStep from "../../components/checkout/DetailsStep";
 import PaymentStep from "../../components/checkout/PaymentStep";
 
-import Footer from "../../components/layout/Footer";
-import Navbar from "@/components/layout/Navbar";
 import Subs from "@/components/landing/Subs";
 import { toDetail } from "@/lib/destination";
 
@@ -70,7 +68,6 @@ function CheckoutContent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white font-sans text-gray-900">
-      <Navbar />
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-20">
         {status !== "found" && (
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
@@ -197,7 +194,6 @@ function CheckoutContent() {
         )}
       </main>
       <Subs />
-      <Footer />
     </div>
   );
 }

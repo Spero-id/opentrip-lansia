@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Clock, ChevronRight, AlertCircle } from "lucide-react";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import PageHeader from "@/components/private/PageHeader";
 import BookingInformationSection from "@/components/private/BookingInformationSection";
 import TripDetailSection from "@/components/private/TripDetailSection";
@@ -12,7 +10,6 @@ import SuccessState from "@/components/private/SuccessState";
 import SubmitBar from "@/components/private/SubmitBar";
 import TermsModal from "@/components/private/TermsModal";
 import Subs from "@/components/landing/Subs";
-import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { initialForm } from "@/components/private/helpers/initialState";
 import { validate } from "@/components/private/helpers/validation";
 
@@ -250,7 +247,6 @@ export default function PrivateTripPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
 
       {showTerms && (
         <TermsModal
@@ -322,8 +318,6 @@ export default function PrivateTripPage() {
         </div>
       </main>
       <Subs />
-      <Footer />
-      <WhatsAppFloat />
     </div>
   );
 }

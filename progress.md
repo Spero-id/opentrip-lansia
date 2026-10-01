@@ -2060,3 +2060,19 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `448bd6f` env sentral · `e5b859b` dotenv setup+scripts · komit docs sesi ini.
 
 **Progres:** Fase 3b = **2/2** → total **48/127**. Lanjut Fase 3c (chrome global ke root layout, 6 task).
+
+## Session 50 — 2026-10-01
+
+**Fase 3c (restructure): Chrome global ke root layout — 6/6 selesai.** `SiteChrome` (client) render Navbar+Footer+Float; 11 halaman + `SuccessState` bersih dari impor chrome (65 baris); admin layout tak tersentuh.
+
+**Perubahan:**
+- **3c.1–3c.2** `src/components/layout/SiteChrome.tsx` baru (`usePathname`; sembunyi exact-atau-prefix `/login /register /forbidden /admin /dashboard`; Float exact `/ /blog /private` + prefix `/trips` = opsi A); root `layout.tsx` bungkus `<SiteChrome>`.
+- **3c.3** script strip hapus 29 import + 36 tag di 12 file; dobel-Navbar success-state private trip hilang.
+- **3c.5** R10 baru di `check-structure` (importir chrome di luar SiteChrome/layout = FAIL; baseline 0; probe terbukti); R9 43→42 (relatif Footer checkout ikut terhapus).
+- **3c.6** grep 0 · curl `/` ada logo Navbar/Footer + Float · `/login /private /trips` 200 · visual browser penuh = user (10/11 halaman adalah CSR).
+
+**Verifikasi:** tsc **0** · lint **0E/78W** · vitest **6/50** · build **0** · routes **96→96 identik** · drift **0** · structure **10/10** · init **0**. `verify:checkout` diskip (logika checkout tak tersentuh; `checkout/page.jsx` lolos kompilasi build).
+
+**Commits:** `4601fcd` SiteChrome+strip · `3915597` R10 · komit docs sesi ini.
+
+**Progres:** Fase 3c = **6/6** → total **54/127**. Prasyarat global selesai — lanjut **Paket 1 `profile`** (loop domain pertama, 7 task).

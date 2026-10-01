@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Newspaper, ArrowRight } from "lucide-react";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
-import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 
 const dateLabel = (dateStr) =>
   new Date(dateStr).toLocaleDateString("id-ID", {
@@ -36,7 +33,6 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
 
       <main className="min-h-screen bg-[#F9FAFB]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
@@ -106,8 +102,6 @@ export default function BlogPage() {
       </main>
 
       <Subs />
-      <Footer />
-      <WhatsAppFloat />
     </div>
   );
 }
