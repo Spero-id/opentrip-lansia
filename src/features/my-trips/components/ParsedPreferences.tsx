@@ -1,10 +1,15 @@
 "use client";
 
-export default function ParsedPreferences({ text }) {
+interface PreferenceSection {
+  title: string;
+  rows: { key: string; value: string }[];
+}
+
+export default function ParsedPreferences({ text }: { text?: string | null }) {
   if (!text) return <span className="text-gray-400 text-xs">-</span>;
 
-  const sections = [];
-  let current = null;
+  const sections: PreferenceSection[] = [];
+  let current: PreferenceSection | null = null;
 
   text.split("\n").forEach((line) => {
     const trimmed = line.trim();

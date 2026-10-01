@@ -2,12 +2,23 @@
 
 import { useState } from "react";
 import { PROPOSAL_COLOR, PROPOSAL_LABEL, formatRupiah } from "./constants";
+import type { PrivateProposal } from "../types";
 
-export default function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
+export default function ProposalCard({
+  proposal,
+  requestId,
+  requestStatus,
+  onRefresh,
+}: {
+  proposal: PrivateProposal;
+  requestId: string;
+  requestStatus?: string | null;
+  onRefresh?: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [note, setNote] = useState("");
 
-  const handleAction = async (action) => {
+  const handleAction = async (action: string) => {
     setLoading(true);
     try {
       const res = await fetch(`/api/private-trips/${requestId}/respond`, {

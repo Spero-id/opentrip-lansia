@@ -2,11 +2,24 @@
 
 import { useState, useEffect } from "react";
 import { X, Download, Image as ImageIcon, Loader2 } from "lucide-react";
+import type { GalleryMedia } from "../types";
 
-export default function GalleryModal({ open, onClose, tripId, departureId, groupLabel }) {
-  const [media, setMedia] = useState([]);
+export default function GalleryModal({
+  open,
+  onClose,
+  tripId,
+  departureId,
+  groupLabel,
+}: {
+  open: boolean;
+  onClose: () => void;
+  tripId?: string | null;
+  departureId?: string | null;
+  groupLabel?: string | null;
+}) {
+  const [media, setMedia] = useState<GalleryMedia[]>([]);
   const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(null);
+  const [downloading, setDownloading] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !tripId || !departureId) return;
@@ -31,7 +44,7 @@ export default function GalleryModal({ open, onClose, tripId, departureId, group
     fetchGallery();
   }, [open, tripId, departureId]);
 
-  const handleDownload = async (url, filename) => {
+  const handleDownload = async (url: string, filename?: string) => {
     setDownloading(url);
     try {
       const res = await fetch(url);
@@ -107,7 +120,7 @@ export default function GalleryModal({ open, onClose, tripId, departureId, group
                   {item.url && (
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <button
-                        onClick={() => handleDownload(item.url, `foto-trip-${item.id}.jpg`)}
+                        onClick={() => handleDownload(item.url ?? "", `foto-trip-${item.id}.jpg`)}
                         disabled={downloading === item.url}
                         className="p-3 bg-white/90 rounded-xl shadow-lg hover:bg-white transition disabled:opacity-50"
                       >

@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { A, STATUS_COLOR, STATUS_LABEL, formatRupiah, toRequestCode, icons } from "./constants";
 import ParsedPreferences from "./ParsedPreferences";
 import ProposalCard from "./ProposalCard";
+import type { PrivateTripRequest } from "../types";
 
-export default function RequestCard({ req, onRefresh }) {
+export default function RequestCard({ req, onRefresh }: { req: PrivateTripRequest; onRefresh?: () => void }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const requestCode = toRequestCode(req.id);
 
-  const copyCode = (e) => {
+  const copyCode = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     navigator.clipboard.writeText(requestCode);
     setCopied(true);

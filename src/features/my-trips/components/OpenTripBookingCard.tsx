@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { NEXT_PUBLIC_WHATSAPP_NUMBER } from "@/lib/env";
 import FeedbackModal from "./FeedbackModal";
 import GalleryModal from "./GalleryModal";
+import type { BookingNotes, MyTripBooking } from "../types";
 import {
   A,
   OPEN_TRIP_STATUS_LABEL,
@@ -14,7 +15,15 @@ import {
   icons,
 } from "./constants";
 
-export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
+export default function OpenTripBookingCard({
+  booking,
+  imageUrl,
+  onRefresh,
+}: {
+  booking: MyTripBooking;
+  imageUrl?: string | null;
+  onRefresh?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -22,10 +31,10 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
 
-  let notesObj = {};
+  let notesObj: BookingNotes = {};
   if (booking.notes) {
     try {
-      notesObj = typeof booking.notes === "string" ? JSON.parse(booking.notes) : booking.notes;
+      notesObj = typeof booking.notes === "string" ? (JSON.parse(booking.notes) as BookingNotes) : booking.notes;
     } catch {
       notesObj = { raw: booking.notes };
     }
@@ -51,7 +60,7 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
 
   const tripId = booking.tripId || notesObj.tripId || null;
 
-  const copyCode = (e) => {
+  const copyCode = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (booking.bookingCode) {
       navigator.clipboard.writeText(booking.bookingCode);
@@ -114,8 +123,8 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
             <p className="text-sm font-extrabold" style={{ color: A }}>
               {formatRupiah(booking.totalAmount) || "IDR " + booking.totalAmount}
             </p>
-            <span className={`inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${OPEN_TRIP_STATUS_COLOR[booking.status] || "bg-teal-100 text-teal-800"}`}>
-              {OPEN_TRIP_STATUS_LABEL[booking.status] || booking.status}
+            <span className={`inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${OPEN_TRIP_STATUS_COLOR[booking.status ?? ""] || "bg-teal-100 text-teal-800"}`}>
+              {OPEN_TRIP_STATUS_LABEL[booking.status ?? ""] || booking.status}
             </span>
           </div>
           {booking.status === "pending_payment" && (

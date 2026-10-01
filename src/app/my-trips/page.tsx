@@ -6,21 +6,22 @@ import { useSession } from "@/lib/auth/client";
 import EmptyState from "@/features/my-trips/components/EmptyState";
 import OpenTripBookingCard from "@/features/my-trips/components/OpenTripBookingCard";
 import RequestCard from "@/features/my-trips/components/RequestCard";
+import type { BookingNotes, MyTripBooking, PrivateTripRequest } from "@/features/my-trips/types";
 
 export default function MyTripsPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const [tab, setTab] = useState("open");
-  const [bookings, setBookings] = useState([]);
-  const [requests, setRequests] = useState([]);
-  const [tripImages, setTripImages] = useState({});
+  const [bookings, setBookings] = useState<MyTripBooking[]>([]);
+  const [requests, setRequests] = useState<PrivateTripRequest[]>([]);
+  const [tripImages, setTripImages] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
-  const getDestinationId = (booking) => {
+  const getDestinationId = (booking: MyTripBooking): string | null => {
     if (!booking?.notes) return null;
     try {
-      const notes = typeof booking.notes === "string" ? JSON.parse(booking.notes) : booking.notes;
+      const notes = typeof booking.notes === "string" ? (JSON.parse(booking.notes) as BookingNotes) : booking.notes;
       return notes?.destinationId || null;
     } catch {
       return null;
@@ -38,7 +39,7 @@ export default function MyTripsPage() {
       setBookings(Array.isArray(bookingsRes) ? bookingsRes : bookingsRes?.rows || []);
       setRequests(Array.isArray(requestsRes) ? requestsRes : requestsRes?.rows || []);
       const trips = Array.isArray(tripsRes) ? tripsRes : tripsRes?.rows || [];
-      const imageMap = {};
+      const imageMap: Record<string, string> = {};
       for (const t of trips) {
         if (t?.id && (t.image || t.images?.[0])) {
           imageMap[t.id] = t.image || t.images[0];
@@ -150,7 +151,7 @@ export default function MyTripsPage() {
                 <OpenTripBookingCard
                   key={b.id}
                   booking={b}
-                  imageUrl={tripImages[getDestinationId(b)] || null}
+                  imageUrl={tripImages[getDestinationId(b) ?? ""] || null}
                   onRefresh={fetchData}
                 />
               ))
