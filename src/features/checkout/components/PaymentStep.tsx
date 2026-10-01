@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { usePaymentAccounts } from "@/features/checkout";
 import BookingSummary from "./BookingSummary";
 import PriceBreakdown from "./PriceBreakdown";
 import Image from "next/image";
@@ -23,28 +24,7 @@ export default function PaymentStep({
   onPay: () => void;
   onBack: () => void;
 }) {
-  const [accounts, setAccounts] = useState<PaymentAccountLike[]>([]);
-  const [accountsStatus, setAccountsStatus] = useState<AccountsStatus>("loading");
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/payments/accounts")
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
-      .then((data) => {
-        if (cancelled) return;
-        if (Array.isArray(data)) {
-          setAccounts(data);
-          setAccountsStatus("ready");
-        } else {
-          setAccountsStatus("error");
-        }
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setAccountsStatus("error");
-      });
-    return () => { cancelled = true; };
-  }, []);
+  const { accounts, status: accountsStatus } = usePaymentAccounts();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">

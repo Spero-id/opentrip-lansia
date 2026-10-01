@@ -1,7 +1,9 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import PaymentStep from "@/features/checkout/components/PaymentStep";
+import { PaymentStep } from "@/features/checkout";
+import type { useCheckout } from "@/features/checkout/hooks/use-checkout";
 
+type CheckoutHook = ReturnType<typeof useCheckout>;
 type Setter = (m: string | null) => void;
 
 const COMPLETE_BCA_ACCOUNT = {
@@ -12,9 +14,9 @@ const COMPLETE_BCA_ACCOUNT = {
   isActive: true,
 };
 
-function makeCheckout(setPaymentMethod: Setter) {
+function makeCheckout(setPaymentMethod: Setter): CheckoutHook {
   return {
-    destination: { title: "Trip Contoh", priceMin: 2200000 },
+    destination: { id: "d1", image: "", title: "Trip Contoh", priceMin: 2200000 },
     paymentMethod: "BCA",
     setPaymentMethod,
     proofUrl: "",
@@ -25,7 +27,7 @@ function makeCheckout(setPaymentMethod: Setter) {
     total: 2200000,
     appliedVoucher: null,
     setProofUrl: () => {},
-  } as never;
+  } as unknown as CheckoutHook;
 }
 
 function stubAccountsFetch(response: unknown) {

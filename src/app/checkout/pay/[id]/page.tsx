@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import PaymentStep from "@/features/checkout/components/PaymentStep";
+import { PaymentStep } from "@/features/checkout";
 import { useCheckout } from "@/features/checkout/hooks/use-checkout";
 
 function PayContent() {
@@ -39,6 +39,7 @@ function PayContent() {
 
         const destination = {
           id: notesObj.destinationId || data.departureId,
+          image: "",
           title: notesObj.destinationName || "Paket Open Trip",
           priceMin: Math.round(Number(data.subtotal) / data.totalParticipants),
         };
@@ -162,6 +163,7 @@ function PayContent() {
     ...checkout,
     destination: {
       id: booking?.departureId,
+      image: "",
       title: (() => {
         try {
           const notes = JSON.parse(booking?.notes || "{}");
