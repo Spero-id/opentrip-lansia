@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, CheckCircle2, XCircle } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
-import { parseMoney, parsePromoValue } from "@/features/promotion";
+import { parseMoney, parsePromoValue } from "@/features/promotion/promo-value";
 
 interface Promotion {
   id: string;

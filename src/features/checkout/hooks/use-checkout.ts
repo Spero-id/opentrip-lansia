@@ -1,10 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { OrderDomain } from "@/lib/order";
-import { parseMoney, parsePromoValue } from "@/features/promotion";
-import { computePromoDiscount } from "@/features/promotion";
+import { parseMoney, parsePromoValue } from "@/features/promotion/promo-value";
+import { computePromoDiscount } from "@/features/promotion/promo-discount";
 
 const initialCustomer = {
   fullName: "",

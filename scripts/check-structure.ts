@@ -108,7 +108,7 @@ const BASELINE: Baseline = {
     "src/lib/format.js",
     "src/lib/order.js",
   ],
-  R3: 49, // rename 3.1 exposed pre-existing @/modules deep imports as @/features deep
+  R3: 53, // rename 3.1 exposed pre-existing @/modules deep imports as @/features deep; +4 client-safe deep (barrels mix server code)
   R4: [
     "app-sidebar.tsx",
     "checkout",
