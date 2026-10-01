@@ -2108,3 +2108,23 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Verifikasi:** tsc 0 · lint 0E/78W · vitest 6/50 · build 0 · routes identik · drift 0 · structure 11/11 · init 0 · dev smoke (`/` 200, sign-in 200, session valid). Verifikasi browser = user.
 
 **Pelajaran:** pola `lib/auth` (index server vs `client.ts`) berlaku umum — **modul campuran server+client harus dipecah di perbatasan bundle**, bukan hanya di perbatasan impor.
+
+## Session 52 — 2026-10-01
+
+**Paket 2 `checkout` — 7/7 selesai.** Rewrite terbesar restructure: 460-baris `useCheckout` → `checkoutReducer` (26 aksi) + hook tipis + `api/` + barrel; paritas perilaku dibuktikan `verify:checkout` + 59 test baru.
+
+**Perubahan (`src/features/checkout/`):**
+- **P2-①** 12 komponen + `__tests__/` → `components/`; impor absolut.
+- **P2-②** 14 file → `.tsx` + `types.ts` (state, aksi, voucher, customer, partisipan); `image/title/priceMin` required, `category/location` opsional, `id?` (konsumen parsial pay-page + `image: ""` fallback aman).
+- **P2-③** `reducer.ts` (26 aksi; `SET_CUSTOMER` satu `as Customer` untuk kunci ekstensi `_bookingId`/`_isLoading`), `pricing.ts` (`resolveVoucher` pindah + selektor), `api/client.ts` (promotions/referral/booking/payments/accounts + `ApiRequestError` bawa status), `usePaymentAccounts`, hook tulis ulang (bentuk return identik; direktif `ts-nocheck` hilang), barrel; `PaymentStep.test` tulis ulang mock hook baru (4/4 paritas). 59 test: 28 reducer + 12 pricing + 15 api + 4 PaymentStep.
+- **P2-③b** `MIN_PAX`/`MAX_PAX`, hapus `console.error` ×2 + `showHealth` mati.
+- **P2-④** `verify:checkout` exit 0 OK (jalur AEZAKMI max-discount cocok dengan unit test).
+- **P2-⑤** baselines: R9 42→**38**, R2 85→71, R4 −checkout, R3 tetap 53 (barrel menetralkan deep baru; deep murni pricing dipertahankan anti-barrel-server), R8 tetap 480, R11 0. Perbaiki: `any` eksplisit → interface `PayBooking`; `stateRef` tulis-di-render → effect; `void fetchVouchers()` → rantai `.then` ala P1 (aturan react-compiler hanya untuk `.ts`); `../types` → barrel `import type` (nol siklus).
+
+**Pelajaran paket:** (1) aturan react-compiler (ref-during-render, set-state-in-effect) tak berlaku di `.js` — konversi `.jsx`→`.tsx` mengaktifkannya; (2) `no-explicit-any` on — siapkan interface API sejak awal; (3) halaman yang membangun objek parsial → izinkan opsional + fallback, bukan `""` palsu di semua field.
+
+**Verifikasi:** tsc **0** · lint **0E/75W** · vitest **11/115** · build **0** · routes **96→96** · drift **0** · structure **11/11 nol stale** · init **0**.
+
+**Commits:** `ff698e0` pindah · `c3cce60` konversi · `8d87226` reducer · `fc944f7` clean · `f96ad67` fixes+baselines · komit docs sesi ini.
+
+**Progres:** Paket 1–2 = **14/14** → total **68/127**. Lanjut Paket 3 `my-trips`.
