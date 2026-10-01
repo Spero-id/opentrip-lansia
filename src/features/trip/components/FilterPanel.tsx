@@ -316,7 +316,7 @@ export default function FilterPanel({
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={9}
+                  maxLength={PRICE_INPUT_MAX_LENGTH}
                   placeholder="Contoh: 200000"
                   value={priceMin}
                   onChange={(e) => {
@@ -350,7 +350,7 @@ export default function FilterPanel({
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={9}
+                  maxLength={PRICE_INPUT_MAX_LENGTH}
                   placeholder="Contoh: 2000000"
                   value={priceMax}
                   onChange={(e) => {
