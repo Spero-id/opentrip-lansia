@@ -15,6 +15,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/admin/pesanan", destination: "/admin/bookings", permanent: true },
+      { source: "/dashboard", destination: "/admin", permanent: true },
+      { source: "/private", destination: "/private-trip", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

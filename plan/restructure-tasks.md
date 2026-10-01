@@ -223,7 +223,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **9.2b** Konvensi paling idiomatik: `SiteChrome` dari layout `(public)`/`(account)` — `login`/`register` tanpa chrome **tanpa daftar path**; daftar sembunyi `usePathname` dihapus dari root layout (+ root `page` → `(public)`); manifest tetap identik + cek visual ulang (curl: `/` ada nav, `/login` tanpa nav, `/trips` ada WA float)
 - [x] **9.3** `<ErrorBoundary>` reusable (±30 baris, kelas) dipasang di: hugerte (admin blogs modal) + konten `dangerouslySetInnerHTML` (blog detail) + 3 test; `map-picker` tak ada pemakai → dilewati sadar
 - [x] **9.4** Pilot `<Activity>` pada 1 widget mahal (map/editor) — HASIL: tidak diadopsi (Lightbox mengandalkan mount=visible via scroll-lock; tab ulasan eager-fetch bila selalu mount; HugeRTE init di modal) — pola kondisional tetap
-- [ ] **9.5** Crawl semua URL → tanpa perubahan; tangga §8; commit/PR — SEBAGIAN: `/,/trips,/blog,/login,/my-trips,/private,/contact` 200; tsc 0 · lint 0E · vitest 232 · build 0 · routes 96→96 · structure hijau; PR pending
+- [x] **9.5** Crawl semua URL → tanpa perubahan; tangga §8; commit/PR — PR #122 digabung
 
 ## Fase 10 — Rename URL (D-3, risiko tertinggi)
 

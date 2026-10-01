@@ -34,11 +34,11 @@ function getHref(n: Pick<Notification, "type" | "link">): string {
   if (n.link) return n.link;
   switch (n.type) {
     case "payment_proof":
-      return "/admin/pesanan";
+      return "/admin/bookings";
     case "private_trip_request":
       return "/admin/private-trips";
     case "participant_added":
-      return "/admin/pesanan";
+      return "/admin/bookings";
     default:
       return "/admin/notifications";
   }

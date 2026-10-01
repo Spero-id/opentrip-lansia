@@ -18,7 +18,7 @@ export default function EmptyState({ type }: { type: string }) {
           : "Ajukan request private trip untuk rombongan Anda"}
       </p>
       <Link
-        href={type === "open" ? "/trips" : "/private"}
+        href={type === "open" ? "/trips" : "/private-trip"}
         className="px-4 py-2 bg-[#F49D1A] text-white text-xs font-bold rounded-lg hover:bg-[#c47d12] transition"
       >
         {type === "open" ? "Lihat Destinasi" : "Buat Request"}

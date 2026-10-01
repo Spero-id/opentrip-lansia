@@ -11,7 +11,7 @@ import MobileMenu from "@/components/layout/MobileMenu";
 const NAV_LINKS = [
   { name: "Beranda", href: "/" },
   { name: "Destinasi Trip", href: "/trips" },
-  { name: "Private Trip", href: "/private" },
+  { name: "Private Trip", href: "/private-trip" },
   { name: "Blog", href: "/blog" },
   { name: "Hubungi Kami", href: "/contact" },
 ];

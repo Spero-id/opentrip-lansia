@@ -82,7 +82,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/private" className="hover:text-[#F49D1A] transition-colors">
+                <Link href="/private-trip" className="hover:text-[#F49D1A] transition-colors">
                   Private Trip
                 </Link>
               </li>

@@ -6,7 +6,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import WhatsAppFloat from "./WhatsAppFloat";
 
-const FLOAT_EXACT = ["/", "/blog", "/private"];
+const FLOAT_EXACT = ["/", "/blog", "/private-trip"];
 const FLOAT_PREFIX = "/trips";
 
 function showFloat(pathname: string): boolean {
