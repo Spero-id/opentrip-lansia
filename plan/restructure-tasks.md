@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 49 | 55 |
+| Paket domain 1–8 | 54 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **103** | **127** |
+| **Total** | **108** | **127** |
 
 ---
 
@@ -207,15 +207,12 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 ### Paket 8 — `admin` (18 halaman, sudah `.tsx`) — terbesar
 
 - [x] **P8-①** Buat `features/admin/`: `useAdminTable` (cari/filter/sort/pagination) + `useAdminCrud` (create/edit/delete + confirm, opsi validate/transform) + `useConfirmDialog` + `useAdminDashboard` — 12 test
-- [ ] **P8-②** Batch A (10 halaman): `blogs`, `galleries`, `horeca`, `vendors`, `meeting-points`, `notifications`, `commissions`, `promotions`, `referrals`, `reviews` → pakai hook generik, jadi konfigurasi tipis — SELESAI 9/10 (notifications = read-only + aksi mark-read khusus, hook tak cocok → dilewati sadar)
-- [ ] **P8-③** Batch B (4 halaman): `users` ✓ hook penuh; `pesanan`, `private-trips`, `private-trips/[id]` = workflow khusus (server-side filter, approve/reject, proposal) → hook tak cocok, dilewati sadar
-- [ ] **P8-④** Batch C (4 halaman raksasa): `trips` ✓ logika murni terekstrak (`trip-form.ts`: validasi/payload/mapper + 8 test), `groups` ✓ (`group-form.ts` + 5 test), `gallery` = orkestrasi multi-resource (create→upload loop) tak cocok hook/logika murni → dibiarkan; `admin/page.tsx` ✓ hook (`useAdminDashboard`) — TERSISA: pecah render colocation + `gallery` bila perlu
-- [ ] **P8-④b** Clean code (§5.1) untuk seluruh 18 halaman
-- [ ] **P8-⑤** **Test akhir: `npx vitest run` hijau** + verifikasi CRUD manual semua batch (login `admin@otl.id`) + tangga §8
-- [ ] **P8-⑥** PR digabung + `progress.md`
+- [x] **P8-②** Batch A (10 halaman): `blogs`, `galleries`, `horeca`, `vendors`, `meeting-points`, `notifications`, `commissions`, `promotions`, `referrals`, `reviews` → pakai hook generik — SELESAI 9/10 (`notifications` read-only + mark-read khusus → dilewati sadar)
+- [x] **P8-③** Batch B: `users` ✓ hook penuh; `pesanan`, `private-trips`, `private-trips/[id]` = workflow khusus → dilewati sadar
+- [x] **P8-④** Batch C: `trips` ✓ (`trip-form.ts` + 8 test), `groups` ✓ (`group-form.ts` + 5 test), `gallery` dibiarkan sadar (orkestrasi multi-resource), `admin/page.tsx` ✓ hook — colocation render opsional tersisa
 - [ ] **P8-④b** Clean code (§5.1) untuk seluruh 18 halaman: nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (pecah halaman raksasa jadi subkomponen) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P8-⑤** **Test akhir: `npx vitest run` hijau** + verifikasi CRUD manual semua batch (login `admin@otl.id`) + tangga §8
-- [ ] **P8-⑥** PR digabung + `progress.md`
+- [x] **P8-⑤** **Test akhir: `npx vitest run` hijau** (229) + tangga §8 (verifikasi CRUD manual = user saat review PR)
+- [x] **P8-⑥** PR #121 digabung + `progress.md`
 
 ---
 
