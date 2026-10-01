@@ -33,10 +33,10 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
 | Paket domain 1–8 | 54 | 55 |
-| Fase 9 — Route groups & boundary | 0 | 6 |
+| Fase 9 — Route groups & boundary | 5 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **108** | **127** |
+| **Total** | **113** | **127** |
 
 ---
 
@@ -218,12 +218,12 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ## Fase 9 — Route groups & boundary global (D-12)
 
-- [ ] **9.1** `git mv` halaman ke route groups `(auth)` `(public)` `(account)` `(admin)` — **`check:routes`: manifest identik 100%**
-- [ ] **9.2** `error.tsx` + `loading.tsx` + `not-found.tsx` per route group (root sudah dari Fase 0.5)
-- [ ] **9.2b** Konvensi paling idiomatik: panggil `SiteChrome` dari layout `(public)`/`(account)` — `login`/`register` tanpa chrome **tanpa daftar path**; daftar sembunyi `usePathname` dihapus dari root layout; manifest tetap identik + cek visual ulang
-- [ ] **9.3** `<ErrorBoundary>` reusable (±30 baris, kelas) dipasang di: hugerte (blog), map-picker, konten `dangerouslySetInnerHTML`
-- [ ] **9.4** Pilot `<Activity>` pada 1 widget mahal (map/editor) — catat hasil eksperimen
-- [ ] **9.5** Crawl semua URL → tanpa perubahan; tangga §8; commit/PR
+- [x] **9.1** `git mv` halaman ke route groups `(auth)` `(public)` `(account)` `(admin)` — **`check:routes`: manifest identik 100%** (96→96)
+- [x] **9.2** `error.tsx` + `loading.tsx` + `not-found.tsx` per route group (root sudah dari Fase 0.5)
+- [x] **9.2b** Konvensi paling idiomatik: `SiteChrome` dari layout `(public)`/`(account)` — `login`/`register` tanpa chrome **tanpa daftar path**; daftar sembunyi `usePathname` dihapus dari root layout (+ root `page` → `(public)`); manifest tetap identik + cek visual ulang (curl: `/` ada nav, `/login` tanpa nav, `/trips` ada WA float)
+- [x] **9.3** `<ErrorBoundary>` reusable (±30 baris, kelas) dipasang di: hugerte (admin blogs modal) + konten `dangerouslySetInnerHTML` (blog detail) + 3 test; `map-picker` tak ada pemakai → dilewati sadar
+- [x] **9.4** Pilot `<Activity>` pada 1 widget mahal (map/editor) — HASIL: tidak diadopsi (Lightbox mengandalkan mount=visible via scroll-lock; tab ulasan eager-fetch bila selalu mount; HugeRTE init di modal) — pola kondisional tetap
+- [ ] **9.5** Crawl semua URL → tanpa perubahan; tangga §8; commit/PR — SEBAGIAN: `/,/trips,/blog,/login,/my-trips,/private,/contact` 200; tsc 0 · lint 0E · vitest 232 · build 0 · routes 96→96 · structure hijau; PR pending
 
 ## Fase 10 — Rename URL (D-3, risiko tertinggi)
 
