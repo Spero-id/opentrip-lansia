@@ -10,7 +10,7 @@ const typedReviews = reviews as LandingReview[];
 
 const PAGE_SIZE = 3;
 
-export default function ReviewSection() {
+export default function TestimonialsSection() {
   const [page, setPage] = useState(0);
   const totalPages = Math.ceil(typedReviews.length / PAGE_SIZE);
 
