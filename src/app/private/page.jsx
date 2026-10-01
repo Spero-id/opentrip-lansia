@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { Clock, ChevronRight, AlertCircle } from "lucide-react";
-import PageHeader from "@/components/private/PageHeader";
-import BookingInformationSection from "@/components/private/BookingInformationSection";
-import TripDetailSection from "@/components/private/TripDetailSection";
-import FacilitiesSection from "@/components/private/FacilitiesSection";
-import SuccessState from "@/components/private/SuccessState";
-import SubmitBar from "@/components/private/SubmitBar";
-import TermsModal from "@/components/private/TermsModal";
+import PageHeader from "@/features/private-trip/components/PageHeader";
+import BookingInformationSection from "@/features/private-trip/components/BookingInformationSection";
+import TripDetailSection from "@/features/private-trip/components/TripDetailSection";
+import FacilitiesSection from "@/features/private-trip/components/FacilitiesSection";
+import SuccessState from "@/features/private-trip/components/SuccessState";
+import SubmitBar from "@/features/private-trip/components/SubmitBar";
+import TermsModal from "@/features/private-trip/components/TermsModal";
 import Subs from "@/components/landing/Subs";
-import { initialForm } from "@/components/private/helpers/initialState";
-import { validate } from "@/components/private/helpers/validation";
+import { initialForm } from "@/features/private-trip/components/helpers/initialState";
+import { validate } from "@/features/private-trip/components/helpers/validation";
 
 function buildDestinationPreferences(form) {
   const lines = [];
