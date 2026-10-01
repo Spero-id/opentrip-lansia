@@ -12,21 +12,23 @@ export function useReferralHistory(page: number, limit = DEFAULT_HISTORY_LIMIT) 
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    fetchReferralHistory(page, limit)
-      .then(({ history: items, pagination: paging }) => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const { history: items, pagination: paging } = await fetchReferralHistory(page, limit);
         if (!cancelled) {
           setHistory(items);
           setPagination(paging);
           setLoading(false);
         }
-      })
-      .catch((err: unknown) => {
+      } catch (err: unknown) {
         if (!cancelled) {
           setError(toPublicError(err));
           setLoading(false);
         }
-      });
+      }
+    };
+    void load();
     return () => {
       cancelled = true;
     };

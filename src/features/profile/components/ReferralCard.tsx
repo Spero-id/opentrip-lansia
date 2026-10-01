@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check, Share2, ExternalLink } from "lucide-react";
-import type { ReferralCardStats } from "../types";
+import type { ReferralCardStats } from "@/features/profile";
 
 const COPY_FEEDBACK_MS = 2000;
 

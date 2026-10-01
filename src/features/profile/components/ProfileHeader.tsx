@@ -1,6 +1,6 @@
 "use client";
 
-import type { ProfileUser } from "../types";
+import type { ProfileUser } from "@/features/profile";
 
 export default function ProfileHeader({ user }: { user?: ProfileUser | null }) {
   const initial = (user?.name || "U").charAt(0).toUpperCase();

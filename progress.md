@@ -2077,11 +2077,31 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Progres:** Fase 3c = **6/6** → total **54/127**. Prasyarat global selesai — lanjut **Paket 1 `profile`** (loop domain pertama, 7 task).
 
+## Session 51 — 2026-10-01
+
+**Paket 1 `profile` (loop domain pertama) — 7/7 selesai.** Pola ①–⑥ tervalidasi: pindah → konversi → ekstrak → clean → SSR → verifikasi.
+
+**Perubahan (`src/features/profile/`):**
+- **P1-①** 6 `.jsx` → `components/`; page impor `@/features/profile/components/`.
+- **P1-②** 6 file → `.tsx` + `types.ts` (`ProfileUser`, `ReferralSummary`, `ReferralCardStats`, `ReferralHistoryItem`, `ReferralPagination` — bentuk disalin dari respons API aktual) + barrel `index.ts`; page impor barrel (R3 −5).
+- **P1-③** `api/client.ts` (`fetchReferralSummary`, `fetchReferralHistory` + `DEFAULT_HISTORY_LIMIT`) + `hooks/` (`useProfileStats`, `useReferralHistory`, error via `toPublicError`) + 10 test baru (`__tests__/profile-api`, `profile-hooks`: URL, shape, ok/error, refetch ganti halaman); `ProfileStats`/page/`ReferralHistory` pakai hook (fetch dobel `/api/user/referral` tetap 2× seperti semula — dedupe = backlog).
+- **P1-③b** `COPY_FEEDBACK_MS`, guard `copyCode`.
+- **P1-④** `profile/layout.tsx` server: title + `robots noindex` (page tetap client).
+- **P1-⑤** baselines: R2 91→85, R4 −`profile`, R9 kembali 42 (import `../types` → barrel `import type`: type-only = nol siklus runtime); perbaiki `set-state-in-effect` via fungsi `load` async. Uji: sign-in `user@otl.id` + shape referral persis + `/profile` 200 (endpoint edit profil tak ada di scope).
+
+**Pelajaran paket:** (1) type-only barrel import = cara R3-netral tanpa risiko siklus; (2) pola hook: `setLoading` langsung di badan effect kena lint → bungkus async fn seperti kode lama.
+
+**Verifikasi:** tsc **0** · lint **0E/78W** · vitest **8/60** · build **0** · routes **96→96** · drift **0** · structure **10/10 nol stale** · init **0**.
+
+**Commits:** `74340e8` pindah · `8b90922` konversi+barrel · `33fba4a` api/hooks/test · `fb2138f` clean · `9520549` metadata · komit baseline+docs sesi ini.
+
+**Progres:** Paket 1 = **7/7** → total **61/127**. Lanjut Paket 2 `checkout` (reducer + `verify:checkout`).
+
 ## Hotfix env-client-crash — 2026-10-01
 
 **Browser blank: `Missing required environment variable: DATABASE_URL`** — rantai: `layout` → `SiteChrome` → `Navbar` → `lib/auth/client.ts` → `@/lib/env` → `required()` throw (browser tak punya var server; Next hanya inline `NEXT_PUBLIC_*`). Build/curl tak menangkapnya (evaluasi server punya `.env`; crash hanya di bundle client). Regression dari Fase 3b.
 
-**Perbaikan (branch `hotfix/env-client-crash` off main):** `env.ts` = 5 var publik murni (tanpa throw/helper — aman browser by construction); `env.server.ts` baru = helper + 13 var server (+`required`); 6 importir server → `env.server`; 6 importir client tetap. Audit statis: 106 file client, 0 mencapai `env.server`.
+**Perbaikan (branch `hotfix/env-client-crash` off main, PR #113 merged):** `env.ts` = 5 var publik murni (tanpa throw/helper — aman browser by construction); `env.server.ts` baru = helper + 13 var server (+`required`); 6 importir server → `env.server`; 6 importir client tetap. Audit statis: 106 file client, 0 mencapai `env.server`.
 
 **R11 baru** di `check-structure` (`client bundle reaches env.server`, baseline 0): BFS graf import dari file `"use client"`; probe suntik bug → FAIL 10 vs 0 → revert hijau.
 

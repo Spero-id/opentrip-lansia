@@ -3,7 +3,7 @@ import type {
   ReferralHistoryItem,
   ReferralPagination,
   ReferralSummary,
-} from "../types";
+} from "@/features/profile";
 
 export const DEFAULT_HISTORY_LIMIT = 10;
 

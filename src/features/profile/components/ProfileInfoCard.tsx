@@ -1,7 +1,7 @@
 "use client";
 
 import { User, Mail, Phone, ShieldCheck } from "lucide-react";
-import type { ProfileUser } from "../types";
+import type { ProfileUser } from "@/features/profile";
 
 export default function ProfileInfoCard({ user }: { user?: ProfileUser | null }) {
   const rows = [

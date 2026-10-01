@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 0 | 55 |
+| Paket domain 1–8 | 7 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **54** | **127** |
+| **Total** | **61** | **127** |
 
 ---
 
@@ -135,13 +135,13 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ### Paket 1 — `profile` (6 jsx, 560 baris) — memvalidasi pola
 
-- [ ] **P1-①** `git mv` → `features/profile/components/` (`features/profile/` baru, UI-only; backend pakai modul `auth`/`referral` yang ada)
-- [ ] **P1-②** Konversi 6 `.jsx` → `.tsx`
-- [ ] **P1-③** Ekstrak `features/profile/api/` + hook (`useProfileStats`, `useReferralHistory`) + unit-test
-- [ ] **P1-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P1-④** SSR minimal: `generateMetadata` halaman profil (authed, tanpa indeks)
-- [ ] **P1-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + uji edit profil (login `user@otl.id`)
-- [ ] **P1-⑥** PR digabung + `progress.md`
+- [x] **P1-①** `git mv` → `features/profile/components/` (`features/profile/` baru, UI-only; backend pakai modul `auth`/`referral` yang ada)
+- [x] **P1-②** Konversi 6 `.jsx` → `.tsx` (+`types.ts`, barrel `index.ts`; page impor barrel)
+- [x] **P1-③** Ekstrak `features/profile/api/` + hook (`useProfileStats`, `useReferralHistory`) + unit-test (10 test baru: 7 api + 3 hooks)
+- [x] **P1-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 (diterapkan: `DEFAULT_HISTORY_LIMIT`, `COPY_FEEDBACK_MS`, guard `copyCode`): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
+- [x] **P1-④** SSR minimal: `generateMetadata` halaman profil (authed, tanpa indeks) — via `profile/layout.tsx` (page tetap client)
+- [x] **P1-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + uji edit profil (login `user@otl.id`) — 8/60; baselines R2 85, R4−profile, R9 42; uji: sign-in + referral shape + `/profile` 200 (tanpa endpoint edit profil di scope)
+- [x] **P1-⑥** PR digabung + `progress.md`
 
 ### Paket 2 — `checkout` (12 jsx + 2 page.jsx, 1363 baris)
 

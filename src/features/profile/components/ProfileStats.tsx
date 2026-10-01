@@ -1,8 +1,7 @@
 "use client";
 
 import { Coins, CalendarDays, Users } from "lucide-react";
-import { useProfileStats } from "@/features/profile";
-import type { ProfileUser } from "../types";
+import { useProfileStats, type ProfileUser } from "@/features/profile";
 
 export default function ProfileStats({ user }: { user?: ProfileUser | null }) {
   const { data: referralData } = useProfileStats();
