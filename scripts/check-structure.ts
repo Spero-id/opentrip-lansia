@@ -21,7 +21,6 @@ const BASELINE: Baseline = {
     "src/app/checkout/page.jsx",
     "src/app/checkout/pay/[id]/page.jsx",
     "src/app/contact/page.jsx",
-    "src/app/layout.jsx",
     "src/app/login/page.jsx",
     "src/app/my-trips/page.jsx",
     "src/app/page.jsx",
@@ -104,14 +103,12 @@ const BASELINE: Baseline = {
     "src/components/profile/ProfileStats.jsx",
     "src/components/profile/ReferralCard.jsx",
     "src/components/profile/ReferralHistory.jsx",
-    "src/lib/Destination.js",
-    "src/lib/Order.js",
     "src/lib/data.js",
+    "src/lib/destination.js",
     "src/lib/format.js",
-    "src/lib/formatRupiah.js",
-    "src/lib/hooks/useCheckout.js",
+    "src/lib/order.js",
   ],
-  R3: 0,
+  R3: 49, // rename 3.1 exposed pre-existing @/modules deep imports as @/features deep
   R4: [
     "app-sidebar.tsx",
     "checkout",
@@ -173,19 +170,10 @@ const BASELINE: Baseline = {
   R6: [
     "src/app/admin/AdminShell.tsx",
     "src/components/private/helpers/initialState.js",
-    "src/db/schema/private_trip.ts",
-    "src/hooks/useNotifications.ts",
-    "src/lib/Destination.js",
-    "src/lib/Order.js",
-    "src/lib/formatRupiah.js",
-    "src/lib/hooks/useCheckout.js",
   ],
-  R7: [
-    "src/shared",
-    "src/lib/hooks",
-  ],
+  R7: [],
   R8: 480,
-  R9: 82,
+  R9: 43,
 };
 
 const ID_COMMENT_WORDS = [
