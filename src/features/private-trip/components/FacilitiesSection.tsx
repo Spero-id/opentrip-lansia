@@ -167,9 +167,9 @@ export default function FacilitiesSection({
                 const text = e.clipboardData.getData("text");
                 if (/[^\d]/.test(text)) {
                   e.preventDefault();
-                  let digits = text.replace(/\D/g, "").slice(0, 9);
-                  if (digits && Number(digits) > MAX_BUDGET) digits = String(MAX_BUDGET);
-                  if (digits) set("budget", digits);
+                  const digits = text.replace(/\D/g, "").slice(0, 9);
+                  const capped = digits && Number(digits) > MAX_BUDGET ? String(MAX_BUDGET) : digits;
+                  if (capped) set("budget", capped);
                 }
               }}
               className={`${baseInput} pl-8 ${errors.budget ? errorBorder : normalBorder}`}

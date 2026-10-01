@@ -29,6 +29,9 @@ const TRANSPORT_OPTIONS = [
   },
 ];
 
+const MAX_PARTICIPANTS = 100;
+const MAX_DURATION_DAYS = 30;
+
 export default function TripDetailSection({
   form,
   set,
@@ -188,10 +191,10 @@ export default function TripDetailSection({
                 placeholder="Cth: 15"
                 value={form.jumlahPeserta}
                 onChange={(e) => {
-                  let digits = e.target.value.replace(/\D/g, "").slice(0, 3);
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 3);
                   if (digits === "") { set("jumlahPeserta", ""); return; }
                   let num = parseInt(digits, 10);
-                  if (num > 100) num = 100;
+                  if (num > MAX_PARTICIPANTS) num = MAX_PARTICIPANTS;
                   set("jumlahPeserta", String(num));
                 }}
                 onKeyDown={(e) => {
@@ -203,10 +206,10 @@ export default function TripDetailSection({
                   const text = e.clipboardData.getData("text");
                   if (/[^\d]/.test(text)) {
                     e.preventDefault();
-                    let digits = text.replace(/\D/g, "").slice(0, 3);
+                    const digits = text.replace(/\D/g, "").slice(0, 3);
                     if (digits) {
                       let num = parseInt(digits, 10);
-                      if (num > 100) num = 100;
+                      if (num > MAX_PARTICIPANTS) num = MAX_PARTICIPANTS;
                       set("jumlahPeserta", String(num));
                     }
                   }
@@ -236,10 +239,10 @@ export default function TripDetailSection({
                 placeholder="Cth: 3"
                 value={form.durasi}
                 onChange={(e) => {
-                  let digits = e.target.value.replace(/\D/g, "").slice(0, 2);
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 2);
                   if (digits === "") { set("durasi", ""); return; }
                   let num = parseInt(digits, 10);
-                  if (num > 30) num = 30;
+                  if (num > MAX_DURATION_DAYS) num = MAX_DURATION_DAYS;
                   set("durasi", String(num));
                 }}
                 onKeyDown={(e) => {
@@ -251,10 +254,10 @@ export default function TripDetailSection({
                   const text = e.clipboardData.getData("text");
                   if (/[^\d]/.test(text)) {
                     e.preventDefault();
-                    let digits = text.replace(/\D/g, "").slice(0, 2);
+                    const digits = text.replace(/\D/g, "").slice(0, 2);
                     if (digits) {
                       let num = parseInt(digits, 10);
-                      if (num > 30) num = 30;
+                      if (num > MAX_DURATION_DAYS) num = MAX_DURATION_DAYS;
                       set("durasi", String(num));
                     }
                   }
