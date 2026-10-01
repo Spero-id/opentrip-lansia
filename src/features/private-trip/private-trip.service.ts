@@ -1,9 +1,9 @@
 import { privateTripRepository } from "./private-trip.repository";
 import { notificationService } from "../notification/notification.service";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { users } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
-import { AppError, ConflictError, UnauthorizedError, ValidationError } from "@/shared/errors/app-error";
+import { AppError, ConflictError, UnauthorizedError, ValidationError } from "@/lib/errors/app-error";
 
 type RequestStatus = "draft" | "submitted" | "reviewed" | "approved" | "rejected" | "revision";
 type ProposalStatus = "pending" | "accepted" | "rejected" | "revised";

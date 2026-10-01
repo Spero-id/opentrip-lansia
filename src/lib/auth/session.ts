@@ -1,5 +1,5 @@
 import { auth } from "@/features/auth/auth.config";
-import type { UserRole } from "@/shared/types";
+import type { UserRole } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export type AppRole = UserRole;

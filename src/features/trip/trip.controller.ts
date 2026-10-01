@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripService } from "./trip.service";
-import { slugify } from "@/shared/utils/helpers";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { slugify } from "@/utils/helpers";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   try {

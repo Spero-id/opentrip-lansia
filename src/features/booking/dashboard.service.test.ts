@@ -1,4 +1,4 @@
-vi.mock("@/shared/db", () => ({
+vi.mock("@/lib/db", () => ({
   db: {
     select: vi.fn(),
     execute: vi.fn(),
@@ -7,7 +7,7 @@ vi.mock("@/shared/db", () => ({
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Mock } from "vitest";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { dashboardService } from "./dashboard.service";
 
 const mockedSelect = db.select as Mock;

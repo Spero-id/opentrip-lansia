@@ -1,8 +1,8 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { bookings, bookingItems, bookingParticipants } from "@/db/schema/bookings";
 import { payments } from "@/db/schema/payments";
 import { eq, desc, or, like } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export interface IBookingRepository {
   findAll(): Promise<(typeof bookings.$inferSelect)[]>;

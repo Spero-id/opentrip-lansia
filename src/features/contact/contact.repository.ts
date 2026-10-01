@@ -1,4 +1,4 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { contactMessages } from "@/db/schema/utility";
 
 export interface IContactRepository {

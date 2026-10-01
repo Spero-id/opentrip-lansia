@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authService } from "@/features/auth";
 import { auth } from "@/features/auth/auth.config";
 import { requireAdmin } from "@/lib/auth";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function PUT(
   req: NextRequest,

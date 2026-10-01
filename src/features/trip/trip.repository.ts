@@ -1,4 +1,4 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import {
   trips, tripDepartures, tripPrices,
   itineraryItems, tripGalleries, galleryMedia,
@@ -9,7 +9,7 @@ import { payments } from "@/db/schema/payments";
 import { destinationCategories } from "@/db/schema/master";
 import { reviews } from "@/db/schema/reviews";
 import { eq, and, asc, desc, sql, getTableColumns, inArray } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export interface TripWithPrice extends Omit<typeof trips.$inferSelect, "priceMin" | "priceMax"> {
   priceMin: number | null;

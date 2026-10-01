@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { bookings, bookingParticipants, healthDeclarations } from "@/db/schema/bookings";
 import { payments } from "@/db/schema/payments";
 import { eq } from "drizzle-orm";
 import { auth } from "@/features/auth/auth.config";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 const VALID_STATUSES = ["pending", "awaiting_verification", "confirmed", "cancelled", "completed"] as const;
 

@@ -1,8 +1,8 @@
 import "dotenv/config";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { users } from "@/db/schema/auth";
 import { eq, isNull } from "drizzle-orm";
-import { generateCode } from "@/shared/utils/helpers";
+import { generateCode } from "@/utils/helpers";
 
 async function main() {
   console.log("🔍 Finding users without referral codes...");

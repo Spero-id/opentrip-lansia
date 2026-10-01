@@ -1,6 +1,6 @@
 import { loyaltyRepository } from "./loyalty.repository";
-import type { Tx } from "@/shared/db/utils";
-import type { UUID } from "@/shared/types";
+import type { Tx } from "@/lib/db/utils";
+import type { UUID } from "@/types";
 
 const POINTS_EXPIRY_YEARS = 1;
 

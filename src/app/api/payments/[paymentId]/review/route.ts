@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { paymentService } from "@/features/payment/payment.service";
 import { paymentRepository } from "@/features/payment/payment.repository";
 import { auth } from "@/features/auth/auth.config";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ paymentId: string }> }) {
   try {

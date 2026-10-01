@@ -1,7 +1,7 @@
 import { blogRepository } from "./blog.repository";
 import { blogs } from "@/db/schema/blog";
-import { sanitizeBlogContent } from "@/shared/utils/sanitize";
-import type { UUID } from "@/shared/types";
+import { sanitizeBlogContent } from "@/utils/sanitize";
+import type { UUID } from "@/types";
 
 type BlogInsert = typeof blogs.$inferInsert;
 

@@ -1,4 +1,4 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { privateTripRequests, privateTripProposals } from "@/db/schema/private_trip";
 import { eq, and, desc, sql, like } from "drizzle-orm";
 

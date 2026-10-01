@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, requireSession } from "@/lib/auth";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { tripGalleries, galleryMedia } from "@/db/schema/trips";
 import { media } from "@/db/schema/master";
 import { eq } from "drizzle-orm";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(
   req: NextRequest,

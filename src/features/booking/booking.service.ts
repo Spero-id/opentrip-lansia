@@ -2,12 +2,12 @@ import { bookingRepository } from "./booking.repository";
 import { tripRepository } from "../trip/trip.repository";
 import { reviewRepository } from "../review/review.repository";
 import { tripDepartures } from "@/db/schema/trips";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
-import { generateCode } from "@/shared/utils/helpers";
-import type { UUID } from "@/shared/types";
+import { generateCode } from "@/utils/helpers";
+import type { UUID } from "@/types";
 import { notificationService } from "../notification/notification.service";
-import { ConflictError } from "@/shared/errors/app-error";
+import { ConflictError } from "@/lib/errors/app-error";
 
 export interface BookingItemInput {
   priceId: string;

@@ -1,7 +1,7 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { promotions, promotionUsages } from "@/db/schema/promotions";
 import { eq, and, desc, sql } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export interface IPromotionRepository {
   findAll(): Promise<(typeof promotions.$inferSelect)[]>;

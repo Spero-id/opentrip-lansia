@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bookingService } from "./booking.service";
 import { auth } from "../auth/auth.config";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   try {

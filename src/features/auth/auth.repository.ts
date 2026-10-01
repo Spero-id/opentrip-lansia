@@ -1,4 +1,4 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { users } from "@/db/schema/auth";
 import { account } from "@/db/schema/auth";
 import { and, eq, desc } from "drizzle-orm";

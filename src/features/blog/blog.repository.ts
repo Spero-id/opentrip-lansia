@@ -1,7 +1,7 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { blogs } from "@/db/schema/blog";
 import { eq, desc } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export interface IBlogRepository {
   findAllPublished(): Promise<(typeof blogs.$inferSelect)[]>;

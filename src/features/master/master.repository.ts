@@ -1,8 +1,8 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { destinationCategories, horeca, vendors, horecaTypes, vendorTypes } from "@/db/schema/master";
 import { eq, desc, asc } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
-import { slugify } from "@/shared/utils/helpers";
+import type { UUID } from "@/types";
+import { slugify } from "@/utils/helpers";
 
 export const masterRepository = {
   async getDestinationCategories() {

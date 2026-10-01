@@ -1,10 +1,10 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { reviews } from "@/db/schema/reviews";
 import { bookings } from "@/db/schema/bookings";
 import { tripDepartures, trips } from "@/db/schema/trips";
 import { users } from "@/db/schema/auth";
 import { eq, desc, and, sql, inArray } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export interface ReviewWithDetails {
   id: string;

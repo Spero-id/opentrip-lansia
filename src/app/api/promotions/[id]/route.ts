@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promotionRepository } from "@/features/promotion";
 import { requireAdmin } from "@/lib/auth";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin(req);

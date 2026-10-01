@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { hashPassword } from "../shared/utils/password";
-import { db } from "../shared/db";
+import { hashPassword } from "../utils/password";
+import { db } from "../lib/db";
 import {
   destinationCategories, horecaTypes, horeca,
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,

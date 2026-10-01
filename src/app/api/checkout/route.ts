@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { bookings, bookingParticipants, healthDeclarations } from "@/db/schema/bookings";
 import { trips, tripDepartures } from "@/db/schema/trips";
 import { promotionUsages } from "@/db/schema/promotions";
@@ -10,8 +10,8 @@ import { promotionRepository } from "@/features/promotion";
 import { computePromoDiscount } from "@/shared/promo/promo-discount";
 import { tripRepository } from "@/features/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
-import { toPublicError } from "@/shared/errors/to-public-error";
-import { withTransaction } from "@/shared/db/utils";
+import { toPublicError } from "@/lib/errors/to-public-error";
+import { withTransaction } from "@/lib/db/utils";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

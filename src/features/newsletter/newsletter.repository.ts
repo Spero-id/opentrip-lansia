@@ -1,4 +1,4 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { subscribers, type Subscriber } from "@/db/schema/utility";
 import { eq } from "drizzle-orm";
 

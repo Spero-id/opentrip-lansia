@@ -1,7 +1,7 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { payments, paymentAccounts } from "@/db/schema/payments";
 import { eq } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export interface IPaymentRepository {
   findById(id: UUID): Promise<typeof payments.$inferSelect | null>;

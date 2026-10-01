@@ -1,9 +1,9 @@
-import { db } from "@/shared/db";
-import type { Tx } from "@/shared/db/utils";
+import { db } from "@/lib/db";
+import type { Tx } from "@/lib/db/utils";
 import { loyaltyTransactions } from "@/db/schema/referral";
 import { users } from "@/db/schema/auth";
 import { eq, sql } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 type Target = typeof db | Tx;
 

@@ -1,7 +1,7 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { referrals, commissions } from "@/db/schema/referral";
 import { eq, desc } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export interface IReferralRepository {
   createReferral(data: typeof referrals.$inferInsert): Promise<typeof referrals.$inferSelect>;

@@ -1,4 +1,4 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { sql } from "drizzle-orm";
 import { trips } from "@/db/schema/trips";
 import { bookings } from "@/db/schema/bookings";

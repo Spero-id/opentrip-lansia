@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripRepository } from "@/features/trip/trip.repository";
 import { bookings } from "@/db/schema/bookings";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function PUT(
   req: NextRequest,

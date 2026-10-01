@@ -1,6 +1,6 @@
 import { auth } from "./auth.config";
 import { authRepository } from "./auth.repository";
-import { hashPassword, isLegacySha256 } from "@/shared/utils/password";
+import { hashPassword, isLegacySha256 } from "@/utils/password";
 
 async function rehashLegacyPassword(email: string, password: string) {
   const user = await authRepository.findByEmail(email);

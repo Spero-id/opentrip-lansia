@@ -3,10 +3,10 @@ import { payments } from "@/db/schema/payments";
 import { bookings } from "@/db/schema/bookings";
 import { loyaltyService } from "../loyalty/loyalty.service";
 import { siteSettingsService } from "../site-settings/site-settings.service";
-import { withTransaction } from "@/shared/db/utils";
+import { withTransaction } from "@/lib/db/utils";
 import { referrals } from "@/db/schema/referral";
 import { eq } from "drizzle-orm";
-import type { UUID } from "@/shared/types";
+import type { UUID } from "@/types";
 
 export const paymentService = {
   async getActiveAccounts() {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { masterRepository } from "@/features/master";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET() {
   try {
