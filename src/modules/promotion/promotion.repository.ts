@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { promotions, promotionUsages } from "./promotion.schema";
+import { promotions, promotionUsages } from "@/db/schema/promotions";
 import { eq, and, desc, sql } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

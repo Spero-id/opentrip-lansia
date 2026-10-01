@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { contactMessages } from "./contact.schema";
+import { contactMessages } from "@/db/schema/utility";
 
 export interface IContactRepository {
   create(data: typeof contactMessages.$inferInsert): Promise<typeof contactMessages.$inferSelect>;

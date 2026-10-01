@@ -1,2 +1,2 @@
-export * from "./master.schema";
+export * from "@/db/schema/master";
 export * from "./master.repository";

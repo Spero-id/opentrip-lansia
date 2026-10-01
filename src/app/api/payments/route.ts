@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/shared/db";
-import { payments } from "@/modules/payment/payment.schema";
-import { bookings } from "@/modules/booking/booking.schema";
+import { payments } from "@/db/schema/payments";
+import { bookings } from "@/db/schema/bookings";
 import { eq } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";
 import { notificationService } from "@/modules/notification/notification.service";

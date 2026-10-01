@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/shared/auth";
 import { db } from "@/shared/db";
-import { referrals } from "@/modules/referral/referral.schema";
-import { bookings } from "@/modules/booking/booking.schema";
-import { tripDepartures, trips } from "@/modules/trip/trip.schema";
-import { users } from "@/modules/auth/auth.schema";
+import { referrals } from "@/db/schema/referral";
+import { bookings } from "@/db/schema/bookings";
+import { tripDepartures, trips } from "@/db/schema/trips";
+import { users } from "@/db/schema/auth";
 import { desc, eq, inArray } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

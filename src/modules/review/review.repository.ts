@@ -1,8 +1,8 @@
 import { db } from "@/shared/db";
-import { reviews } from "./review.schema";
-import { bookings } from "../booking/booking.schema";
-import { tripDepartures, trips } from "../trip/trip.schema";
-import { users } from "../auth/auth.schema";
+import { reviews } from "@/db/schema/reviews";
+import { bookings } from "@/db/schema/bookings";
+import { tripDepartures, trips } from "@/db/schema/trips";
+import { users } from "@/db/schema/auth";
 import { eq, desc, and, sql, inArray } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

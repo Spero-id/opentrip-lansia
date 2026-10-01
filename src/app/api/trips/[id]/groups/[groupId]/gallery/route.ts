@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, requireSession } from "@/shared/auth";
 import { db } from "@/shared/db";
-import { tripGalleries, galleryMedia } from "@/modules/trip/trip.schema";
+import { tripGalleries, galleryMedia } from "@/db/schema/trips";
 import { media } from "@/db/schema/master";
 import { eq } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";

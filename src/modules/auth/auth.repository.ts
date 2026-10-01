@@ -1,6 +1,6 @@
 import { db } from "@/shared/db";
-import { users } from "./auth.schema";
-import { account } from "./better-auth.schema";
+import { users } from "@/db/schema/auth";
+import { account } from "@/db/schema/auth";
 import { and, eq, desc } from "drizzle-orm";
 
 export interface IAuthRepository {

@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { payments, paymentAccounts } from "./payment.schema";
+import { payments, paymentAccounts } from "@/db/schema/payments";
 import { eq } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

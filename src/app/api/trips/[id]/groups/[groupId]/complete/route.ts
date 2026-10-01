@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripRepository } from "@/modules/trip/trip.repository";
-import { bookings } from "@/modules/booking/booking.schema";
+import { bookings } from "@/db/schema/bookings";
 import { db } from "@/shared/db";
 import { requireAdmin } from "@/shared/auth";
 import { eq, and } from "drizzle-orm";

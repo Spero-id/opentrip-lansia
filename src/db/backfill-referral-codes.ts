@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { db } from "@/shared/db";
-import { users } from "@/modules/auth/auth.schema";
+import { users } from "@/db/schema/auth";
 import { eq, isNull } from "drizzle-orm";
 import { generateCode } from "@/shared/utils/helpers";
 

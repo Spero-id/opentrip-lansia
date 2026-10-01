@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { privateTripRequests, privateTripProposals } from "./private-trip.schema";
+import { privateTripRequests, privateTripProposals } from "@/db/schema/private_trip";
 import { eq, and, desc, sql, like } from "drizzle-orm";
 
 export interface IPrivateTripRepository {

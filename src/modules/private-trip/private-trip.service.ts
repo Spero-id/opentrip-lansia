@@ -1,7 +1,7 @@
 import { privateTripRepository } from "./private-trip.repository";
 import { notificationService } from "../notification/notification.service";
 import { db } from "@/shared/db";
-import { users } from "../auth/auth.schema";
+import { users } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
 import { AppError, ConflictError, UnauthorizedError, ValidationError } from "@/shared/errors/app-error";
 

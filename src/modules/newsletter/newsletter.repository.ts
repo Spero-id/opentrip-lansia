@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { subscribers, type Subscriber } from "./newsletter.schema";
+import { subscribers, type Subscriber } from "@/db/schema/utility";
 import { eq } from "drizzle-orm";
 
 export interface ISubscriberRepository {

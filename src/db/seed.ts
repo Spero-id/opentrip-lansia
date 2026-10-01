@@ -6,9 +6,9 @@ import {
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
   blogs, blogCategories, contactMessages, promotions
 } from "../db/schema";
-import { paymentAccounts } from "../modules/payment/payment.schema";
-import { account } from "../modules/auth/better-auth.schema";
-import { users } from "../modules/auth/auth.schema";
+import { paymentAccounts } from "@/db/schema/payments";
+import { account } from "@/db/schema/auth";
+import { users } from "@/db/schema/auth";
 
 function hash(pw: string) {
   return hashPassword(pw);
