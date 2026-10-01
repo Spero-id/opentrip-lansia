@@ -2,26 +2,7 @@
 
 import Link from "next/link";
 import { Compass, Calendar, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
-import { useEffect, useState } from "react";
-
-interface DashboardStats {
-  totalTrips: number;
-  bookingThisMonth: number;
-  bookingChange: number | null;
-  revenue: string;
-  activePromos: number;
-}
-
-interface RecentBooking {
-  id: string;
-  bookingCode: string;
-  status: string;
-  totalAmount: string;
-  currency: string;
-  bookingDate: string;
-  customerName: string;
-  tripName: string;
-}
+import { useAdminDashboard } from "@/features/admin";
 
 function formatStatus(status: string): { label: string; className: string } {
   switch (status) {
@@ -61,25 +42,7 @@ function StatCardSkeleton() {
 }
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/admin/dashboard")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (data.error) throw new Error(data.error);
-        setStats(data.stats);
-        setRecentBookings(data.recentBookings ?? []);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const { stats, recentBookings, loading, error } = useAdminDashboard();
 
   const statCards = stats
     ? [
