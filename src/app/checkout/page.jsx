@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useCheckout } from "../../lib/hooks/useCheckout";
+import { useCheckout } from "@/features/checkout/hooks/use-checkout";
 import StepProgress from "../../components/checkout/StepProgress";
 import DetailsStep from "../../components/checkout/DetailsStep";
 import PaymentStep from "../../components/checkout/PaymentStep";

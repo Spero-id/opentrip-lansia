@@ -6,7 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PaymentStep from "@/components/checkout/PaymentStep";
-import { useCheckout } from "@/lib/hooks/useCheckout";
+import { useCheckout } from "@/features/checkout/hooks/use-checkout";
 
 function PayContent() {
   const router = useRouter();
