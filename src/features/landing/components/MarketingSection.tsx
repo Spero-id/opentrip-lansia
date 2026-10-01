@@ -10,9 +10,9 @@ import { features } from "@/lib/data";
 
 
 export default function MarketingSection() {
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (i) => {
+  const toggle = (i: number) => {
     setOpenIndex(openIndex === i ? -1 : i);
   };
 

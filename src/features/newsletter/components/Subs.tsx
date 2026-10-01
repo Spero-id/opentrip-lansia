@@ -1,56 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useNewsletter } from "@/features/newsletter/hooks/use-newsletter";
 
 export default function Subs() {
-  const [email, setEmail] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const { email, changeEmail, showPopup, closePopup, loading, error, submit } = useNewsletter();
 
-  useEffect(() => {
-    if (showPopup) {
-      document.body.style.overflow = "hidden";
-      const handleKeyDown = (e) => {
-        if (e.key === "Escape") setShowPopup(false);
-      };
-      window.addEventListener("keydown", handleKeyDown);
-      return () => {
-        document.body.style.overflow = "";
-        window.removeEventListener("keydown", handleKeyDown);
-      };
-    }
-  }, [showPopup]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Gagal berlangganan");
-        return;
-      }
-
-      setShowPopup(true);
-      setEmail("");
-    } catch {
-      setError("Terjadi kesalahan, coba lagi nanti");
-    } finally {
-      setLoading(false);
-    }
-  };
+  function handleSubmit(e: React.FormEvent) {
+    void submit(e);
+  }
 
   return (
     <>
@@ -78,7 +35,7 @@ export default function Subs() {
                     type="email"
                     required
                     value={email}
-                    onChange={(e) => { setEmail(e.target.value); setError(""); }}
+                    onChange={(e) => changeEmail(e.target.value)}
                     placeholder="Masukkan email kamu"
                     disabled={loading}
                     className="flex-1 lg:w-72 bg-white border border-white/10 rounded-full px-5 py-3 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] transition-colors disabled:opacity-50"
@@ -117,7 +74,7 @@ export default function Subs() {
       {showPopup && (
         <div
           className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
-          onClick={() => setShowPopup(false)}
+          onClick={closePopup}
         >
           <div
             className="relative bg-white rounded-3xl max-w-md w-full p-8 text-center shadow-2xl border border-gray-100 transform scale-100 transition-all duration-300 flex flex-col items-center"
@@ -127,7 +84,7 @@ export default function Subs() {
             <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-[#F49D1A]/5 pointer-events-none" />
 
             <button
-              onClick={() => setShowPopup(false)}
+              onClick={closePopup}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100"
               aria-label="Tutup"
             >
@@ -151,7 +108,7 @@ export default function Subs() {
             </p>
 
             <button
-              onClick={() => setShowPopup(false)}
+              onClick={closePopup}
               className="w-full py-3.5 bg-[#F49D1A] text-white font-semibold rounded-2xl shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] hover:shadow-[#F49D1A]/30 active:scale-98 transition-all duration-200 text-sm cursor-pointer"
             >
               Mulai Jelajah

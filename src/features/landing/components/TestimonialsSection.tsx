@@ -4,15 +4,19 @@ import { useState } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { reviews } from "@/lib/data";
 
+type LandingReview = (typeof reviews)[number] & { avatar?: string };
+
+const typedReviews = reviews as LandingReview[];
+
 const PAGE_SIZE = 3;
 
 export default function ReviewSection() {
   const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(reviews.length / PAGE_SIZE);
+  const totalPages = Math.ceil(typedReviews.length / PAGE_SIZE);
 
-  const visibleReviews = reviews.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const visibleReviews = typedReviews.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
 
-  const goTo = (target) => {
+  const goTo = (target: number) => {
     setPage(Math.max(0, Math.min(target, totalPages - 1)));
   };
 
