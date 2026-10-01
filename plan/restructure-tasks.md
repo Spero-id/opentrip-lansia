@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 48 | 55 |
+| Paket domain 1–8 | 49 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **102** | **127** |
+| **Total** | **103** | **127** |
 
 ---
 
@@ -202,14 +202,17 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P7-③b** Clean code (§5.1): `LANDING_PAGE_SIZE`, `BLOG_DATE_LOCALE`-style consts, `ReviewSection`→`TestimonialsSection` (samakan file), typed review `avatar?` (bug laten: `lib/data` tak punya avatar — render tak berubah, fallback initial)
 - [x] **P7-④** SSR/SEO: metadata root sudah ada (`Jelajah Memoria`) — verifikasi curl `<title>` tanpa JS; Subs section ter-render di `/`
 - [x] **P7-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit newsletter end-to-end (POST → 200 + row `subscribers`, lalu hapus) — 21/204; R2 42→12, R3 124→146, R4 −landing, R9/R11 tetap; `check:routes` 96→96
-- [ ] **P7-⑥** PR digabung + `progress.md`
+- [x] **P7-⑥** PR #120 digabung + `progress.md`
 
 ### Paket 8 — `admin` (18 halaman, sudah `.tsx`) — terbesar
 
-- [ ] **P8-①** Buat `features/admin/`: `useAdminTable` (cari/filter/sort/pagination) + `useAdminCrud` (create/edit/delete + confirm) + `useConfirmDialog`
-- [ ] **P8-②** Batch A (10 halaman): `blogs`, `galleries`, `horeca`, `vendors`, `meeting-points`, `notifications`, `commissions`, `promotions`, `referrals`, `reviews` → pakai hook generik, jadi konfigurasi tipis
-- [ ] **P8-③** Batch B (4 halaman): `users`, `pesanan`, `private-trips`, `private-trips/[id]` → hook generik + pecah jadi `app/admin/_components/`
-- [ ] **P8-④** Batch C (4 halaman raksasa): `trips` (912), `trips/[id]/groups` (837), `.../gallery` (421), `admin/page.tsx` → reducer + hook generik + komponen colocation
+- [x] **P8-①** Buat `features/admin/`: `useAdminTable` (cari/filter/sort/pagination) + `useAdminCrud` (create/edit/delete + confirm, opsi validate/transform) + `useConfirmDialog` + `useAdminDashboard` — 12 test
+- [ ] **P8-②** Batch A (10 halaman): `blogs`, `galleries`, `horeca`, `vendors`, `meeting-points`, `notifications`, `commissions`, `promotions`, `referrals`, `reviews` → pakai hook generik, jadi konfigurasi tipis — SELESAI 9/10 (notifications = read-only + aksi mark-read khusus, hook tak cocok → dilewati sadar)
+- [ ] **P8-③** Batch B (4 halaman): `users` ✓ hook penuh; `pesanan`, `private-trips`, `private-trips/[id]` = workflow khusus (server-side filter, approve/reject, proposal) → hook tak cocok, dilewati sadar
+- [ ] **P8-④** Batch C (4 halaman raksasa): `trips` ✓ logika murni terekstrak (`trip-form.ts`: validasi/payload/mapper + 8 test), `groups` ✓ (`group-form.ts` + 5 test), `gallery` = orkestrasi multi-resource (create→upload loop) tak cocok hook/logika murni → dibiarkan; `admin/page.tsx` ✓ hook (`useAdminDashboard`) — TERSISA: pecah render colocation + `gallery` bila perlu
+- [ ] **P8-④b** Clean code (§5.1) untuk seluruh 18 halaman
+- [ ] **P8-⑤** **Test akhir: `npx vitest run` hijau** + verifikasi CRUD manual semua batch (login `admin@otl.id`) + tangga §8
+- [ ] **P8-⑥** PR digabung + `progress.md`
 - [ ] **P8-④b** Clean code (§5.1) untuk seluruh 18 halaman: nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (pecah halaman raksasa jadi subkomponen) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
 - [ ] **P8-⑤** **Test akhir: `npx vitest run` hijau** + verifikasi CRUD manual semua batch (login `admin@otl.id`) + tangga §8
 - [ ] **P8-⑥** PR digabung + `progress.md`

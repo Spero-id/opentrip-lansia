@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { useAdminCrud } from "@/features/admin";
 
 interface Gallery {
   id: string;
@@ -24,69 +24,32 @@ interface GalleryForm {
 const emptyForm: GalleryForm = { tripId: "", title: "", description: "", isPrivate: false };
 
 export default function AdminGalleries() {
-  const [rows, setRows] = useState<Gallery[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Gallery | null>(null);
-  const [form, setForm] = useState<GalleryForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  useEffect(() => { fetchData(); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/galleries");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }
-
-  function openCreate() {
-    setEditing(null);
-    setForm(emptyForm);
-    setModalOpen(true);
-  }
-
-  function openEdit(item: Gallery) {
-    setEditing(item);
-    setForm({
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    deletingId,
+    openCreate,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<Gallery, GalleryForm>({
+    endpoint: "/api/galleries",
+    emptyForm,
+    toForm: (item) => ({
       tripId: item.tripId,
       title: item.title || "",
       description: item.description || "",
       isPrivate: item.isPrivate,
-    });
-    setModalOpen(true);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    const url = editing ? `/api/galleries/${editing.id}` : "/api/galleries";
-    await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    setModalOpen(false);
-    fetchData();
-  }
-
-  async function handleDelete() {
-    if (!deleting) return;
-    await fetch(`/api/galleries/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
-  }
+    }),
+  });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value, type } = e.target;
@@ -143,7 +106,7 @@ export default function AdminGalleries() {
                         <button onClick={() => openEdit(g)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Galeri">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(g.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(g.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -156,8 +119,8 @@ export default function AdminGalleries() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Galeri" : "Tambah Galeri"} size="lg">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? "Edit Galeri" : "Tambah Galeri"} size="lg">
+        <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">Trip ID</label>
             <input name="tripId" value={form.tripId} onChange={handleChange} required
@@ -183,7 +146,7 @@ export default function AdminGalleries() {
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -191,7 +154,7 @@ export default function AdminGalleries() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }

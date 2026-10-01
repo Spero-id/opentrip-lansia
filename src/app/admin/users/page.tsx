@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
+import { useAdminCrud, useAdminTable } from "@/features/admin";
 import { Users, ShieldCheck, UserCheck, Search, Edit, Trash2, Award, Mail, Phone, Calendar } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
@@ -35,88 +36,48 @@ const emptyForm: UserForm = {
 };
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<UserItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserItem | null>(null);
-  const [form, setForm] = useState<UserForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  async function fetchUsers() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/users");
-      if (res.ok) {
-        const data = await res.json();
-        setUsers(data);
-      }
-    } catch {
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function openEdit(user: UserItem) {
-    setEditingUser(user);
-    setForm({
+  const {
+    rows: users,
+    loading,
+    modalOpen,
+    editing: editingUser,
+    form,
+    saving,
+    deletingId,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<UserItem, UserForm>({
+    endpoint: "/api/users",
+    emptyForm,
+    toForm: (user) => ({
       name: user.name,
       phone: user.phone || "",
       role: user.role || "user",
       loyaltyPoints: user.loyaltyPoints ?? 0,
-    });
-    setModalOpen(true);
-  }
+    }),
+  });
+
+  const {
+    query: search,
+    setQuery: setSearch,
+    status: roleFilter,
+    setStatus: setRoleFilter,
+    filtered: filteredUsers,
+  } = useAdminTable(users, {
+    searchKeys: ["name", "email", "phone"],
+    statusKey: "role",
+  });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!editingUser) return;
-    setSaving(true);
-    try {
-      await fetch(`/api/users/${editingUser.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      setModalOpen(false);
-      fetchUsers();
-    } catch {
-    } finally {
-      setSaving(false);
-    }
+    await submit(e);
   }
-
-  async function handleDelete() {
-    if (!deletingId) return;
-    try {
-      await fetch(`/api/users/${deletingId}`, { method: "DELETE" });
-      setDeleteOpen(false);
-      setDeletingId(null);
-      fetchUsers();
-    } catch {
-    }
-  }
-
-  const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
-      const matchesSearch =
-        u.name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase()) ||
-        (u.phone && u.phone.includes(search));
-      const matchesRole = roleFilter === "all" || u.role === roleFilter;
-      return matchesSearch && matchesRole;
-    });
-  }, [users, search, roleFilter]);
 
   const stats = useMemo(() => {
     const total = users.length;
@@ -313,10 +274,7 @@ export default function AdminUsersPage() {
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => {
-                              setDeletingId(u.id);
-                              setDeleteOpen(true);
-                            }}
+                            onClick={() => confirmDelete(u.id)}
                             className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
                             title="Hapus User"
                           >
@@ -333,7 +291,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Edit Pengguna" size="md">
+      <Modal open={modalOpen} onClose={closeModal} title="Edit Pengguna" size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">Nama Pengguna</label>
@@ -401,7 +359,7 @@ export default function AdminUsersPage() {
             </button>
             <button
               type="button"
-              onClick={() => setModalOpen(false)}
+              onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
             >
               Batal
@@ -411,9 +369,9 @@ export default function AdminUsersPage() {
       </Modal>
 
       <ConfirmDelete
-        open={deleteOpen}
-        onClose={() => setDeleteOpen(false)}
-        onConfirm={handleDelete}
+        open={deletingId !== null}
+        onClose={cancelDelete}
+        onConfirm={executeDelete}
         title="Hapus Pengguna"
         message="Apakah Anda yakin ingin menghapus pengguna ini? Semua data terkait pengguna ini akan terhapus."
       />

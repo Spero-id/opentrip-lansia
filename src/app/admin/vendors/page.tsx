@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { useAdminCrud } from "@/features/admin";
 
 interface Vendor {
   id: string;
@@ -32,43 +33,26 @@ interface VendorForm {
 const emptyForm: VendorForm = { typeId: "", name: "", contactPerson: "", phone: "", email: "", serviceArea: "", isVerified: false, isActive: true };
 
 export default function AdminVendors() {
-  const [rows, setRows] = useState<Vendor[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Vendor | null>(null);
-  const [form, setForm] = useState<VendorForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
-
-  useEffect(() => { fetchData(); }, []);
-  useEffect(() => { fetch("/api/vendor-types").then(r => r.json()).then(setTypes).catch(() => {}); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/vendors");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }
-
-  function openCreate() {
-    setEditing(null);
-    setForm(emptyForm);
-    setModalOpen(true);
-  }
-
-  function openEdit(item: Vendor) {
-    setEditing(item);
-    setForm({
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    deletingId,
+    openCreate,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<Vendor, VendorForm>({
+    endpoint: "/api/vendors",
+    emptyForm,
+    toForm: (item) => ({
       typeId: item.typeId || "",
       name: item.name,
       contactPerson: item.contactPerson || "",
@@ -77,31 +61,12 @@ export default function AdminVendors() {
       serviceArea: item.serviceArea || "",
       isVerified: item.isVerified,
       isActive: item.isActive,
-    });
-    setModalOpen(true);
-  }
+    }),
+  });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    const url = editing ? `/api/vendors/${editing.id}` : "/api/vendors";
-    await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    setModalOpen(false);
-    fetchData();
-  }
+  const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
 
-  async function handleDelete() {
-    if (!deleting) return;
-    await fetch(`/api/vendors/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
-  }
+  useEffect(() => { fetch("/api/vendor-types").then(r => r.json()).then(setTypes).catch(() => {}); }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value, type } = e.target;
@@ -158,7 +123,7 @@ export default function AdminVendors() {
                         <button onClick={() => openEdit(v)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Vendor">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(v.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(v.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -171,8 +136,8 @@ export default function AdminVendors() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Vendor" : "Tambah Vendor"} size="lg">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? "Edit Vendor" : "Tambah Vendor"} size="lg">
+        <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">Tipe Vendor</label>
             <select name="typeId" value={form.typeId} onChange={handleChange}
@@ -227,7 +192,7 @@ export default function AdminVendors() {
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -235,7 +200,7 @@ export default function AdminVendors() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }

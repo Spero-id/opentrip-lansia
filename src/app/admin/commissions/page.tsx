@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { useAdminCrud } from "@/features/admin";
 
 interface Commission {
   id: string;
@@ -24,64 +24,27 @@ interface CommissionForm {
 const emptyForm: CommissionForm = { agentId: "", bookingId: "", amount: "", status: "pending" };
 
 export default function AdminCommissions() {
-  const [rows, setRows] = useState<Commission[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Commission | null>(null);
-  const [form, setForm] = useState<CommissionForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  useEffect(() => { fetchData(); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/commissions");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }
-
-  function openCreate() {
-    setEditing(null);
-    setForm(emptyForm);
-    setModalOpen(true);
-  }
-
-  function openEdit(item: Commission) {
-    setEditing(item);
-    setForm({ agentId: item.agentId, bookingId: item.bookingId, amount: item.amount, status: item.status });
-    setModalOpen(true);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    const url = editing ? `/api/commissions/${editing.id}` : "/api/commissions";
-    await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    setModalOpen(false);
-    fetchData();
-  }
-
-  async function handleDelete() {
-    if (!deleting) return;
-    await fetch(`/api/commissions/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
-  }
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    deletingId,
+    openCreate,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<Commission, CommissionForm>({
+    endpoint: "/api/commissions",
+    emptyForm,
+    toForm: (item) => ({ agentId: item.agentId, bookingId: item.bookingId, amount: item.amount, status: item.status }),
+  });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
@@ -142,7 +105,7 @@ export default function AdminCommissions() {
                         <button onClick={() => openEdit(c)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Komisi">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(c.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(c.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -155,8 +118,8 @@ export default function AdminCommissions() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Komisi" : "Tambah Komisi"}>
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? "Edit Komisi" : "Tambah Komisi"}>
+        <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">ID Agen</label>
             <input name="agentId" value={form.agentId} onChange={handleChange} required
@@ -187,7 +150,7 @@ export default function AdminCommissions() {
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -195,7 +158,7 @@ export default function AdminCommissions() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }

@@ -2218,3 +2218,32 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `5af909b` pindah · `8f0f567` konversi+api · `547cda8` clean · `7b14846` baselines · komit docs sesi ini.
 
 **Progres:** Paket 1–7 = **48/48** → total **102/127**. Lanjut Paket 8 `admin` (terbesar: 18 halaman, `useAdminTable`/`useAdminCrud`) — branch `restructure/paket-8-admin`.
+
+## Session 58 — 2026-10-01
+
+**Paket 8 `admin` — parsial (P8-① ✓ + Batch A/B 12 halaman; Batch C raksasa tersisa).** Hook generik terbukti di 12 halaman, rendering identik.
+
+**Perubahan (`src/features/admin/` baru):**
+- **P8-①** `useAdminTable` (filter murni + paginasi + hook), `useAdminCrud` (list/modal/form/submit/delete + opsi validate/transform), `useConfirmDialog`, `useAdminDashboard`; 12 test.
+- **P8-②** Batch A 9/10: blogs, galleries, horeca, vendors, meeting-points (transform null-payload), commissions, promotions (validate + transform via hook), reviews, referrals (search via table hook). `notifications` dilewati sadar (read-only + mark-read khusus).
+- **P8-③** `users` penuh (crud + table search/role); `pesanan`/`private-trips`/`[id]` dilewati sadar (workflow khusus, filter server-side).
+- **P8-④ (parsial)** `admin/page.tsx` via `useAdminDashboard`. TERSISA: `trips` (905), `groups` (822), `gallery` (407) — butuh reducer + colocation, sesi sendiri.
+
+**Insiden:** commit users sempat hijau-sebagian (tsc merah `useMemo` luput) — perketat: verifikasi SEBELUM commit, tanpa kecuali.
+
+**Verifikasi:** tsc **0** · lint **0E** · vitest **216** · build **0** · routes **96→96** · drift **0** · structure hijau (R3 146→152).
+
+**Progres:** Paket 1–7 = **48/48**, P8 = **1/7** → total **103/127**. Branch `restructure/paket-8-admin` (stacked, push).
+
+## Session 59 — 2026-10-01 (lanjutan P8)
+
+**Paket 8 Batch C — logika murni `trips` + `groups` terekstrak (render tak berubah).**
+
+- `features/admin/trip-form.ts`: `validateTripForm`, `buildTripPayload`, `mapTripItinerary`, `mapTripFacilities`, `nextItineraryDay`, rupiah helpers + 8 test; page memakai semuanya (payload dual-shape + meetingPoint identik).
+- `features/admin/group-form.ts`: `validateGroupForm`, `buildGroupPayload`, `mapGroupToForm` + 5 test; tipe lokal disatukan.
+- `gallery` (407) dibiarkan sadar: orkestrasi create→upload→attach tak terurai jadi unit murni/hook generik tanpa ubah perilaku.
+- R3 152→159 (deep client-safe). Gallery + pecah render colocation = sisa opsional.
+
+**Verifikasi:** tsc **0** · lint **0E** · vitest **229** (admin 25) · build **0** · routes **96→96** · drift **0** · structure hijau.
+
+**Progres:** total **103/127** (P8-① ✓, ②/③ substansial, ④ logika selesai kecuali colocation). Branch `restructure/paket-8-admin`, push.
