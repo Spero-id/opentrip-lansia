@@ -1,36 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useSession } from "@/lib/auth/client";
-import ProfileHeader from "@/components/profile/ProfileHeader";
-import ProfileStats from "@/components/profile/ProfileStats";
-import ProfileInfoCard from "@/components/profile/ProfileInfoCard";
-import ReferralCard from "@/components/profile/ReferralCard";
-import ReferralHistory from "@/components/profile/ReferralHistory";
-import LogoutButton from "@/components/profile/LogoutButton";
+import { useProfileStats } from "@/features/profile";
+import {
+  LogoutButton,
+  ProfileHeader,
+  ProfileInfoCard,
+  ProfileStats,
+  ReferralCard,
+  ReferralHistory,
+} from "@/features/profile";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [referralStats, setReferralStats] = useState(null);
+  const { data: referralStats } = useProfileStats();
 
   useEffect(() => {
     if (!isPending && !session?.user) {
       router.push("/login");
     }
   }, [isPending, session, router]);
-
-  useEffect(() => {
-    if (session?.user) {
-      fetch("/api/user/referral")
-        .then((res) => res.json())
-        .then((data) => setReferralStats(data))
-        .catch(() => {});
-    }
-  }, [session?.user]);
 
   if (isPending || !session?.user) {
     return (

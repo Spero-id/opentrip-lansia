@@ -1,8 +1,9 @@
 "use client";
 
 import { User, Mail, Phone, ShieldCheck } from "lucide-react";
+import type { ProfileUser } from "@/features/profile";
 
-export default function ProfileInfoCard({ user }) {
+export default function ProfileInfoCard({ user }: { user?: ProfileUser | null }) {
   const rows = [
     { label: "Nama Lengkap", value: user?.name || "-", icon: User },
     { label: "Email", value: user?.email || "-", icon: Mail },
