@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, CheckCircle2, XCircle } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { useAdminCrud } from "@/features/admin";
 import { parseMoney, parsePromoValue } from "@/features/promotion/promo-value";
 
 interface Promotion {
@@ -34,42 +34,27 @@ interface PromotionForm {
 const emptyForm: PromotionForm = { code: "", title: "", type: "percentage", value: "", minPurchase: "", maxDiscount: "", usageLimit: null, isActive: true };
 
 export default function AdminPromotions() {
-  const [rows, setRows] = useState<Promotion[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Promotion | null>(null);
-  const [form, setForm] = useState<PromotionForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState("");
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  useEffect(() => { fetchData(); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/promotions");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }
-
-  function openCreate() {
-    setEditing(null);
-    setForm(emptyForm);
-    setFormError("");
-    setModalOpen(true);
-  }
-
-  function openEdit(item: Promotion) {
-    setEditing(item);
-    setForm({
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    saveError,
+    deletingId,
+    openCreate,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<Promotion, PromotionForm>({
+    endpoint: "/api/promotions",
+    emptyForm,
+    toForm: (item) => ({
       code: item.code,
       title: item.title || "",
       type: item.type,
@@ -78,63 +63,33 @@ export default function AdminPromotions() {
       maxDiscount: item.maxDiscount || "",
       usageLimit: item.usageLimit,
       isActive: item.isActive,
-    });
-    setFormError("");
-    setModalOpen(true);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    const payload: PromotionForm = {
-      ...form,
-      code: form.code.trim().toUpperCase(),
-      value: String(form.value).trim(),
-      minPurchase: form.minPurchase.trim(),
-      maxDiscount: form.maxDiscount.trim(),
-    };
-
-    if (parsePromoValue(payload.value, payload.type) <= 0) {
-      setFormError(
-        payload.type === "percentage"
+    }),
+    validate: (current) => {
+      const value = parsePromoValue(String(current.value).trim(), current.type);
+      if (value <= 0) {
+        return current.type === "percentage"
           ? "Nilai diskon persentase tidak valid (contoh: 20 atau 20%)."
-          : "Nilai diskon nominal tidak valid (contoh: 100000)."
-      );
-      return;
-    }
-    if (payload.type === "percentage" && parsePromoValue(payload.value, payload.type) > 100) {
-      setFormError("Persentase diskon tidak boleh lebih dari 100.");
-      return;
-    }
-    if (payload.minPurchase && parseMoney(payload.minPurchase) <= 0) {
-      setFormError("Min. Pembelian tidak valid (contoh: 100000). ");
-      return;
-    }
-    if (payload.maxDiscount && parseMoney(payload.maxDiscount) <= 0) {
-      setFormError("Maks. Diskon tidak valid (contoh: 100000).");
-      return;
-    }
-
-    setFormError("");
-    setSaving(true);
-    const url = editing ? `/api/promotions/${editing.id}` : "/api/promotions";
-    await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    setSaving(false);
-    setModalOpen(false);
-    fetchData();
-  }
-
-  async function handleDelete() {
-    if (!deleting) return;
-    await fetch(`/api/promotions/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
-  }
+          : "Nilai diskon nominal tidak valid (contoh: 100000).";
+      }
+      if (current.type === "percentage" && value > 100) {
+        return "Persentase diskon tidak boleh lebih dari 100.";
+      }
+      if (current.minPurchase && parseMoney(current.minPurchase) <= 0) {
+        return "Min. Pembelian tidak valid (contoh: 100000). ";
+      }
+      if (current.maxDiscount && parseMoney(current.maxDiscount) <= 0) {
+        return "Maks. Diskon tidak valid (contoh: 100000).";
+      }
+      return null;
+    },
+    transform: (current) => ({
+      ...current,
+      code: current.code.trim().toUpperCase(),
+      value: String(current.value).trim(),
+      minPurchase: current.minPurchase.trim(),
+      maxDiscount: current.maxDiscount.trim(),
+    }),
+  });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value, type } = e.target;
@@ -200,7 +155,7 @@ export default function AdminPromotions() {
                         <button onClick={() => openEdit(p)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Promo">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(p.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(p.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -213,8 +168,8 @@ export default function AdminPromotions() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Promo" : "Tambah Promo"} size="lg">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? "Edit Promo" : "Tambah Promo"} size="lg">
+        <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Kode Kupon</label>
@@ -267,15 +222,15 @@ export default function AdminPromotions() {
               className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
             <span className="font-medium text-slate-700">Aktif</span>
           </label>
-          {formError && (
-            <p className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{formError}</p>
+          {saveError && (
+            <p className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{saveError}</p>
           )}
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -283,7 +238,7 @@ export default function AdminPromotions() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }

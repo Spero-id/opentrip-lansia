@@ -7,6 +7,8 @@ export interface AdminCrudOptions<TRow extends { id: string | number }, TForm> {
   endpoint: string;
   emptyForm: TForm;
   toForm: (row: TRow) => TForm;
+  validate?: (form: TForm) => string | null;
+  transform?: (form: TForm) => unknown;
 }
 
 const ADMIN_SAVE_ERROR_FALLBACK = "Gagal menyimpan data.";
@@ -75,6 +77,14 @@ export function useAdminCrud<TRow extends { id: string | number }, TForm>(option
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (options.validate) {
+      const validationError = options.validate(form);
+      if (validationError) {
+        setSaveError(validationError);
+        return;
+      }
+    }
+    const body = options.transform ? options.transform(form) : form;
     setSaving(true);
     setSaveError(null);
     try {
@@ -82,7 +92,7 @@ export function useAdminCrud<TRow extends { id: string | number }, TForm>(option
       const res = await fetch(url, {
         method: editing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(body),
       });
       if (!res.ok) {
         setSaveError(await readErrorMessage(res, ADMIN_SAVE_ERROR_FALLBACK));

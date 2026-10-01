@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Edit, Trash2, Star, User, Calendar, Hash } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { useAdminCrud } from "@/features/admin";
 
 interface Review {
   id: string;
@@ -30,57 +30,31 @@ interface ReviewForm {
 const emptyForm: ReviewForm = { status: "pending", isFeatured: false };
 
 export default function AdminReviews() {
-  const [rows, setRows] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Review | null>(null);
-  const [form, setForm] = useState<ReviewForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  useEffect(() => { fetchData(); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/reviews");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }
-
-  function openEdit(item: Review) {
-    setEditing(item);
-    setForm({ status: item.status, isFeatured: item.isFeatured });
-    setModalOpen(true);
-  }
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    deletingId,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<Review, ReviewForm>({
+    endpoint: "/api/reviews",
+    emptyForm,
+    toForm: (item) => ({ status: item.status, isFeatured: item.isFeatured }),
+  });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!editing) return;
-    setSaving(true);
-    await fetch(`/api/reviews/${editing.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    setModalOpen(false);
-    fetchData();
-  }
-
-  async function handleDelete() {
-    if (!deleting) return;
-    await fetch(`/api/reviews/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
+    await submit(e);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -170,7 +144,7 @@ export default function AdminReviews() {
                         <button onClick={() => openEdit(r)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Ulasan">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(r.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(r.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -183,7 +157,7 @@ export default function AdminReviews() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Edit Ulasan" size="sm">
+      <Modal open={modalOpen} onClose={closeModal} title="Edit Ulasan" size="sm">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>
@@ -204,7 +178,7 @@ export default function AdminReviews() {
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -212,7 +186,7 @@ export default function AdminReviews() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }

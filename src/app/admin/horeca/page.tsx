@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { useAdminCrud } from "@/features/admin";
 
 interface HorecaItem {
   id: string;
@@ -30,43 +31,26 @@ interface HorecaForm {
 const emptyForm: HorecaForm = { typeId: "", name: "", starCategory: "", address: "", phone: "", isAccessibleForElderly: false, isActive: true };
 
 export default function AdminHoreca() {
-  const [rows, setRows] = useState<HorecaItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<HorecaItem | null>(null);
-  const [form, setForm] = useState<HorecaForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
-
-  useEffect(() => { fetchData(); }, []);
-  useEffect(() => { fetch("/api/horeca-types").then(r => r.json()).then(setTypes).catch(() => {}); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/horeca");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }
-
-  function openCreate() {
-    setEditing(null);
-    setForm(emptyForm);
-    setModalOpen(true);
-  }
-
-  function openEdit(item: HorecaItem) {
-    setEditing(item);
-    setForm({
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    deletingId,
+    openCreate,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<HorecaItem, HorecaForm>({
+    endpoint: "/api/horeca",
+    emptyForm,
+    toForm: (item) => ({
       typeId: item.typeId || "",
       name: item.name,
       starCategory: item.starCategory || "",
@@ -74,31 +58,12 @@ export default function AdminHoreca() {
       phone: item.phone || "",
       isAccessibleForElderly: item.isAccessibleForElderly,
       isActive: item.isActive,
-    });
-    setModalOpen(true);
-  }
+    }),
+  });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    const url = editing ? `/api/horeca/${editing.id}` : "/api/horeca";
-    await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    setModalOpen(false);
-    fetchData();
-  }
+  const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
 
-  async function handleDelete() {
-    if (!deleting) return;
-    await fetch(`/api/horeca/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
-  }
+  useEffect(() => { fetch("/api/horeca-types").then(r => r.json()).then(setTypes).catch(() => {}); }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value, type } = e.target;
@@ -159,7 +124,7 @@ export default function AdminHoreca() {
                         <button onClick={() => openEdit(h)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit HORECA">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(h.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(h.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -172,8 +137,8 @@ export default function AdminHoreca() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit HORECA" : "Tambah HORECA"} size="lg">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? "Edit HORECA" : "Tambah HORECA"} size="lg">
+        <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">Tipe HORECA</label>
             <select name="typeId" value={form.typeId} onChange={handleChange}
@@ -228,7 +193,7 @@ export default function AdminHoreca() {
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -236,7 +201,7 @@ export default function AdminHoreca() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }

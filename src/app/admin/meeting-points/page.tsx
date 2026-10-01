@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, MapPin, Clock, CheckCircle2, XCircle } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { useAdminCrud } from "@/features/admin";
 
 interface MeetingPoint {
   id: string;
@@ -25,88 +25,38 @@ interface MeetingPointForm {
 const emptyForm: MeetingPointForm = { name: "", address: "", description: "", isActive: true };
 
 export default function AdminMeetingPoints() {
-  const [rows, setRows] = useState<MeetingPoint[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<MeetingPoint | null>(null);
-  const [form, setForm] = useState<MeetingPointForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  useEffect(() => { fetchData(); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/meeting-points");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch { setRows([]); }
-    setLoading(false);
-  }
-
-  function openCreate() {
-    setEditing(null);
-    setForm(emptyForm);
-    setModalOpen(true);
-  }
-
-  function openEdit(item: MeetingPoint) {
-    setEditing(item);
-    setForm({
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    deletingId,
+    openCreate,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<MeetingPoint, MeetingPointForm>({
+    endpoint: "/api/meeting-points",
+    emptyForm,
+    toForm: (item) => ({
       name: item.name,
       address: item.address || "",
       description: item.description || "",
       isActive: item.isActive,
-    });
-    setModalOpen(true);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      const payload = {
-        name: form.name,
-        address: form.address || null,
-        description: form.description || null,
-        isActive: form.isActive,
-      };
-
-      if (editing) {
-        await fetch(`/api/meeting-points/${editing.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        await fetch("/api/meeting-points", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
-      setModalOpen(false);
-      fetchData();
-    } catch (err) {
-      console.error("Gagal menyimpan meeting point:", err);
-    }
-    setSaving(false);
-  }
-
-  async function handleDelete() {
-    if (!deleting) return;
-    try {
-      await fetch(`/api/meeting-points/${deleting}`, { method: "DELETE" });
-      setDeleteOpen(false);
-      fetchData();
-    } catch (err) {
-      console.error("Gagal menghapus meeting point:", err);
-    }
-  }
+    }),
+    transform: (current) => ({
+      name: current.name,
+      address: current.address || null,
+      description: current.description || null,
+      isActive: current.isActive,
+    }),
+  });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value, type } = e.target;
@@ -176,7 +126,7 @@ export default function AdminMeetingPoints() {
                         <button onClick={() => openEdit(mp)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(mp.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(mp.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -189,8 +139,8 @@ export default function AdminMeetingPoints() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Meeting Point" : "Tambah Meeting Point"} size="lg">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? "Edit Meeting Point" : "Tambah Meeting Point"} size="lg">
+        <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">Nama Meeting Point *</label>
             <input name="name" value={form.name} onChange={handleChange} required
@@ -219,7 +169,7 @@ export default function AdminMeetingPoints() {
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -227,7 +177,7 @@ export default function AdminMeetingPoints() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }
