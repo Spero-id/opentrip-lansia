@@ -165,7 +165,6 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
         window.location.href = `/login?redirect=${redirect}`;
         return;
       }
-      console.error("Gagal menyimpan pesanan:", err);
       dispatch({
         type: "ORDER_FAILED",
         message: err instanceof Error ? err.message : "Gagal menyimpan pesanan. Silakan coba lagi.",
@@ -188,7 +187,6 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
       });
       dispatch({ type: "PAYMENT_CONFIRMED" });
     } catch (err: unknown) {
-      console.error("Gagal memproses pembayaran:", err);
       dispatch({
         type: "PAYMENT_FAILED",
         message: err instanceof Error ? err.message : "Gagal memproses pembayaran. Silakan coba lagi.",
