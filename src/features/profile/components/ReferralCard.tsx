@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Copy, Check, Share2, ExternalLink } from "lucide-react";
 import type { ReferralCardStats } from "../types";
 
+const COPY_FEEDBACK_MS = 2000;
+
 export default function ReferralCard({
   referralCode,
   stats,
@@ -18,7 +20,7 @@ export default function ReferralCard({
     try {
       await navigator.clipboard.writeText(referralCode);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), COPY_FEEDBACK_MS);
     } catch {
       const textArea = document.createElement("textarea");
       textArea.value = referralCode;
@@ -27,7 +29,7 @@ export default function ReferralCard({
       document.execCommand("copy");
       document.body.removeChild(textArea);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), COPY_FEEDBACK_MS);
     }
   };
 
