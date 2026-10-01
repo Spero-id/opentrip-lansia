@@ -149,7 +149,6 @@ function CheckoutContent() {
                   Seperti aplikasi KAI/tiket lain, bukti booking Anda bisa dilihat kapan saja di halaman <strong className="text-gray-900">Perjalanan Saya</strong>.
                 </p>
 
-                {/* Preview bukti yang baru diupload */}
                 {checkout.proofUrl && (
                   <div className="mb-6 p-3 bg-gray-50 rounded-xl border border-gray-100">
                     <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Pratinjau Bukti Transfer</p>

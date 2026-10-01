@@ -45,7 +45,6 @@ export default function GalleryModal({ open, onClose, tripId, departureId, group
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      // Fallback: open in new tab
       window.open(url, "_blank");
     } finally {
       setDownloading(null);
@@ -58,7 +57,6 @@ export default function GalleryModal({ open, onClose, tripId, departureId, group
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Foto Trip</h2>
@@ -74,7 +72,6 @@ export default function GalleryModal({ open, onClose, tripId, departureId, group
           </button>
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
             <div className="flex items-center justify-center py-16">
@@ -107,7 +104,6 @@ export default function GalleryModal({ open, onClose, tripId, departureId, group
                     </div>
                   )}
 
-                  {/* Download overlay */}
                   {item.url && (
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <button
@@ -129,7 +125,6 @@ export default function GalleryModal({ open, onClose, tripId, departureId, group
           )}
         </div>
 
-        {/* Footer */}
         {media.length > 0 && (
           <div className="px-6 py-3 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-500">

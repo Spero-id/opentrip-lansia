@@ -16,7 +16,6 @@ export async function PUT(
   try {
     const { id: tripId, groupId } = await params;
 
-    // Verify group exists and belongs to trip
     const group = await tripRepository.findGroupById(groupId);
     if (!group || group.tripId !== tripId) {
       return NextResponse.json(
@@ -25,10 +24,8 @@ export async function PUT(
       );
     }
 
-    // Update group status to completed and deactivate it
     await tripRepository.updateGroup(groupId, { status: "completed", isActive: false });
 
-    // Update all bookings for this departure to completed
     await db
       .update(bookings)
       .set({ status: "completed", updatedAt: new Date() })

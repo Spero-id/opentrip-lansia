@@ -1,15 +1,3 @@
-/**
- * Verifikasi read-only (tanpa browser, tanpa dev server) untuk dua fix checkout:
- *
- *   1. Opsi BCA di step pembayaran — tampil hanya kalau payment_accounts lengkap.
- *   2. Diskon voucher — parser client & server memakai aturan yang sama
- *      (kasus AEZAKMI: value "70%" + max_discount 100000).
- *
- * Dipakai karena pemeriksaan browser (Playwright) ditunda pada mesin 8GB.
- * Tidak menulis apa pun ke database.
- *
- * Jalankan:  npx tsx scripts/verify-payment-and-promo.ts
- */
 import { db } from "../src/shared/db";
 import { paymentAccounts } from "../src/modules/payment/payment.schema";
 import { promotions } from "../src/modules/promotion/promotion.schema";
@@ -23,7 +11,6 @@ import { parsePromoValue } from "../src/shared/promo/promo-value";
 
 let failed = false;
 
-// --- 1. Rekening bank / visibilitas BCA ------------------------------------
 const accounts = await db.select().from(paymentAccounts);
 console.log("=== payment_accounts ===");
 for (const a of accounts) {
@@ -51,13 +38,12 @@ if (visible[0] !== "BCA" && visible.includes("QRIS")) {
   console.log("  -> pilihan default BCA dialihkan otomatis ke QRIS");
 }
 
-// --- 2. Diskon voucher ------------------------------------------------------
 const rows = await db.select().from(promotions);
 console.log("\n=== promotions (parse + diskon) ===");
-const SUBTOTAL_LAPORAN = 2200000; // kasus laporan: 1 trip x Rp2.200.000
+const SUBTOTAL_LAPORAN = 2200000;
 for (const p of rows) {
   const value = parsePromoValue(p.value, p.type);
-  const clientOld = Number(p.value) || 0; // parser client LAMA
+  const clientOld = Number(p.value) || 0;
   const discount = computePromoDiscount(p, SUBTOTAL_LAPORAN);
   const total = SUBTOTAL_LAPORAN - discount;
   console.log(
@@ -75,7 +61,7 @@ for (const p of rows) {
 const aezakmi = rows.find((r) => r.code.toUpperCase() === "AEZAKMI");
 if (aezakmi) {
   const d = computePromoDiscount(aezakmi, SUBTOTAL_LAPORAN);
-  const expected = 100000; // 70% x 2.200.000 = 1.540.000, di-cap max_discount
+  const expected = 100000;
   console.log(
     `\n  AEZAKMI @ ${SUBTOTAL_LAPORAN}: diskon=${d} (ekspektasi ${expected}), total=${
       SUBTOTAL_LAPORAN - d

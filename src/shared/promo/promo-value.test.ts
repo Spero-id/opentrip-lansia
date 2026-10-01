@@ -3,7 +3,6 @@ import { parseMoney, parsePromoValue } from "./promo-value";
 import { computePromoDiscount } from "./promo-discount";
 import { resolveVoucher } from "../../lib/hooks/useCheckout";
 
-// Baris promo AEZAKMI sesuai isi database (value = "70%", max_discount = 100000)
 const aeZakmi = {
   code: "AEZAKMI",
   title: "Promo murah meriah 70%",
@@ -16,7 +15,7 @@ const aeZakmi = {
   isActive: true,
 };
 
-const SUBTOTAL = 2200000; // harga 2.200.000 x 1 peserta
+const SUBTOTAL = 2200000;
 
 describe("parsePromoValue / parseMoney", () => {
   it("membaca persentase dengan atau tanpa tanda %", () => {
@@ -46,7 +45,6 @@ describe("klien dan server menghitung total identik", () => {
     expect(applied.voucherError).toBe("");
     expect(applied.appliedVoucher).not.toBeNull();
 
-    // sisi klien (PriceBreakdown / payload ke /api/checkout)
     const clientDiscount = computePromoDiscount(
       {
         type: applied.appliedVoucher!.type,
@@ -57,7 +55,6 @@ describe("klien dan server menghitung total identik", () => {
     );
     const clientTotal = SUBTOTAL - clientDiscount;
 
-    // sisi server (api/checkout/route.ts memanggil fungsi yang sama)
     const serverDiscount = computePromoDiscount(aeZakmi, SUBTOTAL);
     const serverTotal = SUBTOTAL - serverDiscount;
 

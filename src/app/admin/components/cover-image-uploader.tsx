@@ -8,10 +8,6 @@ interface CoverImageUploaderProps {
   onChange: (url: string | null) => void;
 }
 
-/**
- * Uploader sampul gambar tunggal (blog). Upload via /api/upload,
- * hapus file lama di server saat diganti/dihapus.
- */
 export default function CoverImageUploader({ value, onChange }: CoverImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);

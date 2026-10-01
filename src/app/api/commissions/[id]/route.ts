@@ -29,9 +29,6 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const { id } = await params;
     const body = await req.json();
 
-    // Whitelist — hanya field form admin. `agentId`/`bookingId`/`ruleId`/`referralId`
-    // adalah referensi inti komisi; kalau lolos dari body, data bisa menunjuk
-    // baris yang salah.
     const updates: { agentId?: string; bookingId?: string; amount?: string; status?: string } = {};
     if ("agentId" in body) {
       if (typeof body.agentId !== "string" || !body.agentId.trim()) {

@@ -5,7 +5,6 @@ import Subs from "../landing/Subs";
 
 const WA_NUMBER = "6285110511403";
 
-/** Generate kode pendek dari UUID: PTR-XXXXXXXX (8 char pertama uppercase tanpa strip) */
 function generateRequestCode(id) {
   if (!id) return null;
   return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();
@@ -193,7 +192,6 @@ export default function SuccessState({ form, requestId, onReset }) {
                   </span>
                 </div>
               )}
-
 
             </div>
           </div>

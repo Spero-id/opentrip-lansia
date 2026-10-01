@@ -11,12 +11,10 @@ import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   try {
-    // Public endpoint: GET /api/reviews?tripId=...&status=approved
     const { searchParams } = req.nextUrl;
     const statusParam = searchParams.get("status");
     const tripIdParam = searchParams.get("tripId");
 
-    // Public access: only approved reviews
     if (statusParam === "approved" || tripIdParam) {
       const { reviewRepository } = await import("@/modules/review");
       const data = tripIdParam
@@ -25,7 +23,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(data);
     }
 
-    // Tanpa filter = semua review (termasuk email & review pending) → admin only.
     const denied = await requireAdmin(req);
     if (denied) return denied;
     const data = await reviewRepository.findAll();
@@ -38,7 +35,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // Wajib login — userId diambil dari session, bukan dari body
     const session = await auth.api.getSession({ headers: req.headers });
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -64,7 +60,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Ulasan maksimal 2000 karakter" }, { status: 400 });
     }
 
-    // Booking harus milik user yang login
     const [booking] = await db
       .select({ departureId: bookings.departureId, status: bookings.status })
       .from(bookings)
@@ -74,7 +69,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Booking tidak ditemukan atau bukan milik Anda" }, { status: 403 });
     }
 
-    // Ulasan hanya setelah trip selesai — guard client-side bisa di-bypass
     if (booking.status !== "completed") {
       return NextResponse.json(
         { error: "Ulasan hanya bisa diberikan setelah trip selesai" },
@@ -82,7 +76,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // tripId harus cocok dengan trip dari departure booking tersebut
     const [departure] = await db
       .select({ tripId: tripDepartures.tripId })
       .from(tripDepartures)
@@ -92,8 +85,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "tripId tidak cocok dengan booking" }, { status: 400 });
     }
 
-    // Satu booking hanya boleh mengulas satu kali (unique di level DB juga,
-    // tapi dicek dulu supaya dapat pesan yang jelas, bukan error 400 generik)
     const [existing] = await db
       .select({ id: reviews.id })
       .from(reviews)
@@ -103,7 +94,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Anda sudah mengulas booking ini" }, { status: 409 });
     }
 
-    // Field kepercayaan dipaksa dari server, bukan dari client
     const data = await reviewRepository.create({
       bookingId,
       userId: session.user.id,
@@ -111,7 +101,6 @@ export async function POST(req: NextRequest) {
       departureId: booking.departureId,
       rating,
       content,
-      // Booking sudah dipastikan completed & milik user di atas → terverifikasi
       isVerifiedPurchase: true,
       isFeatured: false,
       status: "pending",

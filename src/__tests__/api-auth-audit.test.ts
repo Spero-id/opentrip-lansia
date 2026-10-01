@@ -1,18 +1,3 @@
-/**
- * Regression lock untuk proteksi API (feat-080: API auth middleware & RBAC).
- *
- * Memastikan:
- *  1. Setiap handler di src/app/api punya proteksi, KECUALI yang memang
- *     public by design (terdaftar di api-policy.ts).
- *  2. Tingkat proteksi terdeteksi >= yang disyaratkan kebijakan
- *     (public < session < admin) — mis. endpoint admin tidak boleh
- *     diturunkan jadi session.
- *  3. Entri kebijakan tidak basi (setiap entri menunjuk handler yang ada).
- *  4. Route yang mendelegasikan ke controller (DELEGATED_GUARD) masih
- *     punya cek session di modulnya.
- *  5. Pola route diterjemahkan benar ke regex untuk src/proxy.ts
- *     (guard edge memakai resolveApiAccess).
- */
 import { describe, expect, test } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
@@ -48,11 +33,9 @@ describe("audit proteksi API", () => {
   });
 
   test("tidak ada endpoint yang diam-diam dibuka untuk publik", () => {
-    // Baris baru di API_ACCESS berarti kebijakan publik harus disengaja.
     const publicRoutes = rows.filter((r) => r.required === "public").map((r) => r.route);
     expect(publicRoutes.length).toBeLessThanOrEqual(25);
     for (const r of rows.filter((r) => r.required === "public")) {
-      // /api/auth/... ditandai lewat entri "ALL /api/auth/[...all]"
       if (r.route.includes("/api/auth/")) continue;
       expect(API_ACCESS[r.route]).toBeDefined();
     }

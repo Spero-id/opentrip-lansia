@@ -1,12 +1,3 @@
-/**
- * Inventaris proteksi auth seluruh endpoint API.
- *
- * Jalankan: npx tsx scripts/api-auth-audit.ts   (atau: npm run audit:api)
- *
- * Pemindainya ada di src/shared/auth/api-auth-audit.ts dan kebijakannya di
- * src/shared/auth/api-policy.ts — keduanya juga dipakai oleh test
- * src/__tests__/api-auth-audit.test.ts supaya tak ada regresi.
- */
 import { auditRoutes, isAllowedByPolicy } from "../src/shared/auth/api-auth-audit";
 
 const rows = auditRoutes();

@@ -98,7 +98,6 @@ export default function AdminBlogs() {
         const data = await res.json();
         if (data?.error) msg = data.error;
       } catch {
-        // pakai pesan default
       }
       setSaveError(msg);
       return;

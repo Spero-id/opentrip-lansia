@@ -19,9 +19,6 @@ export const paymentService = {
     const reviewed = { adminNote: note || null, reviewedAt: new Date(), reviewedBy: adminId as UUID };
 
     if (action === "approve") {
-      // Dibaca SEBELUM transaksi: kalau konfigurasi tidak bisa dibaca, belum ada
-      // satu pun baris yang berubah (sebelumnya kegagalan terjadi di tengah,
-      // setelah payment & referral terlanjur ter-update).
       const bonusPoints = await siteSettingsService.getReferralBonusPoints();
 
       await withTransaction(async (tx) => {
@@ -41,10 +38,6 @@ export const paymentService = {
           .limit(1);
         if (!referral || referral.status !== "pending") return;
 
-        // Poin dulu, penandaan `converted` kemudian. Kalau kredit poin gagal,
-        // SELURUH transaksi ikut dibatalkan (payment & booking kembali) sehingga
-        // referral tidak pernah berstatus converted tanpa poin masuk — kasus yang
-        // sebelumnya membuat poin hilang permanen karena route menolak retry.
         if (referral.referrerId && referral.referredUserId) {
           await loyaltyService.creditReferralBonus(
             tx,

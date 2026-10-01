@@ -32,7 +32,6 @@ export async function POST(req: NextRequest) {
         userId = session.user.id;
       }
     } catch {
-      // Guest checkout fallback
     }
 
     if (!userId) {
@@ -61,7 +60,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- Resolve trip + departure from database (server-authoritative) ---
     const tripId = destination.id || destination.tripId;
     if (!tripId || !UUID_REGEX.test(String(tripId))) {
       return NextResponse.json(
@@ -94,8 +92,7 @@ export async function POST(req: NextRequest) {
     } else {
       departureId = null;
     }
-    
-    // If no valid departureId, find the active group
+
     if (!departureId) {
       const [activeDep] = await db
         .select()
@@ -104,8 +101,7 @@ export async function POST(req: NextRequest) {
         .limit(1);
       departureId = activeDep?.id ?? null;
     }
-    
-    // Fallback: if still no departure, find the first upcoming one
+
     if (!departureId) {
       const [dep] = await db
         .select()
@@ -131,7 +127,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- Validasi birthDate: tahun max 4 digit, tidak masa depan ---
     const birthDate = customer?.birthDate;
     if (birthDate) {
       const year = birthDate.split("-")[0];
@@ -166,7 +161,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- Voucher: validated server-side against promotions table ---
     const code = String(voucherCode ?? "").trim().toUpperCase();
     let discount = 0;
     let promoId: string | null = null;
@@ -226,10 +220,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // --- Validasi referral (server-authoritative, SEBELUM menulis apa pun) ---
-    // Dulu: kode yang tidak ditemukan diam-diam diabaikan (referrerId = null)
-    // dan checkout tetap sukses, jadi pengguna mengira kodenya terpakai padahal
-    // tidak — dan referrer tidak pernah mendapat bonus.
     const refCode = String(referralCode ?? "").trim().toUpperCase();
     let referrerId: string | null = null;
 
@@ -255,11 +245,6 @@ export async function POST(req: NextRequest) {
       referrerId = referrer.id;
     }
 
-    // --- Persist booking dengan jumlah hasil hitungan server ---
-    // Booking, peserta, deklarasi kesehatan, dan catatan referral dalam SATU
-    // transaksi: dulu referral di-insert terpisah dengan catch yang hanya
-    // console.error, sehingga booking bisa terbentuk tanpa referral (bonus
-    // referrer hilang diam-diam tanpa jejak).
     const booking = await withTransaction(async (tx) => {
       const [created] = await tx.insert(bookings).values({
         bookingCode: orderId,
@@ -325,8 +310,6 @@ export async function POST(req: NextRequest) {
       return created;
     });
 
-    // Statistik pemakaian voucher: sengaja DI LUAR transaksi. Kalau gagal,
-    // booking tetap harus terbentuk — yang hilang hanya catatan statistik.
     if (promoId) {
       try {
         await promotionRepository.incrementUsage(promoId);

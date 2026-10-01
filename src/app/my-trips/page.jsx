@@ -105,13 +105,11 @@ export default function MyTripsPage() {
       <Navbar />
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
-        {/* Header */}
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Perjalanan Saya</h1>
           <p className="text-sm text-gray-500 mt-1">Kelola booking open trip dan private trip Anda</p>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 w-fit">
           <button
             onClick={() => { setTab("open"); setFilter("all"); }}
@@ -131,7 +129,6 @@ export default function MyTripsPage() {
           </button>
         </div>
 
-        {/* Filter Chips */}
         <div className="flex gap-2 flex-wrap mb-6">
           {activeFilters.map((f) => (
             <button
@@ -148,7 +145,6 @@ export default function MyTripsPage() {
           ))}
         </div>
 
-        {/* Content */}
         {tab === "open" ? (
           <div className="space-y-4">
             {filteredBookings.length === 0 ? (

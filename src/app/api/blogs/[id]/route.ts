@@ -9,7 +9,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const data = await blogRepository.findById(id);
     if (!data) return NextResponse.json({ error: "Blog tidak ditemukan" }, { status: 404 });
 
-    // Non-admin hanya boleh membaca blog published (tutup kebocoran draft)
     const denied = await requireAdmin(req);
     const isAdmin = !denied;
     if (!isAdmin && data.status !== "published") {

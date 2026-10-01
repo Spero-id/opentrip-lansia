@@ -30,7 +30,6 @@ export async function POST(
     const { id } = await params;
     const body = await req.json();
 
-    // Validate required fields
     if (!body.startDate || !body.endDate) {
       return NextResponse.json(
         { error: "Tanggal berangkat dan pulang wajib diisi" },

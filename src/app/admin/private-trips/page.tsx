@@ -24,7 +24,6 @@ const statusStyles: Record<string, string> = {
   rejected: "bg-red-100 text-red-700",
 };
 
-/** Generate kode pendek konsisten dengan SuccessState & my-trips */
 function toRequestCode(id: string) {
   return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();
 }
@@ -57,7 +56,6 @@ export default function AdminPrivateTripsList() {
   const [total, setTotal] = useState(0);
   const [actioningId, setActioningId] = useState<string | null>(null);
 
-  // Kalau search diawali "PTR-", filter di client — sisanya kirim ke API
   const isCodeSearch = search.trim().toUpperCase().startsWith("PTR-");
   const apiSearch = isCodeSearch ? "" : search;
 
@@ -136,7 +134,6 @@ export default function AdminPrivateTripsList() {
         </div>
       )}
 
-      {/* Filters */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
           <Filter className="w-4 h-4" />
@@ -168,7 +165,6 @@ export default function AdminPrivateTripsList() {
         </span>
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">

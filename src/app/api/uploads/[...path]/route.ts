@@ -12,14 +12,12 @@ export async function GET(
   const { path: segments } = await params;
   const filename = segments.join("/");
 
-  // Prevent path traversal
   if (filename.includes("..")) {
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });
   }
 
   const filePath = path.join(UPLOADS_DIR, filename);
 
-  // Ensure the resolved path is within UPLOADS_DIR
   if (!filePath.startsWith(UPLOADS_DIR)) {
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });
   }

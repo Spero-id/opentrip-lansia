@@ -1,6 +1,5 @@
 export const A = "#F49D1A";
 
-// ─── Status Private Trip ───────────────────────────────────────────────────
 export const STATUS_LABEL = {
   draft: "Draft",
   submitted: "Menunggu Review",
@@ -33,7 +32,6 @@ export const PROPOSAL_COLOR = {
   revised: "bg-amber-100 text-amber-700",
 };
 
-// ─── Status Open Trip ──────────────────────────────────────────────────────
 export const OPEN_TRIP_STATUS_LABEL = {
   pending_payment: "Menunggu Pembayaran",
   confirmed: "Terkonfirmasi",
@@ -68,7 +66,6 @@ export const PAYMENT_STATUS_COLOR = {
   pending_payment: "text-amber-700",
 };
 
-// ─── Helpers ───────────────────────────────────────────────────────────────
 export function formatRupiah(val) {
   if (!val && val !== 0) return null;
   const num = typeof val === "string"
@@ -82,7 +79,6 @@ export function toRequestCode(id) {
   return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
-// ─── Ikon ──────────────────────────────────────────────────────────────────
 export const icons = {
   copy: (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -46,8 +46,6 @@ const proposalStatusStyles: Record<string, string> = {
   revised: "bg-purple-100 text-purple-700",
 };
 
-/** Parses the structured destinationPreferences text into sections.
- *  Format: [Header]\nKey: Value\n...  */
 function parseDestinationPreferences(text: string): { heading: string; rows: { key: string; val: string }[] }[] {
   if (!text) return [];
   const sections: { heading: string; rows: { key: string; val: string }[] }[] = [];
@@ -65,7 +63,6 @@ function parseDestinationPreferences(text: string): { heading: string; rows: { k
       if (colonIdx > 0) {
         current.rows.push({ key: line.slice(0, colonIdx).trim(), val: line.slice(colonIdx + 2).trim() });
       } else {
-        // baris tanpa "Key: val" — tampilkan sebagai nilai saja
         current.rows.push({ key: "", val: line });
       }
     }
@@ -85,7 +82,6 @@ function DestinationTable({ raw }: { raw: string }) {
   const sections = parseDestinationPreferences(raw);
 
   if (sections.length === 0) {
-    // fallback: teks biasa tanpa format
     return (
       <div className="bg-slate-50 rounded-2xl px-4 py-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
         {raw}
@@ -97,12 +93,10 @@ function DestinationTable({ raw }: { raw: string }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {sections.map((sec, si) => (
         <div key={si} className="rounded-2xl border border-slate-200 overflow-hidden">
-          {/* Section header */}
           <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200">
             <span className="text-[#F49D1A]">{sectionIcons[sec.heading] ?? <MapPin className="w-4 h-4" />}</span>
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">{sec.heading}</span>
           </div>
-          {/* Rows */}
           <div className="divide-y divide-slate-100">
             {sec.rows.length === 0 && (
               <p className="px-4 py-3 text-xs text-slate-400 italic">Tidak ada data</p>
@@ -122,10 +116,7 @@ function DestinationTable({ raw }: { raw: string }) {
   );
 }
 
-/** Memisahkan teks specialRequirements menjadi bagian kebutuhan awal
- *  dan catatan revisi yang di-append dengan format [Catatan Revisi – ...] */
 function SpecialRequirementsBlock({ raw }: { raw: string }) {
-  // Pisah berdasarkan marker catatan revisi
   const revisionMarker = /\n\[Catatan Revisi\s*[–-][^\]]*\]/g;
   const parts = raw.split(/(?=\n\[Catatan Revisi)/);
 
@@ -139,14 +130,12 @@ function SpecialRequirementsBlock({ raw }: { raw: string }) {
 
   return (
     <div className="space-y-2">
-      {/* Kebutuhan khusus asli */}
       {original && (
         <div className="bg-amber-50/50 rounded-2xl p-4 border border-amber-100/50">
           <p className="text-[11px] font-semibold text-amber-700 uppercase tracking-wide mb-1">Kebutuhan Khusus</p>
           <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{original}</p>
         </div>
       )}
-      {/* Catatan revisi dari user */}
       {revisions.map((rev, i) => (
         <div key={i} className="rounded-2xl border border-purple-200 bg-purple-50/50 p-4 space-y-1.5">
           <div className="flex items-center gap-2">
@@ -175,7 +164,6 @@ export default function AdminPrivateTripDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Proposal form
   const [proposalOpen, setProposalOpen] = useState(false);
   const [proposalContent, setProposalContent] = useState("");
   const [estimatedPrice, setEstimatedPrice] = useState("");
@@ -206,13 +194,6 @@ export default function AdminPrivateTripDetail() {
     return () => { cancelled = true; };
   }, [params.id]);
 
-  // Auto-buka proposal modal jika ada ?proposal=1 dari list page — HIDDEN sementara
-  // useEffect(() => {
-  //   if (searchParams.get("proposal") === "1") {
-  //     setProposalOpen(true);
-  //   }
-  // }, [searchParams]);
-
   async function updateStatus(action: string) {
     setActionMsg("");
     const res = await fetch(`/api/private-trip/admin/${params.id}`, {
@@ -231,7 +212,6 @@ export default function AdminPrivateTripDetail() {
     setActionMsg("");
     if (!proposalContent.trim()) { setActionMsg("Konten proposal wajib diisi"); return; }
 
-    // Validasi estimatedPrice — max numeric(14,2) = 999_999_999_999.99
     if (estimatedPrice) {
       const num = Number(estimatedPrice);
       if (isNaN(num) || num < 0) { setActionMsg("Estimasi harga tidak valid"); return; }
@@ -272,7 +252,6 @@ export default function AdminPrivateTripDetail() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      {/* Back button */}
       <button onClick={() => router.push("/admin/private-trips")} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#F49D1A] transition">
         <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar
       </button>
@@ -284,15 +263,12 @@ export default function AdminPrivateTripDetail() {
         </div>
       )}
 
-      {/* Request Info + Action Buttons */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-5">
-        {/* Header: title, status badge, dan action buttons */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <h1 className="text-xl font-extrabold text-slate-900 leading-tight">{data?.title}</h1>
             <span className={`inline-block mt-2 px-3 py-1 rounded-full text-[11px] font-bold ${statusStyles[data?.status] || "bg-slate-100 text-slate-600"}`}>{data?.status}</span>
           </div>
-          {/* Action buttons inline di header */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             {data?.status === "submitted" && (
               <>
@@ -303,7 +279,6 @@ export default function AdminPrivateTripDetail() {
                   <ClipboardCheck className="w-3.5 h-3.5" />
                   Tandai Sudah Ditinjau
                 </button>
-                {/* Buat Proposal — HIDDEN sementara */}
                 {false && <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-[#F49D1A] hover:bg-[#c47d12] text-white px-4 py-2 text-xs font-bold transition shadow-sm shadow-[#F49D1A]/20"
@@ -320,7 +295,6 @@ export default function AdminPrivateTripDetail() {
                 </button>
               </>
             )}
-            {/* Kirim/Perbarui Proposal & Tolak untuk status reviewed/revision — HIDDEN sementara */}
             {false && (data?.status === "reviewed" || data?.status === "revision") && (
               <>
                 <button
@@ -354,7 +328,6 @@ export default function AdminPrivateTripDetail() {
 
         <hr className="border-slate-100" />
 
-        {/* Info grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
           <div>
             <span className="block text-[11px] font-semibold text-slate-400 uppercase">Durasi</span>
@@ -374,7 +347,6 @@ export default function AdminPrivateTripDetail() {
           </div>
         </div>
 
-        {/* Destinasi — ditampilkan sebagai tabel/badges per item */}
         <div>
           <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 uppercase mb-3">
             <MapPin className="w-3.5 h-3.5" /> Detail Permintaan
@@ -394,7 +366,6 @@ export default function AdminPrivateTripDetail() {
         )}
       </div>
 
-      {/* Riwayat Proposal — HIDDEN sementara */}
       {false && (
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Riwayat Proposal ({data?.proposals?.length || 0})</h2>
@@ -430,21 +401,17 @@ export default function AdminPrivateTripDetail() {
       </div>
       )}
 
-      {/* Proposal Panel — HIDDEN sementara */}
       {false && proposalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
           onClick={() => setProposalOpen(false)}
         >
-          {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
-          {/* Panel */}
           <div
             className="relative bg-white w-full sm:max-w-2xl sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[92dvh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
             <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-xl bg-[#F49D1A]/10 flex items-center justify-center">
@@ -463,11 +430,9 @@ export default function AdminPrivateTripDetail() {
               </button>
             </div>
 
-            {/* Scrollable form body */}
             <form onSubmit={handleCreateProposal} className="flex flex-col flex-1 min-h-0">
               <div className="overflow-y-auto flex-1 px-5 py-4 space-y-4">
 
-                {/* Error/success inline */}
                 {actionMsg && !actionMsg.includes("berhasil") && (
                   <div className="flex items-center gap-2 rounded-2xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-xs font-semibold">
                     <AlertCircle className="w-4 h-4 shrink-0" />
@@ -475,7 +440,6 @@ export default function AdminPrivateTripDetail() {
                   </div>
                 )}
 
-                {/* Konten Proposal */}
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">
                     Deskripsi Proposal <span className="text-red-500">*</span>
@@ -490,7 +454,6 @@ export default function AdminPrivateTripDetail() {
                   />
                 </div>
 
-                {/* Estimasi Harga */}
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Estimasi Harga (Rp)</label>
                   <div className="relative">
@@ -508,7 +471,6 @@ export default function AdminPrivateTripDetail() {
                   <p className="text-[11px] text-slate-400 mt-1">Maks. Rp 999.999.999.999</p>
                 </div>
 
-                {/* Termasuk & Tidak Termasuk */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-600 mb-1.5">
@@ -544,7 +506,6 @@ export default function AdminPrivateTripDetail() {
 
               </div>
 
-              {/* Footer actions — sticky */}
               <div className="px-5 py-4 border-t border-slate-100 flex items-center gap-3 shrink-0">
                 <button
                   type="submit"

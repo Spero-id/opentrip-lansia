@@ -1,15 +1,3 @@
-/**
- * Regression test untuk sanitasi pesan error di API.
- *
- * Sebelum fix, hampir semua route handler melakukan:
- *     const message = err instanceof Error ? err.message : "Terjadi kesalahan";
- * sehingga internals (query SQL + params, pesan driver database, path file,
- * pesan dari library) ikut terkirim ke client. Terbukti live:
- *     GET /api/trips/x/groups -> {"error":"Failed query: select \"id\"... params: y"}
- *
- * Sekarang semua route memakai toPublicError() — allowlist: hanya AppError
- * (yang memang ditulis developer untuk user) yang boleh lewat.
- */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { MockInstance } from "vitest";
 import { AppError, NotFoundError, ValidationError, ConflictError } from "./app-error";
@@ -19,8 +7,6 @@ describe("toPublicError", () => {
   let errorSpy: MockInstance;
 
   beforeEach(() => {
-    // toPublicError console.error untuk kasus non-AppError — bisukan supaya
-    // output test bersih.
     errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
   afterEach(() => errorSpy.mockRestore());

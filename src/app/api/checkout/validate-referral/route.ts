@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find user with this referral code
     const [referrer] = await db
       .select({ id: users.id, name: users.name })
       .from(users)
@@ -43,7 +42,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Prevent self-referral
     if (referrer.id === session.user.id) {
       return NextResponse.json(
         { error: "Tidak bisa menggunakan kode referral sendiri" },

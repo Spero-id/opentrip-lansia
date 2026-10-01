@@ -3,8 +3,6 @@ import { tripService } from "./trip.service";
 import { slugify } from "@/shared/utils/helpers";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
-// --- Next.js Route Handlers ---
-
 export async function GET(req: NextRequest) {
   try {
     const all = req.nextUrl.searchParams.get("all") === "true";
@@ -72,7 +70,5 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
-
-// --- Object-style export for compatibility ---
 
 export const tripController = { GET, GETById, POST, PUT, DELETE };

@@ -46,10 +46,8 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
   const isCompleted = booking.status === "completed";
   const hasReview = booking.hasReview || feedbackSubmitted;
 
-  // departureId is the groupId for gallery
   const departureId = booking.departureId || null;
 
-  // tripId comes from booking service (joined from tripDepartures)
   const tripId = booking.tripId || notesObj.tripId || null;
 
   const copyCode = (e) => {
@@ -65,7 +63,6 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
-      {/* Header */}
       <div
         id={`open-trip-card-${booking.id}`}
         role="button"
@@ -162,10 +159,8 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
         </div>
       </div>
 
-      {/* Detail */}
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
-          {/* WhatsApp Admin */}
           {(() => {
             const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
             if (!waNumber) return null;
@@ -185,7 +180,6 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
             );
           })()}
 
-          {/* Rincian Pembayaran */}
           <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rincian Pembayaran</p>
             <div className="flex justify-between text-xs text-gray-600">
@@ -213,7 +207,6 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
             </div>
           </div>
 
-          {/* Bukti Pembayaran */}
           {paymentProof && (
             <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Bukti Pembayaran</p>
@@ -237,7 +230,6 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
             </div>
           )}
 
-          {/* Kontak Pemesan */}
           {(customerName || customerEmail || customerPhone) && (
             <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-1.5">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Kontak Pemesan</p>
@@ -268,7 +260,6 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
             </div>
           )}
 
-          {/* Daftar Peserta */}
           {booking.participants && booking.participants.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-100 p-4">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">
@@ -297,7 +288,6 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
         </div>
       )}
 
-      {/* Gallery Modal */}
       <GalleryModal
         open={galleryOpen}
         onClose={() => setGalleryOpen(false)}
@@ -306,7 +296,6 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
         groupLabel={destinationName}
       />
 
-      {/* Feedback Modal */}
       <FeedbackModal
         open={feedbackOpen}
         onClose={() => setFeedbackOpen(false)}

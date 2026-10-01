@@ -5,11 +5,6 @@ import { users } from "@/modules/auth/auth.schema";
 import { eq, sql } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 
-/**
- * `target` opsional: berikan `tx` kalau dipanggil dari dalam
- * `withTransaction`, supaya ledger dan saldo ikut rollback bersama.
- * Default-nya `db` untuk pemakaian tunggal yang tidak butuh atomicitas.
- */
 type Target = typeof db | Tx;
 
 export interface ILoyaltyRepository {

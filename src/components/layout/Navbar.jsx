@@ -45,7 +45,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Tutup dropdown kalau klik di luar
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -106,7 +105,6 @@ export default function Navbar() {
 
             <div className={cn("flex items-center gap-2", isOpen && "bg-transparent")}>
               {isLoggedIn ? (
-                /* Avatar + Dropdown */
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen((v) => !v)}
@@ -142,9 +140,6 @@ export default function Navbar() {
                     </span>
 
                     <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
-                      {/* Inisial di belakang sebagai fallback; kalau foto gagal
-                          dimuat, onError menyembunyikan <img> sehingga inisial
-                          yang tampil — bukan alt text. */}
                       <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
                         {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
                       </span>
@@ -161,13 +156,11 @@ export default function Navbar() {
                       )}
                       <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                     </span>
-                    
+
                   </button>
 
-                  {/* Dropdown panel */}
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
-                      {/* User info */}
                       <div className="px-4 py-3 border-b border-slate-200">
                         <p className="text-sm font-medium text-slate-900 truncate">
                           {session.user.name || "Pengguna"}
@@ -177,7 +170,6 @@ export default function Navbar() {
                         </p>
                       </div>
 
-                      {/* Menu items */}
                       <div className="py-1.5">
                         <Link
                           href="/profile"
@@ -207,7 +199,6 @@ export default function Navbar() {
                         </Link>
                       </div>
 
-                      {/* Logout */}
                       <div className="border-t border-slate-200 py-1.5">
                         <button
                           type="button"

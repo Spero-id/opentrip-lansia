@@ -1,12 +1,3 @@
-/**
- * Regression test for the admin dashboard HTTP 500.
- *
- * `dashboardService.getStats()` used `db.select(...).from(...)` (which resolves
- * to a plain array of rows) but read the result as `result.rows[0]` — a shape
- * only returned by `db.execute()`. `.rows` is `undefined` on an array, so
- * `undefined[0]` threw a TypeError that `src/app/api/admin/dashboard/route.ts`
- * turned into HTTP 500.
- */
 vi.mock("@/shared/db", () => ({
   db: {
     select: vi.fn(),
@@ -22,7 +13,6 @@ import { dashboardService } from "./dashboard.service";
 const mockedSelect = db.select as Mock;
 const mockedExecute = db.execute as Mock;
 
-/** Mimics a drizzle select query: awaiting it yields rows, `.where()` too. */
 function selectResult(rows: unknown[]) {
   const promise = Promise.resolve(rows) as Promise<unknown> & {
     where: Mock;
@@ -35,7 +25,6 @@ describe("dashboardService.getStats", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("reads aggregates from drizzle select results (arrays, not .rows)", async () => {
-    // Call order: trips, bookings this month, revenue, active promos, bookings last month
     const results = [
       [{ count: 5 }],
       [{ count: 4 }],
@@ -53,8 +42,8 @@ describe("dashboardService.getStats", () => {
     expect(stats.totalTrips).toBe(5);
     expect(stats.bookingThisMonth).toBe(4);
     expect(stats.activePromos).toBe(2);
-    expect(stats.revenue).toBe("Rp 1.5Jt"); // toFixed(1) — titik, bukan koma
-    expect(stats.bookingChange).toBe(100); // (4 - 2) / 2 * 100
+    expect(stats.revenue).toBe("Rp 1.5Jt");
+    expect(stats.bookingChange).toBe(100);
   });
 
   it("returns null bookingChange when last month had no bookings", async () => {

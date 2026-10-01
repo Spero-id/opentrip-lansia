@@ -13,9 +13,6 @@ import {
 } from "@/shared/payment/payment-account";
 
 export default function PaymentStep({ checkout, onPay, onBack }) {
-  // Daftar rekening bank diambil sekali di sini (bukan di PaymentSelector)
-  // supaya tombol "Kirim Bukti Pembayaran" bisa menunggu hasilnya — kalau tidak,
-  // user bisa submit dengan metode default "BCA" sebelum sempat disembunyikan.
   const [accounts, setAccounts] = useState([]);
   const [accountsStatus, setAccountsStatus] = useState("loading");
 
@@ -34,7 +31,6 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
       })
       .catch(() => {
         if (cancelled) return;
-        // Fail-closed: tanpa data rekening, opsi bank disembunyikan (QRIS tetap ada)
         setAccountsStatus("error");
       });
     return () => { cancelled = true; };
@@ -106,14 +102,10 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
 function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) {
   const bcaAccount = findAccountByMethod(accounts, "BCA");
 
-  // null = data rekening masih dimuat (keputusan ditahan dulu)
   const visible = availableMethods(accounts, status);
   const showBCA = visible?.includes("BCA") ?? false;
   const selected = resolveActiveMethod(paymentMethod, visible);
 
-  // Default useCheckout adalah "BCA". Bila BCA disembunyikan (rekening belum
-  // ada / nomornya kosong), pilihan dialihkan ke QRIS sehingga user tidak
-  // pernah mengirim bukti dengan metode yang tidak ia lihat.
   useEffect(() => {
     if (!visible) return;
     if (!visible.includes(paymentMethod)) {
@@ -134,9 +126,6 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
       </div>
 
       <div className="space-y-3">
-        {/* BCA Option — hanya tampil kalau rekeningnya lengkap.
-            Selama data masih dimuat, tampilkan skeleton agar baris tidak
-            mendadak muncul/hilang (flicker). */}
         {status === "loading" && (
           <div
             aria-hidden="true"
@@ -183,7 +172,6 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
           <AccountCard account={bcaAccount} />
         )}
 
-        {/* QRIS Option */}
         <label
           className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
           onClick={() => setPaymentMethod?.("QRIS")}
@@ -214,7 +202,6 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
           </span>
         </label>
 
-        {/* QRIS QR Code Display - only show when QRIS selected */}
         {isQRIS && (
           <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center">
             <p className="text-xs font-semibold text-gray-600 mb-2">QR Code QRIS</p>
@@ -236,9 +223,6 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
 function AccountCard({ account }) {
   const [copied, setCopied] = useState(false);
 
-  // Baris hanya dirender kalau nilainya benar-benar terisi — kolom varchar
-  // NOT NULL tetap bisa berisi "" / spasi, dan baris "Nomor" kosong + tombol
-  // Salin yang menyalin string kosong justru yang dilaporkan user.
   const bankName = String(account.bankName ?? "").trim();
   const accountHolder = String(account.accountHolder ?? "").trim();
   const accountNumber = String(account.accountNumber ?? "").trim();
@@ -250,7 +234,6 @@ function AccountCard({ account }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard tidak tersedia
     }
   };
 

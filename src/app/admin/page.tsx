@@ -125,7 +125,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Dashboard Welcome Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard Overview</h1>
@@ -141,14 +140,12 @@ export default function AdminDashboard() {
         </Link>
       </div>
 
-      {/* Error Banner */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-2xl">
           Gagal memuat data dashboard: {error}
         </div>
       )}
 
-      {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {loading || !statCards
           ? Array.from({ length: 4 }).map((_, idx) => <StatCardSkeleton key={idx} />)
@@ -174,10 +171,8 @@ export default function AdminDashboard() {
             })}
       </div>
 
-      {/* Recent Bookings & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* Table Recent Bookings */}
         <div className="lg:col-span-8 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Pemesanan Terbaru</h2>
@@ -238,7 +233,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Shortcuts */}
         <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <h2 className="text-lg font-bold text-slate-900">Aksi Cepat</h2>
 

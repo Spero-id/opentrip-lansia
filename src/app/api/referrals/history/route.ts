@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
         bookingId: referrals.bookingId,
         status: referrals.status,
         createdAt: referrals.createdAt,
-        // Referrer info
         referrerName: users.name,
         referrerEmail: users.email,
       })
@@ -31,7 +30,6 @@ export async function GET(req: NextRequest) {
 
     if (allReferrals.length === 0) return NextResponse.json([]);
 
-    // Batch enrichment: 5 query untuk SELURUH baris, bukan 4 query tiap baris (N+1)
     const referredIds = [
       ...new Set(allReferrals.map((r) => r.referredUserId).filter((v): v is string => !!v)),
     ];

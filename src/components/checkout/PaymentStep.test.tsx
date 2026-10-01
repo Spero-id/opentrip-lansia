@@ -1,9 +1,3 @@
-/**
- * Uji visibilitas opsi pembayaran di checkout.
- *
- * Kasus laporan: "Rekening BCA kalau belum ada nomor rekeningnya tolong
- * disembunyikan aja."
- */
 import { afterEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import PaymentStep from "./PaymentStep";
@@ -50,7 +44,6 @@ it("menyembunyikan opsi BCA saat rekening belum ada di server", async () => {
     />
   );
 
-  // tunggu sampai fetch selesai & pilihan dikoreksi (BCA disembunyikan)
   await waitFor(() => {
     expect(setPaymentMethod).toHaveBeenCalledWith("QRIS");
   });
@@ -82,7 +75,6 @@ it("menyembunyikan opsi BCA saat nomor rekening kosong", async () => {
     expect(setPaymentMethod).toHaveBeenCalledWith("QRIS");
   });
   expect(screen.queryByText("Transfer Bank BCA")).toBeNull();
-  // kartu rekening (dengan baris Nomor + tombol Salin) tidak ikut tampil
   expect(screen.queryByText("Salin")).toBeNull();
 });
 
@@ -109,7 +101,6 @@ it("menampilkan BCA beserta kartu rekening ketika rekening lengkap", async () =>
   await waitFor(() => {
     expect(screen.getByText("Transfer Bank BCA")).toBeTruthy();
   });
-  // default "BCA" tetap dipakai, tidak dialihkan
   expect(setPaymentMethod).not.toHaveBeenCalledWith("QRIS");
   expect(screen.getByText("6802082513")).toBeTruthy();
   expect(screen.getByText("PT. SINERGI INOVASI KARYA")).toBeTruthy();

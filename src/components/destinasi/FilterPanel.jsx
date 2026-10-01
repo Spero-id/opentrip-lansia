@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Filter, MapPin, DollarSign, Tag, Heart, X, ChevronDown, ChevronUp, Check } from "lucide-react";
 
 const A = "#F49D1A";
-const MAX_RUPIAH = 100_000_000; // Rp 100jt — reasonable cap for open trip filter
+const MAX_RUPIAH = 100_000_000;
 
 const CATEGORY_OPTIONS = [
   "Semua",
@@ -55,7 +55,6 @@ export default function FilterPanel({
 
   return (
     <aside className="w-full">
-      {/* Mobile Toggle Button */}
       <div className="lg:hidden mb-4">
         <button
           type="button"
@@ -87,7 +86,6 @@ export default function FilterPanel({
           isMobileOpen ? "block" : "hidden lg:block"
         }`}
       >
-        {/* Header Filter */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <Filter size={16} style={{ color: A }} />
@@ -113,7 +111,6 @@ export default function FilterPanel({
         </div>
 
         <div className="p-5 space-y-6">
-          {/* Filter 1: Ramah Lansia Toggle */}
           <div className="bg-teal-50/80 rounded-2xl p-3.5 border border-teal-200/80 space-y-2">
             <div className="flex items-center justify-between">
               <label
@@ -145,7 +142,6 @@ export default function FilterPanel({
             </p>
           </div>
 
-          {/* Filter 2: Kategori */}
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
               <Tag size={12} style={{ color: A }} />
@@ -155,7 +151,7 @@ export default function FilterPanel({
               {CATEGORY_OPTIONS.map((cat) => {
                 const val = cat === "Semua" ? "" : cat;
                 const active = val === "" ? selectedCategories.length === 0 : selectedCategories.includes(val);
-                
+
                 const handleToggle = () => {
                   if (val === "") {
                     setSelectedCategories([]);
@@ -190,7 +186,6 @@ export default function FilterPanel({
 
           <hr className="border-gray-100" />
 
-          {/* Filter 3: Lokasi */}
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
               <MapPin size={12} style={{ color: A }} />
@@ -274,7 +269,6 @@ export default function FilterPanel({
 
           <hr className="border-gray-100" />
 
-          {/* Filter 4: Range Harga */}
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
               <DollarSign size={12} style={{ color: A }} />

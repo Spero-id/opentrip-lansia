@@ -1,7 +1,3 @@
-/**
- * Backfill referral codes for existing users who don't have one.
- * Run with: npx tsx src/db/backfill-referral-codes.ts
- */
 import "dotenv/config";
 import { db } from "@/shared/db";
 import { users } from "@/modules/auth/auth.schema";

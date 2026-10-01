@@ -30,7 +30,6 @@ function PayContent() {
         }
         const data = await res.json();
 
-        // Parse notes for destination info
         let notesObj = {};
         if (data.notes) {
           try {
@@ -40,18 +39,15 @@ function PayContent() {
           }
         }
 
-        // Set booking data into checkout state
         const destination = {
           id: notesObj.destinationId || data.departureId,
           title: notesObj.destinationName || "Paket Open Trip",
           priceMin: Math.round(Number(data.subtotal) / data.totalParticipants),
         };
 
-        // Set the booking info into checkout
         checkout.setDestination(destination);
         checkout.setPax(data.totalParticipants);
 
-        // Set customer info from participants
         const primaryParticipant = data.participants?.find(p => p.isPrimary) || data.participants?.[0];
         if (primaryParticipant) {
           const customer = {
@@ -77,15 +73,11 @@ function PayContent() {
             mobilityOption: data.healthDeclarations?.[0]?.mobilityOption || "independent",
           };
 
-          // Manually set customer fields
           Object.entries(customer).forEach(([field, value]) => {
             checkout.setCustomer(field, value);
           });
         }
 
-        // Set order info
-        // We need to set the internal state directly for bookingId
-        // This is a workaround since the hook doesn't expose a direct setter
         setBooking(data);
         setLoading(false);
       } catch (err) {
@@ -97,10 +89,8 @@ function PayContent() {
     fetchBooking();
   }, [bookingId]);
 
-  // Override initiatePayment to use bookingId from API
   useEffect(() => {
     if (booking) {
-      // Store bookingId in a way the payment can use
       checkout.setCustomer("_bookingId", booking.id);
     }
   }, [booking]);
@@ -136,7 +126,6 @@ function PayContent() {
     );
   }
 
-  // Custom initiatePayment that uses bookingId from the fetched booking
   const handlePay = async () => {
     if (!booking || !checkout.proofUrl) {
       alert("Silakan unggah bukti transfer terlebih dahulu.");
@@ -163,12 +152,10 @@ function PayContent() {
           if (data?.error) message = data.error;
         } catch {}
 
-        // Set error via a workaround
         alert(message);
         return;
       }
 
-      // Redirect to success page
       router.push("/my-trips");
     } catch (err) {
       console.error("Gagal memproses pembayaran:", err);
@@ -176,7 +163,6 @@ function PayContent() {
     }
   };
 
-  // Create a mock checkout object with the booking data
   const checkoutWithData = {
     ...checkout,
     destination: {

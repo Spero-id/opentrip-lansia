@@ -14,14 +14,12 @@ export async function GET(req: NextRequest) {
 
     const userId = session.user.id;
 
-    // Get user's referral code
     const [user] = await db
       .select({ referralCode: users.referralCode })
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
 
-    // Get referral stats by status
     const [totalStats] = await db
       .select({
         totalReferred: count(),
@@ -43,9 +41,6 @@ export async function GET(req: NextRequest) {
       .from(referrals)
       .where(sql`${referrals.referrerId} = ${userId} AND ${referrals.status} = 'pending'`);
 
-    // Get total commission. `commissions.amount` bertipe varchar, jadi harus
-    // di-cast ke numeric — sum(varchar) tidak ada di Postgres dan menyebabkan
-    // 500 pada endpoint ini.
     const [commissionStats] = await db
       .select({
         totalCommission: sql<number>`coalesce(sum(${commissions.amount}::numeric), 0)`,
@@ -53,7 +48,6 @@ export async function GET(req: NextRequest) {
       .from(commissions)
       .where(eq(commissions.agentId, userId));
 
-    // Get user's loyalty points
     const [userWithPoints] = await db
       .select({ loyaltyPoints: users.loyaltyPoints })
       .from(users)

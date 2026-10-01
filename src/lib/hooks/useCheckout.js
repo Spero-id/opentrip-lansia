@@ -25,9 +25,6 @@ const initialCustomer = {
   mobilityOption: "independent",
 };
 
-// Pure voucher resolver: single source of truth for client-side voucher rules.
-// Used by both the "Pakai" button and goToPayment auto-apply, so the discount
-// shown in the price breakdown is always the one sent to /api/checkout.
 export function resolveVoucher(rawCode, vouchers, subtotal) {
   const code = String(rawCode ?? "").trim().toUpperCase();
   if (!code) {
@@ -61,7 +58,6 @@ export function resolveVoucher(rawCode, vouchers, subtotal) {
 
   const value = parsePromoValue(found.value, found.type);
   const maxDiscount = parseMoney(found.maxDiscount);
-  // Rumus yang sama persis dengan server (src/shared/promo/promo-discount.ts)
   const discount = computePromoDiscount(found, subtotal);
 
   return {
@@ -104,19 +100,14 @@ export function useCheckout(initialDestination) {
   const [vouchersLoading, setVouchersLoading] = useState(true);
   const dbVouchersRef = useRef([]);
   const vouchersLoadingRef = useRef(true);
-  // true kalau /api/promotions menolak karena belum login (401).
   const vouchersLockedRef = useRef(false);
 
-  // Keep refs in sync with state
   useEffect(() => { dbVouchersRef.current = dbVouchers; }, [dbVouchers]);
   useEffect(() => { vouchersLoadingRef.current = vouchersLoading; }, [vouchersLoading]);
 
-  // Fetch vouchers from DB on mount
   const fetchVouchers = useCallback(() => {
     fetch("/api/promotions")
       .then((res) => {
-        // Daftar promo sekarang butuh login (feat-080). Jangan dianggap
-        // kegagalan biasa — pesannya beda dan tak perlu di-retry.
         if (res.status === 401) {
           vouchersLockedRef.current = true;
           return [];
@@ -186,17 +177,14 @@ export function useCheckout(initialDestination) {
   }, []);
 
   const applyVoucher = useCallback(() => {
-    // Always read from refs to avoid stale closure
     const currentVouchers = dbVouchersRef.current;
     const isLoading = vouchersLoadingRef.current;
 
-    // If vouchers haven't loaded yet, re-fetch and show loading
     if (isLoading) {
       setState((prev) => ({ ...prev, voucherError: "Memuat data voucher, silakan coba lagi sebentar." }));
       return;
     }
 
-    // If vouchers are empty (fetch may have failed), retry fetch
     if (currentVouchers.length === 0) {
       if (vouchersLockedRef.current) {
         setState((prev) => ({
@@ -299,8 +287,6 @@ export function useCheckout(initialDestination) {
       if (!s.appliedVoucher) return 0;
       const subtotal = getTicketSubtotal(s);
       const av = s.appliedVoucher;
-      // Hitung ulang dengan rumus bersama agar ikut berubah saat pax berubah,
-      // dan hasilnya selalu sama dengan yang dihitung server.
       return computePromoDiscount(
         { type: av.type, value: av.value, maxDiscount: av.maxDiscount },
         subtotal
@@ -318,14 +304,9 @@ export function useCheckout(initialDestination) {
     [getTicketSubtotal, getDiscount]
   );
 
-  // Save booking to DB when clicking "Lanjut ke Pembayaran"
   const goToPayment = useCallback(async () => {
     if (!state.destination) return;
 
-    // Auto-apply a typed-but-not-applied voucher so the price breakdown and
-    // the payload sent to /api/checkout always carry the same discount.
-    // Without this the server applies the discount itself and rejects the
-    // request with a total mismatch (400).
     let applied = state.appliedVoucher;
     const typedCode = state.voucherCode.trim();
     if (typedCode && !applied) {
@@ -351,7 +332,6 @@ export function useCheckout(initialDestination) {
         return;
       }
       applied = resolved.appliedVoucher;
-      // Surface the discounted price in the breakdown before moving on
       setState((prev) => ({ ...prev, appliedVoucher: applied, voucherError: "" }));
     }
 
@@ -416,7 +396,6 @@ export function useCheckout(initialDestination) {
     }
   }, [state, getTotal, fetchVouchers]);
 
-  // Submit payment proof to create a payment record
   const initiatePayment = useCallback(async () => {
     if (!state.bookingId || !state.proofUrl) {
       setState((prev) => ({
@@ -520,5 +499,4 @@ export function useCheckout(initialDestination) {
     goBack,
   };
 }
-
 

@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
 
     const userId = session.user.id;
 
-    // Get referrals with joined data
     const history = await db
       .select({
         id: referrals.id,
@@ -29,12 +28,9 @@ export async function GET(req: NextRequest) {
         bookingId: referrals.bookingId,
         status: referrals.status,
         createdAt: referrals.createdAt,
-        // User info
         referredUserName: users.name,
         referredUserEmail: users.email,
-        // Booking info
         bookingCode: bookings.bookingCode,
-        // Trip info via departure
         tripId: tripDepartures.tripId,
       })
       .from(referrals)
@@ -46,7 +42,6 @@ export async function GET(req: NextRequest) {
       .limit(limit)
       .offset(offset);
 
-    // Get trip titles for each unique tripId
     const tripIds = [...new Set(history.map((h) => h.tripId).filter(Boolean))] as string[];
     let tripMap = new Map<string, string>();
     if (tripIds.length > 0) {
@@ -54,7 +49,6 @@ export async function GET(req: NextRequest) {
       tripMap = new Map(allTrips.map((t) => [t.id, t.title]));
     }
 
-    // Get commissions for each referral
     const referralIds = history.map((h) => h.id).filter(Boolean) as string[];
     const commissionMap = new Map<string, { amount: number; status: string }>();
     if (referralIds.length > 0) {
@@ -75,7 +69,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Map data
     const mappedHistory = history.map((h) => ({
       id: h.id,
       referredUserName: h.referredUserName ?? "User",
@@ -88,7 +81,6 @@ export async function GET(req: NextRequest) {
       createdAt: h.createdAt,
     }));
 
-    // Get total count
     const [{ total }] = await db
       .select({ total: count() })
       .from(referrals)

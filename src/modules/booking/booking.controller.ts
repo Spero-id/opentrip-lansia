@@ -3,8 +3,6 @@ import { bookingService } from "./booking.service";
 import { auth } from "../auth/auth.config";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
-// --- Next.js Route Handlers ---
-
 export async function GET(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: req.headers });
@@ -40,7 +38,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
-
-// --- Object-style export for compatibility ---
 
 export const bookingController = { GET, POST };

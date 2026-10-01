@@ -7,7 +7,6 @@ import { Search, X, ChevronDown, Sparkles, Plus, type LucideIcon } from "lucide-
 
 const iconMap = Icons as unknown as Record<string, LucideIcon>;
 
-// Curated list of popular icons for trip facilities
 export const POPULAR_FACILITY_ICONS = [
   "Bus",
   "Car",
@@ -70,7 +69,6 @@ export const CATEGORIZED_FACILITY_ICONS = [
   },
 ];
 
-// Helper to render dynamic Lucide icon safely
 export function DynamicLucideIcon({
   name,
   className = "w-4 h-4",
@@ -81,14 +79,13 @@ export function DynamicLucideIcon({
   size?: number;
 }) {
   if (!name || !name.trim()) return null;
-  
+
   const iconKey = name.trim();
   const IconComponent = iconMap[iconKey] || iconMap[`${iconKey}Icon`] || Icons.Check;
 
   return <IconComponent className={className} size={size} />;
 }
 
-// Get all valid Lucide icon names
 const ALL_ICON_NAMES = Object.keys(Icons).filter(
   (key) =>
     /^[A-Z]/.test(key) &&
@@ -170,7 +167,6 @@ export default function IconPicker({
     };
   }, [isOpen, updatePosition]);
 
-  // Filter icon names based on search query
   const filteredIcons = useMemo(() => {
     if (!search.trim()) return ALL_ICON_NAMES.slice(0, 80);
     const q = search.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -179,7 +175,6 @@ export default function IconPicker({
     ).slice(0, 100);
   }, [search]);
 
-  // Close when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
@@ -339,7 +334,6 @@ export default function IconPicker({
 
             {!search.trim() ? (
               <div className="space-y-2">
-                {/* Category selector pills */}
                 <div className="flex items-center gap-1 overflow-x-auto pb-1 text-[11px] scrollbar-none">
                   {CATEGORIZED_FACILITY_ICONS.map((cat) => (
                     <button
@@ -357,7 +351,6 @@ export default function IconPicker({
                   ))}
                 </div>
 
-                {/* Icon grid for selected category */}
                 <div className="grid grid-cols-6 sm:grid-cols-7 gap-1.5 max-h-44 overflow-y-auto p-1.5 bg-slate-50/70 rounded-xl border border-slate-100">
                   {(CATEGORIZED_FACILITY_ICONS.find((c) => c.category === activeCategory)?.icons || POPULAR_FACILITY_ICONS).map((iconName) => (
                     <button
@@ -412,7 +405,6 @@ export default function IconPicker({
               </div>
             )}
 
-            {/* Active selection footer */}
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
               <span>Ikon terpilih:</span>
               {hasIcon ? (

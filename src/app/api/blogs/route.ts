@@ -6,7 +6,6 @@ import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   try {
-    // Non-admin (anonymous) hanya boleh melihat blog published
     const denied = await requireAdmin(req);
     const isAdmin = !denied;
     const publishedOnly = req.nextUrl.searchParams.get("published") === "1";

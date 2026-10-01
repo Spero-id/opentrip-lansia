@@ -44,13 +44,11 @@ export interface ITripRepository {
   delete(id: UUID): Promise<void>;
   updateQuota(priceId: UUID, qty: number): Promise<boolean>;
 
-  // Departure & price
   saveTripSchedules(
     tripId: UUID,
     schedules: { startDate: string; endDate: string; maxParticipants: number; price: number }[]
   ): Promise<void>;
 
-  // Group Trip Management
   findAllGroupsByTripId(tripId: UUID): Promise<GroupWithDetails[]>;
   findGroupById(groupId: UUID): Promise<typeof tripDepartures.$inferSelect | null>;
   findActiveGroupByTripId(tripId: UUID): Promise<typeof tripDepartures.$inferSelect | null>;
@@ -61,11 +59,9 @@ export interface ITripRepository {
   countBookingsByDepartureId(departureId: UUID): Promise<number>;
   getActiveGroupWithPrice(tripId: UUID): Promise<ActiveGroupInfo | null>;
 
-  // Itinerary
   findItineraryByTripId(tripId: UUID): Promise<(typeof itineraryItems.$inferSelect)[]>;
   saveItinerary(tripId: UUID, items: ItineraryInput[]): Promise<void>;
 
-  // Galleries
   findAllGalleries(): Promise<(typeof tripGalleries.$inferSelect)[]>;
   findGalleryById(id: UUID): Promise<typeof tripGalleries.$inferSelect | null>;
   findGalleriesByDepartureId(departureId: UUID): Promise<(typeof tripGalleries.$inferSelect)[]>;
@@ -73,7 +69,6 @@ export interface ITripRepository {
   updateGallery(id: UUID, data: Partial<typeof tripGalleries.$inferInsert>): Promise<void>;
   deleteGallery(id: UUID): Promise<void>;
 
-  // Group Participants
   findBookingsWithDetailsByDepartureId(departureId: UUID): Promise<GroupBookingDetail[]>;
 }
 
@@ -180,8 +175,7 @@ export const tripRepository: ITripRepository = {
       if (r.departureId) {
         if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
         pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
-        
-        // Track active group
+
         if (r.isActiveDeparture && !activeGroups.has(r.id)) {
           activeGroups.set(r.id, {
             id: r.departureId,
@@ -189,7 +183,7 @@ export const tripRepository: ITripRepository = {
             endDate: r.departureEndDate ?? "",
             maxParticipants: r.departureMaxParticipants ?? 0,
             status: r.departureStatus ?? "scheduled",
-            quotaBooked: 0, // Will be calculated later if needed
+            quotaBooked: 0,
           });
         }
       }
@@ -205,9 +199,6 @@ export const tripRepository: ITripRepository = {
       }
     }
 
-    // Satu query agregat untuk semua trip, bukan satu query AVG per trip (N+1).
-    // Tanpa baris → rating null (bukan 5.0) supaya trip baru tidak menampilkan
-    // rating palsu.
     const ratingRows = await db
       .select({
         tripId: reviews.tripId,
@@ -481,7 +472,6 @@ export const tripRepository: ITripRepository = {
     );
   },
 
-  // Group Participants
   async findBookingsWithDetailsByDepartureId(departureId: UUID) {
     const bookingRows = await db
       .select({
@@ -537,7 +527,6 @@ export const tripRepository: ITripRepository = {
     return result;
   },
 
-  // Galleries
   async findAllGalleries() {
     return db.select().from(tripGalleries).orderBy(desc(tripGalleries.createdAt));
   },
@@ -564,7 +553,6 @@ export const tripRepository: ITripRepository = {
     await db.delete(tripGalleries).where(eq(tripGalleries.id, id));
   },
 
-  // Group Trip Management
   async findAllGroupsByTripId(tripId) {
     const departures = await db
       .select()
@@ -647,7 +635,6 @@ export const tripRepository: ITripRepository = {
       })
       .returning();
 
-    // Create default price entry using trip's price
     await db.insert(tripPrices).values({
       departureId: dep.id,
       name: "Dewasa",
@@ -669,20 +656,17 @@ export const tripRepository: ITripRepository = {
   },
 
   async deleteGroup(groupId) {
-    // Delete associated prices first
     await db.delete(tripPrices).where(eq(tripPrices.departureId, groupId));
     await db.delete(tripDepartures).where(eq(tripDepartures.id, groupId));
   },
 
   async activateGroup(tripId, groupId) {
-    // Deactivate all groups in this trip
     const deactivated = await db
       .update(tripDepartures)
       .set({ isActive: false, updatedAt: new Date() })
       .where(and(eq(tripDepartures.tripId, tripId), eq(tripDepartures.isActive, true)))
       .returning({ id: tripDepartures.id });
 
-    // Activate the target group
     const [activated] = await db
       .update(tripDepartures)
       .set({ isActive: true, updatedAt: new Date() })
@@ -721,7 +705,6 @@ export const tripRepository: ITripRepository = {
       .where(and(eq(tripPrices.departureId, dep.id), eq(tripPrices.isActive, true)))
       .limit(1);
 
-    // Get total booked from bookings
     const [bookedResult] = await db
       .select({ total: sql<number>`COALESCE(SUM(${bookingItems.quantity}), 0)::int` })
       .from(bookingItems)

@@ -148,7 +148,7 @@ export default function AdminTrips() {
   const [images, setImages] = useState<string[]>([]);
   const [itineraryList, setItineraryList] = useState<ItineraryItemInput[]>([]);
   const [facilitiesList, setFacilitiesList] = useState<FacilityItemInput[]>([]);
-  
+
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -758,7 +758,6 @@ if (categories.length === 0) await fetchCategories();
           </div>
 
           <div className="border-t border-slate-200 pt-5 space-y-4">
-            {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
@@ -792,7 +791,6 @@ if (categories.length === 0) await fetchCategories();
               </div>
             </div>
 
-            {/* Facility Items List */}
             {facilitiesList.length === 0 ? (
               <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 space-y-2">
                 <div className="w-10 h-10 mx-auto rounded-full bg-amber-100/80 text-[#F49D1A] flex items-center justify-center">
@@ -810,12 +808,10 @@ if (categories.length === 0) await fetchCategories();
                     key={index}
                     className="flex items-center gap-2.5 bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
                   >
-                    {/* Index Badge */}
                     <span className="h-10 w-10 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
                       {index + 1}
                     </span>
 
-                    {/* Icon Selector */}
                     <div className="shrink-0">
                       <IconPicker
                         variant="icon-only"
@@ -824,7 +820,6 @@ if (categories.length === 0) await fetchCategories();
                       />
                     </div>
 
-                    {/* Facility Name Input */}
                     <div className="flex-1 min-w-0">
                       <input
                         type="text"
@@ -835,7 +830,6 @@ if (categories.length === 0) await fetchCategories();
                       />
                     </div>
 
-                    {/* Delete Action Button */}
                     <button
                       type="button"
                       onClick={() => removeFacilityItem(index)}

@@ -143,7 +143,6 @@ export default function TermsModal({ type, onClose, onAgree }) {
         onClick={onClose}
       />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] max-h-[600px] flex flex-col overflow-hidden">
-        {/* Modal Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0 bg-white z-10">
           <h2 className="text-lg font-bold text-gray-900">{content.title}</h2>
           <button
@@ -161,7 +160,6 @@ export default function TermsModal({ type, onClose, onAgree }) {
           </button>
         </div>
 
-        {/* Modal Body / Scrollable Content */}
         <div className="relative flex-1 min-h-0 flex flex-col">
           <div
             ref={scrollRef}
@@ -185,7 +183,6 @@ export default function TermsModal({ type, onClose, onAgree }) {
           )}
         </div>
 
-        {/* Modal Footer */}
         <div className="border-t border-gray-100 p-4 shrink-0 bg-white z-10">
           <button
             onClick={() => onAgree()}

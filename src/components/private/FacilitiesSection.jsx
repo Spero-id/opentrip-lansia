@@ -11,7 +11,7 @@ const STANDAR_OPTIONS = [
   { value: "villa", label: "Villa / Resort" },
 ];
 
-const MAX_BUDGET = 100_000_000; // Rp 100jt per orang — cap
+const MAX_BUDGET = 100_000_000;
 
 const LAYANAN_OPTIONS = [
   { key: "fotografer", label: "Fotografer / Video" },
@@ -43,7 +43,6 @@ export default function FacilitiesSection({ form, set, errors }) {
 
   return (
     <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-      {/* Header */}
       <div className="px-5 sm:px-6 pt-5 pb-4">
         <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
           <Info size={16} strokeWidth={1.8} color="#6B7280" className="shrink-0" />
@@ -52,9 +51,7 @@ export default function FacilitiesSection({ form, set, errors }) {
       </div>
       <div className="h-px bg-[#E5E7EB]" />
 
-      {/* Body */}
       <div className="px-5 sm:px-6 py-5 space-y-5">
-        {/* Standar Penginapan */}
         <div id="field-standarPenginapan">
           <label htmlFor="field-standarPenginapan-select" className="text-[13px] font-medium text-[#374151]">
             Standar Penginapan <span className="text-[#DC2626]">*</span>
@@ -83,7 +80,6 @@ export default function FacilitiesSection({ form, set, errors }) {
           )}
         </div>
 
-        {/* Layanan Tambahan */}
         <div>
           <p className="text-[13px] font-medium text-[#374151]">Layanan Tambahan (Opsional)</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1.5">
@@ -123,7 +119,6 @@ export default function FacilitiesSection({ form, set, errors }) {
           </div>
         </div>
 
-        {/* Catatan Kebutuhan Khusus */}
         <div>
           <label className="text-[13px] font-medium text-[#374151]">Catatan Kebutuhan Khusus</label>
           <textarea
@@ -138,7 +133,6 @@ export default function FacilitiesSection({ form, set, errors }) {
           )}
         </div>
 
-        {/* Estimasi Budget */}
         <div>
           <label className="text-[13px] font-medium text-[#374151]">Estimasi Budget (Per Orang)</label>
           <div className="relative mt-1.5 w-full sm:max-w-[300px]">
@@ -177,7 +171,6 @@ export default function FacilitiesSection({ form, set, errors }) {
           )}
         </div>
 
-        {/* Pilih Metode Tindak Lanjut */}
         <div id="field-metodeKontak">
           <p className="text-[13px] font-medium text-[#374151]">
             Pilih Metode Tindak Lanjut <span className="text-[#DC2626]">*</span>

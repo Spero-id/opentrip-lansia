@@ -26,7 +26,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
 
   const handleHealthToggle = (key) => {
     if (key === "none") {
-      // If "none" is selected, uncheck all others
       const cleared = {};
       HEALTH_CONDITIONS.forEach((c) => (cleared[c.key] = false));
       setCustomer("healthConditions", { ...cleared, none: true });
@@ -43,7 +42,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
 
   return (
     <div className="space-y-5">
-      {/* Nama Lengkap Peserta */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 mb-1.5">
           Nama Lengkap Peserta <span className="text-red-400">*</span>
@@ -57,7 +55,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         />
       </div>
 
-      {/* Tanggal Lahir */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 mb-1.5">
           Tanggal Lahir <span className="text-red-400">*</span>
@@ -68,7 +65,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
           value={customer.birthDate || ""}
           onChange={(e) => {
             const val = e.target.value;
-            // Batasi panjang tahun max 4 digit
             if (val && val.split("-")[0] && val.split("-")[0].length > 4) return;
             setCustomer("birthDate", val);
           }}
@@ -76,7 +72,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         />
       </div>
 
-      {/* Nomor WhatsApp / HP */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 mb-1.5">
           Nomor WhatsApp / HP Aktif Peserta <span className="text-red-400">*</span>
@@ -90,7 +85,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         />
       </div>
 
-      {/* Alamat Rumah */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 mb-1.5">
           Alamat Rumah Sekarang <span className="text-red-400">*</span>
@@ -104,7 +98,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         />
       </div>
 
-      {/* Kontak Darurat */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-semibold text-gray-500 mb-1.5">
@@ -132,7 +125,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         </div>
       </div>
 
-      {/* Riwayat Penyakit Bawaan */}
       <div className="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
         <label className="block text-xs font-semibold text-gray-500 mb-3">
           Riwayat Penyakit Bawaan <span className="text-red-400">*</span>
@@ -171,7 +163,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         </div>
       </div>
 
-      {/* Daftar Obat-obatan */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 mb-1.5">
           Daftar Obat-obatan Pribadi yang Wajib Dikonsumsi
@@ -188,7 +179,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         />
       </div>
 
-      {/* Alat Bantu Mobilitas */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 mb-3">
           Alat Bantu Mobilitas yang Digunakan (Jika Ada)
@@ -214,7 +204,6 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
         </div>
       </div>
 
-      {/* Autofill button for dev */}
       <button
         type="button"
         onClick={onAutofill}
