@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAdminTable } from "@/features/admin";
 import { Search, Users, Loader2, Settings, Save, Check } from "lucide-react";
 
 interface ReferralRecord {
@@ -30,7 +31,6 @@ function formatDate(val: string | null | undefined): string {
 export default function AdminReferralHistoryPage() {
   const [rows, setRows] = useState<ReferralRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const [bonusPoints, setBonusPoints] = useState<number>(10000);
   const [bonusPointsInput, setBonusPointsInput] = useState("10000");
   const [savingBonus, setSavingBonus] = useState(false);
@@ -92,17 +92,8 @@ export default function AdminReferralHistoryPage() {
     }
   }
 
-  const filtered = rows.filter((r) => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return (
-      r.referrerName.toLowerCase().includes(q) ||
-      r.referrerEmail.toLowerCase().includes(q) ||
-      r.referredUserName.toLowerCase().includes(q) ||
-      r.referredUserEmail.toLowerCase().includes(q) ||
-      (r.bookingCode && r.bookingCode.toLowerCase().includes(q)) ||
-      (r.tripTitle && r.tripTitle.toLowerCase().includes(q))
-    );
+  const { query: search, setQuery: setSearch, filtered } = useAdminTable(rows, {
+    searchKeys: ["referrerName", "referrerEmail", "referredUserName", "referredUserEmail", "bookingCode", "tripTitle"],
   });
 
   const totalReferrals = rows.length;
