@@ -44,3 +44,25 @@ export interface PrivateTripPayload {
   specialRequirements?: string;
   budgetEstimate?: string;
 }
+
+export interface PrivateTripState {
+  form: PrivateTripForm;
+  errors: FormErrors;
+  destinations: PrivateTripDestination[];
+  submitted: boolean;
+  requestId: string | null;
+  showTerms: boolean;
+  isLoading: boolean;
+  submitError: string | null;
+}
+
+export type PrivateTripAction =
+  | { type: "SET_FIELD"; field: string; value: unknown }
+  | { type: "SET_ERRORS"; errors: Record<string, string> }
+  | { type: "SET_TERMS"; open: boolean }
+  | { type: "SUBMIT_STARTED" }
+  | { type: "SUBMIT_SUCCEEDED"; requestId: string | null }
+  | { type: "SUBMIT_FAILED"; message: string }
+  | { type: "DESTINATIONS_LOADED"; destinations: PrivateTripDestination[] }
+  | { type: "HYDRATE_DRAFT"; draft: Partial<PrivateTripForm> }
+  | { type: "RESET_FORM" };

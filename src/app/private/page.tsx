@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useReducer, type FormEvent } from "react";
 import { Clock, ChevronRight, AlertCircle } from "lucide-react";
 import PageHeader from "@/features/private-trip/components/PageHeader";
 import BookingInformationSection from "@/features/private-trip/components/BookingInformationSection";
@@ -12,81 +12,28 @@ import TermsModal from "@/features/private-trip/components/TermsModal";
 import Subs from "@/components/landing/Subs";
 import { initialForm } from "@/features/private-trip/components/helpers/initialState";
 import { validate } from "@/features/private-trip/components/helpers/validation";
+import { privateTripReducer } from "@/features/private-trip/reducer";
+import {
+  buildPayload,
+  fetchDestinations,
+  submitPrivateTripRequest,
+} from "@/features/private-trip/api/client";
 import type { FormErrors, PrivateTripDestination, PrivateTripForm, PrivateTripPayload } from "@/features/private-trip/types";
-
-function buildDestinationPreferences(form: PrivateTripForm): string {
-  const lines = [];
-
-  lines.push(`[Pemesan]`);
-  lines.push(`Nama: ${form.nama}`);
-  if (form.phone) lines.push(`Ponsel: ${form.phone}`);
-  if (form.email) lines.push(`Email: ${form.email}`);
-
-  lines.push(`[Detail Perjalanan]`);
-  lines.push(`Tipe Trip: ${form.tripType === "custom" ? "Destinasi Baru (Custom)" : "Modifikasi Paket Web"}`);
-  if (form.tripType === "custom" && form.customTripName) lines.push(`Tujuan: ${form.customTripName}`);
-  if (form.tripType === "explorer" && form.selectedDestinasi) lines.push(`Paket Referensi: ${form.selectedDestinasi.title || form.selectedDestinasi.name}`);
-  lines.push(`Jumlah Peserta: ${form.jumlahPeserta || 1} orang`);
-  lines.push(`Durasi: ${form.durasi || "-"} hari`);
-  if (form.tanggalFleksibel) lines.push(`Tanggal Keberangkatan: Fleksibel`);
-  else if (form.tanggal) lines.push(`Tanggal Keberangkatan: ${form.tanggal}`);
-  if (form.meetingPoint) lines.push(`Meeting Point: ${form.meetingPoint}`);
-  if (form.transportNeeds) {
-    const map: Record<string, string> = { "all-in": "All-in dari Kota Asal", local: "Transportasi Lokal Saja", self: "Bawa Kendaraan Sendiri" };
-    lines.push(`Transportasi: ${map[form.transportNeeds] || form.transportNeeds}`);
-  }
-
-  lines.push(`[Fasilitas & Budget]`);
-  if (form.standarPenginapan) {
-    const sm: Record<string, string> = { budget: "Budget / Homestay", bintang3: "Hotel Bintang 3", bintang4: "Hotel Bintang 4", bintang5: "Hotel Bintang 5", villa: "Villa / Resort" };
-    lines.push(`Standar Penginapan: ${sm[form.standarPenginapan] || form.standarPenginapan}`);
-  }
-  if (form.layananTambahan && form.layananTambahan.length > 0) {
-    const lm: Record<string, string> = { fotografer: "Fotografer / Video", drone: "Kamera Drone", gala: "Gala Dinner / BBQ", tourLeader: "Tour Leader Khusus" };
-    lines.push(`Layanan Tambahan: ${form.layananTambahan.map((k) => lm[k] || k).join(", ")}`);
-  }
-  if (form.catatan) lines.push(`Catatan Khusus: ${form.catatan}`);
-  if (form.budget) lines.push(`Estimasi Budget: Rp ${form.budget} /orang`);
-  if (form.metodeKontak) lines.push(`Metode Tindak Lanjut: ${form.metodeKontak === "whatsapp" ? "Hubungi via WhatsApp" : "Kirim ke Email"}`);
-
-  lines.push(`[Asal Pemesanan]`);
-  lines.push(`Tipe: ${form.tripFrom}`);
-  if (form.tripFrom !== "Individu" && form.namaInstitusi)
-    lines.push(`Institusi: ${form.namaInstitusi}`);
-
-  return lines.join("\n");
-}
-
-function buildPayload(form: PrivateTripForm, budgetValue: unknown): PrivateTripPayload {
-  const title =
-    form.tripType === "custom"
-      ? (form.customTripName.trim() || "Custom Trip")
-      : (form.selectedDestinasi?.name || form.selectedDestinasi?.title || "Trip Explorer");
-
-  const participantsCount = parseInt(form.jumlahPeserta, 10);
-  const durationDays = parseInt(form.durasi, 10);
-
-  return {
-    title,
-    durationDays: isNaN(durationDays) || durationDays < 1 ? 1 : durationDays,
-    participantsCount: isNaN(participantsCount) ? 6 : participantsCount,
-    destinationPreferences: buildDestinationPreferences(form),
-    specialRequirements: form.catatan?.trim() || undefined,
-    budgetEstimate: budgetValue ? String(budgetValue) : undefined,
-  };
-}
 
 const STORAGE_KEY = "private-trip-form-draft";
 
 export default function PrivateTripPage() {
-  const [form, setForm] = useState<PrivateTripForm>(initialForm);
-  const [submitted, setSubmitted] = useState(false);
-  const [requestId, setRequestId] = useState<string | null>(null);
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [showTerms, setShowTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [destinations, setDestinations] = useState<PrivateTripDestination[]>([]);
+  const [state, dispatch] = useReducer(privateTripReducer, {
+    form: { ...initialForm },
+    errors: {},
+    destinations: [],
+    submitted: false,
+    requestId: null,
+    showTerms: false,
+    isLoading: false,
+    submitError: null,
+  });
+  const { form, errors, destinations, submitted, requestId, showTerms, isLoading, submitError } = state;
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -94,15 +41,9 @@ export default function PrivateTripPage() {
       try { localStorage.removeItem(STORAGE_KEY); } catch {}
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw);
+        const parsed = JSON.parse(raw) as Partial<PrivateTripForm>;
         // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration from sessionStorage
-        setForm({
-          ...initialForm,
-          ...parsed,
-          layananTambahan: Array.isArray(parsed.layananTambahan)
-            ? parsed.layananTambahan
-            : initialForm.layananTambahan,
-        });
+        dispatch({ type: "HYDRATE_DRAFT", draft: parsed });
       }
     } catch {}
     // eslint-disable-next-line react-hooks/set-state-in-effect -- mark hydrated after mount
@@ -117,43 +58,26 @@ export default function PrivateTripPage() {
   }, [form, isHydrated]);
 
   useEffect(() => {
-    async function fetchDestinations() {
-      try {
-        const res = await fetch("/api/trips");
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            const active = data.filter((item) => item.status === "published");
-            const normalized = active.map((item) => ({
-              ...item,
-              title: item.title || item.name,
-              image: item.image || null,
-              isSeniorFriendly: item.isSeniorFriendly ?? false,
-              priceMin: item.priceMin ?? 0,
-              priceMax: item.priceMax ?? 0,
-              location: item.location || "Indonesia",
-              rating: item.rating ?? null,
-            }));
-            setDestinations(normalized);
-          }
-        }
-      } catch (err) {
-        console.error("Gagal mengambil data destinasi dari database:", err);
-      }
-    }
-    fetchDestinations();
+    let cancelled = false;
+    fetchDestinations()
+      .then((items) => {
+        if (!cancelled) dispatch({ type: "DESTINATIONS_LOADED", destinations: items });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const set = (field: string, value: unknown) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
+    dispatch({ type: "SET_FIELD", field, value });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errs = validate(form);
     if (Object.keys(errs).length > 0) {
-      setErrors(errs);
+      dispatch({ type: "SET_ERRORS", errors: errs });
 
       const fieldOrder = [
         "namaInstitusi",
@@ -183,52 +107,29 @@ export default function PrivateTripPage() {
       }
       return;
     }
-    setSubmitError(null);
-    setShowTerms(true);
+    dispatch({ type: "SET_TERMS", open: true });
   };
 
   const handleAgree = async () => {
-    setShowTerms(false);
-    setIsLoading(true);
-    setSubmitError(null);
+    dispatch({ type: "SUBMIT_STARTED" });
 
     try {
       const payload = buildPayload(form, budgetValue);
-      const res = await fetch("/api/private-trips", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        const message =
-          res.status === 401
-            ? "Anda harus login untuk mengirim permintaan."
-            : data?.error || data?.errors?.[0]?.message || "Terjadi kesalahan. Silakan coba lagi.";
-        setSubmitError(message);
-        return;
-      }
-
-      const responseData = await res.json().catch(() => ({}));
-      setRequestId(responseData.id || null);
-      setSubmitted(true);
+      const { id } = await submitPrivateTripRequest(payload);
+      dispatch({ type: "SUBMIT_SUCCEEDED", requestId: id });
       try {
         sessionStorage.removeItem(STORAGE_KEY);
       } catch {}
-    } catch {
-      setSubmitError("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.");
-    } finally {
-      setIsLoading(false);
+    } catch (err: unknown) {
+      dispatch({
+        type: "SUBMIT_FAILED",
+        message: err instanceof Error ? err.message : "Terjadi kesalahan. Silakan coba lagi.",
+      });
     }
   };
 
   const resetForm = () => {
-    setSubmitted(false);
-    setRequestId(null);
-    setErrors({});
-    setSubmitError(null);
-    setForm(initialForm);
+    dispatch({ type: "RESET_FORM" });
     try {
       sessionStorage.removeItem(STORAGE_KEY);
     } catch {}
@@ -254,7 +155,7 @@ export default function PrivateTripPage() {
       {showTerms && (
         <TermsModal
           onAgree={handleAgree}
-          onClose={() => setShowTerms(false)}
+          onClose={() => dispatch({ type: "SET_TERMS", open: false })}
         />
       )}
 
