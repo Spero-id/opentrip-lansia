@@ -16,8 +16,6 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    // Support legacy ?since param by ignoring (now backed by real table)
-    // Optional filter: ?unreadOnly=true or ?type=xxx
     const unreadOnly = searchParams.get("unreadOnly") === "true";
 
     let notifications = await notificationRepository.findByUserId(userId, limit, offset);
@@ -36,7 +34,6 @@ export async function GET(req: NextRequest) {
         createdAt: n.createdAt,
         readAt: n.readAt,
         link: (n as unknown as { link?: string | null }).link ?? null,
-        // legacy compatibility (undefined for new types)
         bookingCode: null,
         status: n.type,
         amount: null,

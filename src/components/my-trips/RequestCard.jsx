@@ -20,7 +20,6 @@ export default function RequestCard({ req, onRefresh }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
-      {/* Header — selalu terlihat */}
       <div
         role="button"
         tabIndex={0}
@@ -59,7 +58,6 @@ export default function RequestCard({ req, onRefresh }) {
         </div>
       </div>
 
-      {/* Detail — muncul saat dibuka */}
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
           <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">

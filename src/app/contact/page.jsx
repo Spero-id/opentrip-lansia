@@ -3,12 +3,10 @@
 import { useState, useRef } from "react";
 import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User } from "lucide-react";
 
-// Tautan Google Maps untuk alamat pada panel "Hubungi Kami".
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     "Jl. Ratu Bidadari 3 No. 2, Ciputat, Tangerang Selatan"
 )}`;
 
-// Kartu Telepon di panel "Hubungi Kami" langsung membuka chat WhatsApp.
 const WA_NUMBER = "6285110511403";
 const WA_MESSAGE =
     process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ||

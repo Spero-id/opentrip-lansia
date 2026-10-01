@@ -137,13 +137,7 @@ body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* Seluruh teks dalam sidebar admin: putih. Menimpa varian redup seperti
-   text-sidebar-foreground/50 pada label grup — tanpa CSS tak berlapis ini
-   kalah oleh utilitas berlapis Tailwind. Status aktif (data-active) tetap
-   menang karena selektor atribut lebih spesifik.
-   PENGECUALIAN: label grup ([data-slot="sidebar-group-label"]) sengaja
-   tidak ikut — gayanya dikembalikan ke bawaan template yang redup
-   (text-sidebar-foreground/70) agar tidak terlalu kontras. */
+/* Admin sidebar text is forced white; group labels intentionally keep the dim template variant. */
 .admin-sidebar-dark :where(span, p, a, button) {
   color: #fff;
 }

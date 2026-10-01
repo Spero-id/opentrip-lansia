@@ -14,7 +14,7 @@ type Baseline = {
 };
 
 const BASELINE: Baseline = {
-  R1: 250,
+  R1: 0,
   R2: [
     "src/app/blog/[slug]/page.jsx",
     "src/app/blog/page.jsx",
@@ -426,7 +426,7 @@ function main(): void {
   }
 
   console.log("check-structure — rules R1-R9 (strategy §9)");
-  console.log("FAIL = current above baseline; ratchet may only go down\n");
+  console.log("(status FAIL = current above baseline; ratchet may only go down)\n");
 
   let failed = 0;
   for (const rule of rules) {

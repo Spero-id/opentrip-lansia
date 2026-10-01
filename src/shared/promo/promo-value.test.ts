@@ -3,8 +3,7 @@ import { parseMoney, parsePromoValue } from "./promo-value";
 import { computePromoDiscount } from "./promo-discount";
 import { resolveVoucher } from "../../lib/hooks/useCheckout";
 
-// Baris promo AEZAKMI sesuai isi database (value = "70%", max_discount = 100000)
-const aeZakmi = {
+const percentagePromo = {
   code: "AEZAKMI",
   title: "Promo murah meriah 70%",
   type: "percentage",
@@ -16,23 +15,23 @@ const aeZakmi = {
   isActive: true,
 };
 
-const SUBTOTAL = 2200000; // harga 2.200.000 x 1 peserta
+const SUBTOTAL = 2200000;
 
 describe("parsePromoValue / parseMoney", () => {
-  it("membaca persentase dengan atau tanpa tanda %", () => {
+  it("reads percentages with or without the % sign", () => {
     expect(parsePromoValue("70%", "percentage")).toBe(70);
     expect(parsePromoValue("70", "percentage")).toBe(70);
     expect(parsePromoValue("7.5%", "percentage")).toBe(7.5);
     expect(parsePromoValue("20 %", "percentage")).toBe(20);
   });
 
-  it("membaca nominal termasuk format ribuan Indonesia", () => {
+  it("reads nominal values including Indonesian thousand separators", () => {
     expect(parsePromoValue("100000", "nominal")).toBe(100000);
     expect(parsePromoValue("100.000", "nominal")).toBe(100000);
     expect(parsePromoValue("Rp100.000", "nominal")).toBe(100000);
   });
 
-  it("mengembalikan 0 untuk nilai yang tidak terbaca (bukan NaN)", () => {
+  it("returns 0 for unparseable input instead of NaN", () => {
     expect(parsePromoValue("abc", "percentage")).toBe(0);
     expect(parsePromoValue("", "nominal")).toBe(0);
     expect(parsePromoValue(null, "percentage")).toBe(0);
@@ -40,13 +39,12 @@ describe("parsePromoValue / parseMoney", () => {
   });
 });
 
-describe("klien dan server menghitung total identik", () => {
-  it("promo persentase dengan max discount: total client === total server", () => {
-    const applied = resolveVoucher("AEZAKMI", [aeZakmi as never], SUBTOTAL);
+describe("client and server compute identical totals", () => {
+  it("percentage promo with max discount: client total === server total", () => {
+    const applied = resolveVoucher("AEZAKMI", [percentagePromo as never], SUBTOTAL);
     expect(applied.voucherError).toBe("");
     expect(applied.appliedVoucher).not.toBeNull();
 
-    // sisi klien (PriceBreakdown / payload ke /api/checkout)
     const clientDiscount = computePromoDiscount(
       {
         type: applied.appliedVoucher!.type,
@@ -57,8 +55,7 @@ describe("klien dan server menghitung total identik", () => {
     );
     const clientTotal = SUBTOTAL - clientDiscount;
 
-    // sisi server (api/checkout/route.ts memanggil fungsi yang sama)
-    const serverDiscount = computePromoDiscount(aeZakmi, SUBTOTAL);
+    const serverDiscount = computePromoDiscount(percentagePromo, SUBTOTAL);
     const serverTotal = SUBTOTAL - serverDiscount;
 
     expect(clientDiscount).toBe(100000);
@@ -67,14 +64,14 @@ describe("klien dan server menghitung total identik", () => {
     expect(clientTotal).toBe(serverTotal);
   });
 
-  it("promo yang belum di-apply / kode asal tetap ditolak tanpa diskon", () => {
-    const applied = resolveVoucher("TIDAKADA", [aeZakmi as never], SUBTOTAL);
+  it("unknown or unapplied codes are rejected with no discount", () => {
+    const applied = resolveVoucher("TIDAKADA", [percentagePromo as never], SUBTOTAL);
     expect(applied.appliedVoucher).toBeNull();
     expect(applied.voucherError).toBe("Kode voucher tidak valid.");
   });
 
-  it("menghormati minimal pembelian", () => {
-    const applied = resolveVoucher("AEZAKMI", [aeZakmi as never], 50000);
+  it("enforces the minimum purchase amount", () => {
+    const applied = resolveVoucher("AEZAKMI", [percentagePromo as never], 50000);
     expect(applied.appliedVoucher).toBeNull();
     expect(applied.voucherError).toContain("Minimal order");
   });

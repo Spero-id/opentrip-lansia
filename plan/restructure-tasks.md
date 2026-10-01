@@ -27,7 +27,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Persiapan (commit plan & buka cabang) | 3 | 3 |
 | Fase 0 — Tools & baseline | 14 | 14 |
 | Fase 0.5 — Boundary root | 4 | 4 |
-| Fase 1 — Komentar & pesan error | 0 | 7 |
+| Fase 1 — Komentar & pesan error | 7 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 0 | 8 |
 | Fase 3 — Rename & lebur global | 0 | 10 |
 | Fase 3b — `lib/env.ts` | 0 | 2 |
@@ -36,7 +36,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **21** | **127** |
+| **Total** | **28** | **127** |
 
 ---
 
@@ -66,13 +66,13 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 ## Fase 1 — Komentar & pesan error (D-4, D-5)
 
-- [ ] **1.1** Hapus komentar berbahasa Indonesia (±199 baris) — diff = deletions
-- [ ] **1.2** Purge sisa komentar → target ~0; daftarkan komentar "why" 1-baris Inggris yang dipertahankan di deskripsi PR
-- [ ] **1.3** Normalisasi 48 pesan error API Inggris → Indonesia (kecuali `Unauthorized`/`Forbidden` teknis); **status code tidak berubah**
-- [ ] **1.3b** **Tulis ulang isi 6 file test dari kosong** (judul `it()`/`test()` → Inggris, komentar dihapus, helper dirapikan, struktur segar) dengan **case parity 1:1**: petakan tiap kasus lama → kasus baru; **jumlah test ≥50 sebelum & sesudah (turun = gagal batch)**; `verify:checkout` + `check:structure` tetap hijau
-- [ ] **1.4** R1 (komentar Indonesia = error) & R8 (identifier Indonesia = error) aktif di `check:structure`
-- [ ] **1.5** Verifikasi: tangga §8 + `check:structure`; konfirmasi diff komentar dominan deletions
-- [ ] **1.6** Commit + `progress.md`
+- [x] **1.1** Hapus komentar berbahasa Indonesia (±199 baris) — diff = deletions — ✅ R1 **250 → 0 baris**; bagian dari **488 blok** komentar dihapus (komit `2710199`, isi **107 file +26/−873**)
+- [x] **1.2** Purge sisa komentar → target ~0; daftarkan komentar "why" 1-baris Inggris yang dipertahankan di deskripsi PR — ✅ **488 blok** (pass TypeScript AST 306 + pass scanner karakter sadar-string/template 182 + 2 manual di uploads route); **keep-list: 5 baris why-EN** (`eslint.config.mjs` ×2, `playwright.config.ts` ×1, `next.config.ts` ×1, `globals.css` ×1) **+ 7 direktif tool** (`eslint-disable/enable` — instruksi mesin, mengangkatnya mengubah perilaku lint) → daftar penuh di deskripsi PR; insiden: scanner sempat memotong baris regex `sanitize.ts` → tertangkap tsc, dipulihkan + aturan backslash ditambah
+- [x] **1.3** Normalisasi 48 pesan error API Inggris → Indonesia (kecuali `Unauthorized`/`Forbidden` teknis); **status code tidak berubah** — ✅ komit `f13bc97`: temuan final **9 pesan murni Inggris (13 lokasi)** di `private-trip.controller/service` + `uploads/[...path]` + copy halaman private; `Unauthorized`/`Forbidden` tetap teknis; diff 4 file **14/14 baris**, status code tak tersentuh; (angka 48 = inventaris PRD lama, sebagian sudah ID sejak itu)
+- [x] **1.3b** **Tulis ulang isi 6 file test dari kosong** (judul `it()`/`test()` → Inggris, komentar dihapus, helper dirapikan, struktur segar) dengan **case parity 1:1**: petakan tiap kasus lama → kasus baru; **jumlah test ≥50 sebelum & sesudah (turun = gagal batch)**; `verify:checkout` + `check:structure` tetap hijau — ✅ komit `83d3826`: paritas ketat per file **4/4/12/14/6/10 = 50 → 50**; judul Inggris, helper terdedup (`queueSelectResults`, `renderPaymentStep`+`stubAccountsFetch`), `toPublicError` dikelompokkan passthrough/redaction/fallback; **coverage identik baseline 0.10** (S 47.65 · B 55.98 · F 29.67 · L 50.81); `verify:checkout` exit 0
+- [x] **1.4** R1 (komentar Indonesia = error) & R8 (identifier Indonesia = error) aktif di `check:structure` — ✅ baseline R1 **250 → 0** (`d6872bb`); **probe membuktikan keduanya gagal saat dilanggar**: komentar ID → R1 `1 vs 0 FAIL`; identifier `alamatDestinasiBaru` → R8 `481 vs 480 FAIL` (lalu probe dihapus, hijau lagi); legenda `FAIL` diparenthesis agar run hijau tak terbaca gagal (`9074bb0`)
+- [x] **1.5** Verifikasi: tangga §8 + `check:structure`; konfirmasi diff komentar dominan deletions — ✅ tsc **0** · lint **0E/78W** · vitest **6/50** · coverage identik · `npm run build` **EXIT 0** · `check:routes` **96→96 identik** · `check:schema-drift` OK (4 known) · `verify:checkout` **exit 0** · `./init.sh` **EXIT 0**; diff `main...HEAD` = **110 file, +202/−1073** (deletions dominan ✓)
+- [x] **1.6** Commit + `progress.md` — ✅ 5 komit (`2710199` `f13bc97` `83d3826` `d6872bb` `9074bb0`); Session 46 di `progress.md`
 
 ## Fase 2 — Satu sumber skema Drizzle (temuan #1)
 

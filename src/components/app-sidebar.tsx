@@ -18,10 +18,7 @@ import {
 import { isHrefActive } from "@/app/admin/components/nav-data"
 import { LayoutDashboard, Compass, Users, Tag, ShoppingCart, FileText, ExternalLink } from "lucide-react"
 
-// This is sample data.
 const data = {
-  // Isi tab disesuaikan dengan menu admin: hanya teks + link + ikon grup
-  // yang diubah, struktur tab collapsible milik template tidak diutak-atik.
   navMain: [
     {
       title: "Menu Utama",
@@ -130,8 +127,6 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
-  // Penanda grup aktif + buka otomatis mengikuti halaman yang dibuka.
-  // Tanpa ini semua grup mulai tertutup dan tidak ada highlight posisi.
   const navMain = data.navMain.map((item) => ({
     ...item,
     isActive: item.items.some((sub) => isHrefActive(pathname, sub.url)),

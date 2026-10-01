@@ -52,7 +52,6 @@ export default function Subs() {
     }
   };
 
-
   return (
     <>
       <section
@@ -115,7 +114,6 @@ export default function Subs() {
         </div>
       </section>
 
-      {/* Success Popup Modal */}
       {showPopup && (
         <div
           className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
@@ -125,11 +123,9 @@ export default function Subs() {
             className="relative bg-white rounded-3xl max-w-md w-full p-8 text-center shadow-2xl border border-gray-100 transform scale-100 transition-all duration-300 flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Background design elements */}
             <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[#F49D1A]/5 pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-[#F49D1A]/5 pointer-events-none" />
 
-            {/* Close Button */}
             <button
               onClick={() => setShowPopup(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100"
@@ -141,7 +137,6 @@ export default function Subs() {
               </svg>
             </button>
 
-            {/* Success Icon */}
             <div className="w-16 h-16 bg-[#F49D1A]/10 border border-[#F49D1A]/20 text-[#F49D1A] rounded-full flex items-center justify-center mb-6 shadow-xs relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F49D1A]/10 opacity-75"></span>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -150,13 +145,11 @@ export default function Subs() {
               </svg>
             </div>
 
-            {/* Content */}
             <h3 className="text-xl font-bold text-gray-900 mb-3">Selamat Bergabung di Keluarga Jelajah Memoria!</h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-6 font-medium">
               Kami telah mengirimkan email sambutan untuk Anda. Sampai jumpa di perjalanan seru berikutnya!
             </p>
 
-            {/* Action Button */}
             <button
               onClick={() => setShowPopup(false)}
               className="w-full py-3.5 bg-[#F49D1A] text-white font-semibold rounded-2xl shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] hover:shadow-[#F49D1A]/30 active:scale-98 transition-all duration-200 text-sm cursor-pointer"

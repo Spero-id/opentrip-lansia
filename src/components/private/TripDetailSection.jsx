@@ -33,7 +33,7 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
     "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
   const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
   const errorBorder = "border-red-300 focus:border-red-400 focus:ring-red-100";
-  const todayStr = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD local
+  const todayStr = new Date().toLocaleDateString("en-CA");
 
   const [showDestinationModal, setShowDestinationModal] = useState(false);
   const [destinationSearch, setDestinationSearch] = useState("");
@@ -46,7 +46,6 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
 
   return (
     <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-      {/* Header */}
       <div className="px-5 sm:px-6 pt-5 pb-4">
         <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
           <Calendar size={16} strokeWidth={1.8} color="#6B7280" className="shrink-0" />
@@ -55,9 +54,7 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
       </div>
       <div className="h-px bg-[#E5E7EB]" />
 
-      {/* Body */}
       <div className="px-5 sm:px-6 py-5 space-y-5">
-        {/* Tujuan Trip */}
         <div>
           <p className="text-[13px] font-medium text-[#374151]">
             Tujuan Trip <span className="text-[#DC2626]">*</span>
@@ -100,7 +97,6 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
             })}
           </div>
 
-          {/* Custom input */}
           {form.tripType === "custom" && (
             <div className="mt-1.5">
               <input
@@ -117,7 +113,6 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
             </div>
           )}
 
-          {/* Explorer picker — modal popup */}
           {form.tripType === "explorer" && (
             <div id="field-selectedDestinasi" className="mt-1.5">
               <div className="relative">
@@ -149,7 +144,6 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
           )}
         </div>
 
-        {/* Destination Modal */}
         {form.tripType === "explorer" && (
           <DestinationModal
             isOpen={showDestinationModal}
@@ -168,7 +162,6 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
           />
         )}
 
-        {/* Jumlah Peserta & Durasi */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <label htmlFor="field-jumlahPeserta" className="text-[13px] font-medium text-[#374151]">
@@ -267,7 +260,6 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
           </div>
         </div>
 
-        {/* Tanggal & Titik Kumpul */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <label htmlFor="field-tanggal" className="text-[13px] font-medium text-[#374151]">
@@ -334,7 +326,6 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
 
         <div className="h-px bg-[#E5E7EB]" />
 
-        {/* Kebutuhan Transportasi */}
         <div id="field-transportNeeds">
           <p className="text-[13px] font-medium text-[#374151]">
             Kebutuhan Transportasi <span className="text-[#DC2626]">*</span>

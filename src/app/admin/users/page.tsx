@@ -62,7 +62,6 @@ export default function AdminUsersPage() {
         setUsers(data);
       }
     } catch {
-      // ignore
     } finally {
       setLoading(false);
     }
@@ -92,7 +91,6 @@ export default function AdminUsersPage() {
       setModalOpen(false);
       fetchUsers();
     } catch {
-      // ignore
     } finally {
       setSaving(false);
     }
@@ -106,7 +104,6 @@ export default function AdminUsersPage() {
       setDeletingId(null);
       fetchUsers();
     } catch {
-      // ignore
     }
   }
 
@@ -131,7 +128,6 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen User Terdaftar</h1>
@@ -139,7 +135,6 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0D238E] flex items-center justify-center font-bold">
@@ -182,7 +177,6 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
       <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-4 justify-between items-center">
         <div className="relative w-full sm:w-72">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -210,7 +204,6 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Users Table */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
@@ -246,9 +239,6 @@ export default function AdminUsersPage() {
                     <tr key={u.id} className="hover:bg-slate-50/60 transition">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          {/* Inisial di belakang sebagai fallback; kalau foto gagal
-                              dimuat, onError menyembunyikan <img> sehingga inisial
-                              yang tampil — bukan alt text / ikon gambar rusak. */}
                           <div className="relative w-9 h-9 shrink-0 rounded-full border border-[#0D238E]/20 bg-[#0D238E]/10">
                             <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[#0D238E]">
                               {initial}
@@ -343,7 +333,6 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Edit User Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Edit Pengguna" size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -421,7 +410,6 @@ export default function AdminUsersPage() {
         </form>
       </Modal>
 
-      {/* Delete User Confirmation */}
       <ConfirmDelete
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}

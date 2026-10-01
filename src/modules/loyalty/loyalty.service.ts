@@ -11,14 +11,6 @@ function buildExpiry(): Date {
 }
 
 export const loyaltyService = {
-  /**
-   * Beri bonus referral. Wajib dipanggil dari dalam `withTransaction` —
-   * `tx` diteruskan ke repository supaya ledger dan saldo ikut rollback
-   * bersama kalau langkah berikutnya (mis. menandai referral converted) gagal.
-   *
-   * `points` dihitung pemanggil (site settings) supaya pembacaan konfigurasi
-   * dilakukan SEBELUM transaksi dimulai.
-   */
   async creditReferralBonus(tx: Tx, referrerId: UUID, referredUserId: UUID, points: number) {
     await loyaltyRepository.createTransaction(
       {

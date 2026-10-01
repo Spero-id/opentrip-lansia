@@ -8,7 +8,6 @@ import { AppError, ConflictError, UnauthorizedError, ValidationError } from "@/s
 type RequestStatus = "draft" | "submitted" | "reviewed" | "approved" | "rejected" | "revision";
 type ProposalStatus = "pending" | "accepted" | "rejected" | "revised";
 
-/** Valid request status transitions keyed by [currentStatus][action] */
 const REQUEST_TRANSITIONS: Record<string, Record<string, RequestStatus>> = {
   submitted: { review: "reviewed", propose: "reviewed", reject: "rejected" },
   reviewed: { approve: "approved", reject: "rejected", request_revision: "revision" },
@@ -40,7 +39,6 @@ export const privateTripService = {
       status: "submitted",
       submittedAt: new Date(),
     });
-    // MVP trigger: request private trip
     void (async () => {
       try {
         const [u] = await db.select({ name: users.name, email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
@@ -115,7 +113,7 @@ export const privateTripService = {
 
     const prop = await privateTripRepository.findProposalById(proposalId);
     if (!prop) throw new AppError("Proposal not found", "NOT_FOUND", 404);
-    if (prop.status !== "pending" && prop.status !== "revised") throw new ConflictError("Proposal is not actionable");
+    if (prop.status !== "pending" && prop.status !== "revised") throw new ConflictError("Proposal tidak dapat diproses");
 
     const newPropStatus = isValidTransition(PROPOSAL_TRANSITIONS, prop.status, action);
     if (!newPropStatus) throw new ValidationError(`Cannot "${action}" proposal with status "${prop.status}"`);
@@ -124,7 +122,6 @@ export const privateTripService = {
       await privateTripRepository.updateStatus(requestId, newReqStatus);
     }
 
-    // Append catatan revisi ke specialRequirements agar admin bisa baca
     if (action === "revise" && revisionNote) {
       const timestamp = new Date().toLocaleString("id-ID", {
         day: "numeric", month: "short", year: "numeric",

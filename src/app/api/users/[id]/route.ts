@@ -15,7 +15,6 @@ export async function PUT(
     const { id } = await params;
     const body = await req.json();
 
-    // Anti-lockout: admin tidak bisa mengubah role dirinya sendiri
     const session = await auth.api.getSession({ headers: req.headers });
     if (
       session?.user &&
@@ -47,7 +46,6 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    // Anti-lockout: admin tidak bisa menghapus akun sendiri
     const session = await auth.api.getSession({ headers: req.headers });
     if (session?.user && session.user.id === id) {
       return NextResponse.json(

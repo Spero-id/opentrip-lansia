@@ -14,8 +14,6 @@ export const reviews = pgTable("reviews", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Junction review ↔ media: wajib punya composite PK (aturan
-// docs/database/PANDUAN_DATABASE.md) supaya baris duplikat tidak mungkin masuk.
 export const reviewMedia = pgTable("review_media", {
   reviewId: uuid("review_id").notNull().references(() => reviews.id, { onDelete: "cascade" }),
   mediaId: uuid("media_id").notNull(),

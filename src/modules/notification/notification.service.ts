@@ -38,7 +38,6 @@ export function getNotificationLink(type: string, link?: string | null): string 
 }
 
 export const notificationService = {
-  // 1. Bukti pembayaran diupload -> ke halaman pesanan (verifikasi)
   async onPaymentProofUploaded(opts: { bookingCode: string; bookingId: string; userName: string }) {
     return notifyAdmins({
       type: NOTIFICATION_TYPES.PAYMENT_PROOF,
@@ -48,7 +47,6 @@ export const notificationService = {
     });
   },
 
-  // 2. Request Private Trip baru -> ke detail request
   async onPrivateTripRequested(opts: { requestId: string; userName: string }) {
     return notifyAdmins({
       type: NOTIFICATION_TYPES.PRIVATE_TRIP_REQUEST,
@@ -58,7 +56,6 @@ export const notificationService = {
     });
   },
 
-  // 3. Penambahan peserta baru -> ke halaman pesanan
   async onParticipantAdded(opts: { bookingCode: string; bookingId?: string; participantName: string; tripTitle?: string }) {
     return notifyAdmins({
       type: NOTIFICATION_TYPES.PARTICIPANT_ADDED,

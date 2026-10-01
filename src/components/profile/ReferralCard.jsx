@@ -12,7 +12,6 @@ export default function ReferralCard({ referralCode, stats }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for older browsers
       const textArea = document.createElement("textarea");
       textArea.value = referralCode;
       document.body.appendChild(textArea);
@@ -67,7 +66,6 @@ export default function ReferralCard({ referralCode, stats }) {
         </div>
       </div>
 
-      {/* Referral Code Display */}
       <div className="mt-4 flex items-center gap-3 p-4 rounded-xl bg-[#FEF6E7] border border-[#F3E2C0]">
         <div className="flex-1">
           <p className="text-2xl font-mono font-bold text-[#c47d12] tracking-wider">
@@ -96,7 +94,6 @@ export default function ReferralCard({ referralCode, stats }) {
         </button>
       </div>
 
-      {/* Stats */}
       {stats && (
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">

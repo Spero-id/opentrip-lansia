@@ -62,13 +62,10 @@ export default function ReviewsSection({ tripId }) {
   }
 
   const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-  // Kata "terverifikasi" hanya muncul kalau SEMUA ulasan memang terverifikasi
-  // (booking completed milik user sendiri) — kalau tidak, jangan mengklaim.
   const allVerified = reviews.every((r) => r.isVerifiedPurchase);
 
   return (
     <div className="space-y-5">
-      {/* Summary */}
       <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
         <div className="flex items-baseline gap-1">
           <span className="text-3xl font-bold text-gray-900">{Number(avgRating).toFixed(1)}</span>
@@ -82,7 +79,6 @@ export default function ReviewsSection({ tripId }) {
         </div>
       </div>
 
-      {/* Review cards */}
       <div className="space-y-4">
         {reviews.map((r) => (
           <div key={r.id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs">

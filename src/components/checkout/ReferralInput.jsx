@@ -62,8 +62,6 @@ export default function ReferralInput({
             </button>
           </div>
 
-          {/* Kode yang diketik tapi belum ditekan "Pakai" tidak ikut terkirim
-              ke server — beri tahu, jangan biarkan pengguna mengira sudah terpakai. */}
           {referralCode.trim() && (
             <p className="text-[11px] text-amber-600">
               Tekan <span className="font-semibold">Pakai</span> agar kode ini ikut

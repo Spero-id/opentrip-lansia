@@ -42,7 +42,6 @@ export async function POST(req: NextRequest) {
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, safeName), buffer);
 
-    // Create media record in database
     const [mediaRecord] = await db
       .insert(media)
       .values({

@@ -88,14 +88,12 @@ export default function AdminGroupGalleryPage() {
     setLoading(true);
     setError(null);
     try {
-      // Fetch trip info
       const tripRes = await fetch(`/api/trips/${tripId}`);
       if (tripRes.ok) {
         const tripData = await tripRes.json();
         setTrip({ id: tripData.id, title: tripData.title });
       }
 
-      // Fetch group info
       const groupsRes = await fetch(`/api/trips/${tripId}/groups`);
       if (groupsRes.ok) {
         const groupsData = await groupsRes.json();
@@ -103,14 +101,12 @@ export default function AdminGroupGalleryPage() {
         if (foundGroup) setGroup(foundGroup);
       }
 
-      // Fetch gallery for this group
       const galleryRes = await fetch(`/api/trips/${tripId}/groups/${groupId}/gallery`);
       if (galleryRes.ok) {
         const galleryData = await galleryRes.json();
         setGallery(galleryData.gallery);
         setMedia(galleryData.media || []);
       } else if (galleryRes.status === 404) {
-        // No gallery yet, that's OK
         setGallery(null);
         setMedia([]);
       }
@@ -133,7 +129,6 @@ export default function AdminGroupGalleryPage() {
     setUploading(true);
 
     try {
-      // First, create gallery if it doesn't exist
       let galleryId = gallery?.id;
       if (!galleryId) {
         const createRes = await fetch(`/api/trips/${tripId}/groups/${groupId}/gallery`, {
@@ -152,7 +147,6 @@ export default function AdminGroupGalleryPage() {
         setGallery(createData.gallery);
       }
 
-      // Upload each file
       for (const file of selectedFiles) {
         const formData = new FormData();
         formData.append("file", file);
@@ -169,7 +163,6 @@ export default function AdminGroupGalleryPage() {
 
         const uploadData = await uploadRes.json();
 
-        // Add media to gallery
         await fetch(`/api/trips/${tripId}/groups/${groupId}/gallery/media`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -179,7 +172,6 @@ export default function AdminGroupGalleryPage() {
         });
       }
 
-      // Refresh data
       await fetchData();
       setUploadOpen(false);
       setSelectedFiles([]);
@@ -243,7 +235,6 @@ export default function AdminGroupGalleryPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div className="flex items-start gap-3">
           <button
@@ -270,7 +261,6 @@ export default function AdminGroupGalleryPage() {
         </button>
       </div>
 
-      {/* Gallery Grid */}
       {media.length === 0 ? (
         <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
           <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
@@ -307,7 +297,6 @@ export default function AdminGroupGalleryPage() {
                 </div>
               )}
 
-              {/* Overlay actions */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                 <div className="flex items-center gap-2">
                   <button
@@ -323,7 +312,6 @@ export default function AdminGroupGalleryPage() {
         </div>
       )}
 
-      {/* Upload Modal */}
       {uploadOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => !uploading && setUploadOpen(false)} />
@@ -405,7 +393,6 @@ export default function AdminGroupGalleryPage() {
           </div>
         </div>
       )}
-      {/* Delete Photo Confirmation */}
       <ConfirmAction
         open={!!deleteMediaId}
         onClose={() => setDeleteMediaId(null)}

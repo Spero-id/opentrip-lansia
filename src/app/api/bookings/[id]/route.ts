@@ -20,7 +20,6 @@ export async function GET(
 
     const { id } = await params;
 
-    // Fetch booking with participants and payments
     const [booking] = await db
       .select()
       .from(bookings)
@@ -38,13 +37,11 @@ export async function GET(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Fetch participants
     const participants = await db
       .select()
       .from(bookingParticipants)
       .where(eq(bookingParticipants.bookingId, id));
 
-    // Fetch health declarations for participants
     const healthDecls = [];
     for (const p of participants) {
       const [health] = await db
@@ -55,7 +52,6 @@ export async function GET(
       if (health) healthDecls.push(health);
     }
 
-    // Fetch payments
     const paymentRecords = await db
       .select()
       .from(payments)

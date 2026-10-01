@@ -48,7 +48,6 @@ export default function DestinationModal({
         style={{ maxHeight: "85vh" }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="px-5 sm:px-6 pt-5 pb-4 border-b border-[#E5E7EB]">
           <div className="flex items-center justify-between">
             <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
@@ -65,7 +64,6 @@ export default function DestinationModal({
           </div>
         </div>
 
-        {/* Search */}
         <div className="px-5 sm:px-6 pt-5 pb-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280]" size={16} />
@@ -79,7 +77,6 @@ export default function DestinationModal({
           </div>
         </div>
 
-        {/* Destinations list */}
         <div
           className="flex-1 overflow-y-auto px-5 sm:px-6 pt-3 pb-5"
           style={{ scrollbarWidth: "thin", scrollbarColor: "#e5e7eb transparent" }}

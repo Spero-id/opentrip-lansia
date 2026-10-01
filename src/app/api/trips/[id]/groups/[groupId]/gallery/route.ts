@@ -10,13 +10,11 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; groupId: string }> }
 ) {
-  // Galeri keberangkatan dipakai My Trips (pengguna login) & admin.
   const denied = await requireSession(req);
   if (denied) return denied;
   try {
     const { groupId } = await params;
 
-    // Find gallery for this group
     const [gallery] = await db
       .select()
       .from(tripGalleries)
@@ -27,7 +25,6 @@ export async function GET(
       return NextResponse.json({ gallery: null, media: [] });
     }
 
-    // Get media for this gallery with URL from media table
     const mediaItems = await db
       .select({
         id: galleryMedia.id,
@@ -60,7 +57,6 @@ export async function POST(
     const { id: tripId, groupId } = await params;
     const body = await req.json();
 
-    // Check if gallery already exists for this group
     const [existing] = await db
       .select()
       .from(tripGalleries)
@@ -71,7 +67,6 @@ export async function POST(
       return NextResponse.json(existing);
     }
 
-    // Create new gallery
     const [gallery] = await db
       .insert(tripGalleries)
       .values({

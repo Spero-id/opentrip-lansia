@@ -35,8 +35,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(15000);
   const { data: session } = useSession();
 
-  // Foto profil admin: lingkaran saja, tanpa nama/email. Diambil dari
-  // session (foto asli kalau ada, kalau tidak inisial nama).
   const adminName = session?.user?.name?.trim() || "Admin";
   const adminImage = session?.user?.image || null;
   const adminInitials =
@@ -55,7 +53,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     router.push(href);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
@@ -77,7 +74,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         return <ShoppingCart className="size-4 text-muted-foreground" />;
       case "participant_added":
         return <Check className="size-4 text-muted-foreground" />;
-      // legacy fallback
       case "new_booking":
         return <ShoppingCart className="size-4 text-muted-foreground" />;
       case "booking_confirmed":
@@ -113,8 +109,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   return (
     <SidebarProvider>
       <AppSidebar />
-      {/* min-w-0: item flex default min-width:auto sehingga ikut melebar
-          mengikuti tabel — inilah yang dulu membuat header ikut bergeser. */}
       <SidebarInset className="bg-slate-100/70 min-w-0">
         <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white px-4 sm:px-6">
           <div className="flex items-center gap-2 min-w-0">
@@ -147,10 +141,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Notification Bell */}
             <div className="relative" ref={notificationRef}>
-              {/* Tombol lonceng dibuat sama persis seperti SidebarTrigger
-                  (ghost icon-sm) — bedanya hanya ikon Bell + badge. */}
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -167,10 +158,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 )}
               </Button>
 
-              {/* Notification Dropdown */}
               {showNotifications && (
                 <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-popover text-popover-foreground rounded-md shadow-md border overflow-hidden z-50">
-                  {/* Header */}
                   <div className="px-3 py-2 flex items-center justify-between">
                     <h3 className="text-sm font-semibold">Notifikasi</h3>
                     {unreadCount > 0 && (
@@ -184,9 +173,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   </div>
                   <div className="h-px bg-border" />
 
-                  {/* Notification List */}
-                  {/* Beri napas p-1 seperti DropdownMenuContent shadcn agar
-                      baris tidak menempel ke tepi kontainer. */}
                   <div className="max-h-[400px] overflow-y-auto p-1">
                     {notifications.length === 0 ? (
                       <div className="px-4 py-8 text-center">
@@ -236,7 +222,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     )}
                   </div>
 
-                  {/* Footer */}
                   {notifications.length > 0 && (
                     <>
                       <div className="h-px bg-border" />
@@ -257,7 +242,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
             <div className="h-6 w-[1px] bg-slate-200" />
 
-            {/* Avatar + Dropdown profil — panelnya persis seperti Navbar utama */}
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setProfileOpen((v) => !v)}
@@ -300,9 +284,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                       <User className="w-4 h-4 shrink-0" />
                       Profil Saya
                     </Link>
-                    {/* Tanpa cek role seperti di Navbar: layout admin ini sudah
-                        dijamin requireAdminLayout, jadi yang tampil di sini
-                        pasti admin. */}
                     <Link
                       href="/admin"
                       onClick={() => setProfileOpen(false)}
@@ -342,11 +323,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        {/* Content View Container */}
-        {/* min-w-0 + overflow-x-clip: konten tidak boleh melebarkan halaman.
-            Tabel lebar tetap bisa di-scroll lewat pembungkus overflow-x-auto
-            milik masing-masing halaman; header selalu selebar viewport
-            sehingga profil & notifikasi selalu terlihat. */}
         <div className="p-4 sm:p-6 lg:p-8 flex-1 min-w-0 overflow-x-clip">{children}</div>
       </SidebarInset>
     </SidebarProvider>

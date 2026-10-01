@@ -21,7 +21,6 @@ export async function POST(
       return NextResponse.json({ error: "mediaId wajib diisi" }, { status: 400 });
     }
 
-    // Find gallery for this group
     const [gallery] = await db
       .select()
       .from(tripGalleries)
@@ -32,7 +31,6 @@ export async function POST(
       return NextResponse.json({ error: "Galeri tidak ditemukan" }, { status: 404 });
     }
 
-    // Get max sort order
     const [maxSort] = await db
       .select({ maxSort: galleryMedia.sortOrder })
       .from(galleryMedia)
@@ -42,7 +40,6 @@ export async function POST(
 
     const nextSort = (maxSort?.maxSort ?? -1) + 1;
 
-    // Add media to gallery
     const [media] = await db
       .insert(galleryMedia)
       .values({

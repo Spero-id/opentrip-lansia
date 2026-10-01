@@ -86,10 +86,6 @@ export default function AdminPromotions() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Normalisasi & validasi sebelum disimpan: kolom `value` varchar bebas
-    // diisi (mis. "70%"), dan checkout menghitung diskon dari nilai ini.
-    // Nilai yang tidak terbaca membuat UI mengirim total tanpa diskon sementara
-    // server memotong harga -> 400 "Total pembayaran tidak sesuai."
     const payload: PromotionForm = {
       ...form,
       code: form.code.trim().toUpperCase(),

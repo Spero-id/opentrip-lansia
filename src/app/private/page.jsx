@@ -16,20 +16,14 @@ import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { initialForm } from "@/components/private/helpers/initialState";
 import { validate } from "@/components/private/helpers/validation";
 
-/**
- * Builds the `destinationPreferences` text field from all form fields that
- * have no dedicated column in private_trip_requests.
- */
 function buildDestinationPreferences(form) {
   const lines = [];
 
-  // Booker info
   lines.push(`[Pemesan]`);
   lines.push(`Nama: ${form.nama}`);
   if (form.phone) lines.push(`Ponsel: ${form.phone}`);
   if (form.email) lines.push(`Email: ${form.email}`);
 
-  // Trip details
   lines.push(`[Detail Perjalanan]`);
   lines.push(`Tipe Trip: ${form.tripType === "custom" ? "Destinasi Baru (Custom)" : "Modifikasi Paket Web"}`);
   if (form.tripType === "custom" && form.customTripName) lines.push(`Tujuan: ${form.customTripName}`);
@@ -44,7 +38,6 @@ function buildDestinationPreferences(form) {
     lines.push(`Transportasi: ${map[form.transportNeeds] || form.transportNeeds}`);
   }
 
-  // Fasilitas & Preferensi
   lines.push(`[Fasilitas & Budget]`);
   if (form.standarPenginapan) {
     const sm = { budget: "Budget / Homestay", bintang3: "Hotel Bintang 3", bintang4: "Hotel Bintang 4", bintang5: "Hotel Bintang 5", villa: "Villa / Resort" };
@@ -58,7 +51,6 @@ function buildDestinationPreferences(form) {
   if (form.budget) lines.push(`Estimasi Budget: Rp ${form.budget} /orang`);
   if (form.metodeKontak) lines.push(`Metode Tindak Lanjut: ${form.metodeKontak === "whatsapp" ? "Hubungi via WhatsApp" : "Kirim ke Email"}`);
 
-  // Booking source
   lines.push(`[Asal Pemesanan]`);
   lines.push(`Tipe: ${form.tripFrom}`);
   if (form.tripFrom !== "Individu" && form.namaInstitusi)
@@ -67,10 +59,6 @@ function buildDestinationPreferences(form) {
   return lines.join("\n");
 }
 
-/**
- * Maps the local form state to the payload expected by
- * POST /api/private-trips  (privateTripController.create)
- */
 function buildPayload(form, budgetValue) {
   const title =
     form.tripType === "custom"
@@ -103,11 +91,8 @@ export default function PrivateTripPage() {
   const [destinations, setDestinations] = useState([]);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load draft from sessionStorage on mount (avoids hydration mismatch)
-  // Also migrates/cleans legacy localStorage key if present
   useEffect(() => {
     try {
-      // Clean up legacy localStorage draft from previous version
       try { localStorage.removeItem(STORAGE_KEY); } catch {}
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -126,7 +111,6 @@ export default function PrivateTripPage() {
     setIsHydrated(true);
   }, []);
 
-  // Persist form to sessionStorage on every change (after hydration)
   useEffect(() => {
     if (!isHydrated) return;
     try {
@@ -167,14 +151,12 @@ export default function PrivateTripPage() {
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const errs = validate(form);
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
 
-      // Scroll to the first error field in document order
       const fieldOrder = [
         "namaInstitusi",
         "nama",
@@ -195,7 +177,6 @@ export default function PrivateTripPage() {
         const el = document.getElementById(`field-${firstErrorKey}`);
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "center" });
-          // Focus if it's an actual input/select/textarea
           const focusable = el.matches("input,select,textarea") ? el : el.querySelector("input,select,textarea");
           if (focusable) setTimeout(() => focusable.focus({ preventScroll: true }), 350);
         }
@@ -223,7 +204,7 @@ export default function PrivateTripPage() {
         const data = await res.json().catch(() => ({}));
         const message =
           res.status === 401
-            ? "Anda harus login untuk mengirim request."
+            ? "Anda harus login untuk mengirim permintaan."
             : data?.error || data?.errors?.[0]?.message || "Terjadi kesalahan. Silakan coba lagi.";
         setSubmitError(message);
         return;

@@ -22,7 +22,6 @@ export default function BlogCoverUploader({ value, onChange }: BlogCoverUploader
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Gagal mengunggah gambar.");
-      // Hapus file sampul lama jika diganti
       if (value && value.startsWith("/uploads/")) {
         fetch(`/api/upload?url=${encodeURIComponent(value)}`, { method: "DELETE" }).catch(() => {});
       }

@@ -12,22 +12,20 @@ export async function GET(
   const { path: segments } = await params;
   const filename = segments.join("/");
 
-  // Prevent path traversal
   if (filename.includes("..")) {
-    return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+    return NextResponse.json({ error: "Path tidak valid" }, { status: 400 });
   }
 
   const filePath = path.join(UPLOADS_DIR, filename);
 
-  // Ensure the resolved path is within UPLOADS_DIR
   if (!filePath.startsWith(UPLOADS_DIR)) {
-    return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+    return NextResponse.json({ error: "Path tidak valid" }, { status: 400 });
   }
 
   try {
     await stat(filePath);
   } catch {
-    return NextResponse.json({ error: "File not found" }, { status: 404 });
+    return NextResponse.json({ error: "File tidak ditemukan" }, { status: 404 });
   }
 
   const buffer = await readFile(filePath);

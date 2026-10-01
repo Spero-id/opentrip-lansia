@@ -1,14 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Dikonfigurasi untuk mesin rendah (8GB / Ryzen 5 2500U):
-//  - 1 worker, tanpa paralel, headless (pakai chromium_headless_shell)
-//  - trace & video OFF (artefak paling boras RAM/disk)
-//  - html reporter tidak membuka browser otomatis
-//  - reuseExistingServer: true -> boleh jalankan `npm run dev` sendiri sekali,
-//    Playwright tidak menduplikasi proses Next (hemat ~500MB-1GB)
-// Jalankan satu spec saja jika RAM sempit, mis:
-//   npm run test:e2e:smoke   (hanya e2e/public)
-//   npx playwright test e2e/public/checkout.spec.ts --reporter=list
+// Tuned for an 8GB laptop: 1 worker, headless shell, trace/video off, reuse existing dev server (~0.5-1GB saved).
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,

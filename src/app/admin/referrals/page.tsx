@@ -53,7 +53,6 @@ export default function AdminReferralHistoryPage() {
     return () => { cancelled = true; };
   }, []);
 
-  // Load referral bonus setting
   useEffect(() => {
     let cancelled = false;
     async function loadSettings() {
@@ -65,7 +64,6 @@ export default function AdminReferralHistoryPage() {
           setBonusPointsInput(String(data.referralBonusPoints));
         }
       } catch {
-        // keep default
       }
     }
     loadSettings();
@@ -89,7 +87,6 @@ export default function AdminReferralHistoryPage() {
         setTimeout(() => setBonusSaved(false), 2000);
       }
     } catch {
-      // ignore
     } finally {
       setSavingBonus(false);
     }
@@ -108,14 +105,12 @@ export default function AdminReferralHistoryPage() {
     );
   });
 
-  // Stats
   const totalReferrals = rows.length;
   const converted = rows.filter((r) => r.status === "converted" || r.status === "paid").length;
   const pending = rows.filter((r) => r.status === "pending").length;
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
@@ -127,7 +122,6 @@ export default function AdminReferralHistoryPage() {
         </div>
       </div>
 
-      {/* Settings */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-5">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="w-4 h-4 text-slate-500" />
@@ -166,7 +160,6 @@ export default function AdminReferralHistoryPage() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
           <p className="text-xs font-semibold text-slate-500 uppercase">Total Referral</p>
@@ -182,7 +175,6 @@ export default function AdminReferralHistoryPage() {
         </div>
       </div>
 
-      {/* Search */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -196,7 +188,6 @@ export default function AdminReferralHistoryPage() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">

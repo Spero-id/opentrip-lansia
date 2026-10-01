@@ -178,7 +178,6 @@ export default function AdminPesanan() {
         setFeedbackText(parseAdminMessage(data.notes) || "");
       }
     } catch {
-      // silently fail, will show basic data from selected
     } finally {
       setDetailLoading(false);
     }
@@ -514,7 +513,6 @@ export default function AdminPesanan() {
               </div>
             )}
 
-            {/* Feedback / Pesan ke Pengguna */}
             <div className="border-t border-slate-100 pt-4">
               <p className="text-slate-500 font-medium mb-1">
                 Feedback / Pesan ke Pengguna

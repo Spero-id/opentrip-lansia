@@ -11,7 +11,6 @@ interface Notification {
   createdAt: string;
   readAt: string | null;
   link?: string | null;
-  // legacy optional fields for backward compat with old UI
   bookingCode?: string | null;
   status?: string | null;
   amount?: string | null;
@@ -73,7 +72,6 @@ export function useNotifications(pollInterval = 30000) {
   }, []);
 
   const markAsRead = useCallback(async (notificationId: string) => {
-    // optimistic
     setNotifications((prev) => prev.map((n) => (n.id === notificationId ? { ...n, isRead: true, readAt: new Date().toISOString() } : n)));
     setUnreadCount((prev) => Math.max(0, prev - 1));
     try {
@@ -84,7 +82,6 @@ export function useNotifications(pollInterval = 30000) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
     } catch (e) {
       console.error("markAsRead failed", e);
-      // rollback
       await fetchNotifications(false);
     }
   }, [fetchNotifications]);
@@ -105,7 +102,6 @@ export function useNotifications(pollInterval = 30000) {
   }, [fetchNotifications]);
 
   const clearAll = useCallback(() => {
-    // legacy: no delete API, alias to markAllAsRead locally
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true, readAt: new Date().toISOString() })));
     setUnreadCount(0);
     void fetch(`/api/admin/notifications/read-all`, { method: "POST", credentials: "include" }).catch(() => {});
@@ -120,7 +116,6 @@ export function useNotifications(pollInterval = 30000) {
 
   useEffect(() => {
     if (typeof document !== "undefined" && document.visibilityState === "hidden") {
-      // don't poll when hidden; resume on visible
     }
     const id = setInterval(() => {
       if (document.visibilityState === "visible") fetchNotifications(false);

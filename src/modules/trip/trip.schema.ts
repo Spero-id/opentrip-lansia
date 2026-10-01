@@ -13,7 +13,6 @@ export const trips = pgTable("trips", {
   sourceRequestId: uuid("source_request_id"),
   maxParticipants: integer("max_participants"),
   isFeatured: boolean("is_featured").default(false),
-  // Destination fields (merged from destinations table)
   categoryId: uuid("category_id").references(() => destinationCategories.id),
   location: text("location"),
   province: text("province"),

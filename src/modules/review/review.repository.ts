@@ -13,15 +13,11 @@ export interface ReviewWithDetails {
   status: string;
   isFeatured: boolean;
   createdAt: Date;
-  // User info
   userName: string | null;
   userEmail: string | null;
-  // Trip info
   tripTitle: string | null;
-  // Group/Departure info
   groupStartDate: string | null;
   groupEndDate: string | null;
-  // Booking info
   bookingCode: string | null;
 }
 
@@ -47,12 +43,6 @@ export interface IReviewRepository {
   findByUserId(userId: string): Promise<(typeof reviews.$inferSelect)[]>;
   update(id: UUID, data: Partial<typeof reviews.$inferInsert>): Promise<void>;
   delete(id: UUID): Promise<void>;
-  /**
-   * Sinkronkan trips.review_count & trips.rating dengan ulasan approved.
-   * Dipanggil setiap kali status review berubah (approve/reject) atau review
-   * dihapus — kalau tidak, kedua kolom itu tetap basi dan UI menampilkan
-   * "(0 ulasan)" padahal ada ulasan.
-   */
   recomputeTripStats(tripId: UUID): Promise<void>;
 }
 
@@ -78,7 +68,6 @@ async function fetchApproved(tripId?: string): Promise<PublicReview[]> {
 
   if (rows.length === 0) return [];
 
-  // Batch: 2 query untuk seluruh baris, bukan 2 query tiap baris (N+1)
   const userIds = [...new Set(rows.map((r) => r.userId))];
   const tripIds = [...new Set(rows.map((r) => r.tripId))];
 
@@ -130,7 +119,6 @@ export const reviewRepository: IReviewRepository = {
 
     if (data.length === 0) return [];
 
-    // Batch: 4 query untuk seluruh baris, bukan 4 query tiap baris (N+1)
     const userIds = [...new Set(data.map((r) => r.userId))];
     const tripIds = [...new Set(data.map((r) => r.tripId))];
     const departureIds = [

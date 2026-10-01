@@ -1,17 +1,5 @@
 import { parseMoney, parsePromoValue } from "./promo-value";
 
-/**
- * Satu-satunya tempat diskon promo dihitung.
- *
- * Dipakai oleh:
- *  - client  : src/lib/hooks/useCheckout.js (PriceBreakdown + payload /api/checkout)
- *  - server  : src/app/api/checkout/route.ts (authoritative)
- *  - service : src/modules/promotion/promotion.service.ts
- *
- * Dulu ketiganya memakai rumus & parser berbeda (Number / toNumber / parseInt),
- * sehingga total yang dikirim UI bisa beda dengan total yang diharapkan server
- * -> 400 "Total pembayaran tidak sesuai."
- */
 export interface PromoLike {
   type: string;
   value: string | number;

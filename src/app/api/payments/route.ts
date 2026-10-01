@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
       .set({ status: "pending", updatedAt: new Date() })
       .where(eq(bookings.id, bookingId));
 
-    // MVP trigger: bukti pembayaran -> /admin/pesanan?highlight=CODE
     void notificationService
       .onPaymentProofUploaded({
         bookingCode: booking.bookingCode,

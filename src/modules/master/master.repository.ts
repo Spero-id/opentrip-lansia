@@ -40,7 +40,6 @@ export const masterRepository = {
     return db.select().from(vendors).orderBy(desc(vendors.createdAt));
   },
 
-  // HORECA
   async getHorecaById(id: UUID) {
     const [item] = await db.select().from(horeca).where(eq(horeca.id, id)).limit(1);
     return item ?? null;
@@ -60,7 +59,6 @@ export const masterRepository = {
     await db.delete(horeca).where(eq(horeca.id, id));
   },
 
-  // Vendors
   async getVendorById(id: UUID) {
     const [item] = await db.select().from(vendors).where(eq(vendors.id, id)).limit(1);
     return item ?? null;

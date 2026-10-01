@@ -27,9 +27,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { agentId, bookingId, amount, status } = body;
 
-    // Whitelist + validasi — tanpa ini, body apa pun masuk ke insert()
-    // (mass assignment), dan kesalahan isian baru ketahuan sebagai
-    // error generik dari database.
     if (typeof agentId !== "string" || !agentId.trim()) {
       return NextResponse.json({ error: "agentId wajib diisi" }, { status: 400 });
     }

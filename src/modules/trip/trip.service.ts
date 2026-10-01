@@ -129,7 +129,6 @@ export const tripService = {
     return tripRepository.delete(id);
   },
 
-  // Group Trip Management
   async getTripGroups(tripId: UUID) {
     const trip = await tripRepository.findById(tripId);
     if (!trip) throw new NotFoundError("Trip");
@@ -165,7 +164,6 @@ export const tripService = {
     const group = await tripRepository.findGroupById(groupId);
     if (!group) throw new NotFoundError("Grup");
 
-    // Check if there are active bookings
     const bookingCount = await tripRepository.countBookingsByDepartureId(groupId);
     if (bookingCount > 0) {
       throw new ConflictError("Tidak bisa menghapus grup yang sudah memiliki booking aktif");
@@ -183,7 +181,6 @@ export const tripService = {
 
     if (group.tripId !== tripId) throw new ValidationError("Grup tidak termasuk dalam trip ini");
 
-    // Only scheduled or confirmed groups can be activated
     if (!["scheduled", "confirmed"].includes(group.status)) {
       throw new ValidationError("Hanya grup dengan status scheduled atau confirmed yang bisa diaktifkan");
     }

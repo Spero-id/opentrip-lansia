@@ -1,21 +1,3 @@
-/**
- * Pemindai proteksi auth untuk semua route handler di src/app/api (route.ts).
- *
- * Dipakai dua arah:
- *  - `scripts/api-auth-audit.ts` -> mencetak tabel audit (inventaris)
- *  - test `src/__tests__/api-auth-audit.test.ts` -> mengunci supaya endpoint
- *    baru tanpa proteksi gagal di CI (regresi dari temuan "57 endpoint public")
- *
- * Heuristik: sebuah handler dianggap TERLINDUNGI jika
- *  1. tubuhnya memanggil requireAdmin/requireSession/requireRole/
- *     auth.api.getSession, ATAU
- *  2. route.ts hanya mendaftar ulang export dari controller
- *     (`export { GET } from "..."`) DAN fungsi itu di modulnya punya cek
- *     session (lihat DELEGATED_GUARD di api-policy.ts).
- *
- * Tingkat akses yang DISYARATKAN ada di api-policy.ts; test membandingkan
- * `level` (hasil pemindaian) dengan `apiAccess()` (kebijakan).
- */
 import fs from "node:fs";
 import path from "node:path";
 import { apiAccess, isPublicApi, DELEGATED_GUARD, type ApiAccess } from "./api-policy";
@@ -24,16 +6,12 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export type GuardLevel = ApiAccess;
 
 export interface RouteAudit {
-  /** Contoh: GET /api/trips/[id] */
   route: string;
   file: string;
   method: HttpMethod;
   guarded: boolean;
-  /** Tingkat proteksi yang terdeteksi di tubuh handler */
   level: GuardLevel;
-  /** Tingkat proteksi yang disyaratkan kebijakan (api-policy.ts) */
   required: ApiAccess;
-  /** Baris deklarasi handler, untuk laporan */
   line: number;
 }
 
@@ -53,7 +31,6 @@ export function routePathFromFile(file: string): string {
   return dir.startsWith("/") ? dir : `/${dir}`;
 }
 
-/** Resolve path modul: "@/modules/x" maupun "src/modules/x". */
 function resolveModule(spec: string, rootDir: string): string | null {
   const base = spec.startsWith("@/")
     ? path.join(rootDir, "src", spec.slice(2))
@@ -66,7 +43,6 @@ function resolveModule(spec: string, rootDir: string): string | null {
   return null;
 }
 
-/** Cari fungsi ber-export di modul target, lalu ukur tubuhnya. */
 function levelOfExportedHandler(moduleFile: string, method: string): GuardLevel | null {
   const src = fs.readFileSync(moduleFile, "utf8");
   const re = new RegExp(HANDLER_RE.source, "g");
@@ -101,7 +77,6 @@ export function auditRoutes(rootDir = process.cwd()): RouteAudit[] {
       const route = `${method} ${routePath}`;
       let guarded = guardedInBody;
       let level = bodyLevel;
-      // Proteksi ada di controller (route.ts cuma meneruskan)
       if (!guarded) {
         const spec = DELEGATED_GUARD[route];
         if (spec) {
@@ -109,9 +84,6 @@ export function auditRoutes(rootDir = process.cwd()): RouteAudit[] {
           const modSrc = modFile ? fs.readFileSync(modFile, "utf8") : "";
           if (GUARD_RE.test(modSrc)) {
             guarded = true;
-            // Cek session di controller = setara "session". Kalau suatu saat ada
-            // route delegated yang disyaratkan "admin", test akan gagal — itu
-            // disengaja: proteksi role harus eksplisit di route.ts.
             level = "session";
           }
         }
@@ -127,7 +99,6 @@ export function auditRoutes(rootDir = process.cwd()): RouteAudit[] {
       });
     };
 
-    // Kasus 1: handler didefinisikan langsung di route.ts
     const matches = [...src.matchAll(HANDLER_RE)];
     for (let i = 0; i < matches.length; i++) {
       const m = matches[i];
@@ -140,7 +111,6 @@ export function auditRoutes(rootDir = process.cwd()): RouteAudit[] {
       push(method, guarded, !guarded ? "public" : ADMIN_RE.test(body) ? "admin" : "session", line);
     }
 
-    // Kasus 2: route.ts hanya mendaftar ulang export dari controller
     if (matches.length === 0) {
       for (const m of src.matchAll(RE_EXPORT_RE)) {
         const names = m[1].split(",").map((s) => s.trim().split(/\s+as\s+/)[0]);
