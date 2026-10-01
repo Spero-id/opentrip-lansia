@@ -4,7 +4,7 @@ import { inputCls } from "./helpers/formatting";
 import { A, TRIP_OPTIONS } from "./helpers/constants";
 import DestinationCard from "./DestinationCard";
 import SelectedDestination from "./SelectedDestination";
-import type { FormErrors, PrivateTripDestination, PrivateTripForm, SetFormField } from "../types";
+import type { FormErrors, PrivateTripDestination, PrivateTripForm, SetFormField } from "@/features/private-trip/types";
 
 export default function TripOptionSection({
   form,

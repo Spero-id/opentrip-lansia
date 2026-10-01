@@ -1,7 +1,7 @@
 import { A } from "./helpers/constants";
 import { Star, Heart } from "lucide-react";
 import { formatRupiah } from "./helpers/formatting";
-import type { PrivateTripDestination } from "../types";
+import type { PrivateTripDestination } from "@/features/private-trip/types";
 
 export default function DestinationCard({
   dest,

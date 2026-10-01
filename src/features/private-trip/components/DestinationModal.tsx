@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Search, Package } from "lucide-react";
 import DestinationCard from "./DestinationCard";
-import type { PrivateTripDestination } from "../types";
+import type { PrivateTripDestination } from "@/features/private-trip/types";
 
 const baseInput =
   "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";

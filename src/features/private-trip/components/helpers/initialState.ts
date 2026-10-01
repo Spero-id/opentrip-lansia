@@ -1,4 +1,4 @@
-import type { PrivateTripForm } from "../../types";
+import type { PrivateTripForm } from "@/features/private-trip/types";
 
 export const initialForm: PrivateTripForm = {
   nama: "",

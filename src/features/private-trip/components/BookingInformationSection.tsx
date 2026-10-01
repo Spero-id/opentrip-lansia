@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "lucide-react";
-import type { FormErrors, PrivateTripForm, SetFormField } from "../types";
+import type { FormErrors, PrivateTripForm, SetFormField } from "@/features/private-trip/types";
 
 const TIPE_OPTIONS = [
   { value: "Individu", label: "Individu / Keluarga" },

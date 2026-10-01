@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ChevronDown, Calendar } from "lucide-react";
 import SelectedDestination from "./SelectedDestination";
 import DestinationModal from "./DestinationModal";
-import type { FormErrors, PrivateTripDestination, PrivateTripForm, SetFormField } from "../types";
+import type { FormErrors, PrivateTripDestination, PrivateTripForm, SetFormField } from "@/features/private-trip/types";
 
 const TUJUAN_OPTIONS = [
   { value: "custom", label: "Destinasi Baru (Custom)" },

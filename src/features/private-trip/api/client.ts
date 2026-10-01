@@ -2,7 +2,7 @@ import type {
   PrivateTripDestination,
   PrivateTripForm,
   PrivateTripPayload,
-} from "../types";
+} from "@/features/private-trip/types";
 
 export function normalizeDestinations(data: unknown): PrivateTripDestination[] {
   if (!Array.isArray(data) || data.length === 0) return [];

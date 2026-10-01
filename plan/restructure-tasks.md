@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 20 | 55 |
+| Paket domain 1–8 | 27 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **74** | **127** |
+| **Total** | **81** | **127** |
 
 ---
 
@@ -164,13 +164,13 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ### Paket 4 — `private` (15 jsx, 1788 baris)
 
-- [ ] **P4-①** `git mv` → `features/private-trip/components/` (sinkron modul `private-trip`); rename `components/private/helpers/helpers.js` sesuai isi (audit dulu)
-- [ ] **P4-②** Konversi 15 `.jsx` + `private/page.jsx` → `.tsx`
-- [ ] **P4-③** Wizard → `privateTripReducer` (aksi per langkah) + `api/` + unit-test reducer
-- [ ] **P4-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P4-④** SSR/SEO: `generateMetadata` halaman `private-trip` (publik, lead form)
-- [ ] **P4-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit form private trip end-to-end
-- [ ] **P4-⑥** PR digabung + `progress.md`
+- [x] **P4-①** `git mv` → `features/private-trip/components/` (sinkron modul `private-trip`); rename `components/private/helpers/helpers.js` sesuai isi (audit dulu) — `helpers.js` = {formatRupiah, inputCls} → `formatting.js`
+- [x] **P4-②** Konversi 15 `.jsx` + `private/page.jsx` → `.tsx` (+4 helpers, `types.ts`, `Subs` → `@/components`); `PrivateTripForm` required penuh, `FormErrors`, `SetFormField`
+- [x] **P4-③** Wizard → `privateTripReducer` (aksi per langkah) + `api/` + unit-test reducer — 9 aksi + `api/client.ts` (fetchers + builders pindahan page) + page pakai `useReducer`; 26 test (12 reducer + 14 api)
+- [x] **P4-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah (diterapkan: `prefer-const`, `MAX_PARTICIPANTS`/`MAX_DURATION_DAYS`, `capped` tanpa reassign)
+- [x] **P4-④** SSR/SEO: `generateMetadata` halaman `private-trip` (publik, lead form) — via `private/layout.tsx`, boleh indeks
+- [x] **P4-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit form private trip end-to-end — 16/170; R2 62→42, R4 −private, R9 38→37, R3 53→82 (tanpa barrel UI: backend index + client safety), R8 480→500 (identifier form = bahasa form user; rename berisiko); uji: submit API 200 + id + `/private` 200
+- [x] **P4-⑥** PR digabung + `progress.md`
 
 ### Paket 5 — `destinasi` → `features/trip` (18 jsx, 1364 baris) — SSR tertinggi
 

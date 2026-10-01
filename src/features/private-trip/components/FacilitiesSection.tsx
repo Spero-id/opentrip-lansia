@@ -1,7 +1,7 @@
 "use client";
 
 import { Info } from "lucide-react";
-import type { FormErrors, PrivateTripForm, SetFormField } from "../types";
+import type { FormErrors, PrivateTripForm, SetFormField } from "@/features/private-trip/types";
 
 const STANDAR_OPTIONS = [
   { value: "", label: "Pilih standar penginapan..." },
