@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useAdminCrud, useAdminTable } from "@/features/admin";
 import { Users, ShieldCheck, UserCheck, Search, Edit, Trash2, Award, Mail, Phone, Calendar } from "lucide-react";
 import Modal from "../components/modal";
