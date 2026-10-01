@@ -2,37 +2,33 @@ import { describe, expect, test } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { auditRoutes, isAllowedByPolicy } from "@/shared/auth/api-auth-audit";
-import {
-  API_ACCESS,
-  DELEGATED_GUARD,
-  resolveApiAccess,
-} from "@/shared/auth/api-policy";
+import { API_ACCESS, DELEGATED_GUARD, resolveApiAccess } from "@/shared/auth/api-policy";
 
 const rootDir = process.cwd();
 const rows = auditRoutes(rootDir);
 
 const RANK = { public: 0, session: 1, admin: 2 } as const;
 
-describe("audit proteksi API", () => {
-  test("semua route.ts terbaca pemindai", () => {
+describe("API route protection audit", () => {
+  test("the scanner discovers every route.ts file", () => {
     expect(rows.length).toBeGreaterThanOrEqual(90);
   });
 
-  test("setiap handler terlindungi atau public by design", () => {
+  test("every handler is protected or public by design", () => {
     const violations = rows
       .filter((r) => !isAllowedByPolicy(r))
       .map((r) => `${r.route} (${r.file}:${r.line})`);
     expect(violations).toEqual([]);
   });
 
-  test("tingkat proteksi memenuhi kebijakan (public < session < admin)", () => {
+  test("protection levels satisfy policy (public < session < admin)", () => {
     const downgraded = rows
       .filter((r) => RANK[r.level] < RANK[r.required])
       .map((r) => `${r.route}: level=${r.level} < required=${r.required} (${r.file}:${r.line})`);
     expect(downgraded).toEqual([]);
   });
 
-  test("tidak ada endpoint yang diam-diam dibuka untuk publik", () => {
+  test("no endpoint is silently opened to the public", () => {
     const publicRoutes = rows.filter((r) => r.required === "public").map((r) => r.route);
     expect(publicRoutes.length).toBeLessThanOrEqual(25);
     for (const r of rows.filter((r) => r.required === "public")) {
@@ -41,7 +37,7 @@ describe("audit proteksi API", () => {
     }
   });
 
-  test("entri API_ACCESS tidak basi", () => {
+  test("API_ACCESS has no stale entries", () => {
     const existing = new Set(rows.map((r) => r.route));
     const stale = Object.keys(API_ACCESS)
       .map((k) => (k.startsWith("ALL ") ? k.replace(/^ALL (\/api\/auth).*/, "GET $1/[...all]") : k))
@@ -49,25 +45,24 @@ describe("audit proteksi API", () => {
     expect(stale).toEqual([]);
   });
 
-  test("entri DELEGATED_GUARD ada dan modulnya masih mengecek session", () => {
+  test("DELEGATED_GUARD entries exist and their modules still check sessions", () => {
     const existing = new Set(rows.map((r) => r.route));
     const stale = Object.keys(DELEGATED_GUARD).filter((k) => !existing.has(k));
     expect(stale).toEqual([]);
 
-    for (const [route, spec] of Object.entries(DELEGATED_GUARD)) {
+    for (const spec of Object.values(DELEGATED_GUARD)) {
       const file = path.join(rootDir, spec);
       expect(fs.existsSync(file)).toBe(true);
       const src = fs.readFileSync(file, "utf8");
       expect(src).toMatch(
         /requireAdmin\s*\(|requireSession\s*\(|requireRole\s*\(|auth\.api\.getSession\s*\(/
       );
-      void route;
     }
   });
 });
 
-describe("resolveApiAccess (dipakai src/proxy.ts)", () => {
-  test("endpoint public by design tetap terbuka untuk anonim", () => {
+describe("resolveApiAccess (used by src/proxy.ts)", () => {
+  test("public-by-design endpoints stay open to anonymous users", () => {
     expect(resolveApiAccess("GET", "/api/trips")).toBe("public");
     expect(resolveApiAccess("GET", "/api/blogs/abc")).toBe("public");
     expect(resolveApiAccess("GET", "/api/uploads/2026/01/x.png")).toBe("public");
@@ -76,7 +71,7 @@ describe("resolveApiAccess (dipakai src/proxy.ts)", () => {
     expect(resolveApiAccess("POST", "/api/private-trips")).toBe("session");
   });
 
-  test("prefix mirip tidak ikut terbuka (horeca vs horeca-types, upload vs uploads)", () => {
+  test("look-alike prefixes are not exposed (horeca vs horeca-types, upload vs uploads)", () => {
     expect(resolveApiAccess("GET", "/api/horeca-types")).toBe("public");
     expect(resolveApiAccess("GET", "/api/horeca")).toBe("admin");
     expect(resolveApiAccess("GET", "/api/horeca/abc")).toBe("admin");
@@ -84,7 +79,7 @@ describe("resolveApiAccess (dipakai src/proxy.ts)", () => {
     expect(resolveApiAccess("POST", "/api/upload")).toBe("admin");
   });
 
-  test("route dinamis admin terlindungi", () => {
+  test("dynamic admin routes are protected", () => {
     expect(resolveApiAccess("GET", "/api/trips/abc/groups")).toBe("admin");
     expect(resolveApiAccess("GET", "/api/users")).toBe("admin");
     expect(resolveApiAccess("GET", "/api/promotions")).toBe("session");
@@ -93,7 +88,7 @@ describe("resolveApiAccess (dipakai src/proxy.ts)", () => {
     expect(resolveApiAccess("POST", "/api/private-trips/xyz/respond")).toBe("session");
   });
 
-  test("path tak dikenal gagal-closed: wajib session", () => {
+  test("unknown paths fail closed: session required", () => {
     expect(resolveApiAccess("GET", "/api/whatever-new")).toBe("session");
     expect(resolveApiAccess("POST", "/api/trips/abc/unknown-endpoint")).toBe("session");
     expect(resolveApiAccess("HEAD", "/api/trips")).toBe("public");

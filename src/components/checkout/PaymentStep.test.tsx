@@ -4,7 +4,15 @@ import PaymentStep from "./PaymentStep";
 
 type Setter = (m: string | null) => void;
 
-function makeCheckout(setPaymentMethod: Setter, overrides: Record<string, unknown> = {}) {
+const COMPLETE_BCA_ACCOUNT = {
+  method: "BCA",
+  bankName: "Bank BCA",
+  accountNumber: "6802082513",
+  accountHolder: "PT. SINERGI INOVASI KARYA",
+  isActive: true,
+};
+
+function makeCheckout(setPaymentMethod: Setter) {
   return {
     destination: { title: "Trip Contoh", priceMin: 2200000 },
     paymentMethod: "BCA",
@@ -17,32 +25,33 @@ function makeCheckout(setPaymentMethod: Setter, overrides: Record<string, unknow
     total: 2200000,
     appliedVoucher: null,
     setProofUrl: () => {},
-    ...overrides,
   } as never;
 }
 
-function mockAccountsApi(body: unknown, ok = true) {
-  (global as never as { fetch: unknown }).fetch = vi.fn().mockResolvedValue({
-    ok,
-    json: async () => body,
-  });
+function stubAccountsFetch(response: unknown) {
+  const fetchMock =
+    response instanceof Error
+      ? vi.fn().mockRejectedValue(response)
+      : vi.fn().mockResolvedValue({ ok: true, json: async () => response });
+  (global as never as { fetch: unknown }).fetch = fetchMock;
+}
+
+function renderPaymentStep() {
+  const setPaymentMethod = vi.fn();
+  render(
+    <PaymentStep checkout={makeCheckout(setPaymentMethod)} onPay={() => {}} onBack={() => {}} />
+  );
+  return setPaymentMethod;
 }
 
 afterEach(() => {
   vi.resetAllMocks();
 });
 
-it("menyembunyikan opsi BCA saat rekening belum ada di server", async () => {
-  mockAccountsApi([]);
-  const setPaymentMethod = vi.fn();
+it("switches to QRIS and hides BCA when the server has no accounts", async () => {
+  stubAccountsFetch([]);
 
-  render(
-    <PaymentStep
-      checkout={makeCheckout(setPaymentMethod)}
-      onPay={() => {}}
-      onBack={() => {}}
-    />
-  );
+  const setPaymentMethod = renderPaymentStep();
 
   await waitFor(() => {
     expect(setPaymentMethod).toHaveBeenCalledWith("QRIS");
@@ -51,25 +60,10 @@ it("menyembunyikan opsi BCA saat rekening belum ada di server", async () => {
   expect(screen.getByText("Scan QRIS untuk pembayaran")).toBeTruthy();
 });
 
-it("menyembunyikan opsi BCA saat nomor rekening kosong", async () => {
-  mockAccountsApi([
-    {
-      method: "BCA",
-      bankName: "Bank BCA",
-      accountNumber: "   ",
-      accountHolder: "PT. SINERGI INOVASI KARYA",
-      isActive: true,
-    },
-  ]);
-  const setPaymentMethod = vi.fn();
+it("hides BCA when the account number is blank", async () => {
+  stubAccountsFetch([{ ...COMPLETE_BCA_ACCOUNT, accountNumber: "   " }]);
 
-  render(
-    <PaymentStep
-      checkout={makeCheckout(setPaymentMethod)}
-      onPay={() => {}}
-      onBack={() => {}}
-    />
-  );
+  const setPaymentMethod = renderPaymentStep();
 
   await waitFor(() => {
     expect(setPaymentMethod).toHaveBeenCalledWith("QRIS");
@@ -78,25 +72,10 @@ it("menyembunyikan opsi BCA saat nomor rekening kosong", async () => {
   expect(screen.queryByText("Salin")).toBeNull();
 });
 
-it("menampilkan BCA beserta kartu rekening ketika rekening lengkap", async () => {
-  mockAccountsApi([
-    {
-      method: "BCA",
-      bankName: "Bank BCA",
-      accountNumber: "6802082513",
-      accountHolder: "PT. SINERGI INOVASI KARYA",
-      isActive: true,
-    },
-  ]);
-  const setPaymentMethod = vi.fn();
+it("shows BCA with its account card when the account is complete", async () => {
+  stubAccountsFetch([COMPLETE_BCA_ACCOUNT]);
 
-  render(
-    <PaymentStep
-      checkout={makeCheckout(setPaymentMethod)}
-      onPay={() => {}}
-      onBack={() => {}}
-    />
-  );
+  const setPaymentMethod = renderPaymentStep();
 
   await waitFor(() => {
     expect(screen.getByText("Transfer Bank BCA")).toBeTruthy();
@@ -106,19 +85,10 @@ it("menampilkan BCA beserta kartu rekening ketika rekening lengkap", async () =>
   expect(screen.getByText("PT. SINERGI INOVASI KARYA")).toBeTruthy();
 });
 
-it("menyembunyikan BCA (fail-closed) kalau API rekening gagal dimuat", async () => {
-  (global as never as { fetch: unknown }).fetch = vi
-    .fn()
-    .mockRejectedValue(new Error("network down"));
-  const setPaymentMethod = vi.fn();
+it("fails closed to QRIS when the accounts request rejects", async () => {
+  stubAccountsFetch(new Error("network down"));
 
-  render(
-    <PaymentStep
-      checkout={makeCheckout(setPaymentMethod)}
-      onPay={() => {}}
-      onBack={() => {}}
-    />
-  );
+  const setPaymentMethod = renderPaymentStep();
 
   await waitFor(() => {
     expect(setPaymentMethod).toHaveBeenCalledWith("QRIS");

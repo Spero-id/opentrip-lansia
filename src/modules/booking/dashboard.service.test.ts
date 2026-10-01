@@ -14,28 +14,29 @@ const mockedSelect = db.select as Mock;
 const mockedExecute = db.execute as Mock;
 
 function selectResult(rows: unknown[]) {
-  const promise = Promise.resolve(rows) as Promise<unknown> & {
-    where: Mock;
-  };
+  const promise = Promise.resolve(rows) as Promise<unknown> & { where: Mock };
   promise.where = vi.fn(() => Promise.resolve(rows));
   return promise;
+}
+
+function queueSelectResults(results: unknown[][]) {
+  let call = 0;
+  mockedSelect.mockImplementation(() => ({
+    from: vi.fn(() => selectResult(results[call++])),
+  }));
 }
 
 describe("dashboardService.getStats", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("reads aggregates from drizzle select results (arrays, not .rows)", async () => {
-    const results = [
+    queueSelectResults([
       [{ count: 5 }],
       [{ count: 4 }],
       [{ total: "1500000" }],
       [{ count: 2 }],
       [{ count: 2 }],
-    ];
-    let call = 0;
-    mockedSelect.mockImplementation(() => ({
-      from: vi.fn(() => selectResult(results[call++])),
-    }));
+    ]);
 
     const stats = await dashboardService.getStats();
 
@@ -47,11 +48,7 @@ describe("dashboardService.getStats", () => {
   });
 
   it("returns null bookingChange when last month had no bookings", async () => {
-    const results = [[{ count: 1 }], [{ count: 0 }], [{ total: "0" }], [{ count: 0 }], [{ count: 0 }]];
-    let call = 0;
-    mockedSelect.mockImplementation(() => ({
-      from: vi.fn(() => selectResult(results[call++])),
-    }));
+    queueSelectResults([[{ count: 1 }], [{ count: 0 }], [{ total: "0" }], [{ count: 0 }], [{ count: 0 }]]);
 
     const stats = await dashboardService.getStats();
 
@@ -61,9 +58,7 @@ describe("dashboardService.getStats", () => {
   });
 
   it("tolerates empty result sets instead of throwing", async () => {
-    mockedSelect.mockImplementation(() => ({
-      from: vi.fn(() => selectResult([])),
-    }));
+    queueSelectResults([[], [], [], [], []]);
 
     const stats = await dashboardService.getStats();
 
