@@ -1,10 +1,10 @@
-import HeroSection from "@/components/landing/HeroSection";
-import MarketingSection from "@/components/landing/MarketingSection";
-import TutorialSection from "@/components/landing/TutorialSection";
-import DestinationSection from "@/components/landing/DestinationSection";
-import TestimonialsSection from "@/components/landing/TestimonialsSection";
-import Subs from "@/components/landing/Subs";
-import FaqSection from "@/components/landing/FAQSection";
+import HeroSection from "@/features/landing/components/HeroSection";
+import MarketingSection from "@/features/landing/components/MarketingSection";
+import TutorialSection from "@/features/landing/components/TutorialSection";
+import DestinationSection from "@/features/landing/components/DestinationSection";
+import TestimonialsSection from "@/features/landing/components/TestimonialsSection";
+import Subs from "@/features/newsletter/components/Subs";
+import FaqSection from "@/features/landing/components/FAQSection";
 
 export default function Home() {
   return (

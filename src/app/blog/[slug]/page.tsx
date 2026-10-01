@@ -4,7 +4,7 @@ import { Suspense, use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import Subs from "@/components/landing/Subs";
+import Subs from "@/features/newsletter/components/Subs";
 import { sanitizeBlogContent } from "@/utils/sanitize";
 import { fetchPostBySlug, formatBlogDate } from "@/features/blog/api/client";
 import type { BlogPost } from "@/features/blog/types";

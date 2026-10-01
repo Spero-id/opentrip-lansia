@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import FilterPanel from "@/features/trip/components/FilterPanel";
 import DestinationListHeader from "@/features/trip/components/DestinationListHeader";
 import DestinationGrid from "@/features/trip/components/DestinationGrid";
-import Subs from "@/components/landing/Subs";
+import Subs from "@/features/newsletter/components/Subs";
 import { fetchTrips } from "@/features/trip/api/client";
 import { useTripFilter } from "@/features/trip/hooks/use-trip-filter";
 import type { TripDetail } from "@/features/trip/types";

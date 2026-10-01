@@ -1,7 +1,7 @@
 import { A } from "./helpers/constants";
 import type { ReactNode } from "react";
 import type { PrivateTripForm } from "@/features/private-trip/types";
-import Subs from "@/components/landing/Subs";
+import Subs from "@/features/newsletter/components/Subs";
 
 const WA_NUMBER = "6285110511403";
 
