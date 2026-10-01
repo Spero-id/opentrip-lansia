@@ -61,10 +61,9 @@ const BASELINE: Baseline = {
     "src/lib/format.js",
     "src/lib/order.js",
   ],
-  R3: 82, // +17 page deep (no UI barrel: backend index.ts owns the root) +12 types deep (barrel would mix server code); driven down in Fase 11
+  R3: 115, // +29 trip deep (pages+components+api/hooks/types; no UI barrel: backend index.ts owns the root, barrel would mix server code); driven down in Fase 11
   R4: [
     "app-sidebar.tsx",
-    "destinasi",
     "landing",
     "nav-main.tsx",
   ],
