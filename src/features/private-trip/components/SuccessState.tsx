@@ -1,16 +1,18 @@
 import { A } from "./helpers/constants";
-import Subs from "../landing/Subs";
+import type { ReactNode } from "react";
+import type { PrivateTripForm } from "../types";
+import Subs from "@/components/landing/Subs";
 
 const WA_NUMBER = "6285110511403";
 
-function generateRequestCode(id) {
+function generateRequestCode(id: string | null | undefined): string | null {
   if (!id) return null;
   return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
-function formatRupiah(v) {
+function formatRupiah(v: string | number | null | undefined): string {
   if (!v && v !== 0) return "-";
-  return "Rp " + Math.floor(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return "Rp " + Math.floor(Number(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 const icons = {
@@ -63,7 +65,7 @@ const icons = {
   ),
 };
 
-function Row({ icon, label, value }) {
+function Row({ icon, label, value }: { icon: ReactNode; label: ReactNode; value: ReactNode }) {
   return (
     <div className="flex justify-between items-center py-2.5">
       <span className="text-xs text-gray-500 flex items-center gap-1.5">
@@ -77,7 +79,15 @@ function Row({ icon, label, value }) {
   );
 }
 
-export default function SuccessState({ form, requestId, onReset }) {
+export default function SuccessState({
+  form,
+  requestId,
+  onReset,
+}: {
+  form: PrivateTripForm;
+  requestId?: string | null;
+  onReset?: () => void;
+}) {
   const requestCode = generateRequestCode(requestId);
   const waMessage = requestCode
     ? `Halo, saya baru saja mengajukan request Private Trip atas nama *${form.nama || "-"}* dengan kode *${requestCode}*. Mohon konfirmasinya. Terima kasih!`

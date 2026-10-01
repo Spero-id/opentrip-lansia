@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, Calendar } from "lucide-react";
 import SelectedDestination from "./SelectedDestination";
 import DestinationModal from "./DestinationModal";
+import type { FormErrors, PrivateTripDestination, PrivateTripForm, SetFormField } from "../types";
 
 const TUJUAN_OPTIONS = [
   { value: "custom", label: "Destinasi Baru (Custom)" },
@@ -28,7 +29,17 @@ const TRANSPORT_OPTIONS = [
   },
 ];
 
-export default function TripDetailSection({ form, set, errors, destinationsData = [] }) {
+export default function TripDetailSection({
+  form,
+  set,
+  errors,
+  destinationsData = [],
+}: {
+  form: PrivateTripForm;
+  set: SetFormField;
+  errors: FormErrors;
+  destinationsData?: PrivateTripDestination[];
+}) {
   const baseInput =
     "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
   const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";

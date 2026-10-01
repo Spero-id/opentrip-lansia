@@ -48,11 +48,17 @@ const TERMS_CONTENT = [
   },
 ];
 
-export default function TermsModal({ onAgree, onClose }) {
+export default function TermsModal({
+  onAgree,
+  onClose,
+}: {
+  onAgree: () => void;
+  onClose: () => void;
+}) {
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const scrollRef = useRef(null);
-  const rafRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -64,7 +70,7 @@ export default function TermsModal({ onAgree, onClose }) {
 
   useEffect(() => {
     rafRef.current = requestAnimationFrame(() => setMounted(true));
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {

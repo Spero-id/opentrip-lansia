@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Clock, ChevronRight, AlertCircle } from "lucide-react";
 import PageHeader from "@/features/private-trip/components/PageHeader";
 import BookingInformationSection from "@/features/private-trip/components/BookingInformationSection";
@@ -12,8 +12,9 @@ import TermsModal from "@/features/private-trip/components/TermsModal";
 import Subs from "@/components/landing/Subs";
 import { initialForm } from "@/features/private-trip/components/helpers/initialState";
 import { validate } from "@/features/private-trip/components/helpers/validation";
+import type { FormErrors, PrivateTripDestination, PrivateTripForm, PrivateTripPayload } from "@/features/private-trip/types";
 
-function buildDestinationPreferences(form) {
+function buildDestinationPreferences(form: PrivateTripForm): string {
   const lines = [];
 
   lines.push(`[Pemesan]`);
@@ -31,17 +32,17 @@ function buildDestinationPreferences(form) {
   else if (form.tanggal) lines.push(`Tanggal Keberangkatan: ${form.tanggal}`);
   if (form.meetingPoint) lines.push(`Meeting Point: ${form.meetingPoint}`);
   if (form.transportNeeds) {
-    const map = { "all-in": "All-in dari Kota Asal", local: "Transportasi Lokal Saja", self: "Bawa Kendaraan Sendiri" };
+    const map: Record<string, string> = { "all-in": "All-in dari Kota Asal", local: "Transportasi Lokal Saja", self: "Bawa Kendaraan Sendiri" };
     lines.push(`Transportasi: ${map[form.transportNeeds] || form.transportNeeds}`);
   }
 
   lines.push(`[Fasilitas & Budget]`);
   if (form.standarPenginapan) {
-    const sm = { budget: "Budget / Homestay", bintang3: "Hotel Bintang 3", bintang4: "Hotel Bintang 4", bintang5: "Hotel Bintang 5", villa: "Villa / Resort" };
+    const sm: Record<string, string> = { budget: "Budget / Homestay", bintang3: "Hotel Bintang 3", bintang4: "Hotel Bintang 4", bintang5: "Hotel Bintang 5", villa: "Villa / Resort" };
     lines.push(`Standar Penginapan: ${sm[form.standarPenginapan] || form.standarPenginapan}`);
   }
   if (form.layananTambahan && form.layananTambahan.length > 0) {
-    const lm = { fotografer: "Fotografer / Video", drone: "Kamera Drone", gala: "Gala Dinner / BBQ", tourLeader: "Tour Leader Khusus" };
+    const lm: Record<string, string> = { fotografer: "Fotografer / Video", drone: "Kamera Drone", gala: "Gala Dinner / BBQ", tourLeader: "Tour Leader Khusus" };
     lines.push(`Layanan Tambahan: ${form.layananTambahan.map((k) => lm[k] || k).join(", ")}`);
   }
   if (form.catatan) lines.push(`Catatan Khusus: ${form.catatan}`);
@@ -56,7 +57,7 @@ function buildDestinationPreferences(form) {
   return lines.join("\n");
 }
 
-function buildPayload(form, budgetValue) {
+function buildPayload(form: PrivateTripForm, budgetValue: unknown): PrivateTripPayload {
   const title =
     form.tripType === "custom"
       ? (form.customTripName.trim() || "Custom Trip")
@@ -78,14 +79,14 @@ function buildPayload(form, budgetValue) {
 const STORAGE_KEY = "private-trip-form-draft";
 
 export default function PrivateTripPage() {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState<PrivateTripForm>(initialForm);
   const [submitted, setSubmitted] = useState(false);
-  const [requestId, setRequestId] = useState(null);
-  const [errors, setErrors] = useState({});
+  const [requestId, setRequestId] = useState<string | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [showTerms, setShowTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
-  const [destinations, setDestinations] = useState([]);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [destinations, setDestinations] = useState<PrivateTripDestination[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -143,12 +144,12 @@ export default function PrivateTripPage() {
     fetchDestinations();
   }, []);
 
-  const set = (field, value) => {
+  const set = (field: string, value: unknown) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errs = validate(form);
     if (Object.keys(errs).length > 0) {
@@ -174,7 +175,9 @@ export default function PrivateTripPage() {
         const el = document.getElementById(`field-${firstErrorKey}`);
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "center" });
-          const focusable = el.matches("input,select,textarea") ? el : el.querySelector("input,select,textarea");
+          const focusable: HTMLElement | null = el.matches("input,select,textarea")
+            ? (el as HTMLElement)
+            : el.querySelector<HTMLElement>("input,select,textarea");
           if (focusable) setTimeout(() => focusable.focus({ preventScroll: true }), 350);
         }
       }

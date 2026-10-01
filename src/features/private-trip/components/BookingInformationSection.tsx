@@ -1,6 +1,7 @@
 "use client";
 
 import { User } from "lucide-react";
+import type { FormErrors, PrivateTripForm, SetFormField } from "../types";
 
 const TIPE_OPTIONS = [
   { value: "Individu", label: "Individu / Keluarga" },
@@ -8,7 +9,15 @@ const TIPE_OPTIONS = [
   { value: "Sekolah/Universitas", label: "Sekolah / Kampus" },
 ];
 
-export default function BookingInformationSection({ form, set, errors }) {
+export default function BookingInformationSection({
+  form,
+  set,
+  errors,
+}: {
+  form: PrivateTripForm;
+  set: SetFormField;
+  errors: FormErrors;
+}) {
   const isInstitusi = form.tripFrom !== "Individu";
   const institusiLabel =
     form.tripFrom === "Perusahaan" ? "Nama Perusahaan" : "Nama Sekolah / Kampus";

@@ -1,10 +1,14 @@
 import { A } from "./helpers/constants";
 import { Star, Heart, X } from "lucide-react";
-import { formatRupiah } from "./helpers/helpers";
+import { formatRupiah } from "./helpers/formatting";
+import type { PrivateTripDestination } from "../types";
 
 export default function SelectedDestination({
   destination,
   onClear,
+}: {
+  destination: PrivateTripDestination;
+  onClear?: () => void;
 }) {
   const title = destination.title || destination.name || "Destinasi";
   const rating = typeof destination.rating === "number" ? destination.rating.toFixed(1) : null;

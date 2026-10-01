@@ -1,10 +1,14 @@
 import { A } from "./helpers/constants";
 import { Star, Heart } from "lucide-react";
-import { formatRupiah } from "./helpers/helpers";
+import { formatRupiah } from "./helpers/formatting";
+import type { PrivateTripDestination } from "../types";
 
 export default function DestinationCard({
   dest,
   onSelect,
+}: {
+  dest: PrivateTripDestination;
+  onSelect?: () => void;
 }) {
   const title = dest.title || dest.name || "Destinasi";
   const rating = typeof dest.rating === "number" ? dest.rating.toFixed(1) : null;

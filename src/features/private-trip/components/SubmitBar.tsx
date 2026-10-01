@@ -1,7 +1,7 @@
 import { A } from "./helpers/constants";
 import { Loader2, ArrowRight } from "lucide-react";
 
-export default function SubmitBar({ isLoading = false }) {
+export default function SubmitBar({ isLoading = false }: { isLoading?: boolean }) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
       <p className="text-[11px] leading-4 text-[#6B7280] max-w-[420px]">

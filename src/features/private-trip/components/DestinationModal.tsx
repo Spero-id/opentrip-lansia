@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Search, Package } from "lucide-react";
 import DestinationCard from "./DestinationCard";
+import type { PrivateTripDestination } from "../types";
 
 const baseInput =
   "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
@@ -16,16 +17,23 @@ export default function DestinationModal({
   onSelect,
   searchValue = "",
   onSearchChange,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  destinations?: PrivateTripDestination[];
+  onSelect: (dest: PrivateTripDestination) => void;
+  searchValue?: string;
+  onSearchChange: (value: string) => void;
 }) {
   const [mounted, setMounted] = useState(false);
-  const rafRef = useRef(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
 
     rafRef.current = requestAnimationFrame(() => setMounted(true));
 
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
 

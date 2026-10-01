@@ -1,6 +1,7 @@
 "use client";
 
 import { Info } from "lucide-react";
+import type { FormErrors, PrivateTripForm, SetFormField } from "../types";
 
 const STANDAR_OPTIONS = [
   { value: "", label: "Pilih standar penginapan..." },
@@ -20,20 +21,28 @@ const LAYANAN_OPTIONS = [
   { key: "tourLeader", label: "Tour Leader Khusus" },
 ];
 
-export default function FacilitiesSection({ form, set, errors }) {
+export default function FacilitiesSection({
+  form,
+  set,
+  errors,
+}: {
+  form: PrivateTripForm;
+  set: SetFormField;
+  errors: FormErrors;
+}) {
   const baseInput =
     "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
   const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
   const errorBorder = "border-red-300 focus:border-red-400 focus:ring-red-100";
 
-  const budgetDisplay = (raw) => {
+  const budgetDisplay = (raw: string) => {
     if (raw === "" || raw == null) return "";
     const num = Number(String(raw).replace(/\D/g, ""));
     if (isNaN(num) || num === 0) return "";
     return num.toLocaleString("id-ID");
   };
 
-  const toggleLayanan = (key) => {
+  const toggleLayanan = (key: string) => {
     const current = form.layananTambahan || [];
     const next = current.includes(key)
       ? current.filter((k) => k !== key)

@@ -1,6 +1,6 @@
 const A = "#F49D1A";
 
-export default function Radio({ active, onClick }) {
+export default function Radio({ active, onClick }: { active?: boolean; onClick?: () => void }) {
   return (
     <div
       onClick={onClick}

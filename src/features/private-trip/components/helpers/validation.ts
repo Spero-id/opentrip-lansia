@@ -1,5 +1,7 @@
-export function validate(form) {
-  const e = {};
+import type { FormErrors, PrivateTripForm } from "../../types";
+
+export function validate(form: PrivateTripForm): Record<string, string> {
+  const e: Record<string, string> = {};
 
   if (!form.nama.trim())
     e.nama = "Wajib diisi";
