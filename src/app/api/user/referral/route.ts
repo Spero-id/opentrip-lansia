@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/modules/auth/auth.config";
-import { db } from "@/shared/db";
+import { auth } from "@/features/auth/auth.config";
+import { db } from "@/lib/db";
 import { referrals, commissions } from "@/db/schema/referral";
 import { users } from "@/db/schema/auth";
 import { eq, count, sql } from "drizzle-orm";

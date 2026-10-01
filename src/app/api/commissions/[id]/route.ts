@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { referralRepository } from "@/modules/referral";
-import { requireAdmin } from "@/shared/auth";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { referralRepository } from "@/features/referral";
+import { requireAdmin } from "@/lib/auth";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const COMMISSION_STATUSES = new Set(["pending", "approved", "paid", "rejected"]);

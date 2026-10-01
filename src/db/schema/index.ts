@@ -4,7 +4,7 @@ export * from "./bookings";
 export * from "./master";
 export * from "./notifications";
 export * from "./payments";
-export * from "./private_trip";
+export * from "./private-trip";
 export * from "./promotions";
 export * from "./referral";
 export * from "./reviews";

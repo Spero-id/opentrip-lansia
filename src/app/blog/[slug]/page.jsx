@@ -7,7 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
-import { sanitizeBlogContent } from "@/shared/utils/sanitize";
+import { sanitizeBlogContent } from "@/utils/sanitize";
 
 const dateLabel = (dateStr) =>
   new Date(dateStr).toLocaleDateString("id-ID", {

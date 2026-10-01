@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
-import { tripController } from "@/modules/trip/trip.controller";
-import { requireAdmin } from "@/shared/auth";
+import { tripController } from "@/features/trip/trip.controller";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const all = req.nextUrl.searchParams.get("all") === "true";

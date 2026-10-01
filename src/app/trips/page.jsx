@@ -9,7 +9,7 @@ import FilterPanel from "@/components/destinasi/FilterPanel";
 import DestinasiHeader from "@/components/destinasi/DestinasiHeader";
 import DestinationGrid from "@/components/destinasi/DestinationGrid";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
-import { toDetail } from "@/lib/Destination";
+import { toDetail } from "@/lib/destination";
 
 function DestisasiContent() {
   const searchParams = useSearchParams();

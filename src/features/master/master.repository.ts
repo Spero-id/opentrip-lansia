@@ -1,0 +1,80 @@
+import { db } from "@/lib/db";
+import { destinationCategories, horeca, vendors, horecaTypes, vendorTypes } from "@/db/schema/master";
+import { eq, desc, asc } from "drizzle-orm";
+import type { UUID } from "@/types";
+import { slugify } from "@/utils/helpers";
+
+export const masterRepository = {
+  async getDestinationCategories() {
+    return db.select().from(destinationCategories).orderBy(asc(destinationCategories.name));
+  },
+
+  async createDestinationCategory(name: string) {
+    const slug = slugify(name);
+    const [existing] = await db
+      .select()
+      .from(destinationCategories)
+      .where(eq(destinationCategories.name, name))
+      .limit(1);
+    if (existing) return existing;
+    const [item] = await db
+      .insert(destinationCategories)
+      .values({ name, slug, isActive: true })
+      .returning();
+    return item;
+  },
+
+  async getHorecaTypes() {
+    return db.select().from(horecaTypes);
+  },
+
+  async getVendorTypes() {
+    return db.select().from(vendorTypes);
+  },
+
+  async getHorecaList() {
+    return db.select().from(horeca).orderBy(desc(horeca.createdAt));
+  },
+
+  async getVendors() {
+    return db.select().from(vendors).orderBy(desc(vendors.createdAt));
+  },
+
+  async getHorecaById(id: UUID) {
+    const [item] = await db.select().from(horeca).where(eq(horeca.id, id)).limit(1);
+    return item ?? null;
+  },
+
+  async createHoreca(data: typeof horeca.$inferInsert) {
+    const [item] = await db.insert(horeca).values(data).returning();
+    return item;
+  },
+
+  async updateHoreca(id: UUID, data: Partial<typeof horeca.$inferInsert>) {
+    const [item] = await db.update(horeca).set(data).where(eq(horeca.id, id)).returning();
+    return item ?? null;
+  },
+
+  async deleteHoreca(id: UUID) {
+    await db.delete(horeca).where(eq(horeca.id, id));
+  },
+
+  async getVendorById(id: UUID) {
+    const [item] = await db.select().from(vendors).where(eq(vendors.id, id)).limit(1);
+    return item ?? null;
+  },
+
+  async createVendor(data: typeof vendors.$inferInsert) {
+    const [item] = await db.insert(vendors).values(data).returning();
+    return item;
+  },
+
+  async updateVendor(id: UUID, data: Partial<typeof vendors.$inferInsert>) {
+    const [item] = await db.update(vendors).set(data).where(eq(vendors.id, id)).returning();
+    return item ?? null;
+  },
+
+  async deleteVendor(id: UUID) {
+    await db.delete(vendors).where(eq(vendors.id, id));
+  },
+};

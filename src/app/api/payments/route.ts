@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { payments } from "@/db/schema/payments";
 import { bookings } from "@/db/schema/bookings";
 import { eq } from "drizzle-orm";
-import { auth } from "@/modules/auth/auth.config";
-import { notificationService } from "@/modules/notification/notification.service";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { auth } from "@/features/auth/auth.config";
+import { notificationService } from "@/features/notification/notification.service";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 const ALLOWED_METHODS = new Set(["BCA", "BRI", "MANDIRI", "GOPAY", "OVO", "DANA", "QRIS"]);
 

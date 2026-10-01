@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promotionRepository } from "@/modules/promotion";
-import { requireAdmin, requireSession } from "@/shared/auth";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { promotionRepository } from "@/features/promotion";
+import { requireAdmin, requireSession } from "@/lib/auth";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireSession(req);

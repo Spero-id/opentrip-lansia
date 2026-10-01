@@ -1,1 +1,1 @@
-export { GET, POST } from "@/modules/auth/auth.controller";
+export { GET, POST } from "@/features/auth/auth.controller";

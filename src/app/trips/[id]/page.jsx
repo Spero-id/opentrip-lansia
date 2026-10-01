@@ -6,7 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
-import { DestinationDomain, toDetail } from "@/lib/Destination";
+import { DestinationDomain, toDetail } from "@/lib/destination";
 
 import Lightbox from "@/components/destinasi/detail/Lightbox";
 import DestinationHeader from "@/components/destinasi/detail/DestinationHeader";

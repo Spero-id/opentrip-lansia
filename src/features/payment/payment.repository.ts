@@ -1,0 +1,25 @@
+import { db } from "@/lib/db";
+import { payments, paymentAccounts } from "@/db/schema/payments";
+import { eq } from "drizzle-orm";
+import type { UUID } from "@/types";
+
+export interface IPaymentRepository {
+  findById(id: UUID): Promise<typeof payments.$inferSelect | null>;
+  update(id: UUID, data: Partial<typeof payments.$inferInsert>): Promise<void>;
+  findActiveAccounts(): Promise<(typeof paymentAccounts.$inferSelect)[]>;
+}
+
+export const paymentRepository: IPaymentRepository = {
+  async findById(id) {
+    const [payment] = await db.select().from(payments).where(eq(payments.id, id)).limit(1);
+    return payment ?? null;
+  },
+
+  async update(id, data) {
+    await db.update(payments).set(data).where(eq(payments.id, id));
+  },
+
+  async findActiveAccounts() {
+    return db.select().from(paymentAccounts).where(eq(paymentAccounts.isActive, true));
+  },
+};

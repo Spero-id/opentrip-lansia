@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/shared/auth";
-import { db } from "@/shared/db";
+import { requireAdmin } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { galleryMedia } from "@/db/schema/trips";
 import { eq } from "drizzle-orm";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function DELETE(
   _req: NextRequest,

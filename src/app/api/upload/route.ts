@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, unlink, mkdir, access } from "fs/promises";
 import path from "path";
-import { requireAdmin } from "@/shared/auth";
-import { detectImageKind, extensionForImage } from "@/shared/utils/image-guard";
-import { db } from "@/shared/db";
+import { requireAdmin } from "@/lib/auth";
+import { detectImageKind, extensionForImage } from "@/utils/image-guard";
+import { db } from "@/lib/db";
 import { media } from "@/db/schema/master";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 

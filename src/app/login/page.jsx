@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { signIn } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth/client";
 
 function getServerSnapshot() {
   return "/";

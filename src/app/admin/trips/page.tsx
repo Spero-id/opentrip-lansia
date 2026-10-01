@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Eye, EyeOff, Sparkles, Check, Users } from "lucide-react";
 import CreatableSelect from "react-select/creatable";
-import { slugify } from "@/shared/utils/helpers";
+import { slugify } from "@/utils/helpers";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 import ImageManager from "./image-manager";

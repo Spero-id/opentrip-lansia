@@ -1,2 +1,2 @@
-export { db } from "../shared/db";
-export type { DB } from "../shared/db";
+export { db } from "../lib/db";
+export type { DB } from "../lib/db";

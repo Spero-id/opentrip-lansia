@@ -1,4 +1,4 @@
-import { db } from "@/shared/db";
+import { db } from "@/lib/db";
 import { referrals, commissions, commissionPayouts, payoutCommissions } from "@/db/schema/referral";
 import { sql } from "drizzle-orm";
 

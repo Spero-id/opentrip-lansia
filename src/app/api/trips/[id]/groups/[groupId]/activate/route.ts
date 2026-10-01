@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tripService } from "@/modules/trip/trip.service";
-import { requireAdmin } from "@/shared/auth";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { tripService } from "@/features/trip/trip.service";
+import { requireAdmin } from "@/lib/auth";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function PUT(
   _req: NextRequest,

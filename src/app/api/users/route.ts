@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/auth";
-import { requireAdmin } from "@/shared/auth";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { authService } from "@/features/auth";
+import { requireAdmin } from "@/lib/auth";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin(req);

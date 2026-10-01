@@ -10,7 +10,7 @@ import {
   findAccountByMethod,
   isCompleteAccount,
   resolveActiveMethod,
-} from "@/shared/payment/payment-account";
+} from "@/features/payment/payment-account";
 
 export default function PaymentStep({ checkout, onPay, onBack }) {
   const [accounts, setAccounts] = useState([]);

@@ -1,4 +1,4 @@
-import { requireAdminLayout } from "@/shared/auth-server";
+import { requireAdminLayout } from "@/lib/auth";
 import AdminShell from "./AdminShell";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

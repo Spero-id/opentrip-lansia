@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { blogRepository, blogService } from "@/modules/blog";
-import { requireAdmin } from "@/shared/auth";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { blogRepository, blogService } from "@/features/blog";
+import { requireAdmin } from "@/lib/auth";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

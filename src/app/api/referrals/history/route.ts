@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/shared/auth";
-import { db } from "@/shared/db";
+import { requireAdmin } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { referrals } from "@/db/schema/referral";
 import { bookings } from "@/db/schema/bookings";
 import { tripDepartures, trips } from "@/db/schema/trips";
 import { users } from "@/db/schema/auth";
 import { desc, eq, inArray } from "drizzle-orm";
-import { toPublicError } from "@/shared/errors/to-public-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin(req);
