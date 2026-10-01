@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -11,7 +13,7 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Jelajah Memoria",
   description: "Platform open trip terpercaya untuk perjalanan wisata impian Anda.",
   icons: {
@@ -25,7 +27,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable}`}>
       <body className="min-h-dvh bg-white text-slate-900 antialiased">
