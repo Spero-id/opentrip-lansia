@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Star, User } from "lucide-react";
+import { Star } from "lucide-react";
 
-function StarDisplay({ rating }) {
+import type { TripReview } from "@/features/trip/types";
+
+function StarDisplay({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((s) => (
@@ -17,19 +19,19 @@ function StarDisplay({ rating }) {
   );
 }
 
-function getInitial(name) {
+function getInitial(name?: string | null) {
   if (!name) return "?";
   return name.trim().charAt(0).toUpperCase();
 }
 
-function formatDate(dateStr) {
+function formatDate(dateStr?: string | null) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
   return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
 }
 
-export default function ReviewsSection({ tripId }) {
-  const [reviews, setReviews] = useState([]);
+export default function ReviewsSection({ tripId }: { tripId: string }) {
+  const [reviews, setReviews] = useState<TripReview[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

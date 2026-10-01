@@ -3,8 +3,16 @@
 import ResultsBar from "./ResultsBar";
 import EmptyState from "./EmptyState";
 import DestinationCard from "./DestinationCard";
+import type { TripDetail } from "@/features/trip/types";
 
-export default function DestinationGrid({ filtered, hasActiveFilters, onReset }) {
+interface DestinationGridProps {
+  filtered: TripDetail[];
+  hasActiveFilters: boolean;
+  onReset: () => void;
+  loading?: boolean;
+}
+
+export default function DestinationGrid({ filtered, hasActiveFilters, onReset }: DestinationGridProps) {
   return (
     <div className="flex-1 min-w-0">
       <ResultsBar

@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-export default function Lightbox({ images, startIndex, onClose }) {
+interface LightboxProps {
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
+}
+
+export default function Lightbox({ images, startIndex, onClose }: LightboxProps) {
   const [current, setCurrent] = useState(startIndex);
 
   const prev = useCallback(() => {
@@ -14,7 +20,7 @@ export default function Lightbox({ images, startIndex, onClose }) {
   }, [images.length]);
 
   useEffect(() => {
-    const handleKey = (e) => {
+    const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();

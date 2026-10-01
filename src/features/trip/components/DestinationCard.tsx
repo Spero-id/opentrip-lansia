@@ -3,8 +3,15 @@
 import Link from "next/link";
 import { MapPin, Star, ArrowRight, Heart } from "lucide-react";
 import { formatRupiah } from "@/lib/format-rupiah";
+import type { TripDetail } from "@/features/trip/types";
 
-export default function DestinationCard({ dest, onClick, className = "" }) {
+interface DestinationCardProps {
+  dest: TripDetail;
+  onClick?: () => void;
+  className?: string;
+}
+
+export default function DestinationCard({ dest, onClick, className = "" }: DestinationCardProps) {
   const ratingVal = typeof dest.rating === "number" ? dest.rating.toFixed(1) : null;
 
   return (

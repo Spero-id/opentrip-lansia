@@ -1,7 +1,9 @@
 import { Route } from "lucide-react";
 import SectionHeading from "./SectionHeading";
 
-export default function ItinerarySection({ dest, shortLocation }) {
+import type { TripDetail } from "@/features/trip/types";
+
+export default function ItinerarySection({ dest, shortLocation }: { dest: TripDetail; shortLocation: string }) {
   return (
     <section>
       <SectionHeading icon={Route}>Rencana Perjalanan</SectionHeading>

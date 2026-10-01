@@ -1,7 +1,9 @@
 import { formatNumber } from "@/lib/format";
 import { Star } from "lucide-react";
 
-export default function DestinationHeader({ dest }) {
+import type { TripDetail } from "@/features/trip/types";
+
+export default function DestinationHeader({ dest }: { dest: TripDetail }) {
   return (
     <div className="mb-4 sm:mb-6 mt-4">
       <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
