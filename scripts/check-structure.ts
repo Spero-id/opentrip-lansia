@@ -14,7 +14,7 @@ type Baseline = {
 };
 
 const BASELINE: Baseline = {
-  R1: 250,
+  R1: 0,
   R2: [
     "src/app/blog/[slug]/page.jsx",
     "src/app/blog/page.jsx",
