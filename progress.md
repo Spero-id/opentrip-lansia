@@ -1935,3 +1935,19 @@ Ladder: tsc **0** · lint **0E/78W** · vitest **6/50** · check-* dalam baselin
 **Dipush & PR:** branch `restructure/fase-0.5` → PR
 https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-0.5
 (base `main`).
+
+---
+
+## Session 45b — Keputusan: `design-tokens.js` dilebur inline (2026-09-30)
+
+- **Putusan user:** `src/lib/design-tokens.js` (48 baris, 8 export; hanya
+  `contact/page.jsx` yang import,4 export sudah mati) **dilebur inline** ke
+  halaman contact lalu dihapus. **Alasan: `globals.css` = source of truth
+  token** ke depan — modul token JS tak boleh jadi saingan. Catatan keputusan
+  ditambahkan di `plan/restructure-tasks.md` (Paket 7): *jangan bikin modul
+  token JS baru*.
+- Baseline R2 diperbarui turun **95 → 94** (`scripts/check-structure.ts`).
+- Bukti: `npm run build` EXIT 0 · `./init.sh` EXIT 0 (lint 0E/78W, tsc 0,
+vitest 6/50, check-* dalam baseline).
+- Cabang `chore/inline-design-tokens` → PR
+  https://github.com/Spero-id/opentrip-lansia/pull/new/chore%2Finline-design-tokens
