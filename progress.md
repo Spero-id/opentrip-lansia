@@ -2128,3 +2128,20 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `ff698e0` pindah · `c3cce60` konversi · `8d87226` reducer · `fc944f7` clean · `f96ad67` fixes+baselines · komit docs sesi ini.
 
 **Progres:** Paket 1–2 = **14/14** → total **68/127**. Lanjut Paket 3 `my-trips`.
+
+## Session 53 — 2026-10-01
+
+**Paket 3 `my-trips` — 6/6 selesai.** Fetch tersebar → `api/` + 2 hook; parser murni diekstrak + test.
+
+**Perubahan (`src/features/my-trips/`):**
+- **P3-①** 7 `.jsx` + `constants.js` → `components/`.
+- **P3-②** → `.tsx`/`.ts` + `types.ts` (8 interface: booking, payment, notes, galeri, proposal, request); `constants.tsx` (`Record<string,string>`, `formatRupiah` typed null-able, `toRequestCode(id: string)`).
+- **P3-③** `api/client.ts` + `useOpenTripBooking` (bookings+images) + `useGalleryModal` (media+download) + barrel; page pakai hook + `refreshAll`; 23 test (16 api + 7 hooks).
+- **P3-③b** `parsePreferences` murni + 6 test; `COPY_TIMEOUT_MS` ×2; hapus `console.error` ×2.
+- **P3-⑤** baselines: R2 71→62, R4 −my-trips, R9/R3/R8 tetap (disiplin barrel penuh). Perbaiki: `setState` sync di effect → inner async fn (konfirmasi empiris ke-3: inner lolos, outer/direct kena). Uji: sign-in `user@otl.id` + bookings + private-trips + `/my-trips` 200 (buka galeri = visual user).
+
+**Verifikasi:** tsc **0** · lint **0E/75W** · vitest **14/144** · build **0** · routes **96→96** · drift **0** · structure **11/11 nol stale** · init **0**.
+
+**Commits:** `7876ae4` pindah · `250f795` konversi · `da26ff4` api/hooks/test · `7e8de06` clean · komit baseline+docs sesi ini.
+
+**Progres:** Paket 1–3 = **20/20** → total **74/127**. Lanjut Paket 4 `private` (reducer wizard).
