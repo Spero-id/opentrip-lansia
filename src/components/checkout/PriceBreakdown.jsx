@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import TermsModal from "./TermsModal";
-import { OrderDomain } from "../../lib/Order";
+import { OrderDomain } from "../../lib/order";
 
 export default function PriceBreakdown({
   destination,

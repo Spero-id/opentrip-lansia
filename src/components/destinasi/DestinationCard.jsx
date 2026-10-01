@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { MapPin, Star, ArrowRight, Heart } from "lucide-react";
-import { formatRupiah } from "@/lib/formatRupiah";
+import { formatRupiah } from "@/lib/format-rupiah";
 
 export default function DestinationCard({ dest, onClick, className = "" }) {
   const ratingVal = typeof dest.rating === "number" ? dest.rating.toFixed(1) : null;

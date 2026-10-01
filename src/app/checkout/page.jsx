@@ -11,7 +11,7 @@ import PaymentStep from "../../components/checkout/PaymentStep";
 import Footer from "../../components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import Subs from "@/components/landing/Subs";
-import { toDetail } from "@/lib/Destination";
+import { toDetail } from "@/lib/destination";
 
 function CheckoutContent() {
   const router = useRouter();
