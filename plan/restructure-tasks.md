@@ -29,14 +29,14 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 0.5 — Boundary root | 4 | 4 |
 | Fase 1 — Komentar & pesan error | 7 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 8 | 8 |
-| Fase 3 — Rename & lebur global | 0 | 10 |
+| Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 0 | 2 |
 | Fase 3c — Chrome ke root layout | 0 | 6 |
 | Paket domain 1–8 | 0 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **36** | **127** |
+| **Total** | **46** | **127** |
 
 ---
 
@@ -87,16 +87,16 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 ## Fase 3 — Rename & lebur global (D-1, D-2, D-14)
 
-- [ ] **3.1** `git mv src/modules src/features` + rewrite 62 importer (satu commit mekanis)
-- [ ] **3.2a** Lebur autentikasi: `shared/auth.ts` + `shared/auth/` + `shared/auth-server.ts` + `lib/auth-client.ts` → `src/lib/auth/` (`index.ts` publik; 39 importer `auth.ts`)
-- [ ] **3.2b** Lebur `shared/db` → `lib/db` · `shared/errors` → `lib/errors` · `shared/utils` → `src/utils/` · `shared/types` → `src/types/`
-- [ ] **3.2c** `shared/promo` → `features/promotion/` (diekspor via `index.ts`) · `shared/payment` → `features/payment/`; `src/shared/` **dihapus total**
-- [ ] **3.3** Hook: `lib/hooks/useCheckout.js` → `features/checkout/hooks/use-checkout.ts` (rename kebab); `src/hooks` tetap untuk shared + rename `useNotifications.ts` → `use-notifications.ts`; folder `src/lib/hooks` dihapus
-- [ ] **3.4** Rename nama outlier: `lib/Destination.js`→`destination.js`, `lib/Order.js`→`order.js`, `lib/formatRupiah.js`→`format-rupiah.ts` (konversi), `db/schema/private_trip.ts`→`private-trip.ts`
-- [ ] **3.5** Test gaya bulletproof (D-18; peta tujuan: §5.7 dokumen strategi): `setup.ts` → **`src/testing/setup-tests.ts`** + update `test.setupFiles` di `vitest.config.mts` (hapus `src/__tests__/`); `src/__mocks__/` → **`src/testing/mocks/`** + update 7 path di `resolve.alias`; semua test pindah ke **subfolder `__tests__/`** di folder sumbernya (tujuan final — induk sudah pindah di 3.1–3.4); **update import test ke `@/`** (`promo-value.test.ts` masih pakai `../`); `npx vitest run` tetap 6 suite / 50 test hijau
-- [ ] **3.6** Konversi `src/app/layout.jsx` → `layout.tsx` — **commit terpisah** dari rename
-- [ ] **3.7** R7 aktif (`src/shared`, `src/lib/hooks` = error) + turunkan baseline ratchet R9 (catat angka baru di `progress.md`)
-- [ ] **3.8** Tangga §8 hijau + `check:structure`; commit per langkah di atas
+- [x] **3.1** `git mv src/modules src/features` + rewrite 62 importer (satu commit mekanis) — 66 specifier + string path api-policy + `check-schema-drift`
+- [x] **3.2a** Lebur autentikasi: `shared/auth.ts` + `shared/auth/` + `shared/auth-server.ts` + `lib/auth-client.ts` → `src/lib/auth/` (`index.ts` publik; 39 importer `auth.ts`) — client tetap `lib/auth/client.ts` terpisah
+- [x] **3.2b** Lebur `shared/db` → `lib/db` · `shared/errors` → `lib/errors` · `shared/utils` → `src/utils/` · `shared/types` → `src/types/` (114 file importer)`
+- [x] **3.2c** `shared/promo` → `features/promotion/` (diekspor via `index.ts`) · `shared/payment` → `features/payment/`; `src/shared/` **dihapus total**
+- [x] **3.3** Hook: `lib/hooks/useCheckout.js` → `features/checkout/hooks/use-checkout.ts` (rename kebab); `src/hooks` tetap untuk shared + rename `useNotifications.ts` → `use-notifications.ts`; folder `src/lib/hooks` dihapus (`@ts-nocheck` wajib baris-1; `../Order` → `@/lib/order` final di 3.4)
+- [x] **3.4** Rename nama outlier: `lib/Destination.js`→`destination.js`, `lib/Order.js`→`order.js`, `lib/formatRupiah.js`→`format-rupiah.ts` (konversi + anotasi `(value: number)`), `db/schema/private_trip.ts`→`private-trip.ts` (nama tabel DB tak berubah)
+- [x] **3.5** Test gaya bulletproof (D-18; peta tujuan: §5.7 dokumen strategi): `setup.ts` → **`src/testing/setup-tests.ts`** + update `test.setupFiles` di `vitest.config.mts` (hapus `src/__tests__/`); `src/__mocks__/` → **`src/testing/mocks/`** + update 7 path di `resolve.alias` (**vacuous: `__mocks__` tak pernah ada, tanpa alias di config**); semua test pindah ke **subfolder `__tests__/`** di folder sumbernya (tujuan final — induk sudah pindah di 3.1–3.4); **update import test ke `@/`** (`promo-value.test.ts` masih pakai `../`); `npx vitest run` tetap 6 suite / 50 test hijau
+- [x] **3.6** Konversi `src/app/layout.jsx` → `layout.tsx` — **commit terpisah** dari rename (`Metadata` + `ReactNode` typed)
+- [x] **3.7** R7 aktif (`src/shared`, `src/lib/hooks` = error) + turunkan baseline ratchet R9 (catat angka baru di `progress.md`) — R7 `[]`, R9 82→**43**, R2 refresh 91, R6→2, koreksi ukur R3 0→49
+- [x] **3.8** Tangga §8 hijau + `check:structure`; commit per langkah di atas — tsc 0 · lint 0E/78W · vitest 6/50 · build 0 · routes 96→96 · drift 0 · structure 9/9 · init 0 · verify:checkout 0
 
 ## Fase 3b — `lib/env.ts` (temuan #6)
 

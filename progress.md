@@ -2020,3 +2020,29 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `465e47f` D-21 · `b54233b` pindah+merge · `e30d9b8` redirect+hapus · `861ca08` clear KNOWN_DRIFT · komit docs sesi ini.
 
 **Progres:** Fase 2 = **8/8** → total **36/127**. Lanjut Fase 3 (endpoint rapi: 46 route → 0 tebal).
+
+## Session 48 — 2026-10-01
+
+**Fase 3 (restructure): Rename & lebur global — 10/10 selesai.** `src/modules/` → `src/features/`; `src/shared/` dihapus total (lebur ke `lib/`/`utils/`/`types/`/`features/`); hook + outlier kebab; test gaya bulletproof; `layout.tsx` typed; R7 aktif; R9 82→**43**.
+
+**Perubahan:**
+- **3.1** `git mv modules→features`; 66 specifier `@/modules`→`@/features`; 5 string path `api-policy` (`src/modules/`→`src/features/`); `check-schema-drift` pindah ke `src/features`.
+- **3.2a** auth → `src/lib/auth/` + `index.ts` publik (52 specifier); `client.ts` tetap entry terpisah (client bundle tak menarik `next/headers`).
+- **3.2b** `shared/{db,errors,utils,types}` → `lib/db`, `lib/errors`, `src/utils/`, `src/types/` (114 file importer + 4 relatif).
+- **3.2c** `shared/promo`→`features/promotion/`, `shared/payment`→`features/payment/` (via barrel); `src/shared/` dihapus.
+- **3.3** `useCheckout.js`→`features/checkout/hooks/use-checkout.ts`; `useNotifications`→`use-notifications.ts`; `lib/hooks/` dihapus.
+- **3.4** outlier kebab (`destination.js`, `order.js`, `format-rupiah.ts` + anotasi `(value: number)`, `private-trip.ts` — nama tabel DB tak berubah).
+- **3.5** 6 test → `<sumber>/__tests__/`; `setup.ts`→`src/testing/setup-tests.ts`; import test `@/`; 6/50 hijau. Subtask `__mocks__`+`resolve.alias` **vacuous** (dir tak pernah ada, tanpa alias di config).
+- **3.6** `layout.jsx`→`layout.tsx` (`Metadata`, `ReactNode`).
+- **3.7** baseline: R7 `[]` (aktif), R9 82→43, R2 refresh 91, R6→2, koreksi ukur R3 0→49 (rename 3.1 mengekspos deep `@/modules` yg dulu tak terhitung regex).
+- **3.8** dua insiden ladder: (a) `ban-ts-comment` atas `@ts-nocheck` → tambah `eslint-disable-next-line` (2 direktif mesin, masuk daftar PR); (b) **build FAIL `pg` bocor ke client via barrel** (`PaymentStep`, `use-checkout`, halaman promosi narik `*.service`→`@/lib/db`) → 4 import client kembali ke deep murni; R3 49→53.
+
+**Pelajaran alat:** (1) `@ts-nocheck` TS 5.9 hanya mempan di **baris-1** — komentar di atasnya OK, statement (`"use client"`) di atasnya TIDAK. (2) **Barrel fitur campur kode server+client → file `"use client"` dilarang import barrel** (bangun pemisah entry client/server di paket domain). (3) `format.js` duplikat `formatRupiah` — backlog paket.
+
+**Backlog:** pecah barrel server/client per paket; `auth.config` 16 deep → barrel; dorong R3 53→0; dedupe `format.js` vs `format-rupiah.ts`.
+
+**Verifikasi (setelah semua edit):** tsc **0** · lint **0E/78W** · vitest **6/50** · build **0** · routes **96→96** · drift **0** · structure **9/9** · init **0** · verify:checkout **0 OK**.
+
+**Commits:** `2995cf7` rename · `d936bc8` auth · `64d5d78` lib/utils/types · `6eeb1fd` promo/payment · `af976b3` hooks · `a3133b8` outlier · `d1b3e43` tests · `7eb265a` layout · `5c14aff` baseline · `5d470f7` fixes · komit docs sesi ini.
+
+**Progres:** Fase 3 = **10/10** → total **46/127**. Lanjut Fase 3b (`lib/env.ts`, 2 task).
