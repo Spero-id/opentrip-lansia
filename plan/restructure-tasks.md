@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 41 | 55 |
+| Paket domain 1–8 | 48 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **95** | **127** |
+| **Total** | **102** | **127** |
 
 ---
 
@@ -196,12 +196,12 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 > **Keputusan (2026-09-30):** `src/lib/design-tokens.js` sudah **dilebur inline** ke `src/app/contact/page.jsx` (satu-satunya pemakai) lalu dihapus (R2 95→94). Sumber kebenaran token ke depan = **`globals.css`** — **jangan bikin modul token JS baru**.
 
-- [ ] **P7-①** `git mv` → `features/landing/components/`; **`Subs` → `features/newsletter/components/`** (dipakai Footer + lintas halaman)
-- [ ] **P7-②** Konversi 7 `.jsx` + halaman root (bila `.jsx`) → `.tsx`
-- [ ] **P7-③** Ekstrak `api/` newsletter (`useNewsletter`) + landing sections
-- [ ] **P7-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P7-④** SSR/SEO: `generateMetadata` halaman root/landing + cek Lighthouse-ish manual (title/description)
-- [ ] **P7-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit newsletter dari Footer & landing
+- [x] **P7-①** `git mv` → `features/landing/components/`; **`Subs` → `features/newsletter/components/`** (9 pemakai: 8 page + SuccessState; Footer tak pakai Subs — catatan task usang)
+- [x] **P7-②** Konversi 7 `.jsx` + `Subs` + halaman root → `.tsx`
+- [x] **P7-③** Ekstrak `api/` newsletter (`useNewsletter`: email/popup/loading/error + Escape/body-lock) + landing (`toLandingCard`/`fetchLandingTrips`/`clampLandingPage`); Subs & DestinationSection pakai hook/api; 9 test (4 newsletter + 5 landing)
+- [x] **P7-③b** Clean code (§5.1): `LANDING_PAGE_SIZE`, `BLOG_DATE_LOCALE`-style consts, `ReviewSection`→`TestimonialsSection` (samakan file), typed review `avatar?` (bug laten: `lib/data` tak punya avatar — render tak berubah, fallback initial)
+- [x] **P7-④** SSR/SEO: metadata root sudah ada (`Jelajah Memoria`) — verifikasi curl `<title>` tanpa JS; Subs section ter-render di `/`
+- [x] **P7-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit newsletter end-to-end (POST → 200 + row `subscribers`, lalu hapus) — 21/204; R2 42→12, R3 124→146, R4 −landing, R9/R11 tetap; `check:routes` 96→96
 - [ ] **P7-⑥** PR digabung + `progress.md`
 
 ### Paket 8 — `admin` (18 halaman, sudah `.tsx`) — terbesar
