@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db } from "../src/lib/db";
 import { paymentAccounts } from "../src/db/schema/payments";
 import { promotions } from "../src/db/schema/promotions";
