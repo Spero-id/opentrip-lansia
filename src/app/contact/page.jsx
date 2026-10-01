@@ -10,8 +10,6 @@ const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURICom
 
 const WA_NUMBER = "6285110511403";
 const WA_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
 
 const A = "#F49D1A";
@@ -61,7 +59,6 @@ export default function ContactPage() {
 
     return (
         <div className="bg-white">
-            <Navbar />
 
             <section
                 className="relative bg-cover bg-center py-24 sm:py-40"
@@ -271,7 +268,6 @@ export default function ContactPage() {
             </section>
 
             <Subs />
-            <Footer />
         </div>
     );
 }

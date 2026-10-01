@@ -1,5 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import { A } from "./helpers/constants";
 import Subs from "../landing/Subs";
 
@@ -87,7 +85,6 @@ export default function SuccessState({ form, requestId, onReset }) {
   const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMessage)}`;
   return (
     <>
-      <Navbar />
 
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-5 pt-5 pb-8">
@@ -255,7 +252,6 @@ export default function SuccessState({ form, requestId, onReset }) {
       </div>
 
       <Subs />
-      <Footer />
     </>
   );
 }

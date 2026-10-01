@@ -3,8 +3,6 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import PaymentStep from "@/components/checkout/PaymentStep";
 import { useCheckout } from "@/features/checkout/hooks/use-checkout";
 
@@ -98,7 +96,6 @@ function PayContent() {
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
-        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-3">
             <div className="w-8 h-8 border-2 border-[#F49D1A]/30 border-t-[#F49D1A] rounded-full animate-spin mx-auto" />
@@ -112,7 +109,6 @@ function PayContent() {
   if (error) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
-        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
             <p className="text-sm text-red-500 font-semibold">{error}</p>
@@ -121,7 +117,6 @@ function PayContent() {
             </Link>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -186,7 +181,6 @@ function PayContent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white font-sans text-gray-900">
-      <Navbar />
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-20">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Pembayaran</h1>
@@ -201,7 +195,6 @@ function PayContent() {
           onBack={() => router.push("/my-trips")}
         />
       </main>
-      <Footer />
     </div>
   );
 }

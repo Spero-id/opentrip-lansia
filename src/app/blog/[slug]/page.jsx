@@ -4,8 +4,6 @@ import { use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";
 import { sanitizeBlogContent } from "@/utils/sanitize";
 
@@ -53,7 +51,6 @@ export default function BlogDetailPage({ params }) {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
 
       {status !== "found" || !post ? (
         <div className="flex items-center justify-center min-h-[60vh] text-sm text-[#6B7280]">
@@ -101,7 +98,6 @@ export default function BlogDetailPage({ params }) {
         </main>
       )}
       <Subs />
-      <Footer />
     </div>
   );
 }

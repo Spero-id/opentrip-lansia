@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useSession } from "@/lib/auth/client";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileStats from "@/components/profile/ProfileStats";
 import ProfileInfoCard from "@/components/profile/ProfileInfoCard";
@@ -37,18 +35,15 @@ export default function ProfilePage() {
   if (isPending || !session?.user) {
     return (
       <>
-        <Navbar />
         <main className="flex min-h-screen items-center justify-center bg-white">
           <p className="text-sm text-slate-400">Memuat...</p>
         </main>
-        <Footer />
       </>
     );
   }
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
           <Link
@@ -72,7 +67,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

@@ -3,8 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth/client";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import EmptyState from "@/components/my-trips/EmptyState";
 import OpenTripBookingCard from "@/components/my-trips/OpenTripBookingCard";
 import RequestCard from "@/components/my-trips/RequestCard";
@@ -70,7 +68,6 @@ export default function MyTripsPage() {
   if (isPending || loading) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
-        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-3">
             <div className="w-8 h-8 border-2 border-[#F49D1A]/30 border-t-[#F49D1A] rounded-full animate-spin mx-auto" />
@@ -102,7 +99,6 @@ export default function MyTripsPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50/50">
-      <Navbar />
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
         <div className="mb-6 sm:mb-8">
@@ -171,7 +167,6 @@ export default function MyTripsPage() {
         )}
 
       </main>
-      <Footer />
     </div>
   );
 }
