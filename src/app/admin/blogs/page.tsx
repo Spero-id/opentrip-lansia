@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 import WysiwygEditor from "@/features/blog/components/wysiwyg-editor";
 import BlogCoverUploader from "../components/blog-cover-uploader";
+import { useAdminCrud } from "@/features/admin";
 
 interface Blog {
   id: string;
@@ -41,78 +41,35 @@ function slugify(input: string): string {
 }
 
 export default function AdminBlogs() {
-  const [rows, setRows] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Blog | null>(null);
-  const [form, setForm] = useState<BlogForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<string | null>(null);
-
-  useEffect(() => { fetchData(); }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/blogs");
-      const data = await res.json();
-      setRows(Array.isArray(data) ? data : []);
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }
-
-  function openCreate() {
-    setEditing(null);
-    setForm(emptyForm);
-    setSaveError(null);
-    setModalOpen(true);
-  }
-
-  function openEdit(item: Blog) {
-    setEditing(item);
-    setForm({ title: item.title, slug: item.slug, content: item.content || "", excerpt: item.excerpt || "", coverImage: item.coverImage || "", status: item.status });
-    setSaveError(null);
-    setModalOpen(true);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    setSaveError(null);
-    const url = editing ? `/api/blogs/${editing.id}` : "/api/blogs";
-    const res = await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    if (!res.ok) {
-      let msg = "Gagal menyimpan blog.";
-      try {
-        const data = await res.json();
-        if (data?.error) msg = data.error;
-      } catch {
-      }
-      setSaveError(msg);
-      return;
-    }
-    setModalOpen(false);
-    fetchData();
-  }
-
-  async function handleDelete() {
-    if (!deleting) return;
-    await fetch(`/api/blogs/${deleting}`, { method: "DELETE" });
-    setDeleteOpen(false);
-    setDeleting(null);
-    fetchData();
-  }
+  const {
+    rows,
+    loading,
+    modalOpen,
+    editing,
+    form,
+    saving,
+    saveError,
+    deletingId,
+    openCreate,
+    openEdit,
+    closeModal,
+    setForm,
+    submit,
+    confirmDelete,
+    cancelDelete,
+    executeDelete,
+  } = useAdminCrud<Blog, BlogForm>({
+    endpoint: "/api/blogs",
+    emptyForm,
+    toForm: (item) => ({
+      title: item.title,
+      slug: item.slug,
+      content: item.content || "",
+      excerpt: item.excerpt || "",
+      coverImage: item.coverImage || "",
+      status: item.status,
+    }),
+  });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
@@ -178,7 +135,7 @@ export default function AdminBlogs() {
                         <button onClick={() => openEdit(b)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Blog">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(b.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(b.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -191,8 +148,8 @@ export default function AdminBlogs() {
         </div>
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Blog" : "Tambah Blog"} size="lg">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? "Edit Blog" : "Tambah Blog"} size="lg">
+        <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">Judul</label>
             <input name="title" value={form.title} onChange={handleChange} required
@@ -237,7 +194,7 @@ export default function AdminBlogs() {
               className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
-            <button type="button" onClick={() => setModalOpen(false)}
+            <button type="button" onClick={closeModal}
               className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
               Batal
             </button>
@@ -245,7 +202,7 @@ export default function AdminBlogs() {
         </form>
       </Modal>
 
-      <ConfirmDelete open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={handleDelete} />
+      <ConfirmDelete open={deletingId !== null} onClose={cancelDelete} onConfirm={executeDelete} />
     </div>
   );
 }
