@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Plus_Jakarta_Sans, Inter } from "next/font/google";
-import SiteChrome from "@/components/layout/SiteChrome";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -32,7 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable}`}>
       <body className="min-h-dvh bg-white text-slate-900 antialiased">
-        <SiteChrome>{children}</SiteChrome>
+        {children}
       </body>
     </html>
   );

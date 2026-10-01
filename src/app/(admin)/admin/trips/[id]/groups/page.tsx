@@ -20,7 +20,7 @@ import {
   ExternalLink,
   CheckCircle,
 } from "lucide-react";
-import ConfirmAction from "@/app/admin/components/confirm-action";
+import ConfirmAction from "@/app/(admin)/admin/components/confirm-action";
 import { EMPTY_GROUP_FORM, buildGroupPayload, mapGroupToForm, validateGroupForm } from "@/features/admin/group-form";
 import type { GroupFormState } from "@/features/admin/group-form";
 
