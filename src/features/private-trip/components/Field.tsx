@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentType, ReactNode } from "react";
+
 const A = "#F49D1A";
 
 export default function Field({
@@ -10,6 +12,14 @@ export default function Field({
   error,
   hint,
   children,
+}: {
+  label: ReactNode;
+  icon?: ComponentType<{ size?: number | string; className?: string }>;
+  required?: boolean;
+  optional?: boolean;
+  error?: string | null;
+  hint?: ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-1.5">

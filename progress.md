@@ -2145,3 +2145,23 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `7876ae4` pindah · `250f795` konversi · `da26ff4` api/hooks/test · `7e8de06` clean · komit baseline+docs sesi ini.
 
 **Progres:** Paket 1–3 = **20/20** → total **74/127**. Lanjut Paket 4 `private` (reducer wizard).
+
+## Session 54 — 2026-10-01
+
+**Paket 4 `private` — 7/7 selesai.** Form raksasa → `privateTripReducer` (9 aksi) + `api/`; tanpa barrel UI (keputusan sadar demi client safety).
+
+**Perubahan (`src/features/private-trip/`):**
+- **P4-①** 15 `.jsx` + 4 helpers → `components/`; audit `helpers.js` = {formatRupiah, inputCls} → `formatting.js`.
+- **P4-②** → `.tsx`/`.ts` + `types.ts` (form required penuh, `FormErrors`, `SetFormField`, payload); `Subs` → `@/`.
+- **P4-③** `reducer.ts` (9 aksi; `SET_FIELD` satu `as` + hapus error per-field; `HYDRATE_DRAFT` guard array; `RESET` simpan destinations) + `api/client.ts` (fetchers + builders pindahan page) + page `useReducer`; 26 test (12 reducer + 14 api).
+- **P4-③b** `prefer-const`, `MAX_PARTICIPANTS`/`MAX_DURATION_DAYS`, `capped`.
+- **P4-④** `private/layout.tsx` (boleh indeks — lead form publik).
+- **P4-⑤** baselines: R2 62→42, R4 −private, R9 38→37, R3 53→**82**, R8 480→**500**, R11 0. Uji: submit API 200 + id + `/private` 200.
+
+**Keputusan besar:** **tanpa barrel UI** — root `index.ts` milik backend (service→db→env.server); barrel campuran = crash browser (kelas 3.8). Konsekuensi: R3 naik (+17 deep halaman, +12 deep types). R8 naik: identifier form Indonesia = bahasa form user + kunci validasi; rename berisiko (dispatch string-key tak terlihat tsc) → backlog khusus. R11 tetap 0 = bukti pemisahan benar.
+
+**Verifikasi:** tsc **0** · lint **0E/79W** · vitest **16/170** · build **0** · routes **96→96** · drift **0** · structure **11/11 nol stale** · init **0**.
+
+**Commits:** `310945c` pindah · `e5ccd63` konversi · `e05350f` reducer · `033becd` clean · `9028890` metadata · `d6b9c1e` baselines · komit docs sesi ini.
+
+**Progres:** Paket 1–4 = **27/27** → total **81/127**. Lanjut Paket 5 `destinasi` (pindah ke `features/trip` + rename komponen).

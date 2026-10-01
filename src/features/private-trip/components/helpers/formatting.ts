@@ -1,14 +1,14 @@
-export function formatRupiah(v) {
+export function formatRupiah(v: string | number | null | undefined): string {
   if (!v && v !== 0) return "";
   return (
     "Rp " +
-    Math.floor(v)
+    Math.floor(Number(v))
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
   );
 }
 
-export function inputCls(error, extra = "") {
+export function inputCls(error: string | null | undefined, extra = ""): string {
   return [
     "w-full px-3.5 py-2.5 rounded-xl border text-sm font-normal text-gray-900 placeholder:text-gray-400",
     "focus:outline-none focus:ring-2 transition-all",

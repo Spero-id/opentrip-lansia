@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, Calendar } from "lucide-react";
 import SelectedDestination from "./SelectedDestination";
 import DestinationModal from "./DestinationModal";
+import type { FormErrors, PrivateTripDestination, PrivateTripForm, SetFormField } from "@/features/private-trip/types";
 
 const TUJUAN_OPTIONS = [
   { value: "custom", label: "Destinasi Baru (Custom)" },
@@ -28,7 +29,20 @@ const TRANSPORT_OPTIONS = [
   },
 ];
 
-export default function TripDetailSection({ form, set, errors, destinationsData = [] }) {
+const MAX_PARTICIPANTS = 100;
+const MAX_DURATION_DAYS = 30;
+
+export default function TripDetailSection({
+  form,
+  set,
+  errors,
+  destinationsData = [],
+}: {
+  form: PrivateTripForm;
+  set: SetFormField;
+  errors: FormErrors;
+  destinationsData?: PrivateTripDestination[];
+}) {
   const baseInput =
     "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
   const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
@@ -177,10 +191,10 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                 placeholder="Cth: 15"
                 value={form.jumlahPeserta}
                 onChange={(e) => {
-                  let digits = e.target.value.replace(/\D/g, "").slice(0, 3);
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 3);
                   if (digits === "") { set("jumlahPeserta", ""); return; }
                   let num = parseInt(digits, 10);
-                  if (num > 100) num = 100;
+                  if (num > MAX_PARTICIPANTS) num = MAX_PARTICIPANTS;
                   set("jumlahPeserta", String(num));
                 }}
                 onKeyDown={(e) => {
@@ -192,10 +206,10 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                   const text = e.clipboardData.getData("text");
                   if (/[^\d]/.test(text)) {
                     e.preventDefault();
-                    let digits = text.replace(/\D/g, "").slice(0, 3);
+                    const digits = text.replace(/\D/g, "").slice(0, 3);
                     if (digits) {
                       let num = parseInt(digits, 10);
-                      if (num > 100) num = 100;
+                      if (num > MAX_PARTICIPANTS) num = MAX_PARTICIPANTS;
                       set("jumlahPeserta", String(num));
                     }
                   }
@@ -225,10 +239,10 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                 placeholder="Cth: 3"
                 value={form.durasi}
                 onChange={(e) => {
-                  let digits = e.target.value.replace(/\D/g, "").slice(0, 2);
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 2);
                   if (digits === "") { set("durasi", ""); return; }
                   let num = parseInt(digits, 10);
-                  if (num > 30) num = 30;
+                  if (num > MAX_DURATION_DAYS) num = MAX_DURATION_DAYS;
                   set("durasi", String(num));
                 }}
                 onKeyDown={(e) => {
@@ -240,10 +254,10 @@ export default function TripDetailSection({ form, set, errors, destinationsData 
                   const text = e.clipboardData.getData("text");
                   if (/[^\d]/.test(text)) {
                     e.preventDefault();
-                    let digits = text.replace(/\D/g, "").slice(0, 2);
+                    const digits = text.replace(/\D/g, "").slice(0, 2);
                     if (digits) {
                       let num = parseInt(digits, 10);
-                      if (num > 30) num = 30;
+                      if (num > MAX_DURATION_DAYS) num = MAX_DURATION_DAYS;
                       set("durasi", String(num));
                     }
                   }

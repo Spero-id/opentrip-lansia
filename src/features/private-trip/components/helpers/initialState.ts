@@ -1,4 +1,6 @@
-export const initialForm = {
+import type { PrivateTripForm } from "@/features/private-trip/types";
+
+export const initialForm: PrivateTripForm = {
   nama: "",
   phone: "",
   email: "",

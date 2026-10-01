@@ -1,13 +1,18 @@
 import Field from "./Field";
 import Radio from "./Radio";
 import SectionCard from "./SectionCard";
-import { inputCls } from "./helpers/helpers";
+import { inputCls } from "./helpers/formatting";
 import { A, TRIP_FROM } from "./helpers/constants";
+import type { FormErrors, PrivateTripForm, SetFormField } from "@/features/private-trip/types";
 
 export default function TripFromSection({
   form,
   set,
   errors,
+}: {
+  form: PrivateTripForm;
+  set: SetFormField;
+  errors: FormErrors;
 }) {
   return (
     <SectionCard

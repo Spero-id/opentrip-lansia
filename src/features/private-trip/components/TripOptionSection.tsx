@@ -1,15 +1,21 @@
 import Radio from "./Radio";
 import SectionCard from "./SectionCard";
-import { inputCls } from "./helpers/helpers";
+import { inputCls } from "./helpers/formatting";
 import { A, TRIP_OPTIONS } from "./helpers/constants";
 import DestinationCard from "./DestinationCard";
 import SelectedDestination from "./SelectedDestination";
+import type { FormErrors, PrivateTripDestination, PrivateTripForm, SetFormField } from "@/features/private-trip/types";
 
 export default function TripOptionSection({
   form,
   set,
   errors,
   destinationsData,
+}: {
+  form: PrivateTripForm;
+  set: SetFormField;
+  errors: FormErrors;
+  destinationsData?: PrivateTripDestination[];
 }) {
   return (
     <SectionCard
@@ -56,7 +62,7 @@ export default function TripOptionSection({
                     <div>
                       <p className="text-xs font-semibold text-gray-500 mb-2.5">Pilih salah satu destinasi:</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-80 overflow-y-auto pr-1 rounded-xl">
-                        {destinationsData.map((dest) => (
+                        {(destinationsData ?? []).map((dest) => (
                           <DestinationCard
                             key={dest.id}
                             dest={dest}

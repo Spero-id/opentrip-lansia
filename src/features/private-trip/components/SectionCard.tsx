@@ -1,9 +1,15 @@
 const A = "#F49D1A";
 
+import type { ReactNode } from "react";
+
 export default function SectionCard({
   icon,
   title,
   children,
+}: {
+  icon?: ReactNode;
+  title?: ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
