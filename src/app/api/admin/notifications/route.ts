@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin } from "@/lib/auth";
 import { auth } from "@/features/auth/auth.config";
 import { notificationRepository } from "@/features/notification/notification.repository";
 

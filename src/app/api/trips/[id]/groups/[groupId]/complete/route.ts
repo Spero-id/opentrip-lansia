@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { tripRepository } from "@/features/trip/trip.repository";
 import { bookings } from "@/db/schema/bookings";
 import { db } from "@/shared/db";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dashboardService } from "@/features/booking/dashboard.service";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin } from "@/lib/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {

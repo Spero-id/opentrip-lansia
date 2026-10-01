@@ -1,7 +1,7 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { resolveApiAccess } from "@/shared/auth/api-policy";
+import { resolveApiAccess } from "@/lib/auth";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

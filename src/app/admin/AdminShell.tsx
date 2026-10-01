@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Check, X, AlertCircle, ShoppingCart, User, ShoppingBag, LogOut, Shield } from "lucide-react";
 import { useNotifications, getNotificationHref } from "@/hooks/useNotifications";
-import { useSession, signOut } from "@/lib/auth-client";
+import { useSession, signOut } from "@/lib/auth/client";
 import { AppSidebar } from "@/components/app-sidebar";
 import { getActiveMenu } from "./components/nav-data";
 import {

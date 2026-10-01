@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useSession } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth/client";
 import { adminNavGroups, isHrefActive } from "./nav-data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 

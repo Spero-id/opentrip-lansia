@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin, requireSession } from "@/shared/auth";
+import { requireAdmin, requireSession } from "@/lib/auth";
 import { db } from "@/shared/db";
 import { tripGalleries, galleryMedia } from "@/db/schema/trips";
 import { media } from "@/db/schema/master";

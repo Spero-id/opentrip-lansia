@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { masterRepository } from "@/features/master";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin } from "@/lib/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {

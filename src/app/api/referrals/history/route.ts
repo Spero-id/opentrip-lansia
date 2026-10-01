@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin } from "@/lib/auth";
 import { db } from "@/shared/db";
 import { referrals } from "@/db/schema/referral";
 import { bookings } from "@/db/schema/bookings";

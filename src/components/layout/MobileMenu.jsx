@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { X, LogOut, User, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { signOut, useSession } from "@/lib/auth-client";
+import { signOut, useSession } from "@/lib/auth/client";
 
 const emptySubscribe = () => () => {};
 function useIsClient() {

@@ -1,4 +1,4 @@
-import { auditRoutes, isAllowedByPolicy } from "../src/shared/auth/api-auth-audit";
+import { auditRoutes, isAllowedByPolicy } from "../src/lib/auth/api-auth-audit";
 
 const rows = auditRoutes();
 const violations = rows.filter((r) => !isAllowedByPolicy(r));

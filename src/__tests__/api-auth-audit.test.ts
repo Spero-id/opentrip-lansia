@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { auditRoutes, isAllowedByPolicy } from "@/shared/auth/api-auth-audit";
-import { API_ACCESS, DELEGATED_GUARD, resolveApiAccess } from "@/shared/auth/api-policy";
+import { auditRoutes, isAllowedByPolicy } from "@/lib/auth";
+import { API_ACCESS, DELEGATED_GUARD, resolveApiAccess } from "@/lib/auth";
 
 const rootDir = process.cwd();
 const rows = auditRoutes(rootDir);

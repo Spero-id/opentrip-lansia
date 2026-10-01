@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X, User, ShoppingBag, LogOut, Shield } from "lucide-react";
-import { useSession, signOut } from "@/lib/auth-client";
+import { useSession, signOut } from "@/lib/auth/client";
 import MobileMenu from "@/components/layout/MobileMenu";
 
 const NAV_LINKS = [

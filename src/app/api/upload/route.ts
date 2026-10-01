@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, unlink, mkdir, access } from "fs/promises";
 import path from "path";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin } from "@/lib/auth";
 import { detectImageKind, extensionForImage } from "@/shared/utils/image-guard";
 import { db } from "@/shared/db";
 import { media } from "@/db/schema/master";

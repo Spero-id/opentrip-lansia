@@ -6,7 +6,7 @@ import { tripDepartures } from "@/db/schema/trips";
 import { db } from "@/shared/db";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/features/auth/auth.config";
-import { requireAdmin } from "@/shared/auth";
+import { requireAdmin } from "@/lib/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
