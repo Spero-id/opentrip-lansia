@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { MockInstance } from "vitest";
-import { AppError, NotFoundError, ValidationError, ConflictError } from "./app-error";
-import { toPublicError } from "./to-public-error";
+import { AppError, NotFoundError, ValidationError, ConflictError } from "@/lib/errors/app-error";
+import { toPublicError } from "@/lib/errors/to-public-error";
 
 describe("toPublicError", () => {
   let errorSpy: MockInstance;

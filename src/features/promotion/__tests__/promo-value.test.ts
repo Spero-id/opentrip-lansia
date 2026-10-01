@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { parseMoney, parsePromoValue } from "./promo-value";
-import { computePromoDiscount } from "./promo-discount";
+import { parseMoney, parsePromoValue } from "@/features/promotion/promo-value";
+import { computePromoDiscount } from "@/features/promotion/promo-discount";
 import { resolveVoucher } from "@/features/checkout/hooks/use-checkout";
 
 const percentagePromo = {

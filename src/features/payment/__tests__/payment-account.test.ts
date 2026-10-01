@@ -5,7 +5,7 @@ import {
   isCompleteAccount,
   resolveActiveMethod,
   type PaymentAccountLike,
-} from "./payment-account";
+} from "@/features/payment/payment-account";
 
 const complete: PaymentAccountLike = {
   method: "BCA",
