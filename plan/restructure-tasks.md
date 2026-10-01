@@ -194,6 +194,8 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ### Paket 7 — `landing` (7 jsx, 1028 baris; `Subs` fan-in 8)
 
+> **Keputusan (2026-09-30):** `src/lib/design-tokens.js` sudah **dilebur inline** ke `src/app/contact/page.jsx` (satu-satunya pemakai) lalu dihapus (R2 95→94). Sumber kebenaran token ke depan = **`globals.css`** — **jangan bikin modul token JS baru**.
+
 - [ ] **P7-①** `git mv` → `features/landing/components/`; **`Subs` → `features/newsletter/components/`** (dipakai Footer + lintas halaman)
 - [ ] **P7-②** Konversi 7 `.jsx` + halaman root (bila `.jsx`) → `.tsx`
 - [ ] **P7-③** Ekstrak `api/` newsletter (`useNewsletter`) + landing sections
