@@ -21,6 +21,8 @@ import {
   CheckCircle,
 } from "lucide-react";
 import ConfirmAction from "@/app/admin/components/confirm-action";
+import { EMPTY_GROUP_FORM, buildGroupPayload, mapGroupToForm, validateGroupForm } from "@/features/admin/group-form";
+import type { GroupFormState } from "@/features/admin/group-form";
 
 interface Trip {
   id: string;
@@ -67,21 +69,7 @@ interface GroupParticipant {
   } | null;
 }
 
-interface GroupForm {
-  startDate: string;
-  endDate: string;
-  maxParticipants: number;
-  minParticipants: number;
-  notes: string;
-}
-
-const emptyForm: GroupForm = {
-  startDate: "",
-  endDate: "",
-  maxParticipants: 10,
-  minParticipants: 1,
-  notes: "",
-};
+const emptyForm: GroupFormState = { ...EMPTY_GROUP_FORM };
 
 function formatDate(val: string | null | undefined): string {
   if (!val) return "-";
@@ -111,7 +99,7 @@ export default function AdminTripGroupsPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<Group | null>(null);
-  const [form, setForm] = useState<GroupForm>(emptyForm);
+  const [form, setForm] = useState<GroupFormState>(emptyForm);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -162,30 +150,13 @@ export default function AdminTripGroupsPage() {
 
   function openEdit(group: Group) {
     setEditingGroup(group);
-    setForm({
-      startDate: group.startDate?.slice(0, 10) || "",
-      endDate: group.endDate?.slice(0, 10) || "",
-      maxParticipants: group.maxParticipants || 10,
-      minParticipants: group.minParticipants || 1,
-      notes: group.notes || "",
-
-    });
+    setForm(mapGroupToForm(group));
     setFormErrors({});
     setModalOpen(true);
   }
 
   function validateForm(): Record<string, string> {
-    const e: Record<string, string> = {};
-    if (!form.startDate) e.startDate = "Tanggal berangkat wajib diisi";
-    if (!form.endDate) e.endDate = "Tanggal pulang wajib diisi";
-    if (form.startDate && form.endDate && form.endDate < form.startDate) {
-      e.endDate = "Tanggal pulang harus setelah tanggal berangkat";
-    }
-    if (!form.maxParticipants || form.maxParticipants < 1) {
-      e.maxParticipants = "Kuota minimal 1";
-    }
-
-    return e;
+    return validateGroupForm(form);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -205,13 +176,7 @@ export default function AdminTripGroupsPage() {
       const res = await fetch(url, {
         method: editingGroup ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          startDate: form.startDate,
-          endDate: form.endDate,
-          maxParticipants: form.maxParticipants,
-          minParticipants: form.minParticipants,
-          notes: form.notes || null,
-        }),
+        body: JSON.stringify(buildGroupPayload(form)),
       });
 
       if (!res.ok) {

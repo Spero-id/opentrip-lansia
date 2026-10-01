@@ -1,3 +1,4 @@
+export * from "./group-form";
 export * from "./trip-form";
 export * from "./hooks/use-admin-table";
 export * from "./hooks/use-admin-crud";
