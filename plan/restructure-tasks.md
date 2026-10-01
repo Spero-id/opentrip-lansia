@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 7 | 55 |
+| Paket domain 1–8 | 14 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **61** | **127** |
+| **Total** | **68** | **127** |
 
 ---
 
@@ -145,13 +145,13 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ### Paket 2 — `checkout` (12 jsx + 2 page.jsx, 1363 baris)
 
-- [ ] **P2-①** `git mv` → `features/checkout/components/` (termasuk `__tests__/PaymentStep.test.tsx`)
-- [ ] **P2-②** Konversi 12 komponen + `checkout/page.jsx` + `checkout/pay/[id]/page.jsx` → `.tsx`
-- [ ] **P2-③** `checkoutReducer(state, action)` murni (`SET_PAX`, `APPLY_VOUCHER`, `SET_CUSTOMER`, `SET_STEP`) + hook tipis + `features/checkout/api/` + unit-test reducer; **tulis ulang `PaymentStep.test.tsx`** (mock hook baru)
-- [ ] **P2-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P2-④** `npm run verify:checkout` hijau (jalur promo + BCA tetap benar)
-- [ ] **P2-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + ratchet R9 turun
-- [ ] **P2-⑥** PR digabung + `progress.md`
+- [x] **P2-①** `git mv` → `features/checkout/components/` (termasuk `__tests__/PaymentStep.test.tsx`)
+- [x] **P2-②** Konversi 12 komponen + `checkout/page.jsx` + `checkout/pay/[id]/page.jsx` → `.tsx` (+`types.ts`: DestinationSummary, Participant, Customer, AppliedVoucher/Referral, CheckoutStep)
+- [x] **P2-③** `checkoutReducer(state, action)` murni (`SET_PAX`, `APPLY_VOUCHER`, `SET_CUSTOMER`, `SET_STEP`) + hook tipis + `features/checkout/api/` + unit-test reducer; **tulis ulang `PaymentStep.test.tsx`** (mock hook baru) — reducer 26 aksi + `pricing.ts` + `api/client.ts` + `usePaymentAccounts` + barrel; 59 test baru (28 reducer + 12 pricing + 15 api + 4 paritas PaymentStep)
+- [x] **P2-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah (diterapkan: `MIN_PAX`/`MAX_PAX`, hapus `console.error` ×2 + `showHealth` mati)
+- [x] **P2-④** `npm run verify:checkout` hijau (jalur promo + BCA tetap benar) — exit 0 OK incl. kasus AEZAKMI max-discount
+- [x] **P2-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + ratchet R9 turun — 11/115; R9 42→38, R2 85→71, R4 −checkout, R3 tetap 53, R8 tetap 480
+- [x] **P2-⑥** PR digabung + `progress.md`
 
 ### Paket 3 — `my-trips` (7 jsx, 889 baris)
 

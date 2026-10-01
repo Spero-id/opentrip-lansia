@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { usePaymentAccounts } from "@/features/checkout";
 import BookingSummary from "./BookingSummary";
 import PriceBreakdown from "./PriceBreakdown";
 import Image from "next/image";
@@ -11,30 +12,19 @@ import {
   isCompleteAccount,
   resolveActiveMethod,
 } from "@/features/payment/payment-account";
+import type { AccountsStatus, PaymentAccountLike } from "@/features/payment/payment-account";
+import type { useCheckout } from "@/features/checkout";
 
-export default function PaymentStep({ checkout, onPay, onBack }) {
-  const [accounts, setAccounts] = useState([]);
-  const [accountsStatus, setAccountsStatus] = useState("loading");
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/payments/accounts")
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
-      .then((data) => {
-        if (cancelled) return;
-        if (Array.isArray(data)) {
-          setAccounts(data);
-          setAccountsStatus("ready");
-        } else {
-          setAccountsStatus("error");
-        }
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setAccountsStatus("error");
-      });
-    return () => { cancelled = true; };
-  }, []);
+export default function PaymentStep({
+  checkout,
+  onPay,
+  onBack,
+}: {
+  checkout: ReturnType<typeof useCheckout>;
+  onPay: () => void;
+  onBack: () => void;
+}) {
+  const { accounts, status: accountsStatus } = usePaymentAccounts();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
@@ -99,7 +89,17 @@ export default function PaymentStep({ checkout, onPay, onBack }) {
   );
 }
 
-function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) {
+function PaymentSelector({
+  paymentMethod,
+  setPaymentMethod,
+  accounts,
+  status,
+}: {
+  paymentMethod?: string | null;
+  setPaymentMethod?: (method: string | null) => void;
+  accounts: PaymentAccountLike[];
+  status: AccountsStatus;
+}) {
   const bcaAccount = findAccountByMethod(accounts, "BCA");
 
   const visible = availableMethods(accounts, status);
@@ -108,7 +108,7 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
 
   useEffect(() => {
     if (!visible) return;
-    if (!visible.includes(paymentMethod)) {
+    if (!visible.includes(paymentMethod ?? "")) {
       setPaymentMethod?.(visible[0] ?? null);
     }
   }, [visible, paymentMethod, setPaymentMethod]);
@@ -220,7 +220,7 @@ function PaymentSelector({ paymentMethod, setPaymentMethod, accounts, status }) 
   );
 }
 
-function AccountCard({ account }) {
+function AccountCard({ account }: { account: PaymentAccountLike }) {
   const [copied, setCopied] = useState(false);
 
   const bankName = String(account.bankName ?? "").trim();
@@ -272,12 +272,12 @@ function AccountCard({ account }) {
   );
 }
 
-function ProofUploader({ checkout }) {
-  const fileInputRef = useRef(null);
+function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> }) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
-  async function handleFile(e) {
+  async function handleFile(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);

@@ -3,14 +3,12 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useCheckout } from "@/features/checkout/hooks/use-checkout";
+import { useCheckout } from "@/features/checkout";
 import {
   NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
   NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION,
 } from "@/lib/env";
-import StepProgress from "../../components/checkout/StepProgress";
-import DetailsStep from "../../components/checkout/DetailsStep";
-import PaymentStep from "../../components/checkout/PaymentStep";
+import { DetailsStep, PaymentStep, StepProgress } from "@/features/checkout";
 
 import Subs from "@/components/landing/Subs";
 import { toDetail } from "@/lib/destination";
@@ -23,7 +21,7 @@ function CheckoutContent() {
   const checkout = useCheckout(null);
   const setDestination = checkout.setDestination;
 
-  const [status, setStatus] = useState(destId ? "loading" : "empty");
+  const [status, setStatus] = useState<"loading" | "empty" | "found" | "notfound">(destId ? "loading" : "empty");
 
   useEffect(() => {
     if (!destId) return;

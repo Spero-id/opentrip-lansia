@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { ArrowDown } from "lucide-react";
+import type { TermsModalType } from "@/features/checkout";
 
 const TERMS_CONTENT = {
   terms: {
@@ -92,9 +93,17 @@ const TERMS_CONTENT = {
   },
 };
 
-export default function TermsModal({ type, onClose, onAgree }) {
+export default function TermsModal({
+  type,
+  onClose,
+  onAgree,
+}: {
+  type: TermsModalType;
+  onClose: () => void;
+  onAgree: () => void;
+}) {
   const content = TERMS_CONTENT[type];
-  const scrollRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const isClient = useSyncExternalStore(
     () => () => {},
@@ -106,7 +115,7 @@ export default function TermsModal({ type, onClose, onAgree }) {
     if (!isClient) return;
     document.body.style.overflow = "hidden";
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKeyDown);

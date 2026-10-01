@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import TermsModal from "./TermsModal";
-import { OrderDomain } from "../../lib/order";
+import { OrderDomain } from "@/lib/order";
+import type { AppliedVoucher, DestinationSummary, TermsModalType } from "@/features/checkout";
 
 export default function PriceBreakdown({
   destination,
@@ -19,11 +20,26 @@ export default function PriceBreakdown({
   hideTerms,
   isLoading,
   error,
+}: {
+  destination?: DestinationSummary | null;
+  pricePerPax: number;
+  pax: number;
+  ticketSubtotal: number;
+  discount: number;
+  total: number;
+  appliedVoucher?: AppliedVoucher | null;
+  agreeToTerms?: boolean;
+  setAgreeToTerms?: (value: boolean) => void;
+  canProceed?: unknown;
+  onNext?: () => void;
+  hideTerms?: boolean;
+  isLoading?: boolean;
+  error?: string | null;
 }) {
-  const [modalType, setModalType] = useState(null);
+  const [modalType, setModalType] = useState<TermsModalType | null>(null);
 
   const handleAgree = () => {
-    setAgreeToTerms(true);
+    setAgreeToTerms?.(true);
     setModalType(null);
   };
 

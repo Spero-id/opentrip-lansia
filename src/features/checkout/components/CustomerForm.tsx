@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import type { ChangeEvent } from "react";
+import type { Customer } from "@/features/checkout";
 
 const HEALTH_CONDITIONS = [
   { key: "hypertension", label: "Hipertensi / Darah Tinggi" },
@@ -17,16 +18,22 @@ const MOBILITY_OPTIONS = [
   { value: "wheelchair", label: "Kursi roda (Akan didampingi keluarga sendiri)" },
 ];
 
-export default function CustomerForm({ customer, setCustomer, onAutofill }) {
-  const [showHealth, setShowHealth] = useState(false);
-
-  const handleChange = (field) => (e) => {
+export default function CustomerForm({
+  customer,
+  setCustomer,
+  onAutofill,
+}: {
+  customer: Customer;
+  setCustomer: (field: string, value: unknown) => void;
+  onAutofill: () => void;
+}) {
+  const handleChange = (field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setCustomer(field, e.target.value);
   };
 
-  const handleHealthToggle = (key) => {
+  const handleHealthToggle = (key: string) => {
     if (key === "none") {
-      const cleared = {};
+      const cleared: Record<string, boolean> = {};
       HEALTH_CONDITIONS.forEach((c) => (cleared[c.key] = false));
       setCustomer("healthConditions", { ...cleared, none: true });
     } else {
@@ -36,7 +43,7 @@ export default function CustomerForm({ customer, setCustomer, onAutofill }) {
     }
   };
 
-  const handleMobilityChange = (value) => {
+  const handleMobilityChange = (value: string) => {
     setCustomer("mobilityOption", value);
   };
 

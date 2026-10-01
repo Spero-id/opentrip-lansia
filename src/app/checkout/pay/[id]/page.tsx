@@ -3,17 +3,51 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import PaymentStep from "@/components/checkout/PaymentStep";
-import { useCheckout } from "@/features/checkout/hooks/use-checkout";
+import { PaymentStep } from "@/features/checkout";
+import { useCheckout } from "@/features/checkout";
+
+interface PayParticipant {
+  fullName?: string | null;
+  dateOfBirth?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  isPrimary?: boolean | null;
+}
+
+interface PayHealthDeclaration {
+  hasHypertension?: boolean | null;
+  hasDiabetes?: boolean | null;
+  hasHeartDisease?: boolean | null;
+  hasAsthma?: boolean | null;
+  hasVertigo?: boolean | null;
+  hasJointBoneDisease?: boolean | null;
+  noConditions?: boolean | null;
+  medications?: string | null;
+  mobilityOption?: string | null;
+}
+
+interface PayBooking {
+  id?: string | null;
+  departureId?: string | null;
+  subtotal?: number | string | null;
+  totalParticipants: number;
+  totalAmount?: number | string | null;
+  discountAmount?: number | string | null;
+  notes?: string | Record<string, string | undefined> | null;
+  participants?: PayParticipant[] | null;
+  healthDeclarations?: PayHealthDeclaration[] | null;
+}
 
 function PayContent() {
   const router = useRouter();
   const params = useParams();
   const bookingId = params.id;
 
-  const [booking, setBooking] = useState(null);
+  const [booking, setBooking] = useState<PayBooking | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const checkout = useCheckout(null);
 
@@ -26,9 +60,9 @@ function PayContent() {
         if (!res.ok) {
           throw new Error("Booking tidak ditemukan");
         }
-        const data = await res.json();
+        const data: PayBooking = await res.json();
 
-        let notesObj = {};
+        let notesObj: Record<string, string | undefined> = {};
         if (data.notes) {
           try {
             notesObj = typeof data.notes === "string" ? JSON.parse(data.notes) : data.notes;
@@ -39,14 +73,16 @@ function PayContent() {
 
         const destination = {
           id: notesObj.destinationId || data.departureId,
+          image: "",
           title: notesObj.destinationName || "Paket Open Trip",
-          priceMin: Math.round(Number(data.subtotal) / data.totalParticipants),
+          priceMin: Math.round(Number(data.subtotal) / Number(data.totalParticipants)),
         };
 
         checkout.setDestination(destination);
         checkout.setPax(data.totalParticipants);
 
-        const primaryParticipant = data.participants?.find(p => p.isPrimary) || data.participants?.[0];
+        const participants: PayParticipant[] = data.participants ?? [];
+        const primaryParticipant = participants.find((p) => p.isPrimary) || participants[0];
         if (primaryParticipant) {
           const customer = {
             fullName: primaryParticipant.fullName || "",
@@ -78,8 +114,8 @@ function PayContent() {
 
         setBooking(data);
         setLoading(false);
-      } catch (err) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Booking tidak ditemukan");
         setLoading(false);
       }
     };
@@ -152,8 +188,7 @@ function PayContent() {
       }
 
       router.push("/my-trips");
-    } catch (err) {
-      console.error("Gagal memproses pembayaran:", err);
+    } catch {
       alert("Terjadi kesalahan jaringan. Silakan coba lagi.");
     }
   };
@@ -162,9 +197,10 @@ function PayContent() {
     ...checkout,
     destination: {
       id: booking?.departureId,
+      image: "",
       title: (() => {
         try {
-          const notes = JSON.parse(booking?.notes || "{}");
+          const notes = JSON.parse(String(booking?.notes || "{}"));
           return notes.destinationName || "Paket Open Trip";
         } catch {
           return "Paket Open Trip";

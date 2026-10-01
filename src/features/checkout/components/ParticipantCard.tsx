@@ -1,8 +1,19 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
+import type { Participant } from "@/features/checkout";
 
-export default function ParticipantCard({ participant, index, onUpdate, onRemove }) {
+export default function ParticipantCard({
+  participant,
+  index,
+  onUpdate,
+  onRemove,
+}: {
+  participant: Participant;
+  index: number;
+  onUpdate: (id: Participant["id"], field: string, value: string) => void;
+  onRemove?: (id: Participant["id"]) => void;
+}) {
   return (
     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
       <div className="flex items-center justify-between">

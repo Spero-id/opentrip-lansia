@@ -1,8 +1,9 @@
 "use client";
 
 import { Clock, MapPin } from "lucide-react";
+import type { DestinationSummary } from "@/features/checkout";
 
-export default function MeetingPointInfo({ destination }) {
+export default function MeetingPointInfo({ destination }: { destination?: DestinationSummary | null }) {
   const points = destination?.meetingPoints || [];
 
   if (points.length === 0) {

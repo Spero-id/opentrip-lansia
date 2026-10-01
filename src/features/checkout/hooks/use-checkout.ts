@@ -1,476 +1,219 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { OrderDomain } from "@/lib/order";
-import { parseMoney, parsePromoValue } from "@/features/promotion/promo-value";
-import { computePromoDiscount } from "@/features/promotion/promo-discount";
+import {
+  ApiRequestError,
+  checkoutReducer,
+  createBookingOrder,
+  fetchPromotions,
+  getDiscount,
+  getTicketSubtotal,
+  getTotal,
+  initialCheckoutState,
+  resolveVoucher,
+  submitPayment,
+  validateReferralCode,
+} from "@/features/checkout";
+import type { DbVoucher, DestinationSummary } from "@/features/checkout";
+import type { BookingSnapshot } from "@/features/checkout";
 
-const initialCustomer = {
-  fullName: "",
-  birthDate: "",
-  phone: "",
-  address: "",
-  emergencyContactName: "",
-  emergencyContactPhone: "",
-  healthConditions: {
-    hypertension: false,
-    diabetes: false,
-    heart: false,
-    asthma: false,
-    vertigo: false,
-    jointBone: false,
-    none: false,
-  },
-  medications: "",
-  mobilityOption: "independent",
-};
-
-export function resolveVoucher(rawCode, vouchers, subtotal) {
-  const code = String(rawCode ?? "").trim().toUpperCase();
-  if (!code) {
-    return { appliedVoucher: null, voucherError: "Masukkan kode voucher." };
-  }
-
-  const found = vouchers.find((v) => v.code?.trim().toUpperCase() === code);
-  if (!found) {
-    return { appliedVoucher: null, voucherError: "Kode voucher tidak valid." };
-  }
-
-  const minPurchase = parseMoney(found.minPurchase);
-  if (minPurchase > 0 && subtotal < minPurchase) {
-    return {
-      appliedVoucher: null,
-      voucherError: `Minimal order ${OrderDomain.formatPrice(minPurchase)} untuk voucher ini.`,
-    };
-  }
-
-  if (found.usageLimit && found.usageCount >= found.usageLimit) {
-    return { appliedVoucher: null, voucherError: "Voucher sudah mencapai batas pemakaian." };
-  }
-
-  const now = new Date();
-  if (found.validFrom && new Date(found.validFrom) > now) {
-    return { appliedVoucher: null, voucherError: "Voucher belum aktif." };
-  }
-  if (found.validUntil && new Date(found.validUntil) < now) {
-    return { appliedVoucher: null, voucherError: "Voucher sudah kedaluwarsa." };
-  }
-
-  const value = parsePromoValue(found.value, found.type);
-  const maxDiscount = parseMoney(found.maxDiscount);
-  const discount = computePromoDiscount(found, subtotal);
-
-  return {
-    appliedVoucher: {
-      code: found.code,
-      label: found.title || found.code,
-      discount,
-      type: found.type,
-      value,
-      percentageValue: found.type === "percentage" ? value : 0,
-      maxDiscount,
-    },
-    voucherError: "",
-  };
-}
-
-export function useCheckout(initialDestination) {
-  const [state, setState] = useState({
-    step: "details",
+export function useCheckout(initialDestination: DestinationSummary | null) {
+  const [state, dispatch] = useReducer(checkoutReducer, {
+    ...initialCheckoutState,
     destination: initialDestination ?? null,
-    pax: 1,
-    customer: { ...initialCustomer },
-    voucherCode: "",
-    appliedVoucher: null,
-    voucherError: "",
-    referralCode: "",
-    appliedReferral: null,
-    referralError: "",
-    paymentMethod: "BCA",
-    proofUrl: "",
-    orderId: "",
-    totalAmount: 0,
-    isLoading: false,
-    error: null,
-    agreeToTerms: false,
-    bookingId: null,
+  });
+  const stateRef = useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
   });
 
-  const [dbVouchers, setDbVouchers] = useState([]);
+  const [dbVouchers, setDbVouchers] = useState<DbVoucher[]>([]);
   const [vouchersLoading, setVouchersLoading] = useState(true);
-  const dbVouchersRef = useRef([]);
+  const dbVouchersRef = useRef<DbVoucher[]>([]);
   const vouchersLoadingRef = useRef(true);
   const vouchersLockedRef = useRef(false);
 
-  useEffect(() => { dbVouchersRef.current = dbVouchers; }, [dbVouchers]);
-  useEffect(() => { vouchersLoadingRef.current = vouchersLoading; }, [vouchersLoading]);
-
-  const fetchVouchers = useCallback(() => {
-    fetch("/api/promotions")
-      .then((res) => {
-        if (res.status === 401) {
-          vouchersLockedRef.current = true;
-          return [];
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setDbVouchers(data.filter((v) => v.isActive));
-        } else {
-          setDbVouchers([]);
-        }
-      })
-      .catch(() => setDbVouchers([]))
-      .finally(() => setVouchersLoading(false));
+  const fetchVouchers = useCallback(async () => {
+    try {
+      const { vouchers, locked } = await fetchPromotions();
+      if (locked) vouchersLockedRef.current = true;
+      setDbVouchers(vouchers);
+    } catch {
+      setDbVouchers([]);
+    } finally {
+      setVouchersLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    fetchVouchers();
-  }, [fetchVouchers]);
-
-  const setDestination = useCallback((dest) => {
-    setState((prev) => ({ ...prev, destination: dest }));
-  }, []);
-
-  const setPax = useCallback((pax) => {
-    setState((prev) => ({
-      ...prev,
-      pax: Math.max(1, Math.min(pax, 10)),
-    }));
-  }, []);
-
-  const setCustomer = useCallback((field, value) => {
-    setState((prev) => ({
-      ...prev,
-      customer: { ...prev.customer, [field]: value },
-    }));
-  }, []);
-
-  const autofillProfile = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      customer: {
-        fullName: "Budi Santoso",
-        birthDate: "1955-03-15",
-        phone: "081234567890",
-        address: "Jl. Sudirman No. 123, Jakarta Selatan",
-        emergencyContactName: "Rina Santoso",
-        emergencyContactPhone: "081987654321",
-        healthConditions: {
-          hypertension: true,
-          diabetes: false,
-          heart: false,
-          asthma: false,
-          vertigo: false,
-          jointBone: false,
-          none: false,
-        },
-        medications: "Amlodipine 5mg",
-        mobilityOption: "independent",
-      },
-    }));
-  }, []);
-
-  const setVoucherCode = useCallback((code) => {
-    setState((prev) => ({ ...prev, voucherCode: code, voucherError: "" }));
-  }, []);
-
-  const applyVoucher = useCallback(() => {
-    const currentVouchers = dbVouchersRef.current;
-    const isLoading = vouchersLoadingRef.current;
-
-    if (isLoading) {
-      setState((prev) => ({ ...prev, voucherError: "Memuat data voucher, silakan coba lagi sebentar." }));
-      return;
-    }
-
-    if (currentVouchers.length === 0) {
-      if (vouchersLockedRef.current) {
-        setState((prev) => ({
-          ...prev,
-          voucherError: "Voucher hanya bisa dipakai setelah Anda login.",
-        }));
-        return;
-      }
-      fetchVouchers();
-      setState((prev) => ({ ...prev, voucherError: "Memuat ulang data voucher..." }));
-      return;
-    }
-
-    setState((prev) => {
-      const subtotal = (prev.destination?.priceMin ?? 0) * prev.pax;
-      const { appliedVoucher, voucherError } = resolveVoucher(
-        prev.voucherCode,
-        currentVouchers,
-        subtotal
-      );
-      return { ...prev, appliedVoucher, voucherError };
-    });
-  }, [fetchVouchers]);
-
-  const removeVoucher = useCallback(() => {
-    setState((prev) => ({ ...prev, appliedVoucher: null, voucherCode: "" }));
-  }, []);
-
-  const setReferralCode = useCallback((code) => {
-    setState((prev) => ({ ...prev, referralCode: code, referralError: "" }));
-  }, []);
-
-  const applyReferral = useCallback(async () => {
-    const code = state.referralCode.trim();
-    if (!code) return;
-
-    setState((prev) => ({ ...prev, referralError: "" }));
-
-    try {
-      const res = await fetch("/api/checkout/validate-referral", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ referralCode: code }),
+    dbVouchersRef.current = dbVouchers;
+  }, [dbVouchers]);
+  useEffect(() => {
+    vouchersLoadingRef.current = vouchersLoading;
+  }, [vouchersLoading]);
+  useEffect(() => {
+    let cancelled = false;
+    fetchPromotions()
+      .then(({ vouchers, locked }) => {
+        if (cancelled) return;
+        if (locked) vouchersLockedRef.current = true;
+        setDbVouchers(vouchers);
+        setVouchersLoading(false);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setDbVouchers([]);
+          setVouchersLoading(false);
+        }
       });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-      const data = await res.json();
+  const setDestination = (destination: DestinationSummary | null) =>
+    dispatch({ type: "SET_DESTINATION", destination });
+  const setPax = (pax: number) => dispatch({ type: "SET_PAX", pax });
+  const setCustomer = (field: string, value: unknown) =>
+    dispatch({ type: "SET_CUSTOMER", field, value });
+  const autofillProfile = () => dispatch({ type: "AUTOFILL_PROFILE" });
+  const setVoucherCode = (code: string) => dispatch({ type: "SET_VOUCHER_CODE", code });
 
-      if (!res.ok) {
-        setState((prev) => ({
-          ...prev,
-          referralError: data.error || "Kode referral tidak valid",
-        }));
-        return;
-      }
-
-      setState((prev) => ({
-        ...prev,
-        appliedReferral: {
-          code: code.toUpperCase(),
-          referrerName: data.referrerName,
-          referrerId: data.referrerId,
-        },
-        referralError: "",
-      }));
-    } catch (_err) {
-      setState((prev) => ({
-        ...prev,
-        referralError: "Gagal memvalidasi kode referral",
-      }));
+  const applyVoucher = () => {
+    if (
+      !vouchersLoadingRef.current &&
+      dbVouchersRef.current.length === 0 &&
+      !vouchersLockedRef.current
+    ) {
+      void fetchVouchers();
     }
-  }, [state.referralCode]);
+    dispatch({
+      type: "APPLY_VOUCHER",
+      vouchers: dbVouchersRef.current,
+      loading: vouchersLoadingRef.current,
+      locked: vouchersLockedRef.current,
+    });
+  };
 
-  const removeReferral = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      referralCode: "",
-      appliedReferral: null,
-      referralError: "",
-    }));
-  }, []);
+  const removeVoucher = () => dispatch({ type: "REMOVE_VOUCHER" });
+  const setReferralCode = (code: string) => dispatch({ type: "SET_REFERRAL_CODE", code });
 
-  const setPaymentMethod = useCallback((method) => {
-    setState((prev) => ({ ...prev, paymentMethod: method }));
-  }, []);
+  const applyReferral = async () => {
+    const code = stateRef.current.referralCode.trim();
+    if (!code) return;
+    dispatch({ type: "APPLY_REFERRAL_STARTED" });
+    try {
+      const { referrerName, referrerId } = await validateReferralCode(code);
+      dispatch({ type: "APPLY_REFERRAL_SUCCESS", code: code.toUpperCase(), referrerName, referrerId });
+    } catch (err: unknown) {
+      dispatch({
+        type: "APPLY_REFERRAL_FAILURE",
+        message: err instanceof Error ? err.message : "Gagal memvalidasi kode referral",
+      });
+    }
+  };
 
-  const setProofUrl = useCallback((url) => {
-    setState((prev) => ({ ...prev, proofUrl: url }));
-  }, []);
+  const removeReferral = () => dispatch({ type: "REMOVE_REFERRAL" });
+  const setPaymentMethod = (method: string | null) =>
+    dispatch({ type: "SET_PAYMENT_METHOD", method });
+  const setProofUrl = (url: string) => dispatch({ type: "SET_PROOF_URL", url });
+  const setAgreeToTerms = (value: boolean) => dispatch({ type: "SET_AGREE", value });
 
-  const setAgreeToTerms = useCallback((value) => {
-    setState((prev) => ({ ...prev, agreeToTerms: value }));
-  }, []);
+  const goToPayment = async () => {
+    const s = stateRef.current;
+    if (!s.destination) return;
 
-  const getTicketSubtotal = useCallback((s) => {
-    return (s.destination?.priceMin ?? 0) * s.pax;
-  }, []);
-
-  const getDiscount = useCallback(
-    (s) => {
-      if (!s.appliedVoucher) return 0;
-      const subtotal = getTicketSubtotal(s);
-      const av = s.appliedVoucher;
-      return computePromoDiscount(
-        { type: av.type, value: av.value, maxDiscount: av.maxDiscount },
-        subtotal
-      );
-    },
-    [getTicketSubtotal]
-  );
-
-  const getTotal = useCallback(
-    (s) => {
-      const sub = getTicketSubtotal(s);
-      const disc = getDiscount(s);
-      return Math.max(0, sub - disc);
-    },
-    [getTicketSubtotal, getDiscount]
-  );
-
-  const goToPayment = useCallback(async () => {
-    if (!state.destination) return;
-
-    let applied = state.appliedVoucher;
-    const typedCode = state.voucherCode.trim();
+    let applied = s.appliedVoucher;
+    const typedCode = s.voucherCode.trim();
     if (typedCode && !applied) {
       if (vouchersLoadingRef.current || dbVouchersRef.current.length === 0) {
-        if (!vouchersLockedRef.current) fetchVouchers();
-        setState((prev) => ({
-          ...prev,
-          error: vouchersLockedRef.current
+        if (!vouchersLockedRef.current) void fetchVouchers();
+        dispatch({
+          type: "SET_ERROR",
+          message: vouchersLockedRef.current
             ? "Silakan login dulu untuk memakai voucher."
             : "Data voucher belum tersedia. Mohon tunggu sebentar lalu coba lagi.",
-        }));
+        });
         return;
       }
-      const subtotal = (state.destination?.priceMin ?? 0) * state.pax;
+      const subtotal = (s.destination?.priceMin ?? 0) * s.pax;
       const resolved = resolveVoucher(typedCode, dbVouchersRef.current, subtotal);
       if (!resolved.appliedVoucher) {
-        setState((prev) => ({
-          ...prev,
-          appliedVoucher: null,
-          voucherError: resolved.voucherError,
-          error: resolved.voucherError,
-        }));
+        dispatch({
+          type: "APPLY_VOUCHER",
+          vouchers: dbVouchersRef.current,
+          loading: false,
+          locked: vouchersLockedRef.current,
+        });
+        dispatch({ type: "SET_ERROR", message: resolved.voucherError });
         return;
       }
       applied = resolved.appliedVoucher;
-      setState((prev) => ({ ...prev, appliedVoucher: applied, voucherError: "" }));
+      dispatch({
+        type: "APPLY_VOUCHER",
+        vouchers: dbVouchersRef.current,
+        loading: false,
+        locked: vouchersLockedRef.current,
+      });
     }
 
-    const pricingState = applied ? { ...state, appliedVoucher: applied } : state;
-
-    const snapshot = {
+    const pricingState = applied ? { ...s, appliedVoucher: applied } : s;
+    const snapshot: BookingSnapshot = {
       orderId: OrderDomain.generateOrderId(),
-      destination: state.destination,
-      pax: state.pax,
-      customer: state.customer,
+      destination: s.destination,
+      pax: s.pax,
+      customer: s.customer,
       voucherCode: applied?.code ?? null,
       appliedVoucher: applied,
-      referralCode: state.appliedReferral?.code || null,
-      paymentMethod: state.paymentMethod,
-      proofUrl: state.proofUrl,
-      subtotal: (state.destination?.priceMin ?? 0) * state.pax,
+      referralCode: s.appliedReferral?.code || null,
+      paymentMethod: s.paymentMethod,
+      proofUrl: s.proofUrl,
+      subtotal: (s.destination?.priceMin ?? 0) * s.pax,
       totalAmount: getTotal(pricingState),
     };
 
-    setState((prev) => ({ ...prev, isLoading: true, error: null, orderId: snapshot.orderId }));
-
+    dispatch({ type: "ORDER_STARTED", orderId: snapshot.orderId });
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(snapshot),
-      });
-
-      if (!res.ok) {
-        let message = "Gagal menyimpan pesanan. Silakan coba lagi.";
-        try {
-          const data = await res.json();
-          if (data?.error) message = data.error;
-        } catch {}
-
-        if (res.status === 401) {
-          const redirect = encodeURIComponent(
-            window.location.pathname + window.location.search
-          );
-          window.location.href = `/login?redirect=${redirect}`;
-          return;
-        }
-
-        setState((prev) => ({ ...prev, error: message, isLoading: false }));
+      const { bookingId } = await createBookingOrder(snapshot);
+      dispatch({ type: "ORDER_CONFIRMED", bookingId });
+    } catch (err: unknown) {
+      if (err instanceof ApiRequestError && err.status === 401) {
+        const redirect = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = `/login?redirect=${redirect}`;
         return;
       }
-
-      const data = await res.json();
-      setState((prev) => ({
-        ...prev,
-        step: "payment",
-        isLoading: false,
-        bookingId: data.booking?.id,
-      }));
-    } catch (err) {
-      console.error("Gagal menyimpan pesanan:", err);
-      setState((prev) => ({
-        ...prev,
-        error: "Terjadi kesalahan jaringan. Silakan coba lagi.",
-        isLoading: false,
-      }));
+      dispatch({
+        type: "ORDER_FAILED",
+        message: err instanceof Error ? err.message : "Gagal menyimpan pesanan. Silakan coba lagi.",
+      });
     }
-  }, [state, getTotal, fetchVouchers]);
+  };
 
-  const initiatePayment = useCallback(async () => {
-    if (!state.bookingId || !state.proofUrl) {
-      setState((prev) => ({
-        ...prev,
-        error: "Silakan unggah bukti transfer terlebih dahulu.",
-        isLoading: false,
-      }));
+  const initiatePayment = async () => {
+    const s = stateRef.current;
+    if (!s.bookingId || !s.proofUrl) {
+      dispatch({ type: "PAYMENT_BLOCKED" });
       return;
     }
-
-    setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
+    dispatch({ type: "PAYMENT_STARTED" });
     try {
-      const res = await fetch("/api/payments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bookingId: state.bookingId,
-          paymentMethod: state.paymentMethod || "manual",
-          proofUrl: state.proofUrl,
-        }),
+      await submitPayment({
+        bookingId: s.bookingId,
+        paymentMethod: s.paymentMethod || "manual",
+        proofUrl: s.proofUrl,
       });
-
-      if (!res.ok) {
-        let message = "Gagal memproses pembayaran. Silakan coba lagi.";
-        try {
-          const data = await res.json();
-          if (data?.error) message = data.error;
-        } catch {}
-        setState((prev) => ({ ...prev, error: message, isLoading: false }));
-        return;
-      }
-
-      setState((prev) => ({ ...prev, step: "confirmation", isLoading: false }));
-    } catch (err) {
-      console.error("Gagal memproses pembayaran:", err);
-      setState((prev) => ({
-        ...prev,
-        error: "Terjadi kesalahan jaringan. Silakan coba lagi.",
-        isLoading: false,
-      }));
+      dispatch({ type: "PAYMENT_CONFIRMED" });
+    } catch (err: unknown) {
+      dispatch({
+        type: "PAYMENT_FAILED",
+        message: err instanceof Error ? err.message : "Gagal memproses pembayaran. Silakan coba lagi.",
+      });
     }
-  }, [state.bookingId, state.paymentMethod, state.proofUrl]);
+  };
 
-  const reset = useCallback(() => {
-    setState({
-      step: "details",
-      destination: null,
-      pax: 1,
-      customer: { ...initialCustomer },
-      voucherCode: "",
-      appliedVoucher: null,
-      voucherError: "",
-      referralCode: "",
-      appliedReferral: null,
-      referralError: "",
-      paymentMethod: null,
-      proofUrl: "",
-      orderId: "",
-      totalAmount: 0,
-      isLoading: false,
-      error: null,
-      agreeToTerms: false,
-      bookingId: null,
-    });
-  }, []);
-
-  const goBack = useCallback(() => {
-    setState((prev) => {
-      if (prev.step === "payment") return { ...prev, step: "details", error: null };
-      return prev;
-    });
-  }, []);
+  const reset = () => dispatch({ type: "RESET" });
+  const goBack = () => dispatch({ type: "GO_BACK" });
 
   const ticketSubtotal = getTicketSubtotal(state);
   const discount = getDiscount(state);
@@ -501,4 +244,3 @@ export function useCheckout(initialDestination) {
     goBack,
   };
 }
-
