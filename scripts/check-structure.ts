@@ -61,7 +61,7 @@ const BASELINE: Baseline = {
     "src/lib/format.js",
     "src/lib/order.js",
   ],
-  R3: 152, // P5 +29 trip, P6 +9 blog, P7 +22 landing/newsletter, P8 +6 admin hooks deep; driven down in Fase 11
+  R3: 159, // P5 +29 trip, P6 +9 blog, P7 +22 landing/newsletter, P8 +19 admin (hooks deep + trip/group form); driven down in Fase 11
   R4: [
     "app-sidebar.tsx",
     "nav-main.tsx",

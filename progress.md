@@ -2234,3 +2234,16 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Verifikasi:** tsc **0** · lint **0E** · vitest **216** · build **0** · routes **96→96** · drift **0** · structure hijau (R3 146→152).
 
 **Progres:** Paket 1–7 = **48/48**, P8 = **1/7** → total **103/127**. Branch `restructure/paket-8-admin` (stacked, push).
+
+## Session 59 — 2026-10-01 (lanjutan P8)
+
+**Paket 8 Batch C — logika murni `trips` + `groups` terekstrak (render tak berubah).**
+
+- `features/admin/trip-form.ts`: `validateTripForm`, `buildTripPayload`, `mapTripItinerary`, `mapTripFacilities`, `nextItineraryDay`, rupiah helpers + 8 test; page memakai semuanya (payload dual-shape + meetingPoint identik).
+- `features/admin/group-form.ts`: `validateGroupForm`, `buildGroupPayload`, `mapGroupToForm` + 5 test; tipe lokal disatukan.
+- `gallery` (407) dibiarkan sadar: orkestrasi create→upload→attach tak terurai jadi unit murni/hook generik tanpa ubah perilaku.
+- R3 152→159 (deep client-safe). Gallery + pecah render colocation = sisa opsional.
+
+**Verifikasi:** tsc **0** · lint **0E** · vitest **229** (admin 25) · build **0** · routes **96→96** · drift **0** · structure hijau.
+
+**Progres:** total **103/127** (P8-① ✓, ②/③ substansial, ④ logika selesai kecuali colocation). Branch `restructure/paket-8-admin`, push.

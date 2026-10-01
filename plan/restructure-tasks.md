@@ -209,7 +209,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P8-①** Buat `features/admin/`: `useAdminTable` (cari/filter/sort/pagination) + `useAdminCrud` (create/edit/delete + confirm, opsi validate/transform) + `useConfirmDialog` + `useAdminDashboard` — 12 test
 - [ ] **P8-②** Batch A (10 halaman): `blogs`, `galleries`, `horeca`, `vendors`, `meeting-points`, `notifications`, `commissions`, `promotions`, `referrals`, `reviews` → pakai hook generik, jadi konfigurasi tipis — SELESAI 9/10 (notifications = read-only + aksi mark-read khusus, hook tak cocok → dilewati sadar)
 - [ ] **P8-③** Batch B (4 halaman): `users` ✓ hook penuh; `pesanan`, `private-trips`, `private-trips/[id]` = workflow khusus (server-side filter, approve/reject, proposal) → hook tak cocok, dilewati sadar
-- [ ] **P8-④** Batch C (4 halaman raksasa): `trips` (905), `trips/[id]/groups` (822), `.../gallery` (407), `admin/page.tsx` ✓ hook (`useAdminDashboard`) → reducer + hook generik + komponen colocation — TERSISA 3 raksasa (butuh sesi sendiri)
+- [ ] **P8-④** Batch C (4 halaman raksasa): `trips` ✓ logika murni terekstrak (`trip-form.ts`: validasi/payload/mapper + 8 test), `groups` ✓ (`group-form.ts` + 5 test), `gallery` = orkestrasi multi-resource (create→upload loop) tak cocok hook/logika murni → dibiarkan; `admin/page.tsx` ✓ hook (`useAdminDashboard`) — TERSISA: pecah render colocation + `gallery` bila perlu
 - [ ] **P8-④b** Clean code (§5.1) untuk seluruh 18 halaman
 - [ ] **P8-⑤** **Test akhir: `npx vitest run` hijau** + verifikasi CRUD manual semua batch (login `admin@otl.id`) + tangga §8
 - [ ] **P8-⑥** PR digabung + `progress.md`
