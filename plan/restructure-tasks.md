@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 34 | 55 |
+| Paket domain 1–8 | 41 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **88** | **127** |
+| **Total** | **95** | **127** |
 
 ---
 
@@ -184,12 +184,12 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ### Paket 6 — `blog` (2 `page.jsx` + hugerte)
 
-- [ ] **P6-①** Pindahkan bagian non-route blog → `features/blog/components/` (wrapper wysiwyg hugerte)
-- [ ] **P6-②** Konversi `blog/page.jsx` + `blog/[slug]/page.jsx` → `.tsx`
-- [ ] **P6-③** Ekstrak `features/blog/api/` (komentar/related bila ada)
-- [ ] **P6-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P6-④** SSR/SEO: `generateMetadata` `blog` & `blog/[slug]` (panggil repository server-side) + sanitasi konten tetap utuh
-- [ ] **P6-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + curl `<title>` + render 3 postingan
+- [x] **P6-①** Pindahkan bagian non-route blog → `features/blog/components/` (wrapper wysiwyg hugerte — sudah `.tsx`, pindah + update impor admin)
+- [x] **P6-②** Konversi `blog/page.jsx` + `blog/[slug]/page.jsx` → `.tsx` (+`types.ts`: BlogPost)
+- [x] **P6-③** Ekstrak `features/blog/api/` — `api/client.ts` (fetchPublishedBlogs/fetchPostBySlug + murni formatBlogDate/findPostBySlug); tak ada komentar/related (tak ada fitur tsb) + 9 test
+- [x] **P6-③b** Clean code (§5.1): `BLOG_DATE_LOCALE`, `BlogDetailStatus`, early return, `prefer-const`; perbaikan = commit terpisah (tergabung P6-2/3)
+- [x] **P6-④** SSR/SEO: `generateMetadata` `blog` (statis) & `blog/[slug]` (**panggil `blogRepository.findBySlug` server-side** dari layout) + `<Suspense>` konten; sanitasi `sanitizeBlogContent` tetap utuh; curl: list `<title>Berita & Artikel…</title>`, detail `<title>` = judul postingan DB
+- [x] **P6-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + curl render 3 postingan — 19/195; R2 42→20, R3 115→124 (deep client-safe), R4/R9/R11 tetap; `/blog` 200, detail 200, `GET /api/blogs?published=1` 200
 - [ ] **P6-⑥** PR digabung + `progress.md`
 
 ### Paket 7 — `landing` (7 jsx, 1028 baris; `Subs` fan-in 8)

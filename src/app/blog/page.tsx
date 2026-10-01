@@ -4,28 +4,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Newspaper, ArrowRight } from "lucide-react";
 import Subs from "@/components/landing/Subs";
-
-const dateLabel = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+import { fetchPublishedBlogs, formatBlogDate } from "@/features/blog/api/client";
+import type { BlogPost } from "@/features/blog/types";
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState(null);
+  const [posts, setPosts] = useState<BlogPost[] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/blogs?published=1")
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled) return;
-        setPosts(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {
-        if (!cancelled) setPosts([]);
-      });
+    fetchPublishedBlogs().then((data) => {
+      if (!cancelled) setPosts(data);
+    });
     return () => {
       cancelled = true;
     };
@@ -33,7 +22,6 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-white">
-
       <main className="min-h-screen bg-[#F9FAFB]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="mb-8 sm:mb-12">
@@ -78,21 +66,21 @@ export default function BlogPage() {
                     )}
                   </div>
                   <div className="p-4 flex flex-col flex-1">
-                  <div className="text-[11px] font-semibold text-[#F49D1A] uppercase tracking-wider mb-1.5">
-                    {dateLabel(post.publishedAt || post.createdAt)}
-                  </div>
-                  <h2 className="font-bold text-[#1F2937] leading-snug transition-colors">
-                    {post.title}
-                  </h2>
-                  {post.excerpt && (
-                    <p className="text-xs text-[#6B7280] leading-relaxed mt-1.5 mb-4 line-clamp-3 flex-1">
-                      {post.excerpt}
-                    </p>
-                  )}
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F49D1A] mt-3">
-                    Baca Selengkapnya
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </span>
+                    <div className="text-[11px] font-semibold text-[#F49D1A] uppercase tracking-wider mb-1.5">
+                      {formatBlogDate(post.publishedAt || post.createdAt)}
+                    </div>
+                    <h2 className="font-bold text-[#1F2937] leading-snug transition-colors">
+                      {post.title}
+                    </h2>
+                    {post.excerpt && (
+                      <p className="text-xs text-[#6B7280] leading-relaxed mt-1.5 mb-4 line-clamp-3 flex-1">
+                        {post.excerpt}
+                      </p>
+                    )}
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F49D1A] mt-3">
+                      Baca Selengkapnya
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
                   </div>
                 </Link>
               ))}
@@ -100,7 +88,6 @@ export default function BlogPage() {
           )}
         </div>
       </main>
-
       <Subs />
     </div>
   );

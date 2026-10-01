@@ -2183,3 +2183,21 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `6a57ac5` pindah · `ad95a7a` konversi · `3b84ee5` api/hook/test · `98b6cae` clean · `6f26e2f` metadata · `32a1a8e` baselines · komit docs sesi ini.
 
 **Progres:** Paket 1–5 = **34/34** → total **88/127**. Lanjut Paket 6 `blog` (branch `restructure/paket-6-blog`).
+
+## Session 56 — 2026-10-01
+
+**Paket 6 `blog` — 7/7 selesai (P6-⑥ PR pending; stacked di atas P5).** Paket terkecil: 2 page + wrapper hugerte.
+
+**Perubahan (`src/features/blog/`):**
+- **P6-①** `admin/components/wysiwyg-editor.tsx` → `components/` (sudah `.tsx`; impor admin → `@/features/blog/...`).
+- **P6-②/③** 2 page → `.tsx` + `types.ts` (BlogPost) + `api/client.ts` (fetchPublishedBlogs/fetchPostBySlug + murni formatBlogDate/findPostBySlug); page pakai fetcher (cancelled-flag tetap); 9 test.
+- **P6-④** `blog/layout.tsx` (metadata statis) + `blog/[slug]/layout.tsx` (`generateMetadata` **server-side via `blogRepository.findBySlug`**); `<Suspense>` konten; `sanitizeBlogContent` tak tersentuh. Curl: list `<title>Berita & Artikel…</title>`, detail `<title>` = judul DB.
+- **P6-⑤** baselines: R2 42→20, R3 115→124 (deep client-safe), R4/R9/R11 tetap. Uji: `/blog` 200, detail 200, API published 200 (3+ postingan).
+
+**Insiden P5 (diperbaiki sebelum P6):** rewrite P5 tak sengaja membuang `<Subs/>` di 2 halaman trips (regresi visual — markup dirender tak identik). Fix `7c3bf1a` di branch P5 (push), P6 di-rebase. Pelajaran: diff tiap page wajib grep `Subs` sebelum commit.
+
+**Verifikasi:** tsc **0** · lint **0E** · vitest **19/195** · build **0** · routes **96→96** · drift **0** · structure hijau.
+
+**Commits:** `b19abb5` pindah · `8fc475a` konversi+api · `a4b77e8` test+metadata+baselines · komit docs sesi ini.
+
+**Progres:** Paket 1–6 = **41/41** → total **95/127**. Lanjut Paket 7 `landing` + `newsletter` (branch `restructure/paket-7-landing`).

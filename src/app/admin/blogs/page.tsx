@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
-import WysiwygEditor from "../components/wysiwyg-editor";
+import WysiwygEditor from "@/features/blog/components/wysiwyg-editor";
 import BlogCoverUploader from "../components/blog-cover-uploader";
 
 interface Blog {

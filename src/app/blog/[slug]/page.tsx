@@ -1,45 +1,34 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import Subs from "@/components/landing/Subs";
 import { sanitizeBlogContent } from "@/utils/sanitize";
+import { fetchPostBySlug, formatBlogDate } from "@/features/blog/api/client";
+import type { BlogPost } from "@/features/blog/types";
 
-const dateLabel = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+type BlogDetailStatus = "loading" | "found" | "notfound";
 
-export default function BlogDetailPage({ params }) {
+export default function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
-  const [post, setPost] = useState(null);
-  const [status, setStatus] = useState("loading");
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [status, setStatus] = useState<BlogDetailStatus>("loading");
 
   useEffect(() => {
     const slug = resolvedParams.slug;
     let cancelled = false;
-
-    fetch("/api/blogs?published=1")
-      .then((res) => res.json())
-      .then((data) => {
+    fetchPostBySlug(slug)
+      .then((found) => {
         if (cancelled) return;
-        if (!Array.isArray(data)) {
-          setStatus("notfound");
-          return;
-        }
-        const found = data.find((b) => b.slug === slug);
-        setPost(found ?? null);
+        setPost(found);
         setStatus(found ? "found" : "notfound");
       })
       .catch(() => {
         if (cancelled) return;
         setStatus("notfound");
       });
-
     return () => {
       cancelled = true;
     };
@@ -51,7 +40,6 @@ export default function BlogDetailPage({ params }) {
 
   return (
     <div className="min-h-screen bg-white">
-
       {status !== "found" || !post ? (
         <div className="flex items-center justify-center min-h-[60vh] text-sm text-[#6B7280]">
           Memuat artikel...
@@ -69,7 +57,7 @@ export default function BlogDetailPage({ params }) {
 
             <div className="mt-6">
               <div className="text-xs font-semibold text-[#F49D1A] uppercase tracking-wider mb-3">
-                {dateLabel(post.publishedAt || post.createdAt)}
+                {formatBlogDate(post.publishedAt || post.createdAt)}
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight text-[#1F2937]">
                 {post.title}
@@ -89,10 +77,12 @@ export default function BlogDetailPage({ params }) {
             </div>
 
             <div className="mt-8 border-t border-slate-200 pt-8">
-              <div
-                className="text-sm text-[#475569] leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
-                dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
-              />
+              <Suspense fallback={<div className="py-8 text-center text-sm text-[#6B7280]">Memuat konten...</div>}>
+                <div
+                  className="text-sm text-[#475569] leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
+                  dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
+                />
+              </Suspense>
             </div>
           </div>
         </main>

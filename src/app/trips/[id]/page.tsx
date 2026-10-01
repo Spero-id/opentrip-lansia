@@ -3,6 +3,7 @@
 import { Suspense, use, useEffect, useOptimistic, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Subs from "@/components/landing/Subs";
 import { DestinationDomain } from "@/lib/destination";
 import Lightbox from "@/features/trip/components/detail/Lightbox";
 import DestinationHeader from "@/features/trip/components/detail/DestinationHeader";
@@ -117,6 +118,7 @@ export default function DestinationDetailPage({ params }: { params: Promise<{ id
           <TripBookingCard dest={dest} />
         </div>
       </main>
+      <Subs />
     </div>
   );
 }
