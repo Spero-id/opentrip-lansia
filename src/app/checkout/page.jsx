@@ -8,9 +8,9 @@ import {
   NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
   NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION,
 } from "@/lib/env";
-import StepProgress from "../../components/checkout/StepProgress";
-import DetailsStep from "../../components/checkout/DetailsStep";
-import PaymentStep from "../../components/checkout/PaymentStep";
+import StepProgress from "@/features/checkout/components/StepProgress";
+import DetailsStep from "@/features/checkout/components/DetailsStep";
+import PaymentStep from "@/features/checkout/components/PaymentStep";
 
 import Subs from "@/components/landing/Subs";
 import { toDetail } from "@/lib/destination";

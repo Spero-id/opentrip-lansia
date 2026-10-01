@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import PaymentStep from "@/components/checkout/PaymentStep";
+import PaymentStep from "@/features/checkout/components/PaymentStep";
 import { useCheckout } from "@/features/checkout/hooks/use-checkout";
 
 function PayContent() {

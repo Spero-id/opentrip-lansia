@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import PaymentStep from "@/components/checkout/PaymentStep";
+import PaymentStep from "@/features/checkout/components/PaymentStep";
 
 type Setter = (m: string | null) => void;
 
