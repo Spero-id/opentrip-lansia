@@ -180,7 +180,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P5-③b** Clean code (§5.1): `PRICE_INPUT_MAX_LENGTH`, `sanitizePriceDigits`/`clampPrice`/`parsePriceInput`, hapus `User` tak terpakai, `prefer-const`; perbaikan = commit refactor terpisah
 - [x] **P5-④** SSR/SEO: `generateMetadata` `trips` via `trips/layout.tsx` (page tetap client, preseden P1) + `<Suspense>` (galeri, ulasan); curl HTML: `<title>Semua Destinasi Open Trip Lansia</title>` tanpa JS
 - [x] **P5-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + crawl trip — 18/186; R2 42→22 (stale, 20 file jsx hilang), R3 82→115 (deep impor client-safe ala P4), R4 −destinasi, R9 37→37, R11 0; `/trips` 200, `/trips/abc-123` 200, `GET /api/trips` 200, `npm run build` hijau, `check:routes` 96→96, drift 0
-- [ ] **P5-⑥** PR digabung + `progress.md`
+- [x] **P5-⑥** PR #118 digabung + `progress.md`
 
 ### Paket 6 — `blog` (2 `page.jsx` + hugerte)
 
@@ -190,7 +190,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P6-③b** Clean code (§5.1): `BLOG_DATE_LOCALE`, `BlogDetailStatus`, early return, `prefer-const`; perbaikan = commit terpisah (tergabung P6-2/3)
 - [x] **P6-④** SSR/SEO: `generateMetadata` `blog` (statis) & `blog/[slug]` (**panggil `blogRepository.findBySlug` server-side** dari layout) + `<Suspense>` konten; sanitasi `sanitizeBlogContent` tetap utuh; curl: list `<title>Berita & Artikel…</title>`, detail `<title>` = judul postingan DB
 - [x] **P6-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + curl render 3 postingan — 19/195; R2 42→20, R3 115→124 (deep client-safe), R4/R9/R11 tetap; `/blog` 200, detail 200, `GET /api/blogs?published=1` 200
-- [ ] **P6-⑥** PR digabung + `progress.md`
+- [x] **P6-⑥** PR #119 digabung + `progress.md`
 
 ### Paket 7 — `landing` (7 jsx, 1028 baris; `Subs` fan-in 8)
 
