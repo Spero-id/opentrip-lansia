@@ -1,55 +1,42 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth/client";
-import EmptyState from "@/components/my-trips/EmptyState";
-import OpenTripBookingCard from "@/components/my-trips/OpenTripBookingCard";
-import RequestCard from "@/components/my-trips/RequestCard";
+import {
+  EmptyState,
+  OpenTripBookingCard,
+  RequestCard,
+  fetchPrivateRequests,
+  normalizeList,
+  useOpenTripBooking,
+} from "@/features/my-trips";
+import type { BookingNotes, MyTripBooking, PrivateTripRequest } from "@/features/my-trips";
 
 export default function MyTripsPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const [tab, setTab] = useState("open");
-  const [bookings, setBookings] = useState([]);
-  const [requests, setRequests] = useState([]);
-  const [tripImages, setTripImages] = useState({});
-  const [loading, setLoading] = useState(true);
+  const {
+    bookings,
+    tripImages,
+    loading: bookingsLoading,
+    refresh: refreshBookings,
+  } = useOpenTripBooking();
+  const [requests, setRequests] = useState<PrivateTripRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(true);
+  const loading = bookingsLoading || requestsLoading;
   const [filter, setFilter] = useState("all");
 
-  const getDestinationId = (booking) => {
+  const getDestinationId = (booking: MyTripBooking): string | null => {
     if (!booking?.notes) return null;
     try {
-      const notes = typeof booking.notes === "string" ? JSON.parse(booking.notes) : booking.notes;
+      const notes = typeof booking.notes === "string" ? (JSON.parse(booking.notes) as BookingNotes) : booking.notes;
       return notes?.destinationId || null;
     } catch {
       return null;
     }
   };
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [bookingsRes, requestsRes, tripsRes] = await Promise.all([
-        fetch("/api/bookings").then((r) => r.json()),
-        fetch("/api/private-trips").then((r) => r.json()),
-        fetch("/api/trips").then((r) => r.json()).catch(() => []),
-      ]);
-      setBookings(Array.isArray(bookingsRes) ? bookingsRes : bookingsRes?.rows || []);
-      setRequests(Array.isArray(requestsRes) ? requestsRes : requestsRes?.rows || []);
-      const trips = Array.isArray(tripsRes) ? tripsRes : tripsRes?.rows || [];
-      const imageMap = {};
-      for (const t of trips) {
-        if (t?.id && (t.image || t.images?.[0])) {
-          imageMap[t.id] = t.image || t.images[0];
-        }
-      }
-      setTripImages(imageMap);
-    } catch (err) {
-      console.error("Gagal memuat data:", err);
-    }
-    setLoading(false);
-  }, []);
 
   useEffect(() => {
     if (isPending) return;
@@ -58,12 +45,30 @@ export default function MyTripsPage() {
       return;
     }
     let cancelled = false;
-    void (async () => {
-      await Promise.resolve();
-      if (!cancelled) await fetchData();
-    })();
-    return () => { cancelled = true; };
-  }, [session, isPending, fetchData, router]);
+    fetchPrivateRequests()
+      .then((payload) => {
+        if (cancelled) return;
+        setRequests(normalizeList<PrivateTripRequest>(payload));
+        setRequestsLoading(false);
+      })
+      .catch(() => {
+        if (!cancelled) setRequestsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [session, isPending, router]);
+
+  const refreshAll = () => {
+    void refreshBookings();
+    setRequestsLoading(true);
+    fetchPrivateRequests()
+      .then((payload) => {
+        setRequests(normalizeList<PrivateTripRequest>(payload));
+        setRequestsLoading(false);
+      })
+      .catch(() => setRequestsLoading(false));
+  };
 
   if (isPending || loading) {
     return (
@@ -150,8 +155,8 @@ export default function MyTripsPage() {
                 <OpenTripBookingCard
                   key={b.id}
                   booking={b}
-                  imageUrl={tripImages[getDestinationId(b)] || null}
-                  onRefresh={fetchData}
+                  imageUrl={tripImages[getDestinationId(b) ?? ""] || null}
+                  onRefresh={refreshAll}
                 />
               ))
             )}
@@ -161,7 +166,7 @@ export default function MyTripsPage() {
             {filteredRequests.length === 0 ? (
               <EmptyState type="private" />
             ) : (
-              filteredRequests.map((r) => <RequestCard key={r.id} req={r} onRefresh={fetchData} />)
+              filteredRequests.map((r) => <RequestCard key={r.id} req={r} onRefresh={refreshAll} />)
             )}
           </div>
         )}

@@ -1,6 +1,6 @@
 export const A = "#F49D1A";
 
-export const STATUS_LABEL = {
+export const STATUS_LABEL: Record<string, string> = {
   draft: "Draft",
   submitted: "Menunggu Review",
   reviewed: "Sedang Direview",
@@ -9,7 +9,7 @@ export const STATUS_LABEL = {
   revision: "Perlu Revisi",
 };
 
-export const STATUS_COLOR = {
+export const STATUS_COLOR: Record<string, string> = {
   draft: "bg-gray-100 text-gray-600",
   submitted: "bg-blue-100 text-blue-700",
   reviewed: "bg-violet-100 text-violet-700",
@@ -18,21 +18,21 @@ export const STATUS_COLOR = {
   revision: "bg-amber-100 text-amber-700",
 };
 
-export const PROPOSAL_LABEL = {
+export const PROPOSAL_LABEL: Record<string, string> = {
   pending: "Menunggu",
   accepted: "Diterima",
   rejected: "Ditolak",
   revised: "Revisi",
 };
 
-export const PROPOSAL_COLOR = {
+export const PROPOSAL_COLOR: Record<string, string> = {
   pending: "bg-blue-100 text-blue-700",
   accepted: "bg-emerald-100 text-emerald-700",
   rejected: "bg-red-100 text-red-700",
   revised: "bg-amber-100 text-amber-700",
 };
 
-export const OPEN_TRIP_STATUS_LABEL = {
+export const OPEN_TRIP_STATUS_LABEL: Record<string, string> = {
   pending_payment: "Menunggu Pembayaran",
   confirmed: "Terkonfirmasi",
   pending: "Menunggu Verifikasi",
@@ -41,7 +41,7 @@ export const OPEN_TRIP_STATUS_LABEL = {
   completed: "Selesai",
 };
 
-export const OPEN_TRIP_STATUS_COLOR = {
+export const OPEN_TRIP_STATUS_COLOR: Record<string, string> = {
   pending_payment: "bg-amber-100 text-amber-700",
   confirmed: "bg-emerald-100 text-emerald-700",
   pending: "bg-blue-100 text-blue-700",
@@ -50,7 +50,7 @@ export const OPEN_TRIP_STATUS_COLOR = {
   completed: "bg-gray-100 text-gray-600",
 };
 
-export const PAYMENT_STATUS_LABEL = {
+export const PAYMENT_STATUS_LABEL: Record<string, string> = {
   pending: "Menunggu Verifikasi",
   paid: "Lunas",
   rejected: "Ditolak",
@@ -58,7 +58,7 @@ export const PAYMENT_STATUS_LABEL = {
   pending_payment: "Menunggu Pembayaran",
 };
 
-export const PAYMENT_STATUS_COLOR = {
+export const PAYMENT_STATUS_COLOR: Record<string, string> = {
   pending: "text-blue-700",
   paid: "text-emerald-700",
   rejected: "text-red-700",
@@ -66,7 +66,7 @@ export const PAYMENT_STATUS_COLOR = {
   pending_payment: "text-amber-700",
 };
 
-export function formatRupiah(val) {
+export function formatRupiah(val: string | number | null | undefined): string | null {
   if (!val && val !== 0) return null;
   const num = typeof val === "string"
     ? parseFloat(val.replace(/[^\d.]/g, ""))
@@ -75,7 +75,7 @@ export function formatRupiah(val) {
   return "Rp " + Math.floor(num).toLocaleString("id-ID");
 }
 
-export function toRequestCode(id) {
+export function toRequestCode(id: string): string {
   return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 

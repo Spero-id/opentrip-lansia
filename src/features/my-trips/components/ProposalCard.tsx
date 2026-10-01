@@ -2,12 +2,23 @@
 
 import { useState } from "react";
 import { PROPOSAL_COLOR, PROPOSAL_LABEL, formatRupiah } from "./constants";
+import type { PrivateProposal } from "@/features/my-trips";
 
-export default function ProposalCard({ proposal, requestId, requestStatus, onRefresh }) {
+export default function ProposalCard({
+  proposal,
+  requestId,
+  requestStatus,
+  onRefresh,
+}: {
+  proposal: PrivateProposal;
+  requestId: string;
+  requestStatus?: string | null;
+  onRefresh?: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [note, setNote] = useState("");
 
-  const handleAction = async (action) => {
+  const handleAction = async (action: string) => {
     setLoading(true);
     try {
       const res = await fetch(`/api/private-trips/${requestId}/respond`, {
@@ -16,10 +27,9 @@ export default function ProposalCard({ proposal, requestId, requestStatus, onRef
         body: JSON.stringify({ proposalId: proposal.id, action, revisionNote: note }),
       });
       if (res.ok) onRefresh?.();
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (requestStatus !== "revision" && proposal.status !== "pending") return null;

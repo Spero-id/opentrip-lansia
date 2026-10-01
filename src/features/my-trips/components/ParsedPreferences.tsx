@@ -1,29 +1,11 @@
 "use client";
 
-export default function ParsedPreferences({ text }) {
+import { parsePreferences } from "@/features/my-trips";
+
+export default function ParsedPreferences({ text }: { text?: string | null }) {
   if (!text) return <span className="text-gray-400 text-xs">-</span>;
 
-  const sections = [];
-  let current = null;
-
-  text.split("\n").forEach((line) => {
-    const trimmed = line.trim();
-    if (!trimmed) return;
-    const sectionMatch = trimmed.match(/^\[(.+)\]$/);
-    if (sectionMatch) {
-      if (current) sections.push(current);
-      current = { title: sectionMatch[1], rows: [] };
-    } else if (current) {
-      const colonIdx = trimmed.indexOf(":");
-      if (colonIdx > 0) {
-        current.rows.push({
-          key: trimmed.slice(0, colonIdx).trim(),
-          value: trimmed.slice(colonIdx + 1).trim(),
-        });
-      }
-    }
-  });
-  if (current) sections.push(current);
+  const sections = parsePreferences(text);
 
   if (sections.length === 0) {
     return <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">{text}</p>;

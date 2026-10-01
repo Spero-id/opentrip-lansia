@@ -1,8 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
-export default function FeedbackModal({ open, onClose, onSubmit, tripTitle, bookingCode }) {
+export default function FeedbackModal({
+  open,
+  onClose,
+  onSubmit,
+  tripTitle,
+  bookingCode,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (input: { rating: number; content: string }) => Promise<void>;
+  tripTitle?: string | null;
+  bookingCode?: string | null;
+}) {
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -10,7 +22,7 @@ export default function FeedbackModal({ open, onClose, onSubmit, tripTitle, book
 
   if (!open) return null;
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!content.trim()) {
       alert("Mohon isi ulasan Anda");
@@ -21,8 +33,7 @@ export default function FeedbackModal({ open, onClose, onSubmit, tripTitle, book
       await onSubmit({ rating, content: content.trim() });
       setContent("");
       setRating(5);
-    } catch (err) {
-      console.error("Error submitting feedback:", err);
+    } catch {
     } finally {
       setLoading(false);
     }
