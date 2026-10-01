@@ -9,6 +9,7 @@ import type { PrivateTripRequest } from "@/features/my-trips";
 export default function RequestCard({ req, onRefresh }: { req: PrivateTripRequest; onRefresh?: () => void }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const COPY_TIMEOUT_MS = 2000;
 
   const requestCode = toRequestCode(req.id);
 
@@ -16,7 +17,7 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
     e.stopPropagation();
     navigator.clipboard.writeText(requestCode);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), COPY_TIMEOUT_MS);
   };
 
   return (

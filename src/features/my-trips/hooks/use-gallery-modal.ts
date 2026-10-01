@@ -12,21 +12,23 @@ export function useGalleryModal(tripId: string | null | undefined, departureId: 
   useEffect(() => {
     if (!open || !tripId || !departureId) return;
     let cancelled = false;
-    setLoading(true);
-    fetchGalleryMedia(tripId, departureId)
-      .then((items) => {
+    async function load(t: string, d: string) {
+      setLoading(true);
+      try {
+        const items = await fetchGalleryMedia(t, d);
         if (!cancelled) {
           setMedia(items);
           setLoading(false);
         }
-      })
-      .catch((err: unknown) => {
+      } catch (err: unknown) {
         if (!cancelled) {
           setMedia([]);
           setError(toPublicError(err));
           setLoading(false);
         }
-      });
+      }
+    }
+    void load(tripId, departureId);
     return () => {
       cancelled = true;
     };

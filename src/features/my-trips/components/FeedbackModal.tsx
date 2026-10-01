@@ -33,8 +33,7 @@ export default function FeedbackModal({
       await onSubmit({ rating, content: content.trim() });
       setContent("");
       setRating(5);
-    } catch (err) {
-      console.error("Error submitting feedback:", err);
+    } catch {
     } finally {
       setLoading(false);
     }

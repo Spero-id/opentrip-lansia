@@ -30,6 +30,7 @@ export default function OpenTripBookingCard({
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const COPY_TIMEOUT_MS = 2000;
 
   let notesObj: BookingNotes = {};
   if (booking.notes) {
@@ -65,7 +66,7 @@ export default function OpenTripBookingCard({
     if (booking.bookingCode) {
       navigator.clipboard.writeText(booking.bookingCode);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), COPY_TIMEOUT_MS);
     }
   };
 

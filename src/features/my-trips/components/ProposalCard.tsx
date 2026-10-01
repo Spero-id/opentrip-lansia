@@ -27,10 +27,9 @@ export default function ProposalCard({
         body: JSON.stringify({ proposalId: proposal.id, action, revisionNote: note }),
       });
       if (res.ok) onRefresh?.();
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (requestStatus !== "revision" && proposal.status !== "pending") return null;
