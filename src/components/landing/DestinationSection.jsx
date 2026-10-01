@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MapPin } from "lucide-react";
 import Link from "next/link";
-import DestinationCard from "@/components/destinasi/DestinationCard";
+import DestinationCard from "@/features/trip/components/DestinationCard";
 
 const PAGE_SIZE = 6;
 
