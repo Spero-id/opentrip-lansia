@@ -113,7 +113,7 @@ export const privateTripService = {
 
     const prop = await privateTripRepository.findProposalById(proposalId);
     if (!prop) throw new AppError("Proposal not found", "NOT_FOUND", 404);
-    if (prop.status !== "pending" && prop.status !== "revised") throw new ConflictError("Proposal is not actionable");
+    if (prop.status !== "pending" && prop.status !== "revised") throw new ConflictError("Proposal tidak dapat diproses");
 
     const newPropStatus = isValidTransition(PROPOSAL_TRANSITIONS, prop.status, action);
     if (!newPropStatus) throw new ValidationError(`Cannot "${action}" proposal with status "${prop.status}"`);

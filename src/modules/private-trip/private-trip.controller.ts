@@ -54,14 +54,14 @@ export const privateTripController = {
   async create(req: NextRequest) {
     const userId = await getSessionUserId(req);
     if (!userId) {
-      return NextResponse.json({ error: "Anda harus login untuk mengirim request" }, { status: 401 });
+      return NextResponse.json({ error: "Anda harus login untuk mengirim permintaan" }, { status: 401 });
     }
 
     let body: Record<string, unknown>;
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ error: "Format request body tidak valid" }, { status: 400 });
+      return NextResponse.json({ error: "Format permintaan tidak valid" }, { status: 400 });
     }
 
     const errors = validateCreateRequest(body);
@@ -106,7 +106,7 @@ export const privateTripController = {
     }
     const request = await privateTripService.findById(params.id);
     if (!request) {
-      return NextResponse.json({ error: "Request tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ error: "Permintaan tidak ditemukan" }, { status: 404 });
     }
     if (request.userId !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -127,7 +127,7 @@ export const privateTripController = {
   async getAdminDetail(req: NextRequest, { params }: { params: { id: string } }) {
     const request = await privateTripService.findById(params.id);
     if (!request) {
-      return NextResponse.json({ error: "Request tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ error: "Permintaan tidak ditemukan" }, { status: 404 });
     }
     const proposals = await privateTripService.findProposalsByRequestId(params.id);
     return NextResponse.json({ ...request, proposals });
@@ -138,10 +138,10 @@ export const privateTripController = {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+      return NextResponse.json({ error: "Data permintaan tidak valid" }, { status: 400 });
     }
     if (!body.action) {
-      return NextResponse.json({ error: "Action is required" }, { status: 400 });
+      return NextResponse.json({ error: "Aksi wajib diisi" }, { status: 400 });
     }
     try {
       const result = await privateTripService.updateStatus(params.id, body.action);
@@ -160,7 +160,7 @@ export const privateTripController = {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+      return NextResponse.json({ error: "Data permintaan tidak valid" }, { status: 400 });
     }
     if (!body.proposalContent) {
       return NextResponse.json({ error: "Konten proposal wajib diisi" }, { status: 400 });
@@ -193,10 +193,10 @@ export const privateTripController = {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+      return NextResponse.json({ error: "Data permintaan tidak valid" }, { status: 400 });
     }
     if (!body.proposalId || !body.action) {
-      return NextResponse.json({ error: "proposalId and action are required" }, { status: 400 });
+      return NextResponse.json({ error: "proposalId dan action wajib diisi" }, { status: 400 });
     }
     if (body.action === "revise" && body.revisionNote && body.revisionNote.trim().length > 1000) {
       return NextResponse.json({ error: "Catatan revisi maksimal 1000 karakter" }, { status: 400 });

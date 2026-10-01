@@ -204,7 +204,7 @@ export default function PrivateTripPage() {
         const data = await res.json().catch(() => ({}));
         const message =
           res.status === 401
-            ? "Anda harus login untuk mengirim request."
+            ? "Anda harus login untuk mengirim permintaan."
             : data?.error || data?.errors?.[0]?.message || "Terjadi kesalahan. Silakan coba lagi.";
         setSubmitError(message);
         return;
