@@ -12,6 +12,7 @@ type Baseline = {
   R8: number;
   R9: number;
   R10: number;
+  R11: number;
 };
 
 const BASELINE: Baseline = {
@@ -176,6 +177,7 @@ const BASELINE: Baseline = {
   R8: 480,
   R9: 42,
   R10: 0,
+  R11: 0,
 };
 
 const ID_COMMENT_WORDS = [
@@ -409,6 +411,63 @@ function main(): void {
   }
   const r10 = r10Samples.length;
 
+  const ENV_SERVER = "src/lib/env.server.ts";
+  const STATIC_IMPORT_RE = /(?:import|export)[^'"]*?from\s*["']([^"']+)["']/g;
+  const importCache = new Map<string, string[]>();
+  function resolveLocal(fromFile: string, spec: string): string | null {
+    let base: string;
+    if (spec.startsWith("@/")) base = path.join(SRC, spec.slice(2));
+    else if (spec.startsWith(".")) base = path.resolve(path.dirname(fromFile), spec);
+    else return null;
+    const cands = [base, `${base}.ts`, `${base}.tsx`, `${base}.jsx`, `${base}.js`,
+      path.join(base, "index.ts"), path.join(base, "index.tsx")];
+    for (const c of cands) {
+      try {
+        if (fs.statSync(c).isFile()) return c;
+      } catch {
+        continue;
+      }
+    }
+    return null;
+  }
+  function localImports(file: string): string[] {
+    const hit = importCache.get(file);
+    if (hit) return hit;
+    const out: string[] = [];
+    const text = fs.readFileSync(file, "utf8");
+    STATIC_IMPORT_RE.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = STATIC_IMPORT_RE.exec(text)) !== null) {
+      const r = resolveLocal(file, m[1]);
+      if (r) out.push(r);
+    }
+    importCache.set(file, out);
+    return out;
+  }
+  const r11Samples: string[] = [];
+  for (const f of walk(SRC)) {
+    if (!CODE_EXT.has(path.extname(f))) continue;
+    if (!fs.readFileSync(f, "utf8").slice(0, 200).includes('"use client"')) continue;
+    const seen = new Set<string>([f]);
+    const queue: string[] = [f];
+    let bad = false;
+    while (queue.length && !bad) {
+      const cur = queue.shift() as string;
+      for (const dep of localImports(cur)) {
+        if (rel(dep) === ENV_SERVER) {
+          bad = true;
+          break;
+        }
+        if (!seen.has(dep)) {
+          seen.add(dep);
+          queue.push(dep);
+        }
+      }
+    }
+    if (bad) r11Samples.push(rel(f));
+  }
+  const r11 = r11Samples.length;
+
   const rules: RuleState[] = [
     { id: "R1", title: "Indonesian comment lines (target 0)", current: r1, baseline: BASELINE.R1, samples: r1Samples },
     { id: "R2", title: "legacy .jsx/.js files (ratchet)", current: r2, baseline: BASELINE.R2, samples: [] },
@@ -420,6 +479,7 @@ function main(): void {
     { id: "R8", title: "Indonesian identifier segments", current: r8, baseline: BASELINE.R8, samples: r8Samples },
     { id: "R9", title: "relative ../ imports (ratchet)", current: r9, baseline: BASELINE.R9, samples: r9Samples },
     { id: "R10", title: "chrome imports outside SiteChrome/layout (target 0)", current: r10, baseline: BASELINE.R10, samples: r10Samples },
+    { id: "R11", title: "client bundle reaches env.server (target 0)", current: r11, baseline: BASELINE.R11, samples: r11Samples },
   ];
 
   if (process.argv.includes("--print-baseline")) {
@@ -429,7 +489,7 @@ function main(): void {
     process.exit(0);
   }
 
-  console.log("check-structure — rules R1-R10 (strategy §9)");
+  console.log("check-structure — rules R1-R11 (strategy §9)");
   console.log("(status FAIL = current above baseline; ratchet may only go down)\n");
 
   let failed = 0;
