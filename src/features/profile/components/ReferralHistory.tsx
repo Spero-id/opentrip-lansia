@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useReferralHistory } from "@/features/profile";
 import {
   Clock,
   CheckCircle,
@@ -9,7 +10,6 @@ import {
   ChevronUp,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import type { ReferralHistoryItem, ReferralPagination } from "../types";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: LucideIcon }> = {
   pending: {
@@ -39,42 +39,9 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
 };
 
 export default function ReferralHistory() {
-  const [history, setHistory] = useState<ReferralHistoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState<ReferralPagination | null>(null);
+  const { history, pagination, loading } = useReferralHistory(page);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchHistory = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `/api/user/referral/history?page=${page}&limit=10`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          if (!cancelled) {
-            setHistory(data.history);
-            setPagination(data.pagination);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch referral history:", err);
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchHistory();
-    return () => {
-      cancelled = true;
-    };
-  }, [page]);
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);

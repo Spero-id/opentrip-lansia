@@ -1,17 +1,11 @@
 "use client";
 
 import { Coins, CalendarDays, Users } from "lucide-react";
-import { useState, useEffect } from "react";
-import type { ProfileUser, ReferralSummary } from "../types";
+import { useProfileStats } from "@/features/profile";
+import type { ProfileUser } from "../types";
 
 export default function ProfileStats({ user }: { user?: ProfileUser | null }) {
-  const [referralData, setReferralData] = useState<ReferralSummary | null>(null);
-  useEffect(() => {
-    fetch("/api/user/referral")
-      .then((res) => res.json())
-      .then((data) => setReferralData(data))
-      .catch(() => {});
-  }, []);
+  const { data: referralData } = useProfileStats();
 
   const memberSince = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString("id-ID", {
