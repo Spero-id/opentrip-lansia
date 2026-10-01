@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { OrderDomain } from "../Order";
-import { parseMoney, parsePromoValue } from "@/shared/promo/promo-value";
-import { computePromoDiscount } from "@/shared/promo/promo-discount";
+import { parseMoney, parsePromoValue } from "@/features/promotion";
+import { computePromoDiscount } from "@/features/promotion";
 
 const initialCustomer = {
   fullName: "",

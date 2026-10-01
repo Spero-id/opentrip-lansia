@@ -7,7 +7,7 @@ import { referrals } from "@/db/schema/referral";
 import { users } from "@/db/schema/auth";
 import { auth } from "@/features/auth/auth.config";
 import { promotionRepository } from "@/features/promotion";
-import { computePromoDiscount } from "@/shared/promo/promo-discount";
+import { computePromoDiscount } from "@/features/promotion";
 import { tripRepository } from "@/features/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
 import { toPublicError } from "@/lib/errors/to-public-error";

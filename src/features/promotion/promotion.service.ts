@@ -1,7 +1,7 @@
 import { promotionRepository } from "./promotion.repository";
 import { ConflictError, ValidationError } from "@/lib/errors/app-error";
-import { computePromoDiscount } from "@/shared/promo/promo-discount";
-import { parseMoney } from "@/shared/promo/promo-value";
+import { computePromoDiscount } from "@/features/promotion";
+import { parseMoney } from "@/features/promotion";
 
 export const promotionService = {
   async applyPromo(code: string, userId: string, bookingId: string, subtotal: string) {

@@ -5,9 +5,9 @@ import {
   availableMethods,
   findAccountByMethod,
   isCompleteAccount,
-} from "../src/shared/payment/payment-account";
-import { computePromoDiscount } from "../src/shared/promo/promo-discount";
-import { parsePromoValue } from "../src/shared/promo/promo-value";
+} from "../src/features/payment";
+import { computePromoDiscount } from "../src/features/promotion";
+import { parsePromoValue } from "../src/features/promotion";
 
 let failed = false;
 
