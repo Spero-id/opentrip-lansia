@@ -28,7 +28,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 0 — Tools & baseline | 14 | 14 |
 | Fase 0.5 — Boundary root | 4 | 4 |
 | Fase 1 — Komentar & pesan error | 7 | 7 |
-| Fase 2 — Skema Drizzle tunggal | 0 | 8 |
+| Fase 2 — Skema Drizzle tunggal | 8 | 8 |
 | Fase 3 — Rename & lebur global | 0 | 10 |
 | Fase 3b — `lib/env.ts` | 0 | 2 |
 | Fase 3c — Chrome ke root layout | 0 | 6 |
@@ -36,7 +36,7 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **28** | **127** |
+| **Total** | **36** | **127** |
 
 ---
 
@@ -76,14 +76,14 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 ## Fase 2 — Satu sumber skema Drizzle (temuan #1)
 
-- [ ] **2.1** Jalankan `check:schema-drift` → daftar 35 tabel kembar + selisih kolom; **jika ada selisih kolom: STOP, putuskan manual mana yang benar**
-- [ ] **2.2** Tetapkan sumber kebenaran = `src/db/schema/` (sesuai `drizzle.config.ts`); catat di dokumen strategi
-- [ ] **2.3** 13 tabel yang hanya ada di `src/modules/*` → pindah ke `src/db/schema/` (file per domain sesuai konvensi yang ada)
-- [ ] **2.4** Redirect semua import skema → `@/db/schema` (tanpa `../`)
-- [ ] **2.5** Hapus definisi duplikat di `src/modules/*`; file schema modul cukup re-export dari `@/db/schema` bila masih dibutuhkan
-- [ ] **2.6** `npx drizzle-kit generate` **tidak** menghasilkan migrasi baru (definisi identik dengan migrasi yang ada)
-- [ ] **2.7** `check:schema-drift` = 0 selisih; tangga §8 hijau
-- [ ] **2.8** Commit
+- [x] **2.1** Jalankan `check:schema-drift` → daftar 35 tabel kembar + selisih kolom; **jika ada selisih kolom: STOP, putuskan manual mana yang benar** (4 drift diputuskan vs `information_schema` live → D-21)
+- [x] **2.2** Tetapkan sumber kebenaran = `src/db/schema/` (sesuai `drizzle.config.ts`); catat di dokumen strategi (D-21 di §10)
+- [x] **2.3** 13 tabel yang hanya ada di `src/modules/*` → pindah ke `src/db/schema/` (file per domain sesuai konvensi yang ada)
+- [x] **2.4** Redirect semua import skema → `@/db/schema` (tanpa `../`) — 80 specifier di 51 file + 3 import `scripts/` manual
+- [x] **2.5** Hapus definisi duplikat di `src/modules/*`; file schema modul cukup re-export dari `@/db/schema` bila masih dibutuhkan (12 file murni dihapus; contact/newsletter/notification = stub zod/consts + re-export)
+- [x] **2.6** `npx drizzle-kit generate` **tidak** menghasilkan migrasi baru (definisi identik dengan migrasi yang ada) — 0 file `drizzle/` ditulis; jalannya mentok di prompt konflik nama pra-ada, identik dgn baseline sebelum perubahan (folder beku utuh)
+- [x] **2.7** `check:schema-drift` = 0 selisih; tangga §8 hijau — 48/0/0/0 exit 0 · tsc 0 · lint 0E/78W · vitest 6/50 · build 0 · routes 96→96 · init 0 · verify:checkout 0 (KNOWN_DRIFT dikosongkan)
+- [x] **2.8** Commit (465e47f docs · b54233b pindah · e30d9b8 redirect/hapus · 861ca08 drift-clear · komit docs sesi ini)
 
 ## Fase 3 — Rename & lebur global (D-1, D-2, D-14)
 
