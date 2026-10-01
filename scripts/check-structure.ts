@@ -11,6 +11,7 @@ type Baseline = {
   R7: string[];
   R8: number;
   R9: number;
+  R10: number;
 };
 
 const BASELINE: Baseline = {
@@ -173,7 +174,8 @@ const BASELINE: Baseline = {
   ],
   R7: [],
   R8: 480,
-  R9: 43,
+  R9: 42,
+  R10: 0,
 };
 
 const ID_COMMENT_WORDS = [
@@ -204,6 +206,7 @@ const ID_COMMENT_RE = new RegExp("\\b(?:" + ID_COMMENT_WORDS.join("|") + ")\\b",
 const TOKEN_RE = /[A-Za-z_$][A-Za-z0-9_$]*/g;
 const FEATURE_DEEP_RE = /(?:from\s*|import\s*\(\s*|require\s*\(\s*)['"]@\/features\/[^'"]+\/[^'"]+['"]/g;
 const REL_IMPORT_RE = /(?:from\s*|import\s*\(\s*|require\s*\(\s*)['"]\.\.\/[^'"]+['"]/g;
+const CHROME_RE = /from\s*['"][^'"]*components\/layout\/(Navbar|Footer|WhatsAppFloat)['"]/;
 const CONTROLLER_DELEGATE_RE = /from\s*['"][^'"]*\.controller['"]/
 const LEGACY_DIRS = ["src/shared", "src/lib/hooks"];
 
@@ -394,6 +397,18 @@ function main(): void {
 
   const r7 = LEGACY_DIRS.filter((d) => fs.existsSync(path.join(ROOT, d)));
 
+  const r10Samples: string[] = [];
+  for (const f of walk(SRC)) {
+    const r = rel(f);
+    if (!CODE_EXT.has(path.extname(f))) continue;
+    if (r === "src/components/layout/SiteChrome.tsx") continue;
+    if (/(^|\/)layout\.(tsx|jsx)$/.test(r)) continue;
+    const src = fs.readFileSync(f, "utf8");
+    const m = src.match(CHROME_RE);
+    if (m) r10Samples.push(`${r}: ${m[0].slice(0, 60)}`);
+  }
+  const r10 = r10Samples.length;
+
   const rules: RuleState[] = [
     { id: "R1", title: "Indonesian comment lines (target 0)", current: r1, baseline: BASELINE.R1, samples: r1Samples },
     { id: "R2", title: "legacy .jsx/.js files (ratchet)", current: r2, baseline: BASELINE.R2, samples: [] },
@@ -404,6 +419,7 @@ function main(): void {
     { id: "R7", title: "legacy dirs present (src/shared, src/lib/hooks)", current: r7, baseline: BASELINE.R7, samples: [] },
     { id: "R8", title: "Indonesian identifier segments", current: r8, baseline: BASELINE.R8, samples: r8Samples },
     { id: "R9", title: "relative ../ imports (ratchet)", current: r9, baseline: BASELINE.R9, samples: r9Samples },
+    { id: "R10", title: "chrome imports outside SiteChrome/layout (target 0)", current: r10, baseline: BASELINE.R10, samples: r10Samples },
   ];
 
   if (process.argv.includes("--print-baseline")) {
@@ -413,7 +429,7 @@ function main(): void {
     process.exit(0);
   }
 
-  console.log("check-structure — rules R1-R9 (strategy §9)");
+  console.log("check-structure — rules R1-R10 (strategy §9)");
   console.log("(status FAIL = current above baseline; ratchet may only go down)\n");
 
   let failed = 0;
