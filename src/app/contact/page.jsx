@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { NEXT_PUBLIC_WHATSAPP_MESSAGE } from "@/lib/env";
 import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User } from "lucide-react";
 
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -8,9 +9,7 @@ const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURICom
 )}`;
 
 const WA_NUMBER = "6285110511403";
-const WA_MESSAGE =
-    process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ||
-    "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
+const WA_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Subs from "@/components/landing/Subs";

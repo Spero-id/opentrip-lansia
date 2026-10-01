@@ -1,7 +1,8 @@
 import "dotenv/config";
 import pg from "pg";
+import { DATABASE_URL } from "@/lib/env";
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL! });
+const pool = new pg.Pool({ connectionString: DATABASE_URL });
 
 async function dropAll() {
   const client = await pool.connect();

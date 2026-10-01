@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { BASE_URL } from "@/lib/env";
 
 const ROOT = process.cwd();
 const BUILD_MANIFEST = path.join(ROOT, ".next", "app-path-routes-manifest.json");
@@ -103,7 +104,7 @@ async function main(): Promise<void> {
   }
   if (args.includes("--crawl")) {
     const idx = args.indexOf("--base");
-    const base = idx >= 0 ? args[idx + 1] : process.env.BASE_URL || "http://localhost:3000";
+    const base = idx >= 0 ? args[idx + 1] : BASE_URL;
     await crawl(base);
     return;
   }

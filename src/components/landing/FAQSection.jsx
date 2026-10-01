@@ -3,11 +3,15 @@
 import { useState } from "react";
 import { Plus, ChevronLeft, ChevronRight, Send } from "lucide-react";
 import { faqs } from "@/lib/data.js";
+import {
+  NEXT_PUBLIC_WHATSAPP_MESSAGE,
+  NEXT_PUBLIC_WHATSAPP_NUMBER,
+} from "@/lib/env";
 
 const PAGE_SIZE = 6;
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-const WHATSAPP_MESSAGE = process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE || "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
+const WHATSAPP_NUMBER = NEXT_PUBLIC_WHATSAPP_NUMBER;
+const WHATSAPP_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
 
 export default function FAQSection() {
     const [openIndex, setOpenIndex] = useState(0);
