@@ -4,6 +4,10 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCheckout } from "@/features/checkout/hooks/use-checkout";
+import {
+  NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
+  NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION,
+} from "@/lib/env";
 import StepProgress from "../../components/checkout/StepProgress";
 import DetailsStep from "../../components/checkout/DetailsStep";
 import PaymentStep from "../../components/checkout/PaymentStep";
@@ -51,11 +55,10 @@ function CheckoutContent() {
   }, [destId, setDestination]);
 
   useEffect(() => {
-    const snapUrl =
-      process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true"
-        ? "https://app.midtrans.com/snap/snap.js"
-        : "https://app.sandbox.midtrans.com/snap/snap.js";
-    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
+    const snapUrl = NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION
+      ? "https://app.midtrans.com/snap/snap.js"
+      : "https://app.sandbox.midtrans.com/snap/snap.js";
+    const clientKey = NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
     if (!document.querySelector(`script[src="${snapUrl}"]`)) {
       const script = document.createElement("script");
       script.src = snapUrl;

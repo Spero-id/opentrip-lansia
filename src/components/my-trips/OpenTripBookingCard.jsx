@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NEXT_PUBLIC_WHATSAPP_NUMBER } from "@/lib/env";
 import FeedbackModal from "./FeedbackModal";
 import GalleryModal from "./GalleryModal";
 import {
@@ -162,7 +163,7 @@ export default function OpenTripBookingCard({ booking, imageUrl, onRefresh }) {
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
           {(() => {
-            const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+            const waNumber = NEXT_PUBLIC_WHATSAPP_NUMBER;
             if (!waNumber) return null;
             const waMsg = encodeURIComponent(
               `Halo Admin Jelajah Memoria, saya ingin bertanya tentang booking saya.\n\nKode Booking: ${booking.bookingCode}\nDestinasi: ${destinationName}`

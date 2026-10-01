@@ -1,12 +1,21 @@
 import nodemailer from "nodemailer";
+import {
+  ADMIN_EMAIL,
+  SMTP_FROM,
+  SMTP_HOST,
+  SMTP_PASS,
+  SMTP_PORT,
+  SMTP_SECURE,
+  SMTP_USER,
+} from "@/lib/env";
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: process.env.SMTP_SECURE === "true",
+  host: SMTP_HOST,
+  port: SMTP_PORT,
+  secure: SMTP_SECURE,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: SMTP_USER,
+    pass: SMTP_PASS,
   },
 });
 
@@ -19,7 +28,7 @@ interface ContactEmailData {
 }
 
 export async function sendContactEmail(data: ContactEmailData) {
-  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminEmail = ADMIN_EMAIL;
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -54,7 +63,7 @@ export async function sendContactEmail(data: ContactEmailData) {
   `;
 
   await transporter.sendMail({
-    from: `"Jelajah Memoria" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+    from: `"Jelajah Memoria" <${SMTP_FROM || SMTP_USER}>`,
     to: adminEmail,
     subject: `Pesan Baru dari Contact Us - ${data.name}`,
     replyTo: "no-reply@jelajahmemoria.com",
@@ -78,7 +87,7 @@ export async function sendSubscriptionConfirmationEmail(data: SubscriptionEmailD
   `;
 
   await transporter.sendMail({
-    from: `"Jelajah Memoria" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+    from: `"Jelajah Memoria" <${SMTP_FROM || SMTP_USER}>`,
     to: data.email,
     subject: "Selamat Datang di Jelajah Memoria!",
     replyTo: "no-reply@jelajahmemoria.com",

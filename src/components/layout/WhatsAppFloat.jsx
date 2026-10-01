@@ -1,9 +1,11 @@
 import Link from "next/link";
+import {
+  NEXT_PUBLIC_WHATSAPP_MESSAGE,
+  NEXT_PUBLIC_WHATSAPP_NUMBER,
+} from "@/lib/env";
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-const WHATSAPP_MESSAGE =
-  process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ||
-  "Halo Abangkuh, saya ingin bertanya tentang trip di Jelajah Memoria";
+const WHATSAPP_NUMBER = NEXT_PUBLIC_WHATSAPP_NUMBER;
+const WHATSAPP_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
 
 export default function WhatsAppFloat() {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;

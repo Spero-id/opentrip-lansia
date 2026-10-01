@@ -30,13 +30,13 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 1 — Komentar & pesan error | 7 | 7 |
 | Fase 2 — Skema Drizzle tunggal | 8 | 8 |
 | Fase 3 — Rename & lebur global | 10 | 10 |
-| Fase 3b — `lib/env.ts` | 0 | 2 |
+| Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 0 | 6 |
 | Paket domain 1–8 | 0 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **46** | **127** |
+| **Total** | **48** | **127** |
 
 ---
 
@@ -100,8 +100,8 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 
 ## Fase 3b — `lib/env.ts` (temuan #6)
 
-- [ ] **3b.1** Kumpulkan ±15 akses `process.env` → `src/lib/env.ts` (baca + validasi + fallback), ubah seluruh pemakaian
-- [ ] **3b.2** Tangga §8 + smoke login; **commit terpisah** dari Fase 3
+- [x] **3b.1** Kumpulkan ±15 akses `process.env` → `src/lib/env.ts` (baca + validasi + fallback), ubah seluruh pemakaian — 18 var / 28 situs / 12 file; `required()` untuk DATABASE_URL + BETTER_AUTH_SECRET, sisanya fallback identik
+- [x] **3b.2** Tangga §8 + smoke login; **commit terpisah** dari Fase 3 — tsc 0 · lint 0E/78W · vitest 6/50 · build 0 · routes 96→96 · drift 0 · structure 9/9 · init 0 · login 200/401/200+session · verify:checkout 0
 
 ## Fase 3c — Chrome global ke root layout (temuan #17, D-17)
 

@@ -2046,3 +2046,17 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `2995cf7` rename · `d936bc8` auth · `64d5d78` lib/utils/types · `6eeb1fd` promo/payment · `af976b3` hooks · `a3133b8` outlier · `d1b3e43` tests · `7eb265a` layout · `5c14aff` baseline · `5d470f7` fixes · komit docs sesi ini.
 
 **Progres:** Fase 3 = **10/10** → total **46/127**. Lanjut Fase 3b (`lib/env.ts`, 2 task).
+
+## Session 49 — 2026-10-01
+
+**Fase 3b (restructure): `lib/env.ts` — 2/2 selesai.** 18 variabel / 28 situs / 12 file → `src/lib/env.ts`; nol `process.env` di luar file itu.
+
+**Desain:** baca terpusat (`str` + fallback identik, `bool` untuk flag, koersi port); `required()` (throw pesan Inggris) hanya untuk DATABASE_URL + BETTER_AUTH_SECRET (keduanya memang fatal bila hilang); murni tanpa efek samping → aman diimport komponen client. `BASE_URL` milik `check-routes` ikut masuk.
+
+**Insiden ladder (kelas sama, 2×):** `required()` meledak di konteks tanpa `.env` otomatis — (a) 3 suite vitest gagal collect → tambah `import "dotenv/config"` di `src/testing/setup-tests.ts` (dev/build memuat `.env` otomatis, vitest tidak); (b) `check:routes` crash → tambah `dotenv/config` di 3 script rantai-env (`check-routes`, `clear-referral-history`, `verify-payment-and-promo`; preseden: `drop.ts`/`truncate.ts`).
+
+**Verifikasi:** tsc **0** · lint **0E/78W** · vitest **6/50** · build **0** · routes **96→96** · drift **0** · structure **9/9** · init **0** · smoke login: `/login` 200, password salah 401, admin sign-in 200 + session valid · verify:checkout **0 OK**.
+
+**Commits:** `448bd6f` env sentral · `e5b859b` dotenv setup+scripts · komit docs sesi ini.
+
+**Progres:** Fase 3b = **2/2** → total **48/127**. Lanjut Fase 3c (chrome global ke root layout, 6 task).
