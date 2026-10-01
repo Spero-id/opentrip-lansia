@@ -20,7 +20,7 @@ export default function FAQSection() {
 
     const visibleFaqs = faqs.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
 
-    const goTo = (target) => {
+    const goTo = (target: number) => {
         setPage(Math.max(0, Math.min(target, totalPages - 1)));
         setOpenIndex(-1);
     };

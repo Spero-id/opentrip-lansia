@@ -9,7 +9,7 @@ import FacilitiesSection from "@/features/private-trip/components/FacilitiesSect
 import SuccessState from "@/features/private-trip/components/SuccessState";
 import SubmitBar from "@/features/private-trip/components/SubmitBar";
 import TermsModal from "@/features/private-trip/components/TermsModal";
-import Subs from "@/components/landing/Subs";
+import Subs from "@/features/newsletter/components/Subs";
 import { initialForm } from "@/features/private-trip/components/helpers/initialState";
 import { validate } from "@/features/private-trip/components/helpers/validation";
 import { privateTripReducer } from "@/features/private-trip/reducer";

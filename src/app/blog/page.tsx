@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Newspaper, ArrowRight } from "lucide-react";
-import Subs from "@/components/landing/Subs";
+import Subs from "@/features/newsletter/components/Subs";
 import { fetchPublishedBlogs, formatBlogDate } from "@/features/blog/api/client";
 import type { BlogPost } from "@/features/blog/types";
 

@@ -10,7 +10,7 @@ import {
 } from "@/lib/env";
 import { DetailsStep, PaymentStep, StepProgress } from "@/features/checkout";
 
-import Subs from "@/components/landing/Subs";
+import Subs from "@/features/newsletter/components/Subs";
 import { toDetail } from "@/lib/destination";
 
 function CheckoutContent() {

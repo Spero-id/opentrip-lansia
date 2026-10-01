@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 41 | 55 |
+| Paket domain 1–8 | 48 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **95** | **127** |
+| **Total** | **102** | **127** |
 
 ---
 
@@ -180,7 +180,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P5-③b** Clean code (§5.1): `PRICE_INPUT_MAX_LENGTH`, `sanitizePriceDigits`/`clampPrice`/`parsePriceInput`, hapus `User` tak terpakai, `prefer-const`; perbaikan = commit refactor terpisah
 - [x] **P5-④** SSR/SEO: `generateMetadata` `trips` via `trips/layout.tsx` (page tetap client, preseden P1) + `<Suspense>` (galeri, ulasan); curl HTML: `<title>Semua Destinasi Open Trip Lansia</title>` tanpa JS
 - [x] **P5-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + crawl trip — 18/186; R2 42→22 (stale, 20 file jsx hilang), R3 82→115 (deep impor client-safe ala P4), R4 −destinasi, R9 37→37, R11 0; `/trips` 200, `/trips/abc-123` 200, `GET /api/trips` 200, `npm run build` hijau, `check:routes` 96→96, drift 0
-- [ ] **P5-⑥** PR digabung + `progress.md`
+- [x] **P5-⑥** PR #118 digabung + `progress.md`
 
 ### Paket 6 — `blog` (2 `page.jsx` + hugerte)
 
@@ -190,18 +190,18 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P6-③b** Clean code (§5.1): `BLOG_DATE_LOCALE`, `BlogDetailStatus`, early return, `prefer-const`; perbaikan = commit terpisah (tergabung P6-2/3)
 - [x] **P6-④** SSR/SEO: `generateMetadata` `blog` (statis) & `blog/[slug]` (**panggil `blogRepository.findBySlug` server-side** dari layout) + `<Suspense>` konten; sanitasi `sanitizeBlogContent` tetap utuh; curl: list `<title>Berita & Artikel…</title>`, detail `<title>` = judul postingan DB
 - [x] **P6-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + curl render 3 postingan — 19/195; R2 42→20, R3 115→124 (deep client-safe), R4/R9/R11 tetap; `/blog` 200, detail 200, `GET /api/blogs?published=1` 200
-- [ ] **P6-⑥** PR digabung + `progress.md`
+- [x] **P6-⑥** PR #119 digabung + `progress.md`
 
 ### Paket 7 — `landing` (7 jsx, 1028 baris; `Subs` fan-in 8)
 
 > **Keputusan (2026-09-30):** `src/lib/design-tokens.js` sudah **dilebur inline** ke `src/app/contact/page.jsx` (satu-satunya pemakai) lalu dihapus (R2 95→94). Sumber kebenaran token ke depan = **`globals.css`** — **jangan bikin modul token JS baru**.
 
-- [ ] **P7-①** `git mv` → `features/landing/components/`; **`Subs` → `features/newsletter/components/`** (dipakai Footer + lintas halaman)
-- [ ] **P7-②** Konversi 7 `.jsx` + halaman root (bila `.jsx`) → `.tsx`
-- [ ] **P7-③** Ekstrak `api/` newsletter (`useNewsletter`) + landing sections
-- [ ] **P7-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P7-④** SSR/SEO: `generateMetadata` halaman root/landing + cek Lighthouse-ish manual (title/description)
-- [ ] **P7-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit newsletter dari Footer & landing
+- [x] **P7-①** `git mv` → `features/landing/components/`; **`Subs` → `features/newsletter/components/`** (9 pemakai: 8 page + SuccessState; Footer tak pakai Subs — catatan task usang)
+- [x] **P7-②** Konversi 7 `.jsx` + `Subs` + halaman root → `.tsx`
+- [x] **P7-③** Ekstrak `api/` newsletter (`useNewsletter`: email/popup/loading/error + Escape/body-lock) + landing (`toLandingCard`/`fetchLandingTrips`/`clampLandingPage`); Subs & DestinationSection pakai hook/api; 9 test (4 newsletter + 5 landing)
+- [x] **P7-③b** Clean code (§5.1): `LANDING_PAGE_SIZE`, `BLOG_DATE_LOCALE`-style consts, `ReviewSection`→`TestimonialsSection` (samakan file), typed review `avatar?` (bug laten: `lib/data` tak punya avatar — render tak berubah, fallback initial)
+- [x] **P7-④** SSR/SEO: metadata root sudah ada (`Jelajah Memoria`) — verifikasi curl `<title>` tanpa JS; Subs section ter-render di `/`
+- [x] **P7-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit newsletter end-to-end (POST → 200 + row `subscribers`, lalu hapus) — 21/204; R2 42→12, R3 124→146, R4 −landing, R9/R11 tetap; `check:routes` 96→96
 - [ ] **P7-⑥** PR digabung + `progress.md`
 
 ### Paket 8 — `admin` (18 halaman, sudah `.tsx`) — terbesar

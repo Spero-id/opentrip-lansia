@@ -10,7 +10,7 @@ const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURICom
 
 const WA_NUMBER = "6285110511403";
 const WA_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
-import Subs from "@/components/landing/Subs";
+import Subs from "@/features/newsletter/components/Subs";
 
 const A = "#F49D1A";
 const A_HOVER = "#c47d12";

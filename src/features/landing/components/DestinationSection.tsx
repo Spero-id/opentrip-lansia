@@ -4,31 +4,14 @@ import { useRef, useState, useEffect } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MapPin } from "lucide-react";
 import Link from "next/link";
 import DestinationCard from "@/features/trip/components/DestinationCard";
+import { LANDING_PAGE_SIZE, clampLandingPage, fetchLandingTrips } from "@/features/landing/api/client";
+import type { TripDetail } from "@/features/trip/types";
 
-const PAGE_SIZE = 6;
-
-function toCard(trip) {
-  const image =
-    trip.image ||
-    (Array.isArray(trip.images) && trip.images[0]) ||
-    null;
-
-  return {
-    id: trip.id,
-    title: trip.title,
-    location: trip.location || "Indonesia",
-    rating: trip.rating ?? null,
-    priceMin: trip.priceMin || 0,
-    category: trip.categoryName || "Alam",
-    isSeniorFriendly: trip.isSeniorFriendly !== undefined ? trip.isSeniorFriendly : true,
-
-    image,
-  };
-}
+const PAGE_SIZE = LANDING_PAGE_SIZE;
 
 export default function DestinationSection() {
-  const scrollRef = useRef(null);
-  const [destinations, setDestinations] = useState([]);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [destinations, setDestinations] = useState<TripDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const pageCount = Math.max(1, Math.ceil(destinations.length / PAGE_SIZE));
@@ -38,22 +21,24 @@ export default function DestinationSection() {
     (currentPage + 1) * PAGE_SIZE
   );
 
-  function goToPage(nextPage) {
-    setPage(Math.min(Math.max(nextPage, 0), pageCount - 1));
+  function goToPage(nextPage: number) {
+    setPage(clampLandingPage(nextPage, pageCount));
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   useEffect(() => {
-    fetch("/api/trips?featured=true")
-      .then((res) => res.json())
-      .then((data) => {
-        setDestinations(Array.isArray(data) ? data.map(toCard) : []);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    fetchLandingTrips().then((data) => {
+      if (!cancelled) setDestinations(data);
+    }).catch(() => {}).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const scroll = (dir) => {
+  const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
     const amount = scrollRef.current.clientWidth * 0.7;
     scrollRef.current.scrollBy({

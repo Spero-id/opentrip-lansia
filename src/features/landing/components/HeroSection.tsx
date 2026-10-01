@@ -14,7 +14,7 @@ const stats = [
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState("");
-  const rafRef = useRef(null);
+  const rafRef = useRef<number | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function HeroSection() {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, []);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const q = query.trim();
     router.push(q ? `/trips?q=${encodeURIComponent(q)}` : "/trips");

@@ -2201,3 +2201,20 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `b19abb5` pindah · `8fc475a` konversi+api · `a4b77e8` test+metadata+baselines · komit docs sesi ini.
 
 **Progres:** Paket 1–6 = **41/41** → total **95/127**. Lanjut Paket 7 `landing` + `newsletter` (branch `restructure/paket-7-landing`).
+
+## Session 57 — 2026-10-01
+
+**Paket 7 `landing` + `newsletter` — 7/7 selesai (P7-⑥ PR pending; stacked di atas P5–P6).** `Subs` fan-in 9 diselamatkan ke `features/newsletter`.
+
+**Perubahan:**
+- **P7-①** 6 section → `features/landing/components/`; `Subs` → `features/newsletter/components/`; 9 importer diperbarui (8 page + SuccessState). `src/components/landing/` hilang. Koreksi task: Footer **tak** pakai Subs.
+- **P7-②/③** → `.tsx` + `newsletter/api` (`subscribeNewsletter`) + `useNewsletter` (state + Escape/body-lock) + `landing/api` (`toLandingCard`/`fetchLandingTrips`/`clampLandingPage`); Subs & DestinationSection pakai hook/api; 9 test.
+- **P7-③b** `LANDING_PAGE_SIZE`, `ReviewSection`→`TestimonialsSection`, typed `avatar?` (bug laten: `lib/data` reviews tak punya avatar — selama ini selalu fallback initial; render identik).
+- **P7-④** metadata root pra-ada (`Jelajah Memoria`) — curl `<title>` tanpa JS ✓; section Subs ter-render di `/` ✓.
+- **P7-⑤** baselines: R2 42→12, R3 124→146, R4 −landing. Uji E2E: POST `/api/newsletter` → 200 + row `subscribers` (source=landing) → **dihapus kembali**. Temuan: subscribe menulis ke tabel `subscribers`, BUKAN `newsletter_subscribers` (drift konseptual, di luar scope).
+
+**Verifikasi:** tsc **0** · lint **0E** · vitest **21/204** · build **0** · routes **96→96** · drift **0** · structure hijau.
+
+**Commits:** `5af909b` pindah · `8f0f567` konversi+api · `547cda8` clean · `7b14846` baselines · komit docs sesi ini.
+
+**Progres:** Paket 1–7 = **48/48** → total **102/127**. Lanjut Paket 8 `admin` (terbesar: 18 halaman, `useAdminTable`/`useAdminCrud`) — branch `restructure/paket-8-admin`.

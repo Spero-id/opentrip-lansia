@@ -61,10 +61,9 @@ const BASELINE: Baseline = {
     "src/lib/format.js",
     "src/lib/order.js",
   ],
-  R3: 124, // P5 +29 trip, P6 +9 blog (pages api/types, admin wysiwyg, tests; no UI barrel: backend index owns root, barrel would mix server code); driven down in Fase 11
+  R3: 146, // P5 +29 trip, P6 +9 blog, P7 +22 landing/newsletter (page rewrites, Subs hook/api, tests; no UI barrel: backend index owns root); driven down in Fase 11
   R4: [
     "app-sidebar.tsx",
-    "landing",
     "nav-main.tsx",
   ],
   R5: [
