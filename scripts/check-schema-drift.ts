@@ -6,7 +6,7 @@ type TableDef = { table: string; file: string; cols: Set<string> };
 const ROOT = process.cwd();
 const SCHEMA_DIR = path.join(ROOT, "src", "db", "schema");
 const MODULES_DIR = path.join(ROOT, "src", "modules");
-const KNOWN_DRIFT = new Set(["booking_participants", "health_declarations", "payments", "terms_acceptances"]);
+const KNOWN_DRIFT = new Set<string>();
 
 function walk(dir: string, out: string[] = []): string[] {
   if (!fs.existsSync(dir)) return out;
@@ -95,18 +95,22 @@ function main(): void {
 
   console.log("");
   console.log(`tables found          : ${total}`);
-  console.log(`identical duplicates  : ${identical.length} (dedupe in Fase 2)`);
-  console.log(`only in src/modules   : ${onlyModules.length} (move to src/db/schema in Fase 2)`);
+  console.log(`identical duplicates  : ${identical.length}`);
+  console.log(`only in src/modules   : ${onlyModules.length}`);
   if (onlyModules.length > 0) console.log(`  ${onlyModules.join(", ")}`);
   const staleKnown = [...KNOWN_DRIFT].filter((t) => !known.includes(t) && !drift.includes(t));
   console.log(`column drift          : ${drift.length} new, ${known.length} known baseline${staleKnown.length ? `, stale: ${staleKnown.join(", ")}` : ""}`);
 
   if (drift.length > 0) {
     console.log("");
-    console.log("FAIL — new column drift; decide the source of truth manually (task 2.1)");
+    console.log("FAIL — new column drift; decide the source of truth manually");
     process.exit(1);
   }
-  console.log(`OK — no new drift; ${known.length} known drift(s) stay in KNOWN_DRIFT until Fase 2 clears it`);
+  console.log(
+    drift.length === 0 && known.length === 0
+      ? "OK — no new drift (KNOWN_DRIFT is empty; any new diff fails)"
+      : `OK — no new drift; ${known.length} known drift(s) remain in KNOWN_DRIFT`,
+  );
 }
 
 main();

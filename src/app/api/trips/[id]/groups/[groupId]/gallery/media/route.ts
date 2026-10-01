@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/shared/auth";
 import { db } from "@/shared/db";
-import { galleryMedia } from "@/modules/trip/trip.schema";
-import { tripGalleries } from "@/modules/trip/trip.schema";
+import { galleryMedia } from "@/db/schema/trips";
+import { tripGalleries } from "@/db/schema/trips";
 import { eq } from "drizzle-orm";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

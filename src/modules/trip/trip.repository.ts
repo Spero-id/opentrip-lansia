@@ -3,11 +3,11 @@ import {
   trips, tripDepartures, tripPrices,
   itineraryItems, tripGalleries, galleryMedia,
   tripHoreca, tripVendors, tripMedia,
-} from "./trip.schema";
-import { bookings, bookingItems, bookingParticipants } from "../booking/booking.schema";
-import { payments } from "../payment/payment.schema";
-import { destinationCategories } from "../master/master.schema";
-import { reviews } from "../review/review.schema";
+} from "@/db/schema/trips";
+import { bookings, bookingItems, bookingParticipants } from "@/db/schema/bookings";
+import { payments } from "@/db/schema/payments";
+import { destinationCategories } from "@/db/schema/master";
+import { reviews } from "@/db/schema/reviews";
 import { eq, and, asc, desc, sql, getTableColumns, inArray } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

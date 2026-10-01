@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { referrals, commissions, commissionPayouts, payoutCommissions } from "@/modules/referral/referral.schema";
+import { referrals, commissions, commissionPayouts, payoutCommissions } from "@/db/schema/referral";
 import { sql } from "drizzle-orm";
 
 async function clearReferralHistory() {

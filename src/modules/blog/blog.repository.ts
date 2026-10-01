@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { blogs } from "./blog.schema";
+import { blogs } from "@/db/schema/blog";
 import { eq, desc } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

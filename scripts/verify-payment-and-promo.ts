@@ -1,6 +1,6 @@
 import { db } from "../src/shared/db";
-import { paymentAccounts } from "../src/modules/payment/payment.schema";
-import { promotions } from "../src/modules/promotion/promotion.schema";
+import { paymentAccounts } from "../src/db/schema/payments";
+import { promotions } from "../src/db/schema/promotions";
 import {
   availableMethods,
   findAccountByMethod,

@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { notifications, type NewNotification } from "./notification.schema";
+import { notifications, type NewNotification } from "@/db/schema/notifications";
 import { eq, desc, and, count } from "drizzle-orm";
 
 export const notificationRepository = {

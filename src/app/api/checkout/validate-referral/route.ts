@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/modules/auth/auth.config";
 import { db } from "@/shared/db";
-import { users } from "@/modules/auth/auth.schema";
+import { users } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {

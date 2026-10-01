@@ -1,6 +1,6 @@
 import { tripRepository } from "./trip.repository";
 import type { UUID } from "@/shared/types";
-import type { trips, itineraryItems } from "./trip.schema";
+import type { trips, itineraryItems } from "@/db/schema/trips";
 import type { GroupCreateInput } from "./trip.repository";
 import { ConflictError, NotFoundError, ValidationError } from "@/shared/errors/app-error";
 

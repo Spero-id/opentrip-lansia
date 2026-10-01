@@ -3,8 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/shared/db";
 import { hashPassword, verifyPassword } from "@/shared/utils/password";
 import { generateCode } from "@/shared/utils/helpers";
-import { users } from "./auth.schema";
-import { session, account, verification } from "./better-auth.schema";
+import { users } from "@/db/schema/auth";
+import { session, account, verification } from "@/db/schema/auth";
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,

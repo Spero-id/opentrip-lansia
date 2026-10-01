@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/modules/auth/auth.config";
 import { db } from "@/shared/db";
-import { referrals, commissions } from "@/modules/referral/referral.schema";
-import { users } from "@/modules/auth/auth.schema";
+import { referrals, commissions } from "@/db/schema/referral";
+import { users } from "@/db/schema/auth";
 import { eq, count, sql } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {

@@ -1,7 +1,7 @@
 import { db } from "@/shared/db";
 import type { Tx } from "@/shared/db/utils";
 import { loyaltyTransactions } from "@/db/schema/referral";
-import { users } from "@/modules/auth/auth.schema";
+import { users } from "@/db/schema/auth";
 import { eq, sql } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

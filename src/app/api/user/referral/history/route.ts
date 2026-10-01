@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/modules/auth/auth.config";
 import { db } from "@/shared/db";
-import { referrals, commissions } from "@/modules/referral/referral.schema";
-import { users } from "@/modules/auth/auth.schema";
-import { bookings } from "@/modules/booking/booking.schema";
+import { referrals, commissions } from "@/db/schema/referral";
+import { users } from "@/db/schema/auth";
+import { bookings } from "@/db/schema/bookings";
 import { trips, tripDepartures } from "@/db/schema/trips";
 import { eq, count, desc } from "drizzle-orm";
 

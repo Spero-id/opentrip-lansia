@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/shared/db";
-import { bookings, bookingParticipants, healthDeclarations } from "@/modules/booking/booking.schema";
+import { bookings, bookingParticipants, healthDeclarations } from "@/db/schema/bookings";
 import { trips, tripDepartures } from "@/db/schema/trips";
 import { promotionUsages } from "@/db/schema/promotions";
-import { referrals } from "@/modules/referral/referral.schema";
-import { users } from "@/modules/auth/auth.schema";
+import { referrals } from "@/db/schema/referral";
+import { users } from "@/db/schema/auth";
 import { auth } from "@/modules/auth/auth.config";
 import { promotionRepository } from "@/modules/promotion";
 import { computePromoDiscount } from "@/shared/promo/promo-discount";

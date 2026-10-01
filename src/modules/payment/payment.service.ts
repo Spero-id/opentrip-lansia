@@ -1,10 +1,10 @@
 import { paymentRepository } from "./payment.repository";
-import { payments } from "./payment.schema";
-import { bookings } from "../booking/booking.schema";
+import { payments } from "@/db/schema/payments";
+import { bookings } from "@/db/schema/bookings";
 import { loyaltyService } from "../loyalty/loyalty.service";
 import { siteSettingsService } from "../site-settings/site-settings.service";
 import { withTransaction } from "@/shared/db/utils";
-import { referrals } from "@/modules/referral/referral.schema";
+import { referrals } from "@/db/schema/referral";
 import { eq } from "drizzle-orm";
 import type { UUID } from "@/shared/types";
 

@@ -1,7 +1,7 @@
 import { bookingRepository } from "./booking.repository";
 import { tripRepository } from "../trip/trip.repository";
 import { reviewRepository } from "../review/review.repository";
-import { tripDepartures } from "../trip/trip.schema";
+import { tripDepartures } from "@/db/schema/trips";
 import { db } from "@/shared/db";
 import { eq } from "drizzle-orm";
 import { generateCode } from "@/shared/utils/helpers";
@@ -92,7 +92,7 @@ export const bookingService = {
   },
 };
 
-async function withDetails(b: typeof import("../booking/booking.schema").bookings.$inferSelect) {
+async function withDetails(b: typeof import("@/db/schema/bookings").bookings.$inferSelect) {
   const [participants, items, paymentsList, departure] = await Promise.all([
     bookingRepository.findParticipantsByBookingId(b.id),
     bookingRepository.findItemsByBookingId(b.id),

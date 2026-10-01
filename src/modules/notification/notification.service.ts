@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { users } from "../auth/auth.schema";
+import { users } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
 import { notificationRepository } from "./notification.repository";
 import { NOTIFICATION_TYPES } from "./notification.schema";

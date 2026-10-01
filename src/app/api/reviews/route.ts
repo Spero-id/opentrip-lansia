@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { reviewRepository } from "@/modules/review";
-import { bookings } from "@/modules/booking/booking.schema";
-import { reviews } from "@/modules/review/review.schema";
-import { tripDepartures } from "@/modules/trip/trip.schema";
+import { bookings } from "@/db/schema/bookings";
+import { reviews } from "@/db/schema/reviews";
+import { tripDepartures } from "@/db/schema/trips";
 import { db } from "@/shared/db";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/modules/auth/auth.config";

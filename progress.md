@@ -2003,3 +2003,20 @@ vitest 6/50, check-* dalam baseline).
 
 **Dipush & PR:** branch `restructure/fase-1` → PR
 https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
+
+## Session 47 — 2026-10-01
+
+**Fase 2 (restructure): Satu sumber skema Drizzle — 8/8 selesai.** `src/db/schema/` kini satu-satunya tempat `pgTable()` (D-21, arbiter = struktur DB **live**, bukan salinan migrasi).
+
+**Perubahan:**
+- **Pindah + merge (48 tabel, 0 duplikat):** 13 tabel pindah dari `src/modules/*` (auth×4, notifications, reviews×2, private-trip×3, payment_accounts, site_settings, subscribers) + 4 drift diselesaikan ke bentuk live: `booking_participants` & `health_declarations` & `payments` → sisi modules (DB live punya `emergency_contact_*`, `proof_url`, `bank_name`, dst.; bentuk lama kolom health_declarations **tak ada di live**), `terms_acceptances` → sisi db/schema (modules kurang `id`/`booking_id`).
+- **Redirect:** 80 specifier di 51 file → `@/db/schema` (script context-aware; zod/konst domain stay) + 3 import `scripts/`; R9 turun **82 → 46**.
+- **Hapus duplikat:** 12 file schema murni dihapus; contact/newsletter/notification = stub tipis (zod/consts + re-export tabel); type `Subscriber` pindah ke `db/schema/utility`.
+- **Gate:** `KNOWN_DRIFT` dikosongkan → drift checker **48/0/0/0, exit 0**, label basi dibersihkan.
+- **`drizzle-kit generate`:** **0 file `drizzle/` ditulis** — jalannya mentok di prompt konflik nama (`promptNamedWithSchemasConflict`), identik dgn baseline sebelum perubahan. **Temuan pra-ada:** folder `drizzle/` (7 SQL, journal 3) tertinggal dari DB live — di luar restructure, dicat di D-21.
+
+**Verifikasi (setelah semua edit):** tsc **0** · lint **0E/78W** · vitest **6/50** · coverage tak diuji ulang (test tak diubah) · build **0** · check:routes **96→96** · check:schema-drift **exit 0** · `./init.sh` **EXIT 0** · `verify:checkout` **exit 0 OK** (dev server 1× jalan, dimatikan bersih, `.next/dev/types` dihapus).
+
+**Commits:** `465e47f` D-21 · `b54233b` pindah+merge · `e30d9b8` redirect+hapus · `861ca08` clear KNOWN_DRIFT · komit docs sesi ini.
+
+**Progres:** Fase 2 = **8/8** → total **36/127**. Lanjut Fase 3 (endpoint rapi: 46 route → 0 tebal).

@@ -1,5 +1,5 @@
 import { db } from "@/shared/db";
-import { siteSettings } from "./site-settings.schema";
+import { siteSettings } from "@/db/schema/utility";
 import { eq } from "drizzle-orm";
 
 export interface ISiteSettingsRepository {
