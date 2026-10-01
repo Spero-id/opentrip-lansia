@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 14 | 55 |
+| Paket domain 1–8 | 20 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **68** | **127** |
+| **Total** | **74** | **127** |
 
 ---
 
@@ -155,12 +155,12 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ### Paket 3 — `my-trips` (7 jsx, 889 baris)
 
-- [ ] **P3-①** `git mv` → `features/my-trips/components/`
-- [ ] **P3-②** Konversi 7 `.jsx` → `.tsx`
-- [ ] **P3-③** Ekstrak `api/` + hook (`useOpenTripBooking`, `useGalleryModal`)
-- [ ] **P3-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P3-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + uji My Trips (lihat booking, buka galeri)
-- [ ] **P3-⑥** PR digabung + `progress.md`
+- [x] **P3-①** `git mv` → `features/my-trips/components/` (+`constants.js` ikut pindah)
+- [x] **P3-②** Konversi 7 `.jsx` → `.tsx` (+`constants.js`→`constants.tsx`, page; `types.ts` 8 interface)
+- [x] **P3-③** Ekstrak `api/` + hook (`useOpenTripBooking`, `useGalleryModal`) — `api/client.ts` (6 fetcher + `normalizeList` + `buildTripImages` + `downloadMedia` + `submitReview`) + barrel; 23 test baru (16 api + 7 hooks)
+- [x] **P3-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah (diterapkan: `parsePreferences` murni + test, `COPY_TIMEOUT_MS` ×2, hapus `console.error` ×2)
+- [x] **P3-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + uji My Trips (lihat booking, buka galeri) — 14/144; R2 71→62, R4 −my-trips, R9/R3 tetap; uji: sign-in + bookings + private-trips + `/my-trips` 200
+- [x] **P3-⑥** PR digabung + `progress.md`
 
 ### Paket 4 — `private` (15 jsx, 1788 baris)
 
