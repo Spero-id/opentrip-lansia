@@ -2076,3 +2076,15 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `4601fcd` SiteChrome+strip · `3915597` R10 · komit docs sesi ini.
 
 **Progres:** Fase 3c = **6/6** → total **54/127**. Prasyarat global selesai — lanjut **Paket 1 `profile`** (loop domain pertama, 7 task).
+
+## Hotfix env-client-crash — 2026-10-01
+
+**Browser blank: `Missing required environment variable: DATABASE_URL`** — rantai: `layout` → `SiteChrome` → `Navbar` → `lib/auth/client.ts` → `@/lib/env` → `required()` throw (browser tak punya var server; Next hanya inline `NEXT_PUBLIC_*`). Build/curl tak menangkapnya (evaluasi server punya `.env`; crash hanya di bundle client). Regression dari Fase 3b.
+
+**Perbaikan (branch `hotfix/env-client-crash` off main):** `env.ts` = 5 var publik murni (tanpa throw/helper — aman browser by construction); `env.server.ts` baru = helper + 13 var server (+`required`); 6 importir server → `env.server`; 6 importir client tetap. Audit statis: 106 file client, 0 mencapai `env.server`.
+
+**R11 baru** di `check-structure` (`client bundle reaches env.server`, baseline 0): BFS graf import dari file `"use client"`; probe suntik bug → FAIL 10 vs 0 → revert hijau.
+
+**Verifikasi:** tsc 0 · lint 0E/78W · vitest 6/50 · build 0 · routes identik · drift 0 · structure 11/11 · init 0 · dev smoke (`/` 200, sign-in 200, session valid). Verifikasi browser = user.
+
+**Pelajaran:** pola `lib/auth` (index server vs `client.ts`) berlaku umum — **modul campuran server+client harus dipecah di perbatasan bundle**, bukan hanya di perbatasan impor.
