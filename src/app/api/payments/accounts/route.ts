@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { paymentService } from "@/modules/payment/payment.service";
+import { paymentService } from "@/features/payment/payment.service";
 import { toPublicError } from "@/shared/errors/to-public-error";
 import { isCompleteAccount } from "@/shared/payment/payment-account";
 

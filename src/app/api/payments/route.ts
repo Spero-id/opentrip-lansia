@@ -3,8 +3,8 @@ import { db } from "@/shared/db";
 import { payments } from "@/db/schema/payments";
 import { bookings } from "@/db/schema/bookings";
 import { eq } from "drizzle-orm";
-import { auth } from "@/modules/auth/auth.config";
-import { notificationService } from "@/modules/notification/notification.service";
+import { auth } from "@/features/auth/auth.config";
+import { notificationService } from "@/features/notification/notification.service";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 const ALLOWED_METHODS = new Set(["BCA", "BRI", "MANDIRI", "GOPAY", "OVO", "DANA", "QRIS"]);

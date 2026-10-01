@@ -5,7 +5,7 @@ type TableDef = { table: string; file: string; cols: Set<string> };
 
 const ROOT = process.cwd();
 const SCHEMA_DIR = path.join(ROOT, "src", "db", "schema");
-const MODULES_DIR = path.join(ROOT, "src", "modules");
+const MODULES_DIR = path.join(ROOT, "src", "features");
 const KNOWN_DRIFT = new Set<string>();
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -66,7 +66,7 @@ function main(): void {
   for (const [table, defs] of [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
     total++;
     const inSchema = defs.some((d) => d.file.startsWith("src/db/schema/"));
-    const inModules = defs.some((d) => d.file.startsWith("src/modules/"));
+    const inModules = defs.some((d) => d.file.startsWith("src/features/"));
     if (!inSchema && inModules) {
       onlyModules.push(table);
       continue;
@@ -96,7 +96,7 @@ function main(): void {
   console.log("");
   console.log(`tables found          : ${total}`);
   console.log(`identical duplicates  : ${identical.length}`);
-  console.log(`only in src/modules   : ${onlyModules.length}`);
+  console.log(`only in src/features  : ${onlyModules.length}`);
   if (onlyModules.length > 0) console.log(`  ${onlyModules.join(", ")}`);
   const staleKnown = [...KNOWN_DRIFT].filter((t) => !known.includes(t) && !drift.includes(t));
   console.log(`column drift          : ${drift.length} new, ${known.length} known baseline${staleKnown.length ? `, stale: ${staleKnown.join(", ")}` : ""}`);

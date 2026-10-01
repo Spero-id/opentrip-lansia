@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { blogRepository, blogService } from "@/modules/blog";
+import { blogRepository, blogService } from "@/features/blog";
 import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

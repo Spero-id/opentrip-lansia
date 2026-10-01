@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { reviewRepository } from "@/modules/review";
+import { reviewRepository } from "@/features/review";
 import { bookings } from "@/db/schema/bookings";
 import { reviews } from "@/db/schema/reviews";
 import { tripDepartures } from "@/db/schema/trips";
 import { db } from "@/shared/db";
 import { eq, and } from "drizzle-orm";
-import { auth } from "@/modules/auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const tripIdParam = searchParams.get("tripId");
 
     if (statusParam === "approved" || tripIdParam) {
-      const { reviewRepository } = await import("@/modules/review");
+      const { reviewRepository } = await import("@/features/review");
       const data = tripIdParam
         ? await reviewRepository.findApprovedByTripId(tripIdParam)
         : await reviewRepository.findApproved();

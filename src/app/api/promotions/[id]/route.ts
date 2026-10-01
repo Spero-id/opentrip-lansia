@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promotionRepository } from "@/modules/promotion";
+import { promotionRepository } from "@/features/promotion";
 import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

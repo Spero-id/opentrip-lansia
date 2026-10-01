@@ -89,11 +89,11 @@ export const API_ACCESS: Record<string, ApiAccess> = {
 };
 
 export const DELEGATED_GUARD: Record<string, string> = {
-  "POST /api/private-trips": "src/modules/private-trip/private-trip.controller.ts",
-  "GET /api/private-trips": "src/modules/private-trip/private-trip.controller.ts",
-  "GET /api/private-trips/[id]": "src/modules/private-trip/private-trip.controller.ts",
-  "POST /api/private-trips/[id]/respond": "src/modules/private-trip/private-trip.controller.ts",
-  "GET /api/bookings": "src/modules/booking/booking.controller.ts",
+  "POST /api/private-trips": "src/features/private-trip/private-trip.controller.ts",
+  "GET /api/private-trips": "src/features/private-trip/private-trip.controller.ts",
+  "GET /api/private-trips/[id]": "src/features/private-trip/private-trip.controller.ts",
+  "POST /api/private-trips/[id]/respond": "src/features/private-trip/private-trip.controller.ts",
+  "GET /api/bookings": "src/features/booking/booking.controller.ts",
 };
 
 export function apiAccess(method: HttpMethod | string, path: string): ApiAccess {

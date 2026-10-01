@@ -1,4 +1,4 @@
-import { auth } from "@/modules/auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import type { UserRole } from "@/shared/types";
 import { NextRequest, NextResponse } from "next/server";
 

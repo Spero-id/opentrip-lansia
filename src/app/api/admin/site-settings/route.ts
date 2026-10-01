@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/shared/auth";
-import { siteSettingsService } from "@/modules/site-settings/site-settings.service";
+import { siteSettingsService } from "@/features/site-settings/site-settings.service";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
 export async function GET(req: NextRequest) {

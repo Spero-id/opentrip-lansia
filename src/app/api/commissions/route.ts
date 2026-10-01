@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { referralRepository } from "@/modules/referral";
+import { referralRepository } from "@/features/referral";
 import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

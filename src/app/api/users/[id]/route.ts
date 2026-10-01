@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/modules/auth";
-import { auth } from "@/modules/auth/auth.config";
+import { authService } from "@/features/auth";
+import { auth } from "@/features/auth/auth.config";
 import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

@@ -1,1 +1,1 @@
-export { GET } from "@/modules/booking/booking.controller";
+export { GET } from "@/features/booking/booking.controller";

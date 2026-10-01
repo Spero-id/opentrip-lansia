@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tripRepository } from "@/modules/trip";
+import { tripRepository } from "@/features/trip";
 import { requireAdmin } from "@/shared/auth";
 import { toPublicError } from "@/shared/errors/to-public-error";
 

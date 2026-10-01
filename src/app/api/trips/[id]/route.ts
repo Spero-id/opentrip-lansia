@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { tripController } from "@/modules/trip/trip.controller";
+import { tripController } from "@/features/trip/trip.controller";
 import { requireAdmin } from "@/shared/auth";
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

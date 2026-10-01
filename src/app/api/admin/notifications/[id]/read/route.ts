@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/shared/auth";
-import { auth } from "@/modules/auth/auth.config";
-import { notificationRepository } from "@/modules/notification/notification.repository";
+import { auth } from "@/features/auth/auth.config";
+import { notificationRepository } from "@/features/notification/notification.repository";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin(req);

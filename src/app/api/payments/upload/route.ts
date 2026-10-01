@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, unlink, mkdir, access } from "fs/promises";
 import path from "path";
-import { auth } from "@/modules/auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import { detectImageKind, extensionForImage } from "@/shared/utils/image-guard";
 import { toPublicError } from "@/shared/errors/to-public-error";
 
