@@ -202,7 +202,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P7-③b** Clean code (§5.1): `LANDING_PAGE_SIZE`, `BLOG_DATE_LOCALE`-style consts, `ReviewSection`→`TestimonialsSection` (samakan file), typed review `avatar?` (bug laten: `lib/data` tak punya avatar — render tak berubah, fallback initial)
 - [x] **P7-④** SSR/SEO: metadata root sudah ada (`Jelajah Memoria`) — verifikasi curl `<title>` tanpa JS; Subs section ter-render di `/`
 - [x] **P7-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + submit newsletter end-to-end (POST → 200 + row `subscribers`, lalu hapus) — 21/204; R2 42→12, R3 124→146, R4 −landing, R9/R11 tetap; `check:routes` 96→96
-- [ ] **P7-⑥** PR digabung + `progress.md`
+- [x] **P7-⑥** PR #120 digabung + `progress.md`
 
 ### Paket 8 — `admin` (18 halaman, sudah `.tsx`) — terbesar
 
