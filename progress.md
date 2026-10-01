@@ -2165,3 +2165,21 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Commits:** `310945c` pindah · `e5ccd63` konversi · `e05350f` reducer · `033becd` clean · `9028890` metadata · `d6b9c1e` baselines · komit docs sesi ini.
 
 **Progres:** Paket 1–4 = **27/27** → total **81/127**. Lanjut Paket 5 `destinasi` (pindah ke `features/trip` + rename komponen).
+
+## Session 55 — 2026-10-01
+
+**Paket 5 `destinasi` → `features/trip` — 7/7 selesai (P5-⑥ PR pending).** SSR tertinggi selesai tanpa ubah perilaku.
+
+**Perubahan (`src/features/trip/`):**
+- **P5-①** 18 `.jsx` → `components/` (+`detail/`); rename: `DestinasiHeader`→`DestinationListHeader`, `Emptystate`→`EmptyState`, `Resultsbar`→`ResultsBar`; `UlasanSection` mati (0 pemakai) → hapus; `src/components/destinasi/` hilang.
+- **P5-②** → `.tsx`/`.ts` + `types.ts` (TripDetail, TripTabId, TripReview, TripActiveGroup, filter state).
+- **P5-③** `api/client.ts` (fetchTrips/fetchTripById/fetchTripReviews/getTripImages) + `hooks/use-trip-filter.ts` (filterTrips murni + hook) + page pakai hook; tab detail pakai `useOptimistic`; 16 test (7 filter + 9 api).
+- **P5-③b** `PRICE_INPUT_MAX_LENGTH`, `sanitizePriceDigits`/`clampPrice`/`parsePriceInput`, hapus `User` tak terpakai, `prefer-const`.
+- **P5-④** `trips/layout.tsx` metadata (page tetap client, preseden P1) + `<Suspense>` galeri/ulasan; curl: `<title>Semua Destinasi Open Trip Lansia</title>` tanpa JS.
+- **P5-⑤** baselines: R2 42→22 (stale), R3 82→115 (deep client-safe ala P4), R4 −destinasi, R9 37, R11 0. Fix: `DestinationSection.jsx` (landing) impor kartu → `@/features/trip/...`. Uji: `/trips` 200, detail fake-id 200, `GET /api/trips` 200.
+
+**Verifikasi:** tsc **0** · lint **0E/76W** · vitest **18/186** · build **0** · routes **96→96** · drift **0** · structure hijau · `./init.sh` belum (dev-server log dibersihkan).
+
+**Commits:** `6a57ac5` pindah · `ad95a7a` konversi · `3b84ee5` api/hook/test · `98b6cae` clean · `6f26e2f` metadata · `32a1a8e` baselines · komit docs sesi ini.
+
+**Progres:** Paket 1–5 = **34/34** → total **88/127**. Lanjut Paket 6 `blog` (branch `restructure/paket-6-blog`).
