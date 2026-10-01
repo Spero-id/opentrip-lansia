@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth/client";
-import EmptyState from "@/components/my-trips/EmptyState";
-import OpenTripBookingCard from "@/components/my-trips/OpenTripBookingCard";
-import RequestCard from "@/components/my-trips/RequestCard";
+import EmptyState from "@/features/my-trips/components/EmptyState";
+import OpenTripBookingCard from "@/features/my-trips/components/OpenTripBookingCard";
+import RequestCard from "@/features/my-trips/components/RequestCard";
 
 export default function MyTripsPage() {
   const router = useRouter();
