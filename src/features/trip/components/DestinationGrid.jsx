@@ -1,7 +1,7 @@
 "use client";
 
-import ResultsBar from "./Resultsbar";
-import EmptyState from "./Emptystate";
+import ResultsBar from "./ResultsBar";
+import EmptyState from "./EmptyState";
 import DestinationCard from "./DestinationCard";
 
 export default function DestinationGrid({ filtered, hasActiveFilters, onReset }) {
