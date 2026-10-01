@@ -8,6 +8,18 @@ import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
 import ImageManager from "./image-manager";
 import IconPicker, { DynamicLucideIcon } from "../components/icon-picker";
+import {
+  EMPTY_TRIP_FACILITY,
+  EMPTY_TRIP_ITINERARY,
+  buildTripPayload,
+  formatTripPrice,
+  mapTripFacilities,
+  mapTripItinerary,
+  nextItineraryDay,
+  parseTripPrice,
+  validateTripForm,
+} from "@/features/admin/trip-form";
+import type { TripFacilityInput, TripFormState, TripItineraryInput } from "@/features/admin/trip-form";
 
 const PROVINCES = [
   "Aceh",
@@ -50,19 +62,6 @@ const PROVINCES = [
   "Papua Barat Daya",
 ];
 
-function formatRupiah(val: number | string | null | undefined): string {
-  if (val === null || val === undefined || val === "" || val === 0) return "";
-  const raw = String(val).replace(/\D/g, "");
-  if (!raw) return "";
-  const num = parseInt(raw, 10);
-  return "Rp " + num.toLocaleString("id-ID");
-}
-
-function parseRupiah(val: string): number {
-  const raw = val.replace(/\D/g, "");
-  return raw ? parseInt(raw, 10) : 0;
-}
-
 interface Trip {
   id: string;
   type: string;
@@ -85,39 +84,9 @@ interface Trip {
   createdAt: string;
 }
 
-interface ItineraryItemInput {
-  dayNumber: number;
-  location: string;
-  title: string;
-  description: string;
-}
 
-interface FacilityItemInput {
-  name: string;
-  icon: string;
-}
 
-interface TripForm {
-  type: string;
-  title: string;
-  slug: string;
-  description: string;
-  durationDays: number;
-  status: string;
-  isFeatured: boolean;
-  categoryId: string;
-  location: string;
-  province: string;
-  geoPoint: string;
-  isSeniorFriendly: boolean;
-  accessibilityInfo: string;
-  image: string;
-  price: number;
-  meetingPoint: string;
-  meetingPointTime: string;
-}
-
-const emptyForm: TripForm = {
+const emptyForm: TripFormState = {
   type: "open_trip",
   title: "",
   slug: "",
@@ -144,10 +113,10 @@ export default function AdminTrips() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Trip | null>(null);
-  const [form, setForm] = useState<TripForm>(emptyForm);
+  const [form, setForm] = useState<TripFormState>(emptyForm);
   const [images, setImages] = useState<string[]>([]);
-  const [itineraryList, setItineraryList] = useState<ItineraryItemInput[]>([]);
-  const [facilitiesList, setFacilitiesList] = useState<FacilityItemInput[]>([]);
+  const [itineraryList, setItineraryList] = useState<TripItineraryInput[]>([]);
+  const [facilitiesList, setFacilitiesList] = useState<TripFacilityInput[]>([]);
 
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -251,27 +220,10 @@ export default function AdminTrips() {
     setImages(item.images || []);
 
     const rawItinerary = item.itinerary || item.itineraryItems || [];
-    setItineraryList(
-      Array.isArray(rawItinerary) && rawItinerary.length > 0
-        ? rawItinerary.map((it: { dayNumber?: number; day?: number; location?: string; title?: string; description?: string }) => ({
-            dayNumber: it.dayNumber || it.day || 1,
-            location: it.location || "",
-            title: it.title || "",
-            description: it.description || "",
-          }))
-        : []
-    );
+    setItineraryList(mapTripItinerary(rawItinerary));
 
     const rawFacilities = item.facilities || [];
-    setFacilitiesList(
-      Array.isArray(rawFacilities) && rawFacilities.length > 0
-        ? rawFacilities.map((f) =>
-            typeof f === "string"
-              ? { name: f, icon: "" }
-              : { name: f?.name || "", icon: f?.icon || "" }
-          )
-        : []
-    );
+    setFacilitiesList(mapTripFacilities(rawFacilities));
 
 if (categories.length === 0) await fetchCategories();
 
@@ -279,17 +231,7 @@ if (categories.length === 0) await fetchCategories();
   }
 
   function validateForm(): Record<string, string> {
-    const e: Record<string, string> = {};
-    if (!form.title.trim()) e.title = "Judul trip wajib diisi.";
-    if (!form.slug.trim()) e.slug = "Slug wajib diisi.";
-    if (!form.durationDays || form.durationDays < 1) e.durationDays = "Durasi minimal 1 hari.";
-    if (!form.categoryId) e.categoryId = "Pilih atau buat kategori terlebih dahulu.";
-    if (!form.location.trim()) e.location = "Lokasi utama wajib diisi.";
-    if (!form.province) e.province = "Pilih provinsi.";
-    if (!form.price || form.price <= 0) e.price = "Harga wajib diisi dan harus lebih dari 0.";
-    if (!form.meetingPoint.trim()) e.meetingPoint = "Lokasi kumpul wajib diisi.";
-    if (!form.meetingPointTime) e.meetingPointTime = "Jam kumpul wajib diisi.";
-    return e;
+    return validateTripForm(form);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -302,47 +244,7 @@ if (categories.length === 0) await fetchCategories();
     setErrors({});
     setSaving(true);
 
-    const payload: Record<string, unknown> = {
-      type: "open_trip",
-      title: form.title,
-      slug: form.slug || undefined,
-      description: form.description || undefined,
-      durationDays: Number(form.durationDays) || 1,
-      status: form.status,
-      isFeatured: form.isFeatured,
-      categoryId: form.categoryId || undefined,
-      location: form.location || undefined,
-      province: form.province || undefined,
-      geoPoint: form.geoPoint || undefined,
-      isSeniorFriendly: form.isSeniorFriendly,
-      accessibilityInfo: form.accessibilityInfo || undefined,
-      image: images.length > 0 ? images[0] : undefined,
-      images: images.length > 0 ? images : undefined,
-      priceMin: form.price || undefined,
-      priceMax: form.price || undefined,
-      price: form.price || undefined,
-      facilities: facilitiesList
-        .filter((item) => item.name.trim() !== "")
-        .map((item) => ({
-          name: item.name.trim(),
-          icon: item.icon || "",
-        })),
-      itinerary: itineraryList.map((item) => ({
-        day: Number(item.dayNumber) || 1,
-        location: item.location,
-        title: item.title,
-        description: item.description,
-      })),
-      itineraryItems: itineraryList.map((item) => ({
-        dayNumber: Number(item.dayNumber) || 1,
-        location: item.location,
-        title: item.title || `Hari ${item.dayNumber || 1}`,
-        description: item.description,
-      })),
-      meetingPointsJson: form.meetingPoint.trim()
-        ? [{ time: form.meetingPointTime || "08.00", location: form.meetingPoint.trim(), description: "Titik kumpul utama penjemputan. Silakan hadir 15 menit sebelum waktu tersebut." }]
-        : [],
-    };
+    const payload = buildTripPayload(form, images, itineraryList, facilitiesList);
 
     try {
       const url = editing ? `/api/trips/${editing.id}` : "/api/trips";
@@ -407,7 +309,7 @@ if (categories.length === 0) await fetchCategories();
   }
 
   function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const val = parseRupiah(e.target.value);
+    const val = parseTripPrice(e.target.value);
     setErrors((prev) => {
       const next = { ...prev };
       delete next.price;
@@ -417,10 +319,10 @@ if (categories.length === 0) await fetchCategories();
   }
 
   function addItineraryItem() {
-    const nextDay = itineraryList.length > 0 ? itineraryList[itineraryList.length - 1].dayNumber + 1 : 1;
+    const nextDay = nextItineraryDay(itineraryList);
     setItineraryList((prev) => [
       ...prev,
-      { dayNumber: nextDay, location: "", title: "", description: "" },
+      { ...EMPTY_TRIP_ITINERARY, dayNumber: nextDay },
     ]);
   }
 
@@ -428,7 +330,7 @@ if (categories.length === 0) await fetchCategories();
     setItineraryList((prev) => prev.filter((_, i) => i !== index));
   }
 
-  function handleItineraryChange(index: number, field: keyof ItineraryItemInput, value: string | number) {
+  function handleItineraryChange(index: number, field: keyof TripItineraryInput, value: string | number) {
     setItineraryList((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [field]: value };
@@ -437,14 +339,14 @@ if (categories.length === 0) await fetchCategories();
   }
 
   function addFacilityItem() {
-    setFacilitiesList((prev) => [...prev, { name: "", icon: "" }]);
+    setFacilitiesList((prev) => [...prev, { ...EMPTY_TRIP_FACILITY, icon: "" }]);
   }
 
   function removeFacilityItem(index: number) {
     setFacilitiesList((prev) => prev.filter((_, i) => i !== index));
   }
 
-  function handleFacilityChange(index: number, field: keyof FacilityItemInput, value: string) {
+  function handleFacilityChange(index: number, field: keyof TripFacilityInput, value: string) {
     setFacilitiesList((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [field]: value };
@@ -511,7 +413,7 @@ if (categories.length === 0) await fetchCategories();
                       {[t.location, t.province].filter(Boolean).join(", ") || "-"}
                     </td>
                     <td className="px-6 py-4 font-semibold text-slate-900">
-                      {t.priceMin ? formatRupiah(t.priceMin) : "-"}
+                      {t.priceMin ? formatTripPrice(t.priceMin) : "-"}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${t.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : t.status === "draft" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700"}`}>
@@ -653,7 +555,7 @@ if (categories.length === 0) await fetchCategories();
                 <label className="block text-sm font-medium text-slate-700">Harga (Rp)</label>
                 <input
                   type="text"
-                  value={formatRupiah(form.price)}
+                  value={formatTripPrice(form.price)}
                   onChange={handlePriceChange}
                   placeholder="Rp 0"
                   className={fieldClass("price")}
