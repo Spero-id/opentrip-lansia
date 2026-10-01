@@ -1951,3 +1951,55 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-0.5
 vitest 6/50, check-* dalam baseline).
 - Cabang `chore/inline-design-tokens` → PR
   https://github.com/Spero-id/opentrip-lansia/pull/new/chore%2Finline-design-tokens
+
+---
+
+## Session 46 — Restructure Fase 1: Komentar & pesan error (2026-10-01)
+
+**Branch:** `restructure/fase-1` (dari `648b67b` = merge PR #107 inline design-tokens).
+
+- **1.1+1.2 Purge komentar (D-5: nol + eksepsi why-Inggris)** — komit
+  `2710199`: **488 blok komentar dihapus dari 110 file** (pass TypeScript AST
+  306 + pass scanner karakter sadar-string/template 182 + 2 manual di uploads
+  route); isi diff **107 file, +26/−873** (deletions dominan). R1 (komentar
+  Indonesia) **250 → 0 baris**.
+  - **Keep-list (5 baris why-EN, didaftar di PR):** `eslint.config.mjs` ×2
+    (vendor-asset & coverage ignore), `playwright.config.ts` ×1 (setelan RAM
+    8GB), `next.config.ts` ×1 (host avatar OAuth Google), `globals.css` ×1
+    (pengecualian label grup sidebar).
+  - **7 direktif tool dipertahankan** (`eslint-disable/enable`): instruksi
+    mesin, bukan komentar; menghapusnya mengubah perilaku lint.
+  - **Insiden (selamat karena tangga):** scanner pass-2 salah mengira regex
+    `\/\/`+`/` penutup sebagai komentar → baris `sanitize.ts:79` terpotong;
+    **tsc langsung menangkap** → baris dipulihkan + aturan backslash
+    ditambahkan; pass ulang bersih (0 kerusakan). Pelajaran: alat mekanis
+    selalu diverifikasi `tsc`+`build` sebelum dianggap selesai.
+- **1.3 Pesan error API EN→ID (D-4)** — komit `f13bc97`: **9 pesan murni
+  Inggris (13 lokasi)** diterjemahkan — `private-trip.controller` (Action is
+  required / Invalid body ×3 / Request tidak ditemukan ×2 / Format request
+  body / proposalId and action) + `private-trip.service` (Proposal is not
+  actionable) + `uploads/[...path]` (Invalid path ×2 / File not found) + copy
+  halaman private selaras. `Unauthorized`/`Forbidden` tetap teknis; **status
+  code tidak berubah** (diff 4 file, 14/14 baris). Angka 48 di plan =
+  inventaris PRD lama — sisanya sudah Indonesia.
+- **1.3b Rewrite 6 suite test dari kosong** — komit `83d3826`: judul
+  `describe`/`it` → Inggris, komentar dihapus, helper terdedup
+  (`queueSelectResults`, `renderPaymentStep`+`stubAccountsFetch`),
+  `toPublicError` dikelompokkan passthrough/redaction/fallback, loop
+  `void route` dibuang. **Paritas ketat per file 4/4/12/14/6/10 = 50 → 50**;
+  **coverage identik baseline 0.10** (S 47.65 · B 55.98 · F 29.67 · L 50.81);
+  `verify:checkout` exit 0.
+- **1.4 Enforcement R1 & R8** — komit `d6872bb` + `9074bb0`: baseline R1
+  **250 → 0**; **probe membuktikan keduanya jadi error saat dilanggar**:
+  komentar ID → R1 `1 vs 0 FAIL`; identifier `alamatDestinasiBaru` → R8
+  `481 vs 480 FAIL`; legenda `FAIL` diparenthesis (dulu dicetak tanpa syarat
+  → run hijau terbaca gagal).
+- **1.5 Verifikasi (§8):** tsc **0** · lint **0E/78W** · vitest **6/50** ·
+  coverage identik · `npm run build` **EXIT 0** · `check:routes` **96→96
+  identik** · `check:schema-drift` OK (4 known) · `verify:checkout` **exit 0**
+  (dev server hidup, lalu dimatikan bersih) · `./init.sh` **EXIT 0**.
+  Diff `main...HEAD`: **110 file, +202/−1073** (deletions dominan ✓).
+- **Progres:** Fase 1 = **7/7** → total **28/127**.
+
+**Dipush & PR:** branch `restructure/fase-1` → PR
+https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
