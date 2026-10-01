@@ -1,38 +1,33 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { Suspense, use, useEffect, useOptimistic, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Subs from "@/components/landing/Subs";
-import { DestinationDomain, toDetail } from "@/lib/destination";
+import { DestinationDomain } from "@/lib/destination";
+import Lightbox from "@/features/trip/components/detail/Lightbox";
+import DestinationHeader from "@/features/trip/components/detail/DestinationHeader";
+import DestinationGallery from "@/features/trip/components/detail/DestinationGallery";
+import DestinationTabs from "@/features/trip/components/detail/DestinationTabs";
+import AboutSection from "@/features/trip/components/detail/AboutSection";
+import AccessibilitySection from "@/features/trip/components/detail/AccessibilitySection";
+import ItinerarySection from "@/features/trip/components/detail/ItinerarySection";
+import ReviewsSection from "@/features/trip/components/detail/ReviewsSection";
+import TripBookingCard from "@/features/trip/components/detail/BookingCard";
+import { fetchTripById, getTripImages } from "@/features/trip/api/client";
+import type { TripDetail, TripTabId } from "@/features/trip/types";
 
-import Lightbox from "@/components/destinasi/detail/Lightbox";
-import DestinationHeader from "@/components/destinasi/detail/DestinationHeader";
-import DestinationGallery from "@/components/destinasi/detail/DestinationGallery";
-import DestinationTabs from "@/components/destinasi/detail/DestinationTabs";
-import AboutSection from "@/components/destinasi/detail/AboutSection";
-import AccessibilitySection from "@/components/destinasi/detail/AccessibilitySection";
-import ItinerarySection from "@/components/destinasi/detail/ItinerarySection";
-import ReviewsSection from "@/components/destinasi/detail/ReviewsSection";
-import BookingCard from "@/components/destinasi/detail/BookingCard";
-
-export default function DestinationDetailPage({ params }) {
+export default function DestinationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
-  const [dest, setDest] = useState(null);
-  const [status, setStatus] = useState("loading");
+  const [dest, setDest] = useState<TripDetail | null>(null);
+  const [status, setStatus] = useState<"loading" | "found" | "notfound">("loading");
 
   useEffect(() => {
     const rawId = resolvedParams.id;
     let cancelled = false;
-
-    fetch("/api/trips")
-      .then((res) => res.json())
-      .then((data) => {
+    fetchTripById(rawId)
+      .then((found) => {
         if (cancelled) return;
-        const found = Array.isArray(data)
-          ? data.find((d) => d.id === rawId && d.status === "published")
-          : undefined;
-        setDest(found ? toDetail(found) : null);
+        setDest(found);
         setStatus(found ? "found" : "notfound");
       })
       .catch(() => {
@@ -40,14 +35,19 @@ export default function DestinationDetailPage({ params }) {
         setDest(null);
         setStatus("notfound");
       });
-
     return () => {
       cancelled = true;
     };
   }, [resolvedParams.id]);
 
-  const [activeTab, setActiveTab] = useState("tentang");
-  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [activeTab, setActiveTab] = useState<TripTabId>("tentang");
+  const [optimisticTab, switchTab] = useOptimistic<TripTabId, TripTabId>(activeTab, (_current, next) => next);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  function handleTabChange(next: TripTabId) {
+    switchTab(next);
+    setActiveTab(next);
+  }
 
   if (status === "notfound") {
     notFound();
@@ -63,7 +63,7 @@ export default function DestinationDetailPage({ params }) {
     );
   }
 
-  const images = dest.images?.length ? dest.images : dest.image ? [dest.image] : [];
+  const images = getTripImages(dest);
   const shortLocation = DestinationDomain.getShortLocation(dest);
 
   return (
@@ -76,14 +76,13 @@ export default function DestinationDetailPage({ params }) {
         />
       )}
 
-
       <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-6">
         <Link
           href="/trips"
           className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#F49D1A] transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
+            <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Kembali ke Destinasi
         </Link>
@@ -91,31 +90,33 @@ export default function DestinationDetailPage({ params }) {
 
       <div className="pt-4 pb-4 px-4 sm:px-8 max-w-7xl mx-auto">
         <DestinationHeader dest={dest} />
-        <DestinationGallery
-          images={images}
-          title={dest.title}
-          onOpenLightbox={setLightboxIndex}
-        />
+        <Suspense fallback={<div className="h-[30vh] min-h-[200px] rounded-3xl bg-gray-100" />}>
+          <DestinationGallery
+            images={images}
+            title={dest.title}
+            onOpenLightbox={setLightboxIndex}
+          />
+        </Suspense>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10 relative">
         <div className="lg:col-span-2 flex flex-col">
-          <DestinationTabs activeTab={activeTab} onChange={setActiveTab} />
-
+          <DestinationTabs activeTab={optimisticTab} onChange={handleTabChange} />
           <div className="min-h-[400px]">
-            {activeTab === "tentang" && <AboutSection dest={dest} />}
-            {activeTab === "itinerary" && <ItinerarySection dest={dest} shortLocation={shortLocation} />}
-            {activeTab === "aksesibilitas" && <AccessibilitySection dest={dest} />}
-            {activeTab === "ulasan" && <ReviewsSection tripId={dest.id} />}
+            {optimisticTab === "tentang" && <AboutSection dest={dest} />}
+            {optimisticTab === "itinerary" && <ItinerarySection dest={dest} shortLocation={shortLocation} />}
+            {optimisticTab === "aksesibilitas" && <AccessibilitySection dest={dest} />}
+            {optimisticTab === "ulasan" && (
+              <Suspense fallback={<div className="py-10 text-center text-sm text-gray-400">Memuat ulasan...</div>}>
+                <ReviewsSection tripId={dest.id} />
+              </Suspense>
+            )}
           </div>
         </div>
-
         <div className="lg:col-span-1">
-          <BookingCard dest={dest} />
+          <TripBookingCard dest={dest} />
         </div>
       </main>
-
-      <Subs />
     </div>
   );
 }
