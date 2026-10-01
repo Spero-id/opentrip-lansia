@@ -2,11 +2,19 @@
 
 import { useState } from "react";
 import { Copy, Check, Share2, ExternalLink } from "lucide-react";
+import type { ReferralCardStats } from "../types";
 
-export default function ReferralCard({ referralCode, stats }) {
+export default function ReferralCard({
+  referralCode,
+  stats,
+}: {
+  referralCode?: string | null;
+  stats?: ReferralCardStats | null;
+}) {
   const [copied, setCopied] = useState(false);
 
   const copyCode = async () => {
+    if (!referralCode) return;
     try {
       await navigator.clipboard.writeText(referralCode);
       setCopied(true);

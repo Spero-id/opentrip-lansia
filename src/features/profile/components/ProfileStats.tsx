@@ -2,9 +2,10 @@
 
 import { Coins, CalendarDays, Users } from "lucide-react";
 import { useState, useEffect } from "react";
+import type { ProfileUser, ReferralSummary } from "../types";
 
-export default function ProfileStats({ user }) {
-  const [referralData, setReferralData] = useState(null);
+export default function ProfileStats({ user }: { user?: ProfileUser | null }) {
+  const [referralData, setReferralData] = useState<ReferralSummary | null>(null);
   useEffect(() => {
     fetch("/api/user/referral")
       .then((res) => res.json())
@@ -19,7 +20,7 @@ export default function ProfileStats({ user }) {
       })
     : "-";
 
-  const formatPoints = (points) => {
+  const formatPoints = (points: number) => {
     if (!points || points === 0) return "0";
     return points.toLocaleString("id-ID");
   };

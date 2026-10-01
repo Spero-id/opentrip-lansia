@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useSession } from "@/lib/auth/client";
-import ProfileHeader from "@/features/profile/components/ProfileHeader";
-import ProfileStats from "@/features/profile/components/ProfileStats";
-import ProfileInfoCard from "@/features/profile/components/ProfileInfoCard";
-import ReferralCard from "@/features/profile/components/ReferralCard";
-import ReferralHistory from "@/features/profile/components/ReferralHistory";
-import LogoutButton from "@/features/profile/components/LogoutButton";
+import {
+  LogoutButton,
+  ProfileHeader,
+  ProfileInfoCard,
+  ProfileStats,
+  ReferralCard,
+  ReferralHistory,
+} from "@/features/profile";
 
 export default function ProfilePage() {
   const router = useRouter();

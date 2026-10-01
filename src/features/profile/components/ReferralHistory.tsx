@@ -8,8 +8,10 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import type { ReferralHistoryItem, ReferralPagination } from "../types";
 
-const statusConfig = {
+const statusConfig: Record<string, { label: string; color: string; bg: string; icon: LucideIcon }> = {
   pending: {
     label: "Menunggu",
     color: "text-yellow-600",
@@ -37,11 +39,11 @@ const statusConfig = {
 };
 
 export default function ReferralHistory() {
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<ReferralHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState(null);
-  const [expandedId, setExpandedId] = useState(null);
+  const [pagination, setPagination] = useState<ReferralPagination | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,11 +76,11 @@ export default function ReferralHistory() {
     };
   }, [page]);
 
-  const toggleExpand = (id) => {
+  const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
 
-  const formatDate = (dateStr) => {
+  const formatDate = (dateStr: string | Date) => {
     return new Date(dateStr).toLocaleDateString("id-ID", {
       day: "numeric",
       month: "short",
@@ -86,7 +88,7 @@ export default function ReferralHistory() {
     });
   };
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: number | null | undefined) => {
     return `Rp ${(amount ?? 0).toLocaleString("id-ID")}`;
   };
 
