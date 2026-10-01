@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import Subs from "@/features/newsletter/components/Subs";
 import { sanitizeBlogContent } from "@/utils/sanitize";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { fetchPostBySlug, formatBlogDate } from "@/features/blog/api/client";
 import type { BlogPost } from "@/features/blog/types";
 
@@ -78,10 +79,12 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
 
             <div className="mt-8 border-t border-slate-200 pt-8">
               <Suspense fallback={<div className="py-8 text-center text-sm text-[#6B7280]">Memuat konten...</div>}>
-                <div
-                  className="text-sm text-[#475569] leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
-                  dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
-                />
+                <ErrorBoundary>
+                  <div
+                    className="text-sm text-[#475569] leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
+                    dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
+                  />
+                </ErrorBoundary>
               </Suspense>
             </div>
           </div>

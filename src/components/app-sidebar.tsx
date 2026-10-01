@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { isHrefActive } from "@/app/admin/components/nav-data"
+import { isHrefActive } from "@/app/(admin)/admin/components/nav-data"
 import { LayoutDashboard, Compass, Users, Tag, ShoppingCart, FileText, ExternalLink } from "lucide-react"
 
 const data = {

@@ -1,4 +1,4 @@
-import { DynamicLucideIcon } from "@/app/admin/components/icon-picker";
+import { DynamicLucideIcon } from "@/app/(admin)/admin/components/icon-picker";
 import SectionHeading from "./SectionHeading";
 
 import type { TripDetail } from "@/features/trip/types";

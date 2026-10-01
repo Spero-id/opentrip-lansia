@@ -3,6 +3,7 @@
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Modal from "../components/modal";
 import ConfirmDelete from "../components/confirm-delete";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import WysiwygEditor from "@/features/blog/components/wysiwyg-editor";
 import BlogCoverUploader from "../components/blog-cover-uploader";
 import { useAdminCrud } from "@/features/admin";
@@ -167,10 +168,12 @@ export default function AdminBlogs() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Konten</label>
-            <WysiwygEditor
-              value={form.content}
-              onChange={(content) => setForm((prev) => ({ ...prev, content }))}
-            />
+            <ErrorBoundary>
+              <WysiwygEditor
+                value={form.content}
+                onChange={(content) => setForm((prev) => ({ ...prev, content }))}
+              />
+            </ErrorBoundary>
           </div>
           <div>
             <BlogCoverUploader

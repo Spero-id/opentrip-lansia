@@ -12,7 +12,7 @@ import {
   Image as ImageIcon,
   X,
 } from "lucide-react";
-import ConfirmAction from "@/app/admin/components/confirm-action";
+import ConfirmAction from "@/app/(admin)/admin/components/confirm-action";
 
 interface Trip {
   id: string;

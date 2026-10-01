@@ -2247,3 +2247,17 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Verifikasi:** tsc **0** · lint **0E** · vitest **229** (admin 25) · build **0** · routes **96→96** · drift **0** · structure hijau.
 
 **Progres:** total **103/127** (P8-① ✓, ②/③ substansial, ④ logika selesai kecuali colocation). Branch `restructure/paket-8-admin`, push.
+
+## Session 60 — 2026-10-01
+
+**Fase 9 (5/6) — route groups + boundary.** P8 merge (#121) terverifikasi; branch `restructure/fase-9` dari `origin/main`.
+
+- **9.1** 11 folder halaman → `(auth)` login/register/forbidden, `(public)` trips/blog/contact/checkout/private + root page, `(account)` profile/my-trips, `(admin)` admin/*. `check:routes` 96→96 identik. Insiden: 2 `git mv` gagal (lock dev server basi) → bunuh PID non-agen, ulangi OK.
+- **9.2/9.2b** 12 file error/loading/not-found per grup + `SiteChrome` dipanggil layout `(public)`/`(account)`; root bare; daftar `HIDDEN_PREFIXES` dihapus (float config tetap). Perbaikan impor `@/app/admin/components/*` → path grup baru (4 file). Curl: `/` ada nav, `/login` tanpa nav, `/trips` ada WA float.
+- **9.3** `components/ui/error-boundary.tsx` + 3 test; dipasang di HugeRTE (modal blogs) + konten blog. `map-picker` tanpa pemakai → skip sadar.
+- **9.4** Pilot `<Activity>`: dievaluasi di Lightbox & tab ulasan → **tidak diadopsi** (scroll-lock & eager-fetch mengandalkan semantik mount); pola kondisional dipertahankan.
+- Baselines: R2/R6 path grup baru; R9 37→36.
+
+**Verifikasi:** tsc **0** · lint **0E** · vitest **232** · build **0** · routes **96→96** · drift **0** · structure hijau.
+
+**Progres:** total **113/127**. Tersisa: 9.5 PR + Fase 10 (rename URL, risiko tertinggi) + Fase 11 (enforcement).
