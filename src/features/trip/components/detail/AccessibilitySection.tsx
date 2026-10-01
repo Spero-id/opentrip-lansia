@@ -1,6 +1,8 @@
 import SectionHeading from "./SectionHeading";
 
-export default function AccessibilitySection({ dest }) {
+import type { TripDetail } from "@/features/trip/types";
+
+export default function AccessibilitySection({ dest }: { dest: TripDetail }) {
   return (
     <div>
       <section className="mb-10">

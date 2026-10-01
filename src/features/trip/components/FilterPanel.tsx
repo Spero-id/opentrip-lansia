@@ -17,6 +17,40 @@ const CATEGORY_OPTIONS = [
   "Danau",
 ];
 
+import type { TripDetail } from "@/features/trip/types";
+
+interface FilterPanelProps {
+  destinations: TripDetail[];
+  selectedLocation: string;
+  setSelectedLocation: (value: string) => void;
+  priceMin: string | number;
+  setPriceMin: (value: string | number) => void;
+  priceMax: string | number;
+  setPriceMax: (value: string | number) => void;
+  selectedCategories: string[];
+  setSelectedCategories: (value: string[]) => void;
+  isSeniorFriendlyOnly: boolean;
+  setIsSeniorFriendlyOnly: (value: boolean) => void;
+  onResetAll: () => void;
+  hasActiveFilters: boolean;
+}
+
+const PRICE_INPUT_MAX_LENGTH = 9;
+
+function sanitizePriceDigits(raw: string): string {
+  return raw.replace(/\D/g, "").slice(0, PRICE_INPUT_MAX_LENGTH);
+}
+
+function clampPrice(value: number): number {
+  return value > MAX_RUPIAH ? MAX_RUPIAH : value;
+}
+
+function parsePriceInput(raw: string): string | number | null {
+  const digits = sanitizePriceDigits(raw);
+  if (digits === "") return "";
+  return clampPrice(Number(digits));
+}
+
 export default function FilterPanel({
   destinations,
   selectedLocation,
@@ -31,7 +65,7 @@ export default function FilterPanel({
   setIsSeniorFriendlyOnly,
   onResetAll,
   hasActiveFilters,
-}) {
+}: FilterPanelProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
@@ -40,9 +74,10 @@ export default function FilterPanel({
     [destinations]
   );
 
-  function formatRupiah(value) {
-    if (!value || isNaN(value) || value <= 0) return "Rp 0";
-    return "Rp " + Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  function formatRupiah(value: string | number) {
+    const num = Number(value);
+    if (!value || Number.isNaN(num) || num <= 0) return "Rp 0";
+    return "Rp " + Math.floor(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
   const activeCount = [
@@ -281,15 +316,13 @@ export default function FilterPanel({
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={9}
+                  maxLength={PRICE_INPUT_MAX_LENGTH}
                   placeholder="Contoh: 200000"
                   value={priceMin}
                   onChange={(e) => {
-                    let digits = e.target.value.replace(/\D/g, "").slice(0, 9);
-                    if (digits === "") { setPriceMin(""); return; }
-                    let num = Number(digits);
-                    if (num > MAX_RUPIAH) num = MAX_RUPIAH;
-                    setPriceMin(num);
+                    const parsed = parsePriceInput(e.target.value);
+                    if (parsed === null) return;
+                    setPriceMin(parsed);
                   }}
                   onKeyDown={(e) => {
                     if (e.ctrlKey || e.metaKey) return;
@@ -300,12 +333,8 @@ export default function FilterPanel({
                     const text = e.clipboardData.getData("text");
                     if (/[^\d]/.test(text)) {
                       e.preventDefault();
-                      let digits = text.replace(/\D/g, "").slice(0, 9);
-                      if (digits) {
-                        let num = Number(digits);
-                        if (num > MAX_RUPIAH) num = MAX_RUPIAH;
-                        setPriceMin(num);
-                      }
+                      const digits = sanitizePriceDigits(text);
+                      if (digits) setPriceMin(clampPrice(Number(digits)));
                       else if (text === "") setPriceMin("");
                     }
                   }}
@@ -321,15 +350,13 @@ export default function FilterPanel({
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={9}
+                  maxLength={PRICE_INPUT_MAX_LENGTH}
                   placeholder="Contoh: 2000000"
                   value={priceMax}
                   onChange={(e) => {
-                    let digits = e.target.value.replace(/\D/g, "").slice(0, 9);
-                    if (digits === "") { setPriceMax(""); return; }
-                    let num = Number(digits);
-                    if (num > MAX_RUPIAH) num = MAX_RUPIAH;
-                    setPriceMax(num);
+                    const parsed = parsePriceInput(e.target.value);
+                    if (parsed === null) return;
+                    setPriceMax(parsed);
                   }}
                   onKeyDown={(e) => {
                     if (e.ctrlKey || e.metaKey) return;
@@ -340,12 +367,8 @@ export default function FilterPanel({
                     const text = e.clipboardData.getData("text");
                     if (/[^\d]/.test(text)) {
                       e.preventDefault();
-                      let digits = text.replace(/\D/g, "").slice(0, 9);
-                      if (digits) {
-                        let num = Number(digits);
-                        if (num > MAX_RUPIAH) num = MAX_RUPIAH;
-                        setPriceMax(num);
-                      }
+                      const digits = sanitizePriceDigits(text);
+                      if (digits) setPriceMax(clampPrice(Number(digits)));
                       else if (text === "") setPriceMax("");
                     }
                   }}

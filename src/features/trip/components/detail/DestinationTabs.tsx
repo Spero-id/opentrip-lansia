@@ -1,13 +1,15 @@
 import { FileText, Route, Accessibility, Star } from "lucide-react";
 
-const TABS = [
+import type { TripTabId } from "@/features/trip/types";
+
+const TABS: Array<{ id: TripTabId; label: string; icon: typeof FileText }> = [
   { id: "tentang", label: "Deskripsi", icon: FileText },
   { id: "itinerary", label: "Rundown", icon: Route },
   { id: "aksesibilitas", label: "Aksesibilitas", icon: Accessibility },
   { id: "ulasan", label: "Ulasan", icon: Star },
 ];
 
-export default function DestinationTabs({ activeTab, onChange }) {
+export default function DestinationTabs({ activeTab, onChange }: { activeTab: TripTabId; onChange: (id: TripTabId) => void }) {
   return (
     <div
       role="tablist"

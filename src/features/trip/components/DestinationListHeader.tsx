@@ -2,7 +2,12 @@
 
 import SearchBar from "./SearchBar";
 
-export default function DestinasiHeader({ search, setSearch }) {
+interface DestinationListHeaderProps {
+  search: string;
+  setSearch: (value: string) => void;
+}
+
+export default function DestinationListHeader({ search, setSearch }: DestinationListHeaderProps) {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
       <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-2">

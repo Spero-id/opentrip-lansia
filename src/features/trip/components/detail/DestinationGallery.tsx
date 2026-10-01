@@ -2,9 +2,15 @@
 
 import { useState } from "react";
 
-export default function DestinationGallery({ images, title, onOpenLightbox }) {
+interface DestinationGalleryProps {
+  images: Array<string | null | undefined>;
+  title?: string;
+  onOpenLightbox: (index: number) => void;
+}
+
+export default function DestinationGallery({ images, title, onOpenLightbox }: DestinationGalleryProps) {
   const [mobileSlide, setMobileSlide] = useState(0);
-  const validImages = (Array.isArray(images) ? images : []).filter(Boolean);
+  const validImages: string[] = (Array.isArray(images) ? images : []).filter((v): v is string => typeof v === "string" && v.length > 0);
   const hiddenCount = validImages.length - 3;
 
   if (validImages.length === 0) {

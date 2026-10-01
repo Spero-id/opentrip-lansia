@@ -2,7 +2,7 @@
 
 import { SlidersHorizontal } from "lucide-react";
 
-export default function EmptyState({ onReset }) {
+export default function EmptyState({ onReset }: { onReset: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-gray-200 bg-white">
       <div

@@ -7,14 +7,16 @@ const A = "#F49D1A";
 const QUOTA_MAX = 10;
 const MIN_TO_GO = 6;
 
-function formatDate(val) {
+function formatDate(val?: string | null) {
   if (!val) return "-";
   const [y, m, d] = val.slice(0, 10).split("-");
   if (!y || !m || !d) return val;
   return `${d}-${m}-${y}`;
 }
 
-function QuotaStatus({ booked }) {
+import type { TripDetail } from "@/features/trip/types";
+
+function QuotaStatus({ booked }: { booked: number }) {
   if (booked >= QUOTA_MAX) {
     return <span className="rounded-full bg-red-100 px-2.5 py-1 text-[10px] font-bold text-red-600">Kuota Penuh</span>;
   }
@@ -24,7 +26,7 @@ function QuotaStatus({ booked }) {
   return <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-600">Menunggu Kuota</span>;
 }
 
-export default function BookingCard({ dest }) {
+export default function BookingCard({ dest }: { dest: TripDetail }) {
   const activeGroup = dest.activeGroup || null;
   const bookedCount = activeGroup?.quotaBooked ?? (typeof dest.bookedCount === "number" ? dest.bookedCount : null);
   const maxQuota = activeGroup?.maxParticipants ?? QUOTA_MAX;

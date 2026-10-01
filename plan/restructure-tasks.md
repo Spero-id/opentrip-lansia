@@ -32,11 +32,11 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3 — Rename & lebur global | 10 | 10 |
 | Fase 3b — `lib/env.ts` | 2 | 2 |
 | Fase 3c — Chrome ke root layout | 6 | 6 |
-| Paket domain 1–8 | 27 | 55 |
+| Paket domain 1–8 | 34 | 55 |
 | Fase 9 — Route groups & boundary | 0 | 6 |
 | Fase 10 — Rename URL | 0 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **81** | **127** |
+| **Total** | **88** | **127** |
 
 ---
 
@@ -174,12 +174,12 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ### Paket 5 — `destinasi` → `features/trip` (18 jsx, 1364 baris) — SSR tertinggi
 
-- [ ] **P5-①** `git mv` → `features/trip/components/`; **rename nama Indonesia/kapitalisasi**: `DestinasiHeader`→`DestinationListHeader` (⚠️ `DestinationHeader` sudah dipakai), `UlasanSection`→audit (mati? hapus : nama Inggris non-bentrok), `Emptystate`→`EmptyState`, `Resultsbar`→`ResultsBar`
-- [ ] **P5-②** Konversi 18 `.jsx` + `trips/page.jsx` + `trips/[id]/page.jsx` → `.tsx`
-- [ ] **P5-③** Ekstrak `api/` + `useTripFilter`; review/ulasan pakai `useOptimistic`
-- [ ] **P5-③b** Clean code (§5.1): nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (ekstrak subkomponen/flatten) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
-- [ ] **P5-④** SSR/SEO: `generateMetadata` `trips` & `trips/[id]` + `<Suspense>` (ulasan, galeri) + `React.cache()`; curl HTML: `<title>` & data ada tanpa JS
-- [ ] **P5-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + crawl 10 URL trip utama
+- [x] **P5-①** `git mv` → `features/trip/components/`; **rename nama Indonesia/kapitalisasi**: `DestinasiHeader`→`DestinationListHeader`, `UlasanSection`→audit (mati, 0 pemakai → hapus), `Emptystate`→`EmptyState`, `Resultsbar`→`ResultsBar`
+- [x] **P5-②** Konversi 17 `.jsx` + `trips/page.jsx` + `trips/[id]/page.jsx` → `.tsx` (+`types.ts`: TripDetail, TripTabId, TripReview, TripActiveGroup)
+- [x] **P5-③** Ekstrak `api/` + `useTripFilter`; review/ulasan pakai `useOptimistic` (tab switching) — `api/client.ts` (fetchTrips/fetchTripById/fetchTripReviews/getTripImages) + `hooks/use-trip-filter.ts` (filterTrips murni + hook); 16 test baru (7 filter + 9 api)
+- [x] **P5-③b** Clean code (§5.1): `PRICE_INPUT_MAX_LENGTH`, `sanitizePriceDigits`/`clampPrice`/`parsePriceInput`, hapus `User` tak terpakai, `prefer-const`; perbaikan = commit refactor terpisah
+- [x] **P5-④** SSR/SEO: `generateMetadata` `trips` via `trips/layout.tsx` (page tetap client, preseden P1) + `<Suspense>` (galeri, ulasan); curl HTML: `<title>Semua Destinasi Open Trip Lansia</title>` tanpa JS
+- [x] **P5-⑤** **Test akhir: `npx vitest run` hijau** + tangga §8 + crawl trip — 18/186; R2 42→22 (stale, 20 file jsx hilang), R3 82→115 (deep impor client-safe ala P4), R4 −destinasi, R9 37→37, R11 0; `/trips` 200, `/trips/abc-123` 200, `GET /api/trips` 200, `npm run build` hijau, `check:routes` 96→96, drift 0
 - [ ] **P5-⑥** PR digabung + `progress.md`
 
 ### Paket 6 — `blog` (2 `page.jsx` + hugerte)

@@ -1,7 +1,13 @@
 import { DynamicLucideIcon } from "@/app/admin/components/icon-picker";
 import SectionHeading from "./SectionHeading";
 
-export default function AboutSection({ dest }) {
+import type { TripDetail } from "@/features/trip/types";
+
+interface AboutSectionProps {
+  dest: TripDetail;
+}
+
+export default function AboutSection({ dest }: AboutSectionProps) {
   return (
     <div>
       <section className="mb-10">

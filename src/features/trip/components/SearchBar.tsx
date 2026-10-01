@@ -6,7 +6,13 @@ const A = "#F49D1A";
 
 const quickTags = ["Bali", "Bromo", "Raja Ampat", "Borobudur", "Labuan Bajo"];
 
-export default function SearchBar({ searchQuery, onSearchChange, onClear }) {
+interface SearchBarProps {
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+  onClear?: () => void;
+}
+
+export default function SearchBar({ searchQuery, onSearchChange, onClear }: SearchBarProps) {
   return (
     <div className="w-full flex flex-col gap-3">
       <div
