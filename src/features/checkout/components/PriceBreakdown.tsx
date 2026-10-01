@@ -3,7 +3,7 @@
 import { useState } from "react";
 import TermsModal from "./TermsModal";
 import { OrderDomain } from "@/lib/order";
-import type { AppliedVoucher, DestinationSummary, TermsModalType } from "../types";
+import type { AppliedVoucher, DestinationSummary, TermsModalType } from "@/features/checkout";
 
 export default function PriceBreakdown({
   destination,

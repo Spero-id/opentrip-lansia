@@ -1,6 +1,6 @@
 "use client";
 
-import type { DestinationSummary } from "../types";
+import type { DestinationSummary } from "@/features/checkout";
 
 export default function BookingCard({ destination }: { destination: DestinationSummary }) {
   return (

@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { PaymentStep } from "@/features/checkout";
-import type { useCheckout } from "@/features/checkout/hooks/use-checkout";
+import type { useCheckout } from "@/features/checkout";
 
 type CheckoutHook = ReturnType<typeof useCheckout>;
 type Setter = (m: string | null) => void;

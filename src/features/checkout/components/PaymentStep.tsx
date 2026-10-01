@@ -13,7 +13,7 @@ import {
   resolveActiveMethod,
 } from "@/features/payment/payment-account";
 import type { AccountsStatus, PaymentAccountLike } from "@/features/payment/payment-account";
-import type { useCheckout } from "../hooks/use-checkout";
+import type { useCheckout } from "@/features/checkout";
 
 export default function PaymentStep({
   checkout,

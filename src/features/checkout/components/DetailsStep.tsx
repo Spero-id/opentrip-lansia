@@ -6,7 +6,7 @@ import PriceBreakdown from "./PriceBreakdown";
 import MeetingPointInfo from "./MeetingPointInfo";
 import CustomerForm from "./CustomerForm";
 import BookingSummary from "./BookingSummary";
-import type { useCheckout } from "../hooks/use-checkout";
+import type { useCheckout } from "@/features/checkout";
 
 export default function DetailsStep({
   checkout,

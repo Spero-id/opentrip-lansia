@@ -4,14 +4,48 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { PaymentStep } from "@/features/checkout";
-import { useCheckout } from "@/features/checkout/hooks/use-checkout";
+import { useCheckout } from "@/features/checkout";
+
+interface PayParticipant {
+  fullName?: string | null;
+  dateOfBirth?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  isPrimary?: boolean | null;
+}
+
+interface PayHealthDeclaration {
+  hasHypertension?: boolean | null;
+  hasDiabetes?: boolean | null;
+  hasHeartDisease?: boolean | null;
+  hasAsthma?: boolean | null;
+  hasVertigo?: boolean | null;
+  hasJointBoneDisease?: boolean | null;
+  noConditions?: boolean | null;
+  medications?: string | null;
+  mobilityOption?: string | null;
+}
+
+interface PayBooking {
+  id?: string | null;
+  departureId?: string | null;
+  subtotal?: number | string | null;
+  totalParticipants: number;
+  totalAmount?: number | string | null;
+  discountAmount?: number | string | null;
+  notes?: string | Record<string, string | undefined> | null;
+  participants?: PayParticipant[] | null;
+  healthDeclarations?: PayHealthDeclaration[] | null;
+}
 
 function PayContent() {
   const router = useRouter();
   const params = useParams();
   const bookingId = params.id;
 
-  const [booking, setBooking] = useState<any>(null);
+  const [booking, setBooking] = useState<PayBooking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,9 +60,9 @@ function PayContent() {
         if (!res.ok) {
           throw new Error("Booking tidak ditemukan");
         }
-        const data = await res.json();
+        const data: PayBooking = await res.json();
 
-        let notesObj: Record<string, any> = {};
+        let notesObj: Record<string, string | undefined> = {};
         if (data.notes) {
           try {
             notesObj = typeof data.notes === "string" ? JSON.parse(data.notes) : data.notes;
@@ -41,13 +75,13 @@ function PayContent() {
           id: notesObj.destinationId || data.departureId,
           image: "",
           title: notesObj.destinationName || "Paket Open Trip",
-          priceMin: Math.round(Number(data.subtotal) / data.totalParticipants),
+          priceMin: Math.round(Number(data.subtotal) / Number(data.totalParticipants)),
         };
 
         checkout.setDestination(destination);
         checkout.setPax(data.totalParticipants);
 
-        const participants: any[] = data.participants ?? [];
+        const participants: PayParticipant[] = data.participants ?? [];
         const primaryParticipant = participants.find((p) => p.isPrimary) || participants[0];
         if (primaryParticipant) {
           const customer = {
@@ -166,7 +200,7 @@ function PayContent() {
       image: "",
       title: (() => {
         try {
-          const notes = JSON.parse(booking?.notes || "{}");
+          const notes = JSON.parse(String(booking?.notes || "{}"));
           return notes.destinationName || "Paket Open Trip";
         } catch {
           return "Paket Open Trip";

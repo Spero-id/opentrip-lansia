@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, X } from "lucide-react";
-import type { AppliedVoucher } from "../types";
+import type { AppliedVoucher } from "@/features/checkout";
 
 export default function VoucherCard({
   voucherCode,

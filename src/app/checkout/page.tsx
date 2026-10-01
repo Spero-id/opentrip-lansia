@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useCheckout } from "@/features/checkout/hooks/use-checkout";
+import { useCheckout } from "@/features/checkout";
 import {
   NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
   NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION,

@@ -1,6 +1,6 @@
 "use client";
 
-import type { DestinationSummary } from "../types";
+import type { DestinationSummary } from "@/features/checkout";
 
 export default function BookingSummary({ destination }: { destination?: DestinationSummary | null }) {
   if (!destination) {

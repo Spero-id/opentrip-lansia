@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, X, AlertCircle } from "lucide-react";
-import type { AppliedReferral } from "../types";
+import type { AppliedReferral } from "@/features/checkout";
 
 export default function ReferralInput({
   referralCode,

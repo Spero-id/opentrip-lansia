@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { ArrowDown } from "lucide-react";
-import type { TermsModalType } from "../types";
+import type { TermsModalType } from "@/features/checkout";
 
 const TERMS_CONTENT = {
   terms: {

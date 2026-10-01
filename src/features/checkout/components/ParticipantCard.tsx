@@ -1,7 +1,7 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import type { Participant } from "../types";
+import type { Participant } from "@/features/checkout";
 
 export default function ParticipantCard({
   participant,

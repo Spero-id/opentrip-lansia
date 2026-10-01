@@ -1,5 +1,5 @@
 import type { PaymentAccountLike } from "@/features/payment/payment-account";
-import type { BookingSnapshot, DbVoucher } from "../types";
+import type { BookingSnapshot, DbVoucher } from "@/features/checkout";
 
 export class ApiRequestError extends Error {
   status: number;

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
-import type { Customer } from "../types";
+import type { ChangeEvent } from "react";
+import type { Customer } from "@/features/checkout";
 
 const HEALTH_CONDITIONS = [
   { key: "hypertension", label: "Hipertensi / Darah Tinggi" },
@@ -27,8 +27,6 @@ export default function CustomerForm({
   setCustomer: (field: string, value: unknown) => void;
   onAutofill: () => void;
 }) {
-  const [showHealth, setShowHealth] = useState(false);
-
   const handleChange = (field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setCustomer(field, e.target.value);
   };

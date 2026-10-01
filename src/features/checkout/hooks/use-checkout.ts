@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { OrderDomain } from "@/lib/order";
 import {
   ApiRequestError,
@@ -24,7 +24,9 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
     destination: initialDestination ?? null,
   });
   const stateRef = useRef(state);
-  stateRef.current = state;
+  useEffect(() => {
+    stateRef.current = state;
+  });
 
   const [dbVouchers, setDbVouchers] = useState<DbVoucher[]>([]);
   const [vouchersLoading, setVouchersLoading] = useState(true);
@@ -32,7 +34,7 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
   const vouchersLoadingRef = useRef(true);
   const vouchersLockedRef = useRef(false);
 
-  const fetchVouchers = async () => {
+  const fetchVouchers = useCallback(async () => {
     try {
       const { vouchers, locked } = await fetchPromotions();
       if (locked) vouchersLockedRef.current = true;
@@ -42,7 +44,7 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
     } finally {
       setVouchersLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     dbVouchersRef.current = dbVouchers;
@@ -51,7 +53,23 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
     vouchersLoadingRef.current = vouchersLoading;
   }, [vouchersLoading]);
   useEffect(() => {
-    void fetchVouchers();
+    let cancelled = false;
+    fetchPromotions()
+      .then(({ vouchers, locked }) => {
+        if (cancelled) return;
+        if (locked) vouchersLockedRef.current = true;
+        setDbVouchers(vouchers);
+        setVouchersLoading(false);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setDbVouchers([]);
+          setVouchersLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const setDestination = (destination: DestinationSummary | null) =>
