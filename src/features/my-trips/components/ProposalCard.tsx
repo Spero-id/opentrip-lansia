@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PROPOSAL_COLOR, PROPOSAL_LABEL, formatRupiah } from "./constants";
-import type { PrivateProposal } from "../types";
+import type { PrivateProposal } from "@/features/my-trips";
 
 export default function ProposalCard({
   proposal,

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { X, Download, Image as ImageIcon, Loader2 } from "lucide-react";
-import type { GalleryMedia } from "../types";
+import { useGalleryModal } from "@/features/my-trips";
 
 export default function GalleryModal({
   open,
@@ -17,52 +16,7 @@ export default function GalleryModal({
   departureId?: string | null;
   groupLabel?: string | null;
 }) {
-  const [media, setMedia] = useState<GalleryMedia[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!open || !tripId || !departureId) return;
-
-    async function fetchGallery() {
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/trips/${tripId}/groups/${departureId}/gallery`);
-        if (res.ok) {
-          const data = await res.json();
-          setMedia(data.media || []);
-        } else {
-          setMedia([]);
-        }
-      } catch {
-        setMedia([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchGallery();
-  }, [open, tripId, departureId]);
-
-  const handleDownload = async (url: string, filename?: string) => {
-    setDownloading(url);
-    try {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename || "foto-trip.jpg";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    } catch {
-      window.open(url, "_blank");
-    } finally {
-      setDownloading(null);
-    }
-  };
+  const { media, loading, downloading, download } = useGalleryModal(tripId, departureId, open);
 
   if (!open) return null;
 
@@ -120,7 +74,7 @@ export default function GalleryModal({
                   {item.url && (
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <button
-                        onClick={() => handleDownload(item.url ?? "", `foto-trip-${item.id}.jpg`)}
+                        onClick={() => download(item.url ?? "", `foto-trip-${item.id}.jpg`)}
                         disabled={downloading === item.url}
                         className="p-3 bg-white/90 rounded-xl shadow-lg hover:bg-white transition disabled:opacity-50"
                       >

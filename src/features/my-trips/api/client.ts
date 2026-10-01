@@ -1,5 +1,4 @@
-import { toPublicError } from "@/lib/errors/to-public-error";
-import type { GalleryMedia, MyTripBooking, PrivateTripRequest } from "../types";
+import type { GalleryMedia } from "@/features/my-trips";
 
 export async function fetchMyBookings(): Promise<unknown> {
   const res = await fetch("/api/bookings");
@@ -54,6 +53,19 @@ export async function fetchGalleryMedia(
   return (data as { media: GalleryMedia[] }).media;
 }
 
+export async function downloadMedia(url: string, filename?: string): Promise<void> {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = filename || "foto-trip.jpg";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(blobUrl);
+}
+
 export async function submitReview(input: {
   bookingId: string;
   tripId: string;
@@ -79,9 +91,3 @@ export async function submitReview(input: {
     throw new Error(message);
   }
 }
-
-export function loadErrorMessage(err: unknown): string {
-  return toPublicError(err);
-}
-
-export type { GalleryMedia, MyTripBooking, PrivateTripRequest };

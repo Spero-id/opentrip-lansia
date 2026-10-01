@@ -4,7 +4,7 @@ import { useState, type MouseEvent } from "react";
 import { A, STATUS_COLOR, STATUS_LABEL, formatRupiah, toRequestCode, icons } from "./constants";
 import ParsedPreferences from "./ParsedPreferences";
 import ProposalCard from "./ProposalCard";
-import type { PrivateTripRequest } from "../types";
+import type { PrivateTripRequest } from "@/features/my-trips";
 
 export default function RequestCard({ req, onRefresh }: { req: PrivateTripRequest; onRefresh?: () => void }) {
   const [open, setOpen] = useState(false);

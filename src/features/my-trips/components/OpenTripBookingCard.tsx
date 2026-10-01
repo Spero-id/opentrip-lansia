@@ -4,7 +4,7 @@ import { useState, type MouseEvent } from "react";
 import { NEXT_PUBLIC_WHATSAPP_NUMBER } from "@/lib/env";
 import FeedbackModal from "./FeedbackModal";
 import GalleryModal from "./GalleryModal";
-import type { BookingNotes, MyTripBooking } from "../types";
+import type { BookingNotes, MyTripBooking } from "@/features/my-trips";
 import {
   A,
   OPEN_TRIP_STATUS_LABEL,
