@@ -1,58 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { groupController } from "@/features/trip/group.controller";
 import { requireAdmin } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { galleryMedia } from "@/db/schema/trips";
-import { tripGalleries } from "@/db/schema/trips";
-import { eq } from "drizzle-orm";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string; groupId: string }> }
-) {
-  try {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
-
-    const { groupId } = await params;
-    const body = await req.json();
-
-    if (!body.mediaId) {
-      return NextResponse.json({ error: "mediaId wajib diisi" }, { status: 400 });
-    }
-
-    const [gallery] = await db
-      .select()
-      .from(tripGalleries)
-      .where(eq(tripGalleries.departureId, groupId))
-      .limit(1);
-
-    if (!gallery) {
-      return NextResponse.json({ error: "Galeri tidak ditemukan" }, { status: 404 });
-    }
-
-    const [maxSort] = await db
-      .select({ maxSort: galleryMedia.sortOrder })
-      .from(galleryMedia)
-      .where(eq(galleryMedia.galleryId, gallery.id))
-      .orderBy(galleryMedia.sortOrder)
-      .limit(1);
-
-    const nextSort = (maxSort?.maxSort ?? -1) + 1;
-
-    const [media] = await db
-      .insert(galleryMedia)
-      .values({
-        galleryId: gallery.id,
-        mediaId: body.mediaId,
-        uploadedBy: "admin",
-        sortOrder: nextSort,
-      })
-      .returning();
-
-    return NextResponse.json({ media }, { status: 201 });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string; groupId: string }> }) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+  return groupController.attachMedia(req, ctx);
 }

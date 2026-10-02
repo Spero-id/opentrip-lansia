@@ -1,48 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { tripService } from "@/features/trip/trip.service";
+import { NextRequest } from "next/server";
+import { groupController } from "@/features/trip/group.controller";
 import { requireAdmin } from "@/lib/auth";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string; groupId: string }> }
-) {
-  try {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
-
-    const { groupId } = await params;
-    const body = await req.json();
-
-    const group = await tripService.updateGroup(groupId, {
-      startDate: body.startDate,
-      endDate: body.endDate,
-      maxParticipants: body.maxParticipants,
-      minParticipants: body.minParticipants,
-      notes: body.notes,
-    });
-
-    return NextResponse.json(group);
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string; groupId: string }> }) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+  return groupController.update(req, ctx);
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string; groupId: string }> }
-) {
-  try {
-    const denied = await requireAdmin(_req);
-    if (denied) return denied;
-
-    const { groupId } = await params;
-    await tripService.deleteGroup(groupId);
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string; groupId: string }> }) {
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+  return groupController.remove(req, ctx);
 }
