@@ -101,7 +101,7 @@ const data = {
       items: [
         {
           title: "Pesanan",
-          url: "/admin/pesanan",
+          url: "/admin/bookings",
         },
         {
           title: "Ulasan",

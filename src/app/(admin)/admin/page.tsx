@@ -222,7 +222,7 @@ export default function AdminDashboard() {
               <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
             </Link>
             <Link
-              href="/admin/pesanan"
+              href="/admin/bookings"
               className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
             >
               <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Lihat Semua Pemesanan</span>

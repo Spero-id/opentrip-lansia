@@ -2261,3 +2261,17 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Verifikasi:** tsc **0** · lint **0E** · vitest **232** · build **0** · routes **96→96** · drift **0** · structure hijau.
 
 **Progres:** total **113/127**. Tersisa: 9.5 PR + Fase 10 (rename URL, risiko tertinggi) + Fase 11 (enforcement).
+
+## Session 61 — 2026-10-02
+
+**Fase 10 (5/6) — rename URL risiko tertinggi, tanpa korban.** Semua dari daftar §4.2 yang disetujui, tanpa tambahan.
+
+- **10.1** `redirects()` di `next.config.ts`: 3 aturan 301 persis (`/admin/pesanan`→`/admin/bookings`, `/dashboard`→`/admin`, `/private`→`/private-trip`).
+- **10.2** `git mv pesanan→bookings`, `git rm dashboard/`, `git mv private→private-trip` (layout+metadata ikut).
+- **10.3** 12 file link internal + e2e (`pesanan.spec.ts`→`bookings.spec.ts`, goto baru). Catatan: `dashboard.spec.ts` sudah pakai `/admin` (tanpa ubah); semua ref `/dashboard` tersisa = API `/api/admin/dashboard` (zona beku, benar).
+- **10.4/10.5** grep 0 sisa; crawl: lama 308→tujuan, `/private-trip` 200 + title SSR, `/admin*` anonim 307 ke login (benar), query `?highlight=` lolos redirect; `check:routes` +2/−3 = persis §4.2; **tanpa ubah baseline** (R2 turun alami, R4 tetap).
+- Quirk: `.next/**/types/validator.ts` basi menuduh route lama hilang — hapus folder cache, hijau (pengulangan 0.9c).
+
+**Verifikasi:** tsc **0** · lint **0E** · vitest **232** · build **0** · drift **0** · structure hijau.
+
+**Progres:** total **118/127**. Tersisa: 10.6 PR + Fase 11 (route tipis, enforcement, `allowJs:false`, ratchet 0).

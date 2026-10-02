@@ -27,11 +27,11 @@ export function getNotificationLink(type: string, link?: string | null): string 
   if (link) return link;
   switch (type) {
     case NOTIFICATION_TYPES.PAYMENT_PROOF:
-      return "/admin/pesanan";
+      return "/admin/bookings";
     case NOTIFICATION_TYPES.PRIVATE_TRIP_REQUEST:
       return "/admin/private-trips";
     case NOTIFICATION_TYPES.PARTICIPANT_ADDED:
-      return "/admin/pesanan";
+      return "/admin/bookings";
     default:
       return "/admin/notifications";
   }
@@ -43,7 +43,7 @@ export const notificationService = {
       type: NOTIFICATION_TYPES.PAYMENT_PROOF,
       title: "Bukti Pembayaran Baru",
       message: `${opts.userName} mengirim bukti pembayaran untuk ${opts.bookingCode}.`,
-      link: `/admin/pesanan?highlight=${opts.bookingCode}`,
+      link: `/admin/bookings?highlight=${opts.bookingCode}`,
     });
   },
 
@@ -61,7 +61,7 @@ export const notificationService = {
       type: NOTIFICATION_TYPES.PARTICIPANT_ADDED,
       title: "Peserta Baru Ditambahkan",
       message: `${opts.participantName} ditambahkan ke ${opts.bookingCode}${opts.tripTitle ? ` (${opts.tripTitle})` : ""}.`,
-      link: `/admin/pesanan?highlight=${opts.bookingCode}`,
+      link: `/admin/bookings?highlight=${opts.bookingCode}`,
     });
   },
 };

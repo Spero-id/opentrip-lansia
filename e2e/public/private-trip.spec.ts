@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Private Trip Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/private");
+    await page.goto("/private-trip");
   });
 
   test("should display private trip form elements", async ({ page }) => {

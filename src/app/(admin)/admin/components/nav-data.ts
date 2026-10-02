@@ -58,7 +58,7 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     label: "Order",
     items: [
-      { name: "Pesanan", href: "/admin/pesanan", icon: ShoppingCart },
+      { name: "Pesanan", href: "/admin/bookings", icon: ShoppingCart },
       { name: "Ulasan", href: "/admin/reviews", icon: Star },
     ],
   },

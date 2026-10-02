@@ -34,9 +34,9 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Fase 3c — Chrome ke root layout | 6 | 6 |
 | Paket domain 1–8 | 54 | 55 |
 | Fase 9 — Route groups & boundary | 5 | 6 |
-| Fase 10 — Rename URL | 0 | 6 |
+| Fase 10 — Rename URL | 5 | 6 |
 | Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **113** | **127** |
+| **Total** | **118** | **127** |
 
 ---
 
@@ -223,15 +223,15 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **9.2b** Konvensi paling idiomatik: `SiteChrome` dari layout `(public)`/`(account)` — `login`/`register` tanpa chrome **tanpa daftar path**; daftar sembunyi `usePathname` dihapus dari root layout (+ root `page` → `(public)`); manifest tetap identik + cek visual ulang (curl: `/` ada nav, `/login` tanpa nav, `/trips` ada WA float)
 - [x] **9.3** `<ErrorBoundary>` reusable (±30 baris, kelas) dipasang di: hugerte (admin blogs modal) + konten `dangerouslySetInnerHTML` (blog detail) + 3 test; `map-picker` tak ada pemakai → dilewati sadar
 - [x] **9.4** Pilot `<Activity>` pada 1 widget mahal (map/editor) — HASIL: tidak diadopsi (Lightbox mengandalkan mount=visible via scroll-lock; tab ulasan eager-fetch bila selalu mount; HugeRTE init di modal) — pola kondisional tetap
-- [ ] **9.5** Crawl semua URL → tanpa perubahan; tangga §8; commit/PR — SEBAGIAN: `/,/trips,/blog,/login,/my-trips,/private,/contact` 200; tsc 0 · lint 0E · vitest 232 · build 0 · routes 96→96 · structure hijau; PR pending
+- [x] **9.5** Crawl semua URL → tanpa perubahan; tangga §8; commit/PR — PR #122 digabung
 
 ## Fase 10 — Rename URL (D-3, risiko tertinggi)
 
-- [ ] **10.1** Tambah `redirects()`: `/admin/pesanan`→`/admin/bookings` (301), `/dashboard`→`/admin`, `/private`→`/private-trip` (301)
-- [ ] **10.2** Pindah halaman ke folder URL baru: `admin/bookings/`, hapus `dashboard/`, `private-trip/`
-- [ ] **10.3** Update semua link internal (grep `"/admin/pesanan"`, `"/dashboard"`, `"/private"`) **+ spec e2e**: `git mv e2e/admin/pesanan.spec.ts` → `bookings.spec.ts` + `page.goto` → `/admin/bookings`, `private-trip.spec.ts` → `/private-trip`
-- [ ] **10.4** Buktikan 0 link tersisa ke URL lama (grep + crawl)
-- [ ] **10.5** Crawl: URL lama 301→200, URL baru 200, link internal 0 patah; `check:routes` selisih = **persis** daftar §4.2
+- [x] **10.1** Tambah `redirects()`: `/admin/pesanan`→`/admin/bookings` (301), `/dashboard`→`/admin`, `/private`→`/private-trip` (301) — live: 308 ke tujuan
+- [x] **10.2** Pindah halaman ke folder URL baru: `admin/bookings/`, hapus `dashboard/`, `private-trip/`
+- [x] **10.3** Update semua link internal (7 file pesanan, 5 file private, nav/e2e) **+ spec e2e**: `git mv e2e/admin/pesanan.spec.ts` → `bookings.spec.ts` + `page.goto` → `/admin/bookings`, `private-trip.spec.ts` → `/private-trip`
+- [x] **10.4** Buktikan 0 link tersisa ke URL lama (grep + crawl) — grep `admin/pesanan`, `"/private"`, `"/dashboard"` (non-API) = 0
+- [x] **10.5** Crawl: URL lama 308→tujuan, URL baru 200 (`/private-trip` + title SSR), `/admin*` 307 ke login (auth, benar); query `?highlight=` lolos redirect; `check:routes` selisih **persis** §4.2 (+2/−3); tsc 0 · lint 0E · vitest 232 · build 0 · drift 0 · structure hijau (tanpa ubah baseline)
 - [ ] **10.6** PR digabung + `progress.md`
 
 ## Fase 11 — Route tipis & enforcement (temuan #3, #8)
