@@ -1,17 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { siteSettingsController } from "@/features/site-settings/site-settings.controller";
 import { requireAdmin } from "@/lib/auth";
-import { siteSettingsService } from "@/features/site-settings/site-settings.service";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const points = await siteSettingsService.getReferralBonusPoints();
-    return NextResponse.json({ referralBonusPoints: points });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  return siteSettingsController.getReferralBonus();
 }

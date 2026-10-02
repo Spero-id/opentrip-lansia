@@ -1,20 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { dashboardService } from "@/features/booking/dashboard.service";
+import { NextRequest } from "next/server";
+import { dashboardController } from "@/features/booking/dashboard.controller";
 import { requireAdmin } from "@/lib/auth";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const [stats, recentBookings] = await Promise.all([
-      dashboardService.getStats(),
-      dashboardService.getRecentBookings(),
-    ]);
-    return NextResponse.json({ stats, recentBookings });
-  } catch (e) {
-    const message = toPublicError(e, "Unknown error");
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  return dashboardController.overview();
 }

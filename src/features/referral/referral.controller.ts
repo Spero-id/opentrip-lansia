@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { referralRepository } from "./referral.repository";
+import { auth } from "../auth/auth.config";
 import { db } from "@/lib/db";
-import { referrals } from "@/db/schema/referral";
+import { referrals, commissions } from "@/db/schema/referral";
 import { bookings } from "@/db/schema/bookings";
 import { tripDepartures, trips } from "@/db/schema/trips";
 import { users } from "@/db/schema/auth";
-import { desc, eq, inArray } from "drizzle-orm";
+import { desc, eq, count, inArray, sql } from "drizzle-orm";
 import { toPublicError } from "@/lib/errors/to-public-error";
 
 type IdParams = { params: Promise<{ id: string }> };
@@ -176,6 +177,129 @@ export const referralController = {
       return NextResponse.json(enriched);
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 500 });
+    }
+  },
+
+  async userStats(req: NextRequest) {
+    try {
+      const session = await auth.api.getSession({ headers: req.headers });
+      if (!session?.user?.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      const userId = session.user.id;
+      const [user] = await db
+        .select({ referralCode: users.referralCode })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      const [totalStats] = await db
+        .select({ totalReferred: count() })
+        .from(referrals)
+        .where(eq(referrals.referrerId, userId));
+      const [convertedStats] = await db
+        .select({ count: count() })
+        .from(referrals)
+        .where(sql`${referrals.referrerId} = ${userId} AND ${referrals.status} = 'converted'`);
+      const [pendingStats] = await db
+        .select({ count: count() })
+        .from(referrals)
+        .where(sql`${referrals.referrerId} = ${userId} AND ${referrals.status} = 'pending'`);
+      const [commissionStats] = await db
+        .select({ totalCommission: sql<number>`coalesce(sum(${commissions.amount}::numeric), 0)` })
+        .from(commissions)
+        .where(eq(commissions.agentId, userId));
+      const [userWithPoints] = await db
+        .select({ loyaltyPoints: users.loyaltyPoints })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      return NextResponse.json({
+        referralCode: user?.referralCode ?? null,
+        loyaltyPoints: userWithPoints?.loyaltyPoints ?? 0,
+        stats: {
+          totalReferred: totalStats?.totalReferred ?? 0,
+          convertedReferred: convertedStats?.count ?? 0,
+          pendingReferred: pendingStats?.count ?? 0,
+          totalCommission: Number(commissionStats?.totalCommission ?? 0),
+        },
+      });
+    } catch (err) {
+      console.error("GET /api/user/referral error:", err);
+      return NextResponse.json({ error: "Gagal mengambil data referral" }, { status: 500 });
+    }
+  },
+
+  async userHistory(req: NextRequest) {
+    try {
+      const session = await auth.api.getSession({ headers: req.headers });
+      if (!session?.user?.id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      const url = new URL(req.url);
+      const page = Math.max(1, parseInt(url.searchParams.get("page") ?? "1"));
+      const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get("limit") ?? "10")));
+      const offset = (page - 1) * limit;
+      const userId = session.user.id;
+      const history = await db
+        .select({
+          id: referrals.id,
+          referredUserId: referrals.referredUserId,
+          bookingId: referrals.bookingId,
+          status: referrals.status,
+          createdAt: referrals.createdAt,
+          referredUserName: users.name,
+          referredUserEmail: users.email,
+          bookingCode: bookings.bookingCode,
+          tripId: tripDepartures.tripId,
+        })
+        .from(referrals)
+        .leftJoin(users, eq(referrals.referredUserId, users.id))
+        .leftJoin(bookings, eq(referrals.bookingId, bookings.id))
+        .leftJoin(tripDepartures, eq(bookings.departureId, tripDepartures.id))
+        .where(eq(referrals.referrerId, userId))
+        .orderBy(desc(referrals.createdAt))
+        .limit(limit)
+        .offset(offset);
+      const tripIds = [...new Set(history.map((h) => h.tripId).filter(Boolean))] as string[];
+      let tripMap = new Map<string, string>();
+      if (tripIds.length > 0) {
+        const allTrips = await db.select({ id: trips.id, title: trips.title }).from(trips);
+        tripMap = new Map(allTrips.map((t) => [t.id, t.title]));
+      }
+      const referralIds = history.map((h) => h.id).filter(Boolean) as string[];
+      const commissionMap = new Map<string, { amount: number; status: string }>();
+      if (referralIds.length > 0) {
+        const allCommissions = await db
+          .select({ referralId: commissions.referralId, amount: commissions.amount, status: commissions.status })
+          .from(commissions);
+        for (const c of allCommissions) {
+          if (c.referralId && referralIds.includes(c.referralId)) {
+            commissionMap.set(c.referralId, { amount: Number(c.amount ?? 0), status: c.status ?? "pending" });
+          }
+        }
+      }
+      const mappedHistory = history.map((h) => ({
+        id: h.id,
+        referredUserName: h.referredUserName ?? "User",
+        referredUserEmail: h.referredUserEmail ?? "",
+        bookingCode: h.bookingCode ?? "-",
+        tripName: h.tripId ? (tripMap.get(h.tripId) ?? "-") : "-",
+        status: h.status ?? "pending",
+        commissionAmount: commissionMap.get(h.id!)?.amount ?? 0,
+        commissionStatus: commissionMap.get(h.id!)?.status ?? null,
+        createdAt: h.createdAt,
+      }));
+      const [{ total }] = await db
+        .select({ total: count() })
+        .from(referrals)
+        .where(eq(referrals.referrerId, userId));
+      return NextResponse.json({
+        history: mappedHistory,
+        pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+      });
+    } catch (err) {
+      console.error("GET /api/user/referral/history error:", err);
+      return NextResponse.json({ error: "Gagal mengambil history referral" }, { status: 500 });
     }
   },
 };

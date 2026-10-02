@@ -1,51 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { notificationController } from "@/features/notification/notification.controller";
 import { requireAdmin } from "@/lib/auth";
-import { auth } from "@/features/auth/auth.config";
-import { notificationRepository } from "@/features/notification/notification.repository";
 
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const session = await auth.api.getSession({ headers: req.headers });
-    const userId = session?.user?.id;
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { searchParams } = new URL(req.url);
-    const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
-    const offset = parseInt(searchParams.get("offset") || "0");
-
-    const unreadOnly = searchParams.get("unreadOnly") === "true";
-
-    let notifications = await notificationRepository.findByUserId(userId, limit, offset);
-
-    if (unreadOnly) notifications = notifications.filter((n) => !n.isRead);
-
-    const unreadCount = await notificationRepository.countUnread(userId);
-
-    return NextResponse.json({
-      notifications: notifications.map((n) => ({
-        id: n.id,
-        type: n.type,
-        title: n.title,
-        message: n.message,
-        isRead: n.isRead,
-        createdAt: n.createdAt,
-        readAt: n.readAt,
-        link: (n as unknown as { link?: string | null }).link ?? null,
-        bookingCode: null,
-        status: n.type,
-        amount: null,
-        participantCount: null,
-        userName: null,
-        userEmail: null,
-      })),
-      unreadCount,
-      total: notifications.length,
-    });
-  } catch (err) {
-    console.error("Error fetching notifications:", err);
-    return NextResponse.json({ error: "Gagal mengambil notifikasi" }, { status: 500 });
-  }
+  return notificationController.list(req);
 }
