@@ -19,10 +19,12 @@ import {
   Clock,
   ExternalLink,
   CheckCircle,
+  Tag,
 } from "lucide-react";
 import ConfirmAction from "@/app/(admin)/admin/components/confirm-action";
-import { EMPTY_GROUP_FORM, buildGroupPayload, mapGroupToForm, validateGroupForm } from "@/features/admin/group-form";
-import type { GroupFormState } from "@/features/admin/group-form";
+import { EMPTY_GROUP_FORM, EMPTY_PRICE_FORM, PRICE_TIER_SUGGESTIONS, buildGroupPayload, mapGroupToForm, validateGroupForm, validatePriceForm } from "@/features/admin/group-form";
+import type { GroupFormState, PriceTierFormState } from "@/features/admin/group-form";
+import { formatTripPrice, parseTripPrice } from "@/features/admin/trip-form";
 
 interface Trip {
   id: string;
@@ -45,6 +47,17 @@ interface Group {
   bookingCount: number;
   galleryCount: number;
   price: string | null;
+}
+
+interface PriceTier {
+  id: string;
+  name: string;
+  price: string;
+  quota: number;
+  quotaBooked: number | null;
+  validFrom: string | null;
+  validUntil: string | null;
+  isActive: boolean | null;
 }
 
 interface GroupParticipant {
@@ -118,6 +131,16 @@ export default function AdminTripGroupsPage() {
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const [participants, setParticipants] = useState<GroupParticipant[]>([]);
   const [participantsLoading, setParticipantsLoading] = useState(false);
+
+  const [expandedPrices, setExpandedPrices] = useState<string | null>(null);
+  const [prices, setPrices] = useState<PriceTier[]>([]);
+  const [pricesLoading, setPricesLoading] = useState(false);
+  const [priceModalGroup, setPriceModalGroup] = useState<string | null>(null);
+  const [editingPrice, setEditingPrice] = useState<PriceTier | null>(null);
+  const [priceForm, setPriceForm] = useState<PriceTierFormState>({ ...EMPTY_PRICE_FORM });
+  const [priceErrors, setPriceErrors] = useState<Record<string, string>>({});
+  const [priceSaving, setPriceSaving] = useState(false);
+  const [deletingPrice, setDeletingPrice] = useState<{ groupId: string; tier: PriceTier } | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -269,6 +292,141 @@ export default function AdminTripGroupsPage() {
     } finally {
       setParticipantsLoading(false);
     }
+  }
+
+  async function togglePrices(groupId: string) {
+    if (expandedPrices === groupId) {
+      setExpandedPrices(null);
+      setPrices([]);
+      return;
+    }
+    setExpandedPrices(groupId);
+    await refreshPrices(groupId);
+  }
+
+  async function refreshPrices(groupId: string) {
+    setPricesLoading(true);
+    setPrices([]);
+    try {
+      const res = await fetch(`/api/trips/${tripId}/groups/${groupId}/prices`);
+      const data = await res.json();
+      if (res.ok && Array.isArray(data)) setPrices(data);
+    } catch (err) {
+      console.error("Error fetching prices:", err);
+    } finally {
+      setPricesLoading(false);
+    }
+  }
+
+  function openPriceCreate(groupId: string) {
+    setPriceModalGroup(groupId);
+    setEditingPrice(null);
+    setPriceForm({ ...EMPTY_PRICE_FORM });
+    setPriceErrors({});
+  }
+
+  function openPriceEdit(groupId: string, tier: PriceTier) {
+    setPriceModalGroup(groupId);
+    setEditingPrice(tier);
+    setPriceForm({
+      name: tier.name,
+      price: tier.price,
+      quota: tier.quota,
+      validFrom: tier.validFrom?.slice(0, 10) || "",
+      validUntil: tier.validUntil?.slice(0, 10) || "",
+      isActive: tier.isActive ?? true,
+    });
+    setPriceErrors({});
+  }
+
+  async function handlePriceSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!priceModalGroup) return;
+    const validationErrors = validatePriceForm(priceForm);
+    if (Object.keys(validationErrors).length > 0) {
+      setPriceErrors(validationErrors);
+      return;
+    }
+    setPriceErrors({});
+    setPriceSaving(true);
+    try {
+      const url = editingPrice
+        ? `/api/trips/${tripId}/groups/${priceModalGroup}/prices/${editingPrice.id}`
+        : `/api/trips/${tripId}/groups/${priceModalGroup}/prices`;
+      const res = await fetch(url, {
+        method: editingPrice ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: priceForm.name,
+          price: priceForm.price,
+          quota: Number(priceForm.quota),
+          validFrom: priceForm.validFrom || null,
+          validUntil: priceForm.validUntil || null,
+          isActive: priceForm.isActive,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showAlert("Gagal Menyimpan", data.error || res.statusText);
+        return;
+      }
+      setPriceModalGroup(null);
+      await refreshPrices(priceModalGroup);
+      fetchData();
+    } catch (err) {
+      console.error("Error saving price:", err);
+      showAlert("Terjadi Kesalahan", "Terjadi kesalahan saat menyimpan tier");
+    } finally {
+      setPriceSaving(false);
+    }
+  }
+
+  async function handlePriceToggleActive(groupId: string, tier: PriceTier) {
+    try {
+      const res = await fetch(`/api/trips/${tripId}/groups/${groupId}/prices/${tier.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !(tier.isActive ?? true) }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showAlert("Gagal Mengubah", data.error || res.statusText);
+        return;
+      }
+      await refreshPrices(groupId);
+      fetchData();
+    } catch (err) {
+      console.error("Error toggling price:", err);
+    }
+  }
+
+  async function doDeletePrice() {
+    if (!deletingPrice) return;
+    const res = await fetch(
+      `/api/trips/${tripId}/groups/${deletingPrice.groupId}/prices/${deletingPrice.tier.id}`,
+      { method: "DELETE" }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || res.statusText);
+    }
+    setDeletingPrice(null);
+    await refreshPrices(deletingPrice.groupId);
+    fetchData();
+  }
+
+  function handlePriceChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    setPriceForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : type === "number" ? Number(value) : value,
+    }));
+    setPriceErrors((prev) => {
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
   }
 
   function getPaymentStatusLabel(status: string): { label: string; className: string } {
@@ -441,6 +599,7 @@ export default function AdminTripGroupsPage() {
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-slate-100">
+                  <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => toggleParticipants(group.id)}
                     className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
@@ -453,6 +612,19 @@ export default function AdminTripGroupsPage() {
                       <ChevronDown className="w-3.5 h-3.5 ml-1" />
                     )}
                   </button>
+                  <button
+                    onClick={() => togglePrices(group.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+                  >
+                    <Tag className="w-3.5 h-3.5" />
+                    Harga{expandedPrices === group.id && !pricesLoading ? ` (${prices.length})` : ""}
+                    {expandedPrices === group.id ? (
+                      <ChevronUp className="w-3.5 h-3.5 ml-1" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5 ml-1" />
+                    )}
+                  </button>
+                  </div>
 
                   {expandedGroup === group.id && (
                     <div className="mt-4 bg-slate-50 rounded-2xl p-4">
@@ -554,6 +726,86 @@ export default function AdminTripGroupsPage() {
                                     Lihat Bukti
                                   </a>
                                 )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {expandedPrices === group.id && (
+                    <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">Tier Harga</p>
+                        <button
+                          onClick={() => openPriceCreate(group.id)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
+                        >
+                          <Plus className="w-3 h-3" />
+                          Tambah Tier
+                        </button>
+                      </div>
+                      {pricesLoading ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="w-6 h-6 animate-spin text-[#F49D1A]" />
+                          <span className="ml-2 text-sm text-slate-500">Memuat tier harga...</span>
+                        </div>
+                      ) : prices.length === 0 ? (
+                        <div className="text-center py-8">
+                          <Tag className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="text-sm text-slate-500">Belum ada tier harga</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-2.5">
+                          {prices.map((tier) => (
+                            <div
+                              key={tier.id}
+                              className="bg-white rounded-xl border border-slate-200 p-3.5"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F49D1A]/10 text-[#F49D1A]">
+                                      {tier.name}
+                                    </span>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${tier.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>
+                                      {tier.isActive ? "Aktif" : "Nonaktif"}
+                                    </span>
+                                  </div>
+                                  <p className="text-base font-bold text-slate-900">{formatTripPrice(tier.price)}</p>
+                                  <p className="text-[11px] text-slate-500 mt-1">
+                                    Terisi {tier.quotaBooked ?? 0}/{tier.quota} · {tier.validFrom || tier.validUntil ? `${tier.validFrom?.slice(0, 10) || "…"} s/d ${tier.validUntil?.slice(0, 10) || "…"}` : "Selalu berlaku"}
+                                  </p>
+                                  <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-2">
+                                    <div
+                                      className="h-full rounded-full bg-[#F49D1A] transition-all"
+                                      style={{ width: `${Math.min(((tier.quotaBooked ?? 0) / Math.max(tier.quota, 1)) * 100, 100)}%` }}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <button
+                                    onClick={() => handlePriceToggleActive(group.id, tier)}
+                                    title={tier.isActive ? "Nonaktifkan" : "Aktifkan"}
+                                    className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition"
+                                  >
+                                    <Check className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => openPriceEdit(group.id, tier)}
+                                    title="Edit tier"
+                                    className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => setDeletingPrice({ groupId: group.id, tier })}
+                                    title="Hapus tier"
+                                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -730,6 +982,119 @@ export default function AdminTripGroupsPage() {
         </div>
       )}
 
+      {priceModalGroup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setPriceModalGroup(null)} />
+          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">
+              {editingPrice ? "Edit Tier Harga" : "Tambah Tier Harga"}
+            </h2>
+            <form onSubmit={handlePriceSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700">Nama Tier *</label>
+                <input
+                  name="name"
+                  value={priceForm.name}
+                  onChange={handlePriceChange}
+                  list="tier-suggestions"
+                  placeholder="cth: Dewasa, Anak, Early Bird"
+                  className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.name ? "border-red-400" : "border-slate-300"}`}
+                />
+                <datalist id="tier-suggestions">
+                  {PRICE_TIER_SUGGESTIONS.map((s) => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
+                {priceErrors.name && <p className="mt-1 text-xs text-red-600">{priceErrors.name}</p>}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Harga (Rp) *</label>
+                  <input
+                    name="price"
+                    value={formatTripPrice(priceForm.price) || priceForm.price}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "");
+                      setPriceForm((prev) => ({ ...prev, price: digits }));
+                      setPriceErrors((prev) => {
+                        const next = { ...prev };
+                        delete next.price;
+                        return next;
+                      });
+                    }}
+                    inputMode="numeric"
+                    placeholder="cth: 1500000"
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.price ? "border-red-400" : "border-slate-300"}`}
+                  />
+                  {priceErrors.price && <p className="mt-1 text-xs text-red-600">{priceErrors.price}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Kuota *</label>
+                  <input
+                    type="number"
+                    name="quota"
+                    min={1}
+                    value={priceForm.quota}
+                    onChange={handlePriceChange}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.quota ? "border-red-400" : "border-slate-300"}`}
+                  />
+                  {priceErrors.quota && <p className="mt-1 text-xs text-red-600">{priceErrors.quota}</p>}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Berlaku Dari</label>
+                  <input
+                    type="date"
+                    name="validFrom"
+                    value={priceForm.validFrom}
+                    onChange={handlePriceChange}
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700">Sampai</label>
+                  <input
+                    type="date"
+                    name="validUntil"
+                    value={priceForm.validUntil}
+                    onChange={handlePriceChange}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.validUntil ? "border-red-400" : "border-slate-300"}`}
+                  />
+                  {priceErrors.validUntil && <p className="mt-1 text-xs text-red-600">{priceErrors.validUntil}</p>}
+                </div>
+              </div>
+              <label className="flex items-center gap-3 text-sm">
+                <input
+                  name="isActive"
+                  type="checkbox"
+                  checked={priceForm.isActive}
+                  onChange={handlePriceChange}
+                  className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30"
+                />
+                <span className="font-medium text-slate-700">Tier aktif</span>
+              </label>
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={priceSaving}
+                  className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                >
+                  {priceSaving ? "Menyimpan..." : "Simpan"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPriceModalGroup(null)}
+                  className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                >
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {deleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteOpen(false)} />
@@ -781,6 +1146,15 @@ export default function AdminTripGroupsPage() {
         message={alertModal.message}
         confirmLabel="OK"
         confirmClassName="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+      />
+      <ConfirmAction
+        open={deletingPrice !== null}
+        onClose={() => setDeletingPrice(null)}
+        onConfirm={doDeletePrice}
+        title="Hapus Tier?"
+        message={deletingPrice ? `Hapus tier "${deletingPrice.tier.name}" (${formatTripPrice(deletingPrice.tier.price)})? Tier yang sudah memiliki booking tidak bisa dihapus.` : ""}
+        confirmLabel="Ya, Hapus"
+        confirmClassName="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
     </div>
   );

@@ -18,7 +18,7 @@ type Baseline = {
 const BASELINE: Baseline = {
   R1: 0,
   R2: [], // Fase 11: .jsx/.js habis — pelanggaran baru = error penuh
-  R3: 192, // Fase 11: deep impor client-safe (barrel campur server = R11); target 0 ditunda — butuh pemisah tipe tanpa runtime (backlog)
+  R3: 195, // Fase 11: deep impor client-safe (barrel campur server = R11); +3 feat-012 (groups trip-form/validate)
   R4: [
     "app-sidebar.tsx",
     "nav-main.tsx",

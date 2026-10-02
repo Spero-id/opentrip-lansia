@@ -2287,3 +2287,16 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 - **11.5** `./init.sh` EXIT 0 (tsc 0 · lint 0E/77W · vitest 232 · structure hijau · drift 0 · routes 94→94).
 
 **Progres:** total **123/127**. Tersisa: 11.6 PR fase-11. Setelah merge: restructure DONE; kembali ke `feature_list.json` (14 to_do / 18 in_review) untuk fitur berikutnya.
+
+## Session 64 — 2026-10-02 (feat-011 & feat-012, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**feat-011 → completed (verifikasi, tanpa kode baru):** seluruh poin spec (tanggal, min/max kuota, status) tercakup UI Group Trip; dinyatakan superseded oleh feat-011b.
+
+**feat-012 → completed (Tier editor):**
+- Backend: `trip.repository` +findPriceById/create/update/deletePrice; `trip.service` create/update/deletePrice (AppError: 404 rantai trip-grup-tier, 409 nama duplikat/kuota<booked/hapus tier berbooking/hapus tier terakhir, 400 validasi); `group.controller` list/create/update/deletePrice (404/409/400); routes tipis GET/POST `prices` + PUT/DELETE `prices/[priceId]`; 4 entri api-policy admin.
+- UI: panel "Harga" expandable per grup (daftar tier + progress kuota + toggle aktif + edit/hapus + Tambah Tier), modal tier (saran nama, input Rupiah, validasi), hapus via ConfirmAction.
+- Test: 3 `validatePriceForm` baru (admin 31); audit 10 hijau.
+- Live (admin@otl.id): anon 401; create Anak 201; duplikat 409; harga 0 → 400; toggle/update/delete OK; hapus tier terakhir 409; DB dikembalikan (hanya Dewasa); halaman groups 200.
+- R3 192→195 (impor client-safe).
+
+**Verifikasi:** tsc 0 · lint 0E · vitest 235 · build 0 · routes 94→94 · drift 0 · structure hijau.
