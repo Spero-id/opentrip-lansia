@@ -2,13 +2,13 @@
 
 Status per 2026-10-02 · Branch: `feat/012-tier-pricing` (BELUM commit/push)
 
-## Staging saat ini (centang setelah commit + pull)
+## Staging saat ini (commit `173dab4` + `fee5c48`, push ✓)
 
-- [ ] Backend tier: repository + service + controller + 2 route + 4 policy
-- [ ] UI panel Harga di manage groups (daftar/tambah/edit/toggle/hapus + modal)
-- [ ] `validatePriceForm` + 3 test (admin 31)
-- [ ] Artefak: `feature_list.json` (011+012 completed), `progress.md` S64
-- [ ] Verifikasi live sudah hijau (anon 401, 409/400, DB bersih)
+- [x] Backend tier: repository + service + controller + 2 route + 4 policy
+- [x] UI panel Harga di manage groups (daftar/tambah/edit/toggle/hapus + modal)
+- [x] `validatePriceForm` + 3 test (admin 31)
+- [x] Artefak: `feature_list.json` (011+012 completed), `progress.md` S64
+- [x] Verifikasi live sudah hijau (anon 401, 409/400, DB bersih)
 
 ## P0 — Wajib (tier mati tanpa ini)
 
