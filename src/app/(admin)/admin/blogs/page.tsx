@@ -1,11 +1,11 @@
 "use client";
 
 import { Plus, Edit, Trash2 } from "lucide-react";
-import Modal from "../components/modal";
-import ConfirmDelete from "../components/confirm-delete";
+import Modal from "@/app/(admin)/admin/components/modal";
+import ConfirmDelete from "@/app/(admin)/admin/components/confirm-delete";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import WysiwygEditor from "@/features/blog/components/wysiwyg-editor";
-import BlogCoverUploader from "../components/blog-cover-uploader";
+import BlogCoverUploader from "@/app/(admin)/admin/components/blog-cover-uploader";
 import { useAdminCrud } from "@/features/admin";
 
 interface Blog {

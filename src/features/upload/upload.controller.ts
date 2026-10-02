@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, unlink, mkdir, access, readFile, stat } from "fs/promises";
 import path from "path";
 import { lookup } from "mrmime";
-import { auth } from "../auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import { detectImageKind, extensionForImage } from "@/utils/image-guard";
 import { db } from "@/lib/db";
 import { media } from "@/db/schema/master";

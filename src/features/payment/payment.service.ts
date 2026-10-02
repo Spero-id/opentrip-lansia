@@ -1,8 +1,8 @@
 import { paymentRepository } from "./payment.repository";
 import { payments } from "@/db/schema/payments";
 import { bookings } from "@/db/schema/bookings";
-import { loyaltyService } from "../loyalty/loyalty.service";
-import { siteSettingsService } from "../site-settings/site-settings.service";
+import { loyaltyService } from "@/features/loyalty/loyalty.service";
+import { siteSettingsService } from "@/features/site-settings/site-settings.service";
 import { withTransaction } from "@/lib/db/utils";
 import { referrals } from "@/db/schema/referral";
 import { eq } from "drizzle-orm";

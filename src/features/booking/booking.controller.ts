@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { bookings, bookingParticipants, healthDeclarations } from "@/db/schema/bookings";
 import { payments } from "@/db/schema/payments";
 import { eq } from "drizzle-orm";
-import { auth } from "../auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import { toPublicError } from "@/lib/errors/to-public-error";
 
 type IdParams = { params: Promise<{ id: string }> };

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { referralRepository } from "./referral.repository";
-import { auth } from "../auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import { db } from "@/lib/db";
 import { referrals, commissions } from "@/db/schema/referral";
 import { bookings } from "@/db/schema/bookings";

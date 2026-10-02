@@ -3,12 +3,12 @@ import { db } from "@/lib/db";
 import { payments } from "@/db/schema/payments";
 import { bookings } from "@/db/schema/bookings";
 import { eq } from "drizzle-orm";
-import { auth } from "../auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import { paymentService } from "./payment.service";
 import { paymentRepository } from "./payment.repository";
 import { isCompleteAccount } from "./payment-account";
 import { toPublicError } from "@/lib/errors/to-public-error";
-import { notificationService } from "../notification/notification.service";
+import { notificationService } from "@/features/notification/notification.service";
 
 type PaymentIdParams = { params: Promise<{ paymentId: string }> };
 

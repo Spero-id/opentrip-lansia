@@ -17,51 +17,8 @@ type Baseline = {
 
 const BASELINE: Baseline = {
   R1: 0,
-  R2: [
-    "src/app/blog/[slug]/page.jsx",
-    "src/app/blog/page.jsx",
-    "src/app/(public)/contact/page.jsx",
-    "src/app/(auth)/login/page.jsx",
-    "src/app/page.jsx",
-    "src/app/(account)/profile/page.jsx",
-    "src/app/(auth)/register/page.jsx",
-    "src/app/trips/[id]/page.jsx",
-    "src/app/trips/page.jsx",
-    "src/components/destinasi/DestinasiHeader.jsx",
-    "src/components/destinasi/DestinationCard.jsx",
-    "src/components/destinasi/DestinationGrid.jsx",
-    "src/components/destinasi/Emptystate.jsx",
-    "src/components/destinasi/FilterPanel.jsx",
-    "src/components/destinasi/Resultsbar.jsx",
-    "src/components/destinasi/SearchBar.jsx",
-    "src/components/destinasi/detail/AboutSection.jsx",
-    "src/components/destinasi/detail/AccessibilitySection.jsx",
-    "src/components/destinasi/detail/BookingCard.jsx",
-    "src/components/destinasi/detail/DestinationGallery.jsx",
-    "src/components/destinasi/detail/DestinationHeader.jsx",
-    "src/components/destinasi/detail/DestinationTabs.jsx",
-    "src/components/destinasi/detail/ItinerarySection.jsx",
-    "src/components/destinasi/detail/Lightbox.jsx",
-    "src/components/destinasi/detail/ReviewsSection.jsx",
-    "src/components/destinasi/detail/SectionHeading.jsx",
-    "src/components/destinasi/detail/UlasanSection.jsx",
-    "src/components/landing/DestinationSection.jsx",
-    "src/components/landing/FAQSection.jsx",
-    "src/components/landing/HeroSection.jsx",
-    "src/components/landing/MarketingSection.jsx",
-    "src/components/landing/Subs.jsx",
-    "src/components/landing/TestimonialsSection.jsx",
-    "src/components/landing/TutorialSection.jsx",
-    "src/components/layout/Footer.jsx",
-    "src/components/layout/MobileMenu.jsx",
-    "src/components/layout/Navbar.jsx",
-    "src/components/layout/WhatsAppFloat.jsx",
-    "src/lib/data.js",
-    "src/lib/destination.js",
-    "src/lib/format.js",
-    "src/lib/order.js",
-  ],
-  R3: 159, // P5 +29 trip, P6 +9 blog, P7 +22 landing/newsletter, P8 +19 admin (hooks deep + trip/group form); driven down in Fase 11
+  R2: [], // Fase 11: .jsx/.js habis — pelanggaran baru = error penuh
+  R3: 192, // Fase 11: deep impor client-safe (barrel campur server = R11); target 0 ditunda — butuh pemisah tipe tanpa runtime (backlog)
   R4: [
     "app-sidebar.tsx",
     "nav-main.tsx",
@@ -120,7 +77,7 @@ const BASELINE: Baseline = {
   ],
   R7: [],
   R8: 500, // private-trip form/validation identifiers mirror the Indonesian user-facing form; string-keyed dispatch makes a rename high-risk (backlog)
-  R9: 37,
+  R9: 0, // Fase 11: impor lintas-folder wajib @/ — tanpa kecuali
   R10: 0,
   R11: 0,
 };

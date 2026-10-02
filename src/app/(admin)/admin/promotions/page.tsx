@@ -1,8 +1,8 @@
 "use client";
 
 import { Plus, Edit, Trash2, CheckCircle2, XCircle } from "lucide-react";
-import Modal from "../components/modal";
-import ConfirmDelete from "../components/confirm-delete";
+import Modal from "@/app/(admin)/admin/components/modal";
+import ConfirmDelete from "@/app/(admin)/admin/components/confirm-delete";
 import { useAdminCrud } from "@/features/admin";
 import { parseMoney, parsePromoValue } from "@/features/promotion/promo-value";
 

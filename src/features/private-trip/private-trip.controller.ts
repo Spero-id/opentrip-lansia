@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { privateTripService } from "./private-trip.service";
-import { auth } from "../auth/auth.config";
+import { auth } from "@/features/auth/auth.config";
 import { toPublicError } from "@/lib/errors/to-public-error";
 
 interface ValidationError {

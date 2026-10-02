@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, Eye, EyeOff, Sparkles, Check, Users } from "lucide-react";
 import CreatableSelect from "react-select/creatable";
 import { slugify } from "@/utils/helpers";
-import Modal from "../components/modal";
-import ConfirmDelete from "../components/confirm-delete";
+import Modal from "@/app/(admin)/admin/components/modal";
+import ConfirmDelete from "@/app/(admin)/admin/components/confirm-delete";
 import ImageManager from "./image-manager";
-import IconPicker, { DynamicLucideIcon } from "../components/icon-picker";
+import IconPicker, { DynamicLucideIcon } from "@/app/(admin)/admin/components/icon-picker";
 import {
   EMPTY_TRIP_FACILITY,
   EMPTY_TRIP_ITINERARY,
