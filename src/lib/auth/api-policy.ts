@@ -94,6 +94,7 @@ export const DELEGATED_GUARD: Record<string, string> = {
   "GET /api/private-trips/[id]": "src/features/private-trip/private-trip.controller.ts",
   "POST /api/private-trips/[id]/respond": "src/features/private-trip/private-trip.controller.ts",
   "GET /api/bookings": "src/features/booking/booking.controller.ts",
+  "POST /api/reviews": "src/features/review/review.controller.ts",
 };
 
 export function apiAccess(method: HttpMethod | string, path: string): ApiAccess {

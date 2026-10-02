@@ -1,30 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { promotionRepository } from "@/features/promotion";
+import { NextRequest } from "next/server";
+import { promotionController } from "@/features/promotion/promotion.controller";
 import { requireAdmin, requireSession } from "@/lib/auth";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function GET(req: NextRequest) {
   const denied = await requireSession(req);
   if (denied) return denied;
-  try {
-    const data = await promotionRepository.findAll();
-    return NextResponse.json(data);
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  return promotionController.list();
 }
 
 export async function POST(req: NextRequest) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const body = await req.json();
-    const data = await promotionRepository.create(body);
-    return NextResponse.json(data, { status: 201 });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+  return promotionController.create(req);
 }
