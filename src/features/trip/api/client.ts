@@ -1,5 +1,4 @@
 import { toDetail } from "@/lib/destination";
-import type { TripDetailData } from "@/lib/destination";
 import { toPublicError } from "@/lib/errors/to-public-error";
 import type { TripDetail, TripReview } from "@/features/trip/types";
 
