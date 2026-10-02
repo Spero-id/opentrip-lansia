@@ -20,6 +20,7 @@ export default function PriceBreakdown({
   hideTerms,
   isLoading,
   error,
+  tierLines,
 }: {
   destination?: DestinationSummary | null;
   pricePerPax: number;
@@ -35,6 +36,7 @@ export default function PriceBreakdown({
   hideTerms?: boolean;
   isLoading?: boolean;
   error?: string | null;
+  tierLines?: Array<{ name: string; qty: number; amount: number }>;
 }) {
   const [modalType, setModalType] = useState<TermsModalType | null>(null);
 
@@ -57,6 +59,15 @@ export default function PriceBreakdown({
               {destination?.title} · {OrderDomain.formatPrice(pricePerPax)} ×{" "}
               {pax} peserta
             </p>
+            {tierLines && tierLines.length > 0 && (
+              <div className="mt-1.5 space-y-0.5">
+                {tierLines.map((line) => (
+                  <p key={line.name} className="text-[11px] text-gray-400">
+                    {line.name} × {line.qty} = {OrderDomain.formatPrice(line.amount)}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
           <span className="font-semibold text-gray-700">
             {OrderDomain.formatPrice(ticketSubtotal)}

@@ -48,6 +48,8 @@ export const initialCheckoutState: CheckoutState = {
   step: "details",
   destination: null,
   pax: 1,
+  tiers: [],
+  tierQty: {},
   customer: { ...initialCustomer },
   voucherCode: "",
   appliedVoucher: null,
@@ -71,6 +73,21 @@ export function checkoutReducer(state: CheckoutState, action: CheckoutAction): C
       return { ...state, destination: action.destination };
     case "SET_PAX":
       return { ...state, pax: Math.max(MIN_PAX, Math.min(action.pax, MAX_PAX)) };
+    case "SET_TIERS": {
+      const initialQty: Record<string, number> = {};
+      if (action.tiers.length > 0) {
+        initialQty[action.tiers[0].id] = 1;
+      }
+      return { ...state, tiers: action.tiers, tierQty: initialQty, pax: action.tiers.length > 0 ? 1 : state.pax };
+    }
+    case "SET_TIER_QTY": {
+      const tier = state.tiers.find((t) => t.id === action.priceId);
+      if (!tier) return state;
+      const clamped = Math.max(0, Math.min(Math.floor(Number(action.qty) || 0), MAX_PAX, tier.remaining));
+      const tierQty = { ...state.tierQty, [action.priceId]: clamped };
+      const total = Object.values(tierQty).reduce((sum, q) => sum + q, 0);
+      return { ...state, tierQty, pax: Math.max(MIN_PAX, total) };
+    }
     case "SET_CUSTOMER":
       return { ...state, customer: { ...state.customer, [action.field]: action.value } as Customer };
     case "AUTOFILL_PROFILE":

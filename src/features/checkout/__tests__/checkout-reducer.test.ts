@@ -236,3 +236,23 @@ describe("navigation", () => {
     expect(s.error).toBe("m");
   });
 });
+
+describe("tier selection", () => {
+  const tiers = [
+    { id: "t1", name: "Dewasa", price: 1500000, quota: 10, remaining: 10, validFrom: null, validUntil: null },
+    { id: "t2", name: "Anak", price: 750000, quota: 10, remaining: 2, validFrom: null, validUntil: null },
+  ];
+  it("SET_TIERS initializes first tier qty 1", () => {
+    const s = checkoutReducer(makeState(), { type: "SET_TIERS", tiers });
+    expect(s.tierQty).toEqual({ t1: 1 });
+    expect(s.pax).toBe(1);
+  });
+  it("SET_TIER_QTY clamps to remaining and syncs pax", () => {
+    let s = checkoutReducer(makeState(), { type: "SET_TIERS", tiers });
+    s = checkoutReducer(s, { type: "SET_TIER_QTY", priceId: "t2", qty: 9 });
+    expect(s.tierQty.t2).toBe(2);
+    expect(s.pax).toBe(3);
+    s = checkoutReducer(s, { type: "SET_TIER_QTY", priceId: "nope", qty: 5 });
+    expect(s.pax).toBe(3);
+  });
+});

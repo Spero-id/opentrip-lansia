@@ -30,6 +30,7 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
 
   const [dbVouchers, setDbVouchers] = useState<DbVoucher[]>([]);
   const [vouchersLoading, setVouchersLoading] = useState(true);
+  const [tiersLoading, setTiersLoading] = useState(false);
   const dbVouchersRef = useRef<DbVoucher[]>([]);
   const vouchersLoadingRef = useRef(true);
   const vouchersLockedRef = useRef(false);
@@ -75,6 +76,42 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
   const setDestination = (destination: DestinationSummary | null) =>
     dispatch({ type: "SET_DESTINATION", destination });
   const setPax = (pax: number) => dispatch({ type: "SET_PAX", pax });
+  const setTierQty = (priceId: string, qty: number) => dispatch({ type: "SET_TIER_QTY", priceId, qty });
+
+  useEffect(() => {
+    const destId = state.destination?.id;
+    if (!destId) return;
+    let cancelled = false;
+    async function loadTiers() {
+      setTiersLoading(true);
+      try {
+        const res = await fetch(`/api/trips/${destId}/tiers`);
+        const data = await res.json();
+        if (cancelled) return;
+        if (data && Array.isArray(data.tiers)) {
+          dispatch({
+            type: "SET_TIERS",
+            tiers: data.tiers.map((t: { id: string; name: string; price: string | number; quota: number; remaining: number; validFrom?: string | null; validUntil?: string | null }) => ({
+              id: t.id,
+              name: t.name,
+              price: Number(t.price) || 0,
+              quota: t.quota,
+              remaining: t.remaining,
+              validFrom: t.validFrom ?? null,
+              validUntil: t.validUntil ?? null,
+            })),
+          });
+        }
+      } catch {
+      } finally {
+        if (!cancelled) setTiersLoading(false);
+      }
+    }
+    void loadTiers();
+    return () => {
+      cancelled = true;
+    };
+  }, [state.destination?.id]);
   const setCustomer = (field: string, value: unknown) =>
     dispatch({ type: "SET_CUSTOMER", field, value });
   const autofillProfile = () => dispatch({ type: "AUTOFILL_PROFILE" });
@@ -137,7 +174,7 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
         });
         return;
       }
-      const subtotal = (s.destination?.priceMin ?? 0) * s.pax;
+      const subtotal = getTicketSubtotal(s);
       const resolved = resolveVoucher(typedCode, dbVouchersRef.current, subtotal);
       if (!resolved.appliedVoucher) {
         dispatch({
@@ -159,17 +196,23 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
     }
 
     const pricingState = applied ? { ...s, appliedVoucher: applied } : s;
+    const items = s.tiers.length > 0
+      ? s.tiers
+          .map((t) => ({ priceId: t.id, qty: s.tierQty[t.id] ?? 0 }))
+          .filter((i) => i.qty > 0)
+      : undefined;
     const snapshot: BookingSnapshot = {
       orderId: OrderDomain.generateOrderId(),
       destination: s.destination,
       pax: s.pax,
+      items,
       customer: s.customer,
       voucherCode: applied?.code ?? null,
       appliedVoucher: applied,
       referralCode: s.appliedReferral?.code || null,
       paymentMethod: s.paymentMethod,
       proofUrl: s.proofUrl,
-      subtotal: (s.destination?.priceMin ?? 0) * s.pax,
+      subtotal: getTicketSubtotal(pricingState),
       totalAmount: getTotal(pricingState),
     };
 
@@ -222,11 +265,13 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
   return {
     ...state,
     vouchersLoading,
+    tiersLoading,
     ticketSubtotal,
     discount,
     total,
     setDestination,
     setPax,
+    setTierQty,
     setCustomer,
     autofillProfile,
     setVoucherCode,
