@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import { useAdminCrud, useAdminTable } from "@/features/admin";
 import { Users, ShieldCheck, UserCheck, Search, Edit, Trash2, Award, Mail, Phone, Calendar } from "lucide-react";
-import Modal from "../components/modal";
-import ConfirmDelete from "../components/confirm-delete";
+import Modal from "@/app/(admin)/admin/components/modal";
+import ConfirmDelete from "@/app/(admin)/admin/components/confirm-delete";
 
 interface UserItem {
   id: string;

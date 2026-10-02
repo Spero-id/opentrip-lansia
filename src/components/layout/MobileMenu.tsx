@@ -24,9 +24,18 @@ const NAV_LINKS = [
   { name: "Hubungi Kami", href: "/contact" },
 ];
 
-const cn = (...classes) => classes.filter(Boolean).join(" ");
+import type { MouseEventHandler, ReactNode } from "react";
 
-function MenuItem({ href, children, className, onClick }) {
+const cn = (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(" ");
+
+interface MenuItemProps {
+  href?: string;
+  children: ReactNode;
+  className?: string;
+  onClick?: MouseEventHandler;
+}
+
+function MenuItem({ href, children, className, onClick }: MenuItemProps) {
   const commonClasses = cn("block w-full rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left", className);
 
   if (href) {
@@ -44,7 +53,13 @@ function MenuItem({ href, children, className, onClick }) {
   );
 }
 
-export default function MobileMenu({ isOpen, setIsOpen, _isScrolled }) {
+interface MobileMenuProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  isScrolled?: boolean;
+}
+
+export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled }: MobileMenuProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();

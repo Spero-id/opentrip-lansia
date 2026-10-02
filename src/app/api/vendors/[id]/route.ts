@@ -1,48 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";
-import { masterRepository } from "@/features/master";
+import { NextRequest } from "next/server";
+import { masterController } from "@/features/master/master.controller";
 import { requireAdmin } from "@/lib/auth";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-  try {
-    const { id } = await params;
-    const data = await masterRepository.getVendorById(id);
-    if (!data) return NextResponse.json({ error: "Vendor tidak ditemukan" }, { status: 404 });
-    return NextResponse.json(data);
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  return masterController.getVendor(req, ctx);
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const { id } = await params;
-    const body = await req.json();
-    const data = await masterRepository.updateVendor(id, body);
-    if (!data) return NextResponse.json({ error: "Vendor tidak ditemukan" }, { status: 404 });
-    return NextResponse.json(data);
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+  return masterController.updateVendor(req, ctx);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const { id } = await params;
-    await masterRepository.deleteVendor(id);
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+  return masterController.deleteVendor(req, ctx);
 }

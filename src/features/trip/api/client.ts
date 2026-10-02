@@ -2,6 +2,10 @@ import { toDetail } from "@/lib/destination";
 import { toPublicError } from "@/lib/errors/to-public-error";
 import type { TripDetail, TripReview } from "@/features/trip/types";
 
+function toTripDetail(raw: unknown): TripDetail {
+  return toDetail(raw as Record<string, unknown>) as unknown as TripDetail;
+}
+
 export async function fetchTrips(): Promise<TripDetail[]> {
   try {
     const res = await fetch("/api/trips");
@@ -9,7 +13,7 @@ export async function fetchTrips(): Promise<TripDetail[]> {
     if (!Array.isArray(data) || data.length === 0) return [];
     return data
       .filter((d) => (d as { status?: string }).status === "published")
-      .map((d) => toDetail(d));
+      .map((d) => toTripDetail(d));
   } catch {
     return [];
   }

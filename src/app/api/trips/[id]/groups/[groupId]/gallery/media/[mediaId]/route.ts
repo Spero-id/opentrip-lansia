@@ -1,25 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { groupController } from "@/features/trip/group.controller";
 import { requireAdmin } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { galleryMedia } from "@/db/schema/trips";
-import { eq } from "drizzle-orm";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
 export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string; groupId: string; mediaId: string }> }
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string; groupId: string; mediaId: string }> },
 ) {
-  try {
-    const denied = await requireAdmin(_req);
-    if (denied) return denied;
-
-    const { mediaId } = await params;
-
-    await db.delete(galleryMedia).where(eq(galleryMedia.id, mediaId));
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
+  return groupController.detachMedia(req, ctx);
 }

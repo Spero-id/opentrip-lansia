@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Eye, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
-import Modal from "../components/modal";
+import Modal from "@/app/(admin)/admin/components/modal";
 
 interface Booking {
   id: string;

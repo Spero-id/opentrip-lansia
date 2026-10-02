@@ -35,8 +35,8 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Paket domain 1–8 | 54 | 55 |
 | Fase 9 — Route groups & boundary | 5 | 6 |
 | Fase 10 — Rename URL | 5 | 6 |
-| Fase 11 — Route tipis & enforcement | 0 | 6 |
-| **Total** | **118** | **127** |
+| Fase 11 — Route tipis & enforcement | 5 | 6 |
+| **Total** | **123** | **127** |
 
 ---
 
@@ -236,9 +236,9 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 
 ## Fase 11 — Route tipis & enforcement (temuan #3, #8)
 
-- [ ] **11.1** 46 `route.ts` tebal → guard + controller (batch per domain; 12 route yang sudah delegating jadi referensi)
-- [ ] **11.2** Putuskan `GET /api/trips/[id]/active-group` (0 konsumen): hapus + perbarui `api-policy` & audit, **atau** tetap — catat keputusannya di `progress.md`
-- [ ] **11.3** `.jsx` habis → `allowJs: false` di `tsconfig.json`; R2 jadi error penuh
-- [ ] **11.4** Enforcement penuh `check:structure` tanpa baseline; ratchet R9 = **0** `../`
-- [ ] **11.5** `./init.sh` EXIT 0 + tangga lengkap + `npm run build` hijau
+- [x] **11.1** 46 `route.ts` tebal → guard + controller (16 controller baru: master, gallery, blog, promotion, referral, review, user, dashboard, checkout×2, payment, upload, notification, site-settings, group, booking×2; pola: guard terlihat di route, logika verbatim di controller; audit hijau via DELEGATED_GUARD)
+- [x] **11.2** Putuskan `GET /api/trips/[id]/active-group` (0 konsumen): **HAPUS** + policy entry dibuang + snapshot 94; `activeGroup` sebagai field data tetap
+- [x] **11.3** `.jsx` habis (12 file → tsx/ts) → `allowJs: false` di `tsconfig.json` (+ hapus `**/*.js(x)` dari include); R2 baseline dikosongkan = error penuh
+- [x] **11.4** Enforcement `check-structure`: R1/R2/R5/R9/R10/R11 = 0 tanpa toleransi; R5 baseline dikosongkan; R9 37→0; R3/R8 tetap ratchet (alasan: barrel campur server = R11; identifier form = bahasa user) — deviasi dari "tanpa baseline" dicatat
+- [x] **11.5** `./init.sh` EXIT 0 + tangga lengkap + `npm run build` hijau (tsc 0 · lint 0E · vitest 232 · routes 94→94 · drift 0)
 - [ ] **11.6** `progress.md` + `feature_list.json` final; tutup restructure (status dokumen FINAL → DONE)

@@ -1,12 +1,12 @@
 import { bookingRepository } from "./booking.repository";
-import { tripRepository } from "../trip/trip.repository";
-import { reviewRepository } from "../review/review.repository";
+import { tripRepository } from "@/features/trip/trip.repository";
+import { reviewRepository } from "@/features/review/review.repository";
 import { tripDepartures } from "@/db/schema/trips";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { generateCode } from "@/utils/helpers";
 import type { UUID } from "@/types";
-import { notificationService } from "../notification/notification.service";
+import { notificationService } from "@/features/notification/notification.service";
 import { ConflictError } from "@/lib/errors/app-error";
 
 export interface BookingItemInput {

@@ -49,7 +49,6 @@ export const API_ACCESS: Record<string, ApiAccess> = {
   "PUT /api/trips/[id]/groups/[groupId]/complete": "admin",
   "GET /api/trips/[id]/groups": "admin",
   "GET /api/trips/[id]/groups/[groupId]/participants": "admin",
-  "GET /api/trips/[id]/active-group": "admin",
   "POST /api/trips/[id]/groups/[groupId]/gallery": "admin",
   "DELETE /api/trips/[id]/groups/[groupId]/gallery/media/[mediaId]": "admin",
   "POST /api/trips/[id]/groups/[groupId]/gallery/media": "admin",
@@ -94,6 +93,17 @@ export const DELEGATED_GUARD: Record<string, string> = {
   "GET /api/private-trips/[id]": "src/features/private-trip/private-trip.controller.ts",
   "POST /api/private-trips/[id]/respond": "src/features/private-trip/private-trip.controller.ts",
   "GET /api/bookings": "src/features/booking/booking.controller.ts",
+  "GET /api/user/referral": "src/features/referral/referral.controller.ts",
+  "GET /api/user/referral/history": "src/features/referral/referral.controller.ts",
+  "POST /api/payments": "src/features/payment/payment.controller.ts",
+  "POST /api/payments/[paymentId]/review": "src/features/payment/payment.controller.ts",
+  "POST /api/payments/upload": "src/features/upload/upload.controller.ts",
+  "DELETE /api/payments/upload": "src/features/upload/upload.controller.ts",
+  "GET /api/bookings/[id]": "src/features/booking/booking.controller.ts",
+  "PATCH /api/bookings/[id]": "src/features/booking/booking.controller.ts",
+  "POST /api/checkout/validate-referral": "src/features/booking/checkout-referral.controller.ts",
+  "POST /api/checkout": "src/features/booking/checkout.controller.ts",
+  "POST /api/reviews": "src/features/review/review.controller.ts",
 };
 
 export function apiAccess(method: HttpMethod | string, path: string): ApiAccess {

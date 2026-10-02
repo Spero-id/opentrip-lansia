@@ -16,9 +16,18 @@ const NAV_LINKS = [
   { name: "Hubungi Kami", href: "/contact" },
 ];
 
-const cn = (...classes) => classes.filter(Boolean).join(" ");
+import type { MouseEventHandler, ReactNode } from "react";
 
-function NavbarLink({ href, children, className, onClick }) {
+const cn = (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(" ");
+
+interface NavbarLinkProps {
+  href: string;
+  children: ReactNode;
+  className?: string;
+  onClick?: MouseEventHandler;
+}
+
+function NavbarLink({ href, children, className, onClick }: NavbarLinkProps) {
   return (
     <Link
       href={href}
@@ -35,9 +44,10 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const { data: session } = useSession();
-  const isLoggedIn = Boolean(session?.user);
+  const sessionUser = session?.user ?? null;
+  const sessionRole = (sessionUser as { role?: string } | null)?.role;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -46,8 +56,8 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
     }
@@ -104,15 +114,14 @@ export default function Navbar() {
             </div>
 
             <div className={cn("flex items-center gap-2", isOpen && "bg-transparent")}>
-              {isLoggedIn ? (
+              {sessionUser ? (
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen((v) => !v)}
                     aria-label="Menu akun"
                     aria-expanded={dropdownOpen}
                     className={cn(
-                      "group relative flex items-center gap-2 rounded-full p-1 sm:pr-3 transition-colors cursor-pointer focus:outline-none",
-                      dropdownOpen
+                      "group relative flex items-center gap-2 rounded-full p-1 sm:pr-3 transition-colors cursor-pointer focus:outline-none"
                     )}
                   >
 
@@ -123,7 +132,7 @@ export default function Navbar() {
                           isScrolled ? "text-white" : "text-black"
                         )}
                       >
-                        {session.user.name || "Pengguna"}
+                        {sessionUser.name || "Pengguna"}
                       </span>
                       <span
                         className={cn(
@@ -131,9 +140,9 @@ export default function Navbar() {
                           isScrolled ? "text-white/70" : "text-slate-500"
                         )}
                       >
-                        {session.user.role === "admin"
+                        {sessionRole === "admin"
                           ? "Admin"
-                          : session.user.role === "agent"
+                          : sessionRole === "agent"
                           ? "Agen"
                           : "Member"}
                       </span>
@@ -141,12 +150,12 @@ export default function Navbar() {
 
                     <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
                       <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
-                        {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                        {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "U"}
                       </span>
-                      {session.user.image && (
+                      {sessionUser.image && (
                         <img
-                          key={session.user.image}
-                          src={session.user.image}
+                          key={sessionUser.image}
+                          src={sessionUser.image}
                           alt=""
                           onError={(e) => {
                             e.currentTarget.style.display = "none";
@@ -163,10 +172,10 @@ export default function Navbar() {
                     <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
                       <div className="px-4 py-3 border-b border-slate-200">
                         <p className="text-sm font-medium text-slate-900 truncate">
-                          {session.user.name || "Pengguna"}
+                          {sessionUser.name || "Pengguna"}
                         </p>
                         <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
-                          {session.user.email}
+                          {sessionUser.email}
                         </p>
                       </div>
 
@@ -179,7 +188,7 @@ export default function Navbar() {
                           <User className="w-4 h-4 shrink-0" />
                           Profil Saya
                         </Link>
-                        {session.user.role === "admin" && (
+                        {sessionRole === "admin" && (
                           <Link
                             href="/admin"
                             onClick={() => setDropdownOpen(false)}

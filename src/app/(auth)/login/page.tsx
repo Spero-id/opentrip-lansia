@@ -35,7 +35,7 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);

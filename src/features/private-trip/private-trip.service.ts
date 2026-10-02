@@ -1,5 +1,5 @@
 import { privateTripRepository } from "./private-trip.repository";
-import { notificationService } from "../notification/notification.service";
+import { notificationService } from "@/features/notification/notification.service";
 import { db } from "@/lib/db";
 import { users } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";

@@ -1,11 +1,11 @@
 import "dotenv/config";
-import { hashPassword } from "../utils/password";
-import { db } from "../lib/db";
+import { hashPassword } from "@/utils/password";
+import { db } from "@/lib/db";
 import {
   destinationCategories, horecaTypes, horeca,
   vendorTypes, vendors, trips, tripDepartures, tripPrices, itineraryItems,
   blogs, blogCategories, contactMessages, promotions
-} from "../db/schema";
+} from "@/db/schema";
 import { paymentAccounts } from "@/db/schema/payments";
 import { account } from "@/db/schema/auth";
 import { users } from "@/db/schema/auth";

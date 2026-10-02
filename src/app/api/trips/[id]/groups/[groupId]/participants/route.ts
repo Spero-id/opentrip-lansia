@@ -1,21 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { tripService } from "@/features/trip/trip.service";
+import { NextRequest } from "next/server";
+import { groupController } from "@/features/trip/group.controller";
 import { requireAdmin } from "@/lib/auth";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string; groupId: string }> }
-) {
+export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string; groupId: string }> }) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const { groupId } = await params;
-    const participants = await tripService.getGroupParticipants(groupId);
-    return NextResponse.json(participants);
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  return groupController.participants(req, ctx);
 }

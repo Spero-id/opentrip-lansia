@@ -1,6 +1,35 @@
 import { BadgePercent, Headset, ShieldCheck } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-export const reviews = [
+export interface LandingReview {
+  name: string;
+  trip: string;
+  rating: number;
+  review: string;
+  initial: string;
+}
+
+export interface LandingDestination {
+  name: string;
+  location: string;
+  rating: number;
+  price: string;
+  image: string;
+}
+
+export interface LandingFeature {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  detail: string;
+}
+
+export interface LandingFaq {
+  question: string;
+  answer: string;
+}
+
+export const reviews: LandingReview[] = [
   {
     name: "Ardian Saputra",
     trip: "Trip Gunung Bromo",
@@ -75,7 +104,7 @@ export const reviews = [
   },
 ];
 
-export const destinations = [
+export const destinations: LandingDestination[] = [
   {
     name: "Kawah Putih",
     location: "Bandung, Jawa Barat",
@@ -142,7 +171,7 @@ export const destinations = [
   }
 ];
 
-export const features = [
+export const features: LandingFeature[] = [
   {
     icon: ShieldCheck,
     title: "Banyak Pilihan Destinasi",
@@ -166,7 +195,7 @@ export const features = [
   },
 ];
 
-export const faqs = [
+export const faqs: LandingFaq[] = [
   {
     question: "Bagaimana cara booking trip di Jelajah Memoria?",
     answer:

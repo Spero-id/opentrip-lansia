@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+import type { TripDetail } from "@/features/trip/types";
+
 export default function Footer() {
-  const [popular, setPopular] = useState([]);
+  const [popular, setPopular] = useState<Pick<TripDetail, "id" | "title">[]>([]);
 
   useEffect(() => {
     fetch("/api/trips")

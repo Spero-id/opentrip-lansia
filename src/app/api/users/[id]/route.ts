@@ -1,63 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { authService } from "@/features/auth";
-import { auth } from "@/features/auth/auth.config";
+import { NextRequest } from "next/server";
+import { userController } from "@/features/auth/user.controller";
 import { requireAdmin } from "@/lib/auth";
-import { toPublicError } from "@/lib/errors/to-public-error";
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const { id } = await params;
-    const body = await req.json();
-
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (
-      session?.user &&
-      session.user.id === id &&
-      body.role &&
-      body.role !== session.user.role
-    ) {
-      return NextResponse.json(
-        { error: "Tidak dapat mengubah role akun sendiri" },
-        { status: 400 }
-      );
-    }
-
-    await authService.updateUser(id, body);
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+  return userController.update(req, ctx);
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin(req);
   if (denied) return denied;
-
-  try {
-    const { id } = await params;
-
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (session?.user && session.user.id === id) {
-      return NextResponse.json(
-        { error: "Tidak dapat menghapus akun sendiri" },
-        { status: 400 }
-      );
-    }
-
-    await authService.deleteUser(id);
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    const message = toPublicError(err, "Terjadi kesalahan");
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+  return userController.remove(req, ctx);
 }

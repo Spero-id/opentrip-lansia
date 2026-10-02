@@ -26,7 +26,7 @@ export default function RegisterPage() {
         return "/";
     }
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
         setLoading(true);
