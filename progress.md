@@ -2275,3 +2275,15 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Verifikasi:** tsc **0** · lint **0E** · vitest **232** · build **0** · drift **0** · structure hijau.
 
 **Progres:** total **118/127**. Tersisa: 10.6 PR + Fase 11 (route tipis, enforcement, `allowJs:false`, ratchet 0).
+
+## Session 62 — 2026-10-02
+
+**Fase 11 (5/6) — route tipis + enforcement. Restructure selesai secara teknis.**
+
+- **11.1** 46 route tebal → 0 (16 controller baru, commit per batch a–g). Pola: guard terlihat di route (audit-proof), logika verbatim di controller (deep-import, tanpa barrel). Pelajaran: rute yang guard-nya hanya `getSession` inline (reviews POST, user referral, payments, checkout, bookings/[id]) butuh entri DELEGATED_GUARD — ditemukan via audit merah sebelum commit.
+- **11.2** `GET active-group`: 0 konsumen fetch → **dihapus** (route + policy); field data `activeGroup` tetap; snapshot 96→94.
+- **11.3** 12 `.jsx/.js` terakhir → tsx/ts; `allowJs:false` + include dibersihkan; R2 = [] (error penuh). Ripple: `toDetail` kini bertipe ketat → 2 cast di call-site (perilaku identik); `.js` suffix impor → build merah → dibersihkan.
+- **11.4** R1/R2/R5/R9/R10/R11 = 0; R9 37→0 (44 dengan file baru); R5 dikosongkan. Deviasi tercatat: R3 (192) & R8 (482) tetap ratchet — R3→0 butuh impor barrel yang melanggar R11; R8 = bahasa form user (keputusan D-16/produk).
+- **11.5** `./init.sh` EXIT 0 (tsc 0 · lint 0E/77W · vitest 232 · structure hijau · drift 0 · routes 94→94).
+
+**Progres:** total **123/127**. Tersisa: 11.6 PR fase-11. Setelah merge: restructure DONE; kembali ke `feature_list.json` (14 to_do / 18 in_review) untuk fitur berikutnya.
