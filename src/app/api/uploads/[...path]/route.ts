@@ -1,40 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readFile, stat } from "fs/promises";
-import path from "path";
-import { lookup } from "mrmime";
+import { NextRequest } from "next/server";
+import { uploadController } from "@/features/upload/upload.controller";
 
-const UPLOADS_DIR = path.join(process.cwd(), "uploads");
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
-  const { path: segments } = await params;
-  const filename = segments.join("/");
-
-  if (filename.includes("..")) {
-    return NextResponse.json({ error: "Path tidak valid" }, { status: 400 });
-  }
-
-  const filePath = path.join(UPLOADS_DIR, filename);
-
-  if (!filePath.startsWith(UPLOADS_DIR)) {
-    return NextResponse.json({ error: "Path tidak valid" }, { status: 400 });
-  }
-
-  try {
-    await stat(filePath);
-  } catch {
-    return NextResponse.json({ error: "File tidak ditemukan" }, { status: 404 });
-  }
-
-  const buffer = await readFile(filePath);
-  const mime = lookup(filePath) || "application/octet-stream";
-
-  return new NextResponse(buffer, {
-    headers: {
-      "Content-Type": mime,
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
-  });
+export async function GET(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
+  return uploadController.serve(req, ctx);
 }
