@@ -2300,3 +2300,16 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 - R3 192→195 (impor client-safe).
 
 **Verifikasi:** tsc 0 · lint 0E · vitest 235 · build 0 · routes 94→94 · drift 0 · structure hijau.
+
+## Session 65 — 2026-10-02 (P0 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**P0 selesai penuh + live end-to-end:**
+- Tanggal ditegakkan (isPriceValid/pickValidPrice/findValidPrices; kanonikal, list, endpoint publik).
+- Checkout tier: TierSelector + tierQty + items; server validasi + ambil atomik + rollback + tulis booking_items.
+- Kuota kembali: releaseQuota di reject/cancel/expiry; expireStalePendingBookings (24 jam) lazy di checkout.
+- Endpoint publik baru GET /api/trips/[id]/tiers (policy public).
+- Test: validity (6), normalize (2), reducer tier (3), pricing tier (1); audit 10 hijau.
+- Live: Anak end-to-end (booking b8c5afdc, kuota 1/1, items tercatat), oversell 409, cancel→kuota 0, tier kedaluwarsa 400 + tak tampil publik, legacy pax OK, DB bersih (2 booking QA cancelled).
+- R3 195→200, snapshot 94→97, R9 tetap 0.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest 245 · build 0 · routes 97→97 · drift 0 · structure hijau.

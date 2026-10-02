@@ -12,14 +12,14 @@ Status per 2026-10-02 · Branch: `feat/012-tier-pricing` (BELUM commit/push)
 
 ## P0 — Wajib (tier mati tanpa ini)
 
-- [ ] **Tanggal berlaku ditegakkan**: canonical price + validasi checkout saring `validFrom ≤ hari ini ≤ validUntil`
-- [ ] **Checkout bisa pilih tier**: input pax per tier (Dewasa/Anak/…) + subtotal per tier, server hitung ulang dari DB
-- [ ] **Kuota tier bergerak**: checkout potong `quota_booked` atomik per tier (ganti hitung manual)
-- [ ] **Kuota kembali saat batal/tolak**: decrement saat booking cancelled / payment rejected
-- [ ] **Booking catat tier-nya**: checkout tulis `booking_items` (priceId+qty+unitPrice) — SEKARANG KOSONG, akibat: my-trips tak bisa rincian tier, rekonsiliasi tier vs pendapatan mustahil
-- [ ] **Hidupkan jalur kuota**: `updateQuota` kini mati (hanya dipanggil `createBooking` yang tak punya route POST) — sambungkan ke checkout
-- [ ] **Kedaluwarsa pending**: booking `pending_payment` tak dibayar menahan kuota selamanya — butuh timeout + pelepas otomatis
-- [ ] Verifikasi live: beli tier Anak end-to-end + overbooking ditolak + cancel kembalikan kuota
+- [x] **Tanggal berlaku ditegakkan**: canonical price + validasi checkout saring `validFrom ≤ hari ini ≤ validUntil` (repository `isPriceValid`/`pickValidPrice`/`findValidPrices`; list + kanonikal + endpoint publik ikut)
+- [x] **Checkout bisa pilih tier**: `TierSelector` per-tier stepper + `tierQty` di reducer + `items` di snapshot; server hitung ulang dari DB
+- [x] **Kuota tier bergerak**: `updateQuota` atomik per item + rollback saat gagal parsial (409)
+- [x] **Kuota kembali saat batal/tolak**: `releaseQuota` (GREATEST floor 0) di payment-reject, admin-cancel, dan expiry
+- [x] **Booking catat tier-nya**: `booking_items` ditulis di transaksi checkout
+- [x] **Hidupkan jalur kuota**: checkout pakai `updateQuota` langsung
+- [x] **Kedaluwarsa pending**: `expireStalePendingBookings` (24 jam) dipanggil lazy tiap checkout
+- [x] Verifikasi live: tier Anak end-to-end + overbooking 409 + cancel kembalikan kuota + tier kedaluwarsa ditolak + legacy pax OK + DB bersih
 
 ## P1 — Penting (mencegah salah jual)
 
