@@ -52,6 +52,10 @@ export const API_ACCESS: Record<string, ApiAccess> = {
   "POST /api/trips/[id]/groups/[groupId]/gallery": "admin",
   "DELETE /api/trips/[id]/groups/[groupId]/gallery/media/[mediaId]": "admin",
   "POST /api/trips/[id]/groups/[groupId]/gallery/media": "admin",
+  "GET /api/trips/[id]/groups/[groupId]/prices": "admin",
+  "POST /api/trips/[id]/groups/[groupId]/prices": "admin",
+  "PUT /api/trips/[id]/groups/[groupId]/prices/[priceId]": "admin",
+  "DELETE /api/trips/[id]/groups/[groupId]/prices/[priceId]": "admin",
 
   "GET /api/galleries": "admin",
   "GET /api/galleries/[id]": "admin",

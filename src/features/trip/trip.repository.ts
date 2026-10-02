@@ -38,6 +38,10 @@ export interface ITripRepository {
   findById(id: UUID): Promise<typeof trips.$inferSelect | null>;
   findDeparturesByTripId(tripId: UUID): Promise<(typeof tripDepartures.$inferSelect)[]>;
   findPricesByDepartureId(departureId: UUID): Promise<(typeof tripPrices.$inferSelect)[]>;
+  findPriceById(priceId: UUID): Promise<typeof tripPrices.$inferSelect | null>;
+  createPrice(data: typeof tripPrices.$inferInsert): Promise<typeof tripPrices.$inferSelect>;
+  updatePrice(priceId: UUID, data: Partial<typeof tripPrices.$inferInsert>): Promise<typeof tripPrices.$inferSelect | null>;
+  deletePrice(priceId: UUID): Promise<void>;
   findCanonicalPriceByDepartureId(departureId: UUID): Promise<typeof tripPrices.$inferSelect | null>;
   create(data: typeof trips.$inferInsert): Promise<typeof trips.$inferSelect>;
   update(id: UUID, data: Partial<typeof trips.$inferInsert>): Promise<typeof trips.$inferSelect | null>;
@@ -245,6 +249,25 @@ export const tripRepository: ITripRepository = {
 
   async findPricesByDepartureId(departureId) {
     return db.select().from(tripPrices).where(eq(tripPrices.departureId, departureId));
+  },
+
+  async findPriceById(priceId) {
+    const [row] = await db.select().from(tripPrices).where(eq(tripPrices.id, priceId)).limit(1);
+    return row ?? null;
+  },
+
+  async createPrice(data) {
+    const [row] = await db.insert(tripPrices).values(data).returning();
+    return row;
+  },
+
+  async updatePrice(priceId, data) {
+    const [row] = await db.update(tripPrices).set(data).where(eq(tripPrices.id, priceId)).returning();
+    return row ?? null;
+  },
+
+  async deletePrice(priceId) {
+    await db.delete(tripPrices).where(eq(tripPrices.id, priceId));
   },
 
   async findFeatured() {
