@@ -47,6 +47,8 @@ export interface ITripRepository {
   update(id: UUID, data: Partial<typeof trips.$inferInsert>): Promise<typeof trips.$inferSelect | null>;
   delete(id: UUID): Promise<void>;
   updateQuota(priceId: UUID, qty: number): Promise<boolean>;
+  releaseQuota(priceId: UUID, qty: number): Promise<boolean>;
+  findValidPricesByDepartureId(departureId: UUID): Promise<Array<{ id: string; name: string; price: string; quota: number; quotaBooked: number | null; validFrom: string | null; validUntil: string | null }>>;
 
   saveTripSchedules(
     tripId: UUID,
@@ -143,10 +145,34 @@ export interface GroupBookingDetail {
   } | null;
 }
 
+export interface PriceValidity {
+  name: string;
+  price: string;
+  validFrom?: string | null;
+  validUntil?: string | null;
+}
+
+export function todayISODate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function isPriceValid(p: PriceValidity, today: string = todayISODate()): boolean {
+  if (p.validFrom && today < p.validFrom) return false;
+  if (p.validUntil && today > p.validUntil) return false;
+  return true;
+}
+
 export function pickCanonicalPrice(prices: { name: string; price: string }[]): string | null {
   if (prices.length === 0) return null;
   const dewas = prices.find((p) => p.name === "Dewasa");
   return dewas?.price ?? prices[0].price;
+}
+
+export function pickValidPrice(prices: PriceValidity[], today: string = todayISODate()): string | null {
+  const valid = prices.filter((p) => isPriceValid(p, today));
+  if (valid.length === 0) return null;
+  const dewas = valid.find((p) => p.name === "Dewasa");
+  return dewas?.price ?? valid[0].price;
 }
 
 export const tripRepository: ITripRepository = {
@@ -158,6 +184,8 @@ export const tripRepository: ITripRepository = {
         departureId: tripDepartures.id,
         price: tripPrices.price,
         priceName: tripPrices.name,
+        priceValidFrom: tripPrices.validFrom,
+        priceValidUntil: tripPrices.validUntil,
         categoryName: destinationCategories.name,
         isActiveDeparture: tripDepartures.isActive,
         departureEndDate: tripDepartures.endDate,
@@ -172,13 +200,13 @@ export const tripRepository: ITripRepository = {
       .orderBy(asc(tripDepartures.startDate));
 
     const byTrip = new Map<string, TripWithPrice>();
-    const pricesByDeparture = new Map<string, { name: string; price: string }[]>();
+    const pricesByDeparture = new Map<string, PriceValidity[]>();
     const activeGroups = new Map<string, { id: string; startDate: string; endDate: string; maxParticipants: number; status: string; quotaBooked: number }>();
 
     for (const r of rows) {
       if (r.departureId) {
         if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
-        pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
+        pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "", validFrom: r.priceValidFrom ?? null, validUntil: r.priceValidUntil ?? null });
 
         if (r.isActiveDeparture && !activeGroups.has(r.id)) {
           activeGroups.set(r.id, {
@@ -217,7 +245,7 @@ export const tripRepository: ITripRepository = {
 
     for (const row of byTrip.values()) {
       const prices = pricesByDeparture.get(row.departureId!) ?? [];
-      row.price = pickCanonicalPrice(prices);
+      row.price = pickValidPrice(prices);
       row.activeGroup = activeGroups.get(row.id) ?? null;
       row.rating = ratingByTripId.get(row.id) ?? null;
     }
@@ -230,7 +258,35 @@ export const tripRepository: ITripRepository = {
       .select()
       .from(tripPrices)
       .where(and(eq(tripPrices.departureId, departureId), eq(tripPrices.isActive, true)));
-    return rows.find((r) => r.name === "Dewasa") ?? rows[0] ?? null;
+    const today = todayISODate();
+    const valid = rows.filter((r) => isPriceValid(r, today));
+    if (valid.length === 0) return null;
+    return valid.find((r) => r.name === "Dewasa") ?? valid[0];
+  },
+
+  async findValidPricesByDepartureId(departureId) {
+    const rows = await db
+      .select({
+        id: tripPrices.id,
+        name: tripPrices.name,
+        price: tripPrices.price,
+        quota: tripPrices.quota,
+        quotaBooked: tripPrices.quotaBooked,
+        validFrom: tripPrices.validFrom,
+        validUntil: tripPrices.validUntil,
+      })
+      .from(tripPrices)
+      .where(and(eq(tripPrices.departureId, departureId), eq(tripPrices.isActive, true)));
+    const today = todayISODate();
+    return rows.filter((r) => isPriceValid(r, today));
+  },
+
+  async releaseQuota(priceId, qty) {
+    const result = await db
+      .update(tripPrices)
+      .set({ quotaBooked: sql`GREATEST(0, ${tripPrices.quotaBooked} - ${qty})` })
+      .where(eq(tripPrices.id, priceId));
+    return (result.rowCount ?? 0) > 0;
   },
 
   async findBySlug(slug) {
@@ -278,6 +334,8 @@ export const tripRepository: ITripRepository = {
         departureId: tripDepartures.id,
         price: tripPrices.price,
         priceName: tripPrices.name,
+        priceValidFrom: tripPrices.validFrom,
+        priceValidUntil: tripPrices.validUntil,
         categoryName: destinationCategories.name,
         isActiveDeparture: tripDepartures.isActive,
         departureEndDate: tripDepartures.endDate,
@@ -292,13 +350,13 @@ export const tripRepository: ITripRepository = {
       .orderBy(asc(tripDepartures.startDate));
 
     const byTrip = new Map<string, TripWithPrice>();
-    const pricesByDeparture = new Map<string, { name: string; price: string }[]>();
+    const pricesByDeparture = new Map<string, PriceValidity[]>();
     const activeGroups = new Map<string, { id: string; startDate: string; endDate: string; maxParticipants: number; status: string; quotaBooked: number }>();
 
     for (const r of rows) {
       if (r.departureId) {
         if (!pricesByDeparture.has(r.departureId)) pricesByDeparture.set(r.departureId, []);
-        pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "" });
+        pricesByDeparture.get(r.departureId)!.push({ name: r.priceName ?? "", price: r.price ?? "", validFrom: r.priceValidFrom ?? null, validUntil: r.priceValidUntil ?? null });
         if (r.isActiveDeparture && !activeGroups.has(r.id)) {
           activeGroups.set(r.id, {
             id: r.departureId,
@@ -324,7 +382,7 @@ export const tripRepository: ITripRepository = {
 
     for (const row of byTrip.values()) {
       const prices = pricesByDeparture.get(row.departureId!) ?? [];
-      row.price = pickCanonicalPrice(prices);
+      row.price = pickValidPrice(prices);
       row.activeGroup = activeGroups.get(row.id) ?? null;
     }
 

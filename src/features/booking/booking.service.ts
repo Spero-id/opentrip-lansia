@@ -90,6 +90,28 @@ export const bookingService = {
   async updateBookingStatus(id: UUID, status: string) {
     await bookingRepository.update(id, { status });
   },
+
+  async releaseBookingQuota(bookingId: UUID): Promise<void> {
+    const items = await bookingRepository.findItemsByBookingId(bookingId);
+    for (const item of items) {
+      if (!item.tripPriceId) continue;
+      try {
+        await tripRepository.releaseQuota(item.tripPriceId as UUID, item.quantity ?? 1);
+      } catch (err) {
+        console.error("releaseBookingQuota failed:", err);
+      }
+    }
+  },
+
+  async expireStalePendingBookings(maxAgeHours = 24): Promise<number> {
+    const before = new Date(Date.now() - maxAgeHours * 3600_000);
+    const stale = await bookingRepository.findStalePending(before);
+    for (const booking of stale) {
+      await bookingRepository.update(booking.id, { status: "cancelled" });
+      await this.releaseBookingQuota(booking.id);
+    }
+    return stale.length;
+  },
 };
 
 async function withDetails(b: typeof import("@/db/schema/bookings").bookings.$inferSelect) {

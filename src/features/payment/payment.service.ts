@@ -63,6 +63,8 @@ export const paymentService = {
           .set({ status: "cancelled" })
           .where(eq(bookings.id, payment.bookingId));
       });
+      const { bookingService } = await import("@/features/booking/booking.service");
+      await bookingService.releaseBookingQuota(payment.bookingId);
     }
 
     return paymentRepository.findById(paymentId);

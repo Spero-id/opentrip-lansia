@@ -5,6 +5,7 @@ export type ApiAccess = "public" | "session" | "admin";
 export const API_ACCESS: Record<string, ApiAccess> = {
   "ALL /api/auth/[...all]": "public",
   "GET /api/trips": "public",
+  "GET /api/trips/[id]/tiers": "public",
   "GET /api/blogs": "public",
   "GET /api/blogs/[id]": "public",
   "GET /api/reviews": "public",

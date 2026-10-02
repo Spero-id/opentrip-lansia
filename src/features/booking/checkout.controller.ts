@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { bookings, bookingParticipants, healthDeclarations } from "@/db/schema/bookings";
+import { bookings, bookingItems, bookingParticipants, healthDeclarations } from "@/db/schema/bookings";
 import { trips, tripDepartures } from "@/db/schema/trips";
 import { promotionUsages } from "@/db/schema/promotions";
 import { referrals } from "@/db/schema/referral";
@@ -12,6 +12,7 @@ import { tripRepository } from "@/features/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
 import { toPublicError } from "@/lib/errors/to-public-error";
 import { withTransaction } from "@/lib/db/utils";
+import { bookingService } from "./booking.service";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -54,7 +55,7 @@ export const checkoutController = {
       totalAmount: clientTotalRaw,
     } = body;
 
-    if (!orderId || !destination || !pax) {
+    if (!orderId || !destination || (!pax && !(body as { items?: unknown }).items)) {
       return NextResponse.json(
         { error: "Data pesanan tidak lengkap" },
         { status: 400 }
@@ -119,14 +120,68 @@ export const checkoutController = {
       );
     }
 
-    const canonicalPrice = await tripRepository.findCanonicalPriceByDepartureId(departureId);
-    const serverUnit = canonicalPrice ? toNumber(canonicalPrice.price) : 0;
-    if (!canonicalPrice || serverUnit <= 0) {
+    const validPrices = await tripRepository.findValidPricesByDepartureId(departureId);
+    if (validPrices.length === 0) {
       return NextResponse.json(
         { error: "Harga trip belum tersedia" },
         { status: 400 }
       );
     }
+    const priceById = new Map(validPrices.map((p) => [p.id, p]));
+
+    type CheckoutItem = { priceId: string; qty: number; unit: number };
+    let checkoutItems: CheckoutItem[];
+    const rawItems = (body as { items?: unknown }).items;
+    if (Array.isArray(rawItems) && rawItems.length > 0) {
+      checkoutItems = [];
+      for (const raw of rawItems) {
+        const item = raw as { priceId?: unknown; qty?: unknown };
+        const tier = typeof item.priceId === "string" ? priceById.get(item.priceId) : undefined;
+        const qty = Number(item.qty);
+        if (!tier || !Number.isInteger(qty) || qty < 1 || qty > 99) {
+          return NextResponse.json(
+            { error: "Tier harga tidak valid. Silakan muat ulang halaman." },
+            { status: 400 }
+          );
+        }
+        checkoutItems.push({ priceId: tier.id, qty, unit: Number(tier.price) });
+      }
+    } else {
+      const canonical = validPrices.find((p) => p.name === "Dewasa") ?? validPrices[0];
+      const paxNum = Number(pax);
+      if (!Number.isInteger(paxNum) || paxNum < 1 || paxNum > 99) {
+        return NextResponse.json({ error: "Jumlah peserta tidak valid" }, { status: 400 });
+      }
+      checkoutItems = [{ priceId: canonical.id, qty: paxNum, unit: Number(canonical.price) }];
+    }
+
+    const paxNum = checkoutItems.reduce((s, i) => s + i.qty, 0);
+    if (paxNum < 1 || paxNum > 99) {
+      return NextResponse.json({ error: "Jumlah peserta tidak valid" }, { status: 400 });
+    }
+
+    try {
+      await bookingService.expireStalePendingBookings();
+    } catch (e) {
+      console.error("expireStalePending failed", e);
+    }
+
+    const taken: CheckoutItem[] = [];
+    for (const item of checkoutItems) {
+      const ok = await tripRepository.updateQuota(item.priceId, item.qty);
+      if (!ok) {
+        for (const prev of taken) {
+          await tripRepository.releaseQuota(prev.priceId, prev.qty);
+        }
+        return NextResponse.json(
+          { error: "Kuota tier habis. Silakan muat ulang halaman." },
+          { status: 409 }
+        );
+      }
+      taken.push(item);
+    }
+
+    const expectedSubtotal = checkoutItems.reduce((s, i) => s + i.unit * i.qty, 0);
 
     const birthDate = customer?.birthDate;
     if (birthDate) {
@@ -148,12 +203,6 @@ export const checkoutController = {
       }
     }
 
-    const paxNum = Number(pax);
-    if (!Number.isInteger(paxNum) || paxNum < 1 || paxNum > 99) {
-      return NextResponse.json({ error: "Jumlah peserta tidak valid" }, { status: 400 });
-    }
-
-    const expectedSubtotal = serverUnit * paxNum;
     const clientSubtotal = Number(clientSubtotalRaw);
     if (!Number.isFinite(clientSubtotal) || Math.round(clientSubtotal) !== expectedSubtotal) {
       return NextResponse.json(
@@ -281,6 +330,16 @@ export const checkoutController = {
         emergencyContactPhone: customer?.emergencyContactPhone || null,
         isPrimary: true,
       }).returning();
+
+      await tx.insert(bookingItems).values(
+        checkoutItems.map((item) => ({
+          bookingId: created.id,
+          tripPriceId: item.priceId,
+          quantity: item.qty,
+          unitPrice: String(item.unit),
+          subtotal: String(item.unit * item.qty),
+        }))
+      );
 
       if (participant && customer?.healthConditions) {
         const hc = customer.healthConditions;
