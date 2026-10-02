@@ -161,7 +161,7 @@ async function seed() {
   await db.insert(tripPrices).values([
     { departureId: departList[0].id, name: "Dewasa", price: "2500000", quota: 15, quotaBooked: 3, isActive: true },
     { departureId: departList[0].id, name: "Anak", price: "1750000", quota: 5, quotaBooked: 1, isActive: true },
-    { departureId: departList[0].id, name: "Early Bird", price: "2000000", quota: 5, quotaBooked: 2, isActive: true, validUntil: "2026-07-31" },
+    { departureId: departList[0].id, name: "Early Bird", price: "2000000", quota: 5, quotaBooked: 2, isActive: true, validUntil: "2027-06-30" },
     { departureId: departList[1].id, name: "Dewasa", price: "2700000", quota: 15, isActive: true },
     { departureId: departList[1].id, name: "Anak", price: "1900000", quota: 5, isActive: true },
     { departureId: departList[2].id, name: "Dewasa", price: "3200000", quota: 10, quotaBooked: 4, isActive: true },

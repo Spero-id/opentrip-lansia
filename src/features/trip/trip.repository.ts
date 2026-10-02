@@ -63,6 +63,7 @@ export interface ITripRepository {
   deleteGroup(groupId: UUID): Promise<void>;
   activateGroup(tripId: UUID, groupId: UUID): Promise<{ activated: string; deactivated: string | null }>;
   countBookingsByDepartureId(departureId: UUID): Promise<number>;
+  countParticipantsByDepartureId(departureId: UUID): Promise<number>;
   getActiveGroupWithPrice(tripId: UUID): Promise<ActiveGroupInfo | null>;
 
   findItineraryByTripId(tripId: UUID): Promise<(typeof itineraryItems.$inferSelect)[]>;
@@ -172,7 +173,8 @@ export function pickValidPrice(prices: PriceValidity[], today: string = todayISO
   const valid = prices.filter((p) => isPriceValid(p, today));
   if (valid.length === 0) return null;
   const dewas = valid.find((p) => p.name === "Dewasa");
-  return dewas?.price ?? valid[0].price;
+  if (dewas) return dewas.price;
+  return valid.reduce((min, p) => (Number(p.price) < Number(min.price) ? p : min)).price;
 }
 
 export const tripRepository: ITripRepository = {
@@ -261,7 +263,9 @@ export const tripRepository: ITripRepository = {
     const today = todayISODate();
     const valid = rows.filter((r) => isPriceValid(r, today));
     if (valid.length === 0) return null;
-    return valid.find((r) => r.name === "Dewasa") ?? valid[0];
+    const dewas = valid.find((r) => r.name === "Dewasa");
+    if (dewas) return dewas;
+    return valid.reduce((min, r) => (Number(r.price) < Number(min.price) ? r : min));
   },
 
   async findValidPricesByDepartureId(departureId) {
@@ -766,9 +770,19 @@ export const tripRepository: ITripRepository = {
       .from(bookings)
       .where(and(
         eq(bookings.departureId, departureId),
-        sql`${bookings.status} IN ('pending', 'confirmed')`
+        sql`${bookings.status} IN ('pending_payment', 'pending', 'confirmed')`
       ));
     return result?.count ?? 0;
+  },
+  async countParticipantsByDepartureId(departureId) {
+    const [result] = await db
+      .select({ total: sql<number>`COALESCE(SUM(${bookings.totalParticipants}), 0)::int` })
+      .from(bookings)
+      .where(and(
+        eq(bookings.departureId, departureId),
+        sql`${bookings.status} IN ('pending_payment', 'pending', 'confirmed')`
+      ));
+    return result?.total ?? 0;
   },
 
   async getActiveGroupWithPrice(tripId) {

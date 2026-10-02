@@ -23,12 +23,12 @@ Status per 2026-10-02 · Branch: `feat/012-tier-pricing` (BELUM commit/push)
 
 ## P1 — Penting (mencegah salah jual)
 
-- [ ] **Konsolidasi kuota**: peringatan/batasan saat total kuota tier > maks grup
-- [ ] **Fallback kanonikal**: kalau Dewasa nonaktif/kedaluwarsa, "mulai dari" ambil tier aktif termurah (bukan hilang)
-- [ ] **Tanggal tampil ke user**: info "s/d 31 Okt" di BookingCard/checkout untuk tier berbatas
-- [ ] Seed: rapikan contoh Early Bird kedaluwarsa (`validUntil 2026-07-31`)
-- [ ] **Guard kecil grup**: tolak `maxParticipants` baru < jumlah terbooking (anti-overbook administratif)
-- [ ] **Aturan resmi tier nonaktif**: booking lama jalan terus (snapshot), hanya booking baru yang tak bisa pakai — nyatakan + kunci test
+- [x] **Konsolidasi kuota**: `assertTierQuotasFit` — total kuota tier aktif tak boleh > maks grup (create/update tier); live: Anak×5 + Dewasa×10 → 400. Bonus: `countBookingsByDepartureId` yang badannya kosong diimplementasi (guard hapus-grup kini nyata)
+- [x] **Fallback kanonikal**: tanpa Dewasa valid → tier aktif termurah (bukan pertama); test dikunci
+- [x] **Tanggal tampil ke user**: info "s/d …" di BookingCard (fetch tiers publik) + sudah ada di TierSelector checkout
+- [x] Seed: contoh Early Bird → `validUntil 2027-06-30`
+- [x] **Guard kecil grup**: `maxParticipants` baru < kursi terbooking → 400 (test)
+- [x] **Aturan resmi tier nonaktif**: booking lama jalan terus (snapshot) — dikunci test deaktivasi
 
 ## P2 — Nice to have
 

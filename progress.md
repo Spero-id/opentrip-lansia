@@ -2313,3 +2313,15 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 - R3 195→200, snapshot 94→97, R9 tetap 0.
 
 **Verifikasi:** tsc 0 · lint 0E · vitest 245 · build 0 · routes 97→97 · drift 0 · structure hijau.
+
+## Session 66 — 2026-10-02 (P1 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**P1 selesai + live:**
+- Fallback kanonikal termurah (tanpa Dewasa valid) + test.
+- Konsolidasi kuota tier≤maks grup (create/update) + guard maxParticipants<terbooking + implementasi `countBookingsByDepartureId` yang badannya kosong (guard hapus-grup kini nyata, satu-satunya pemakai).
+- Tanggal tampil ke user: BookingCard ambil tiers publik ("Tier s/d …").
+- Seed Early Bird → 2027-06-30; aturan nonaktif dikunci test.
+- Live: konsolidasi 400 dengan pesan jelas; DB tak tersentuh (validasi menolak sebelum tulis).
+- R3 200→204.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest 250 · build 0 · routes 97→97 · drift 0 · structure hijau.

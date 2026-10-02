@@ -42,6 +42,22 @@ export interface NormalizedPriceTier {
   isActive: boolean;
 }
 
+async function assertTierQuotasFit(
+  group: { id: string; maxParticipants: number },
+  excludePriceId: string | undefined,
+  newQuota: number,
+): Promise<void> {
+  const siblings = await tripRepository.findPricesByDepartureId(group.id);
+  const total = siblings
+    .filter((s) => s.id !== excludePriceId && s.isActive !== false)
+    .reduce((sum, s) => sum + (s.quota ?? 0), 0) + newQuota;
+  if (total > group.maxParticipants) {
+    throw new ValidationError(
+      `Total kuota tier (${total}) melebihi kuota grup (${group.maxParticipants})`
+    );
+  }
+}
+
 export function normalizePriceInput(input: PriceTierInput): NormalizedPriceTier {
   const name = (input.name || "").trim();
   if (!name) throw new ValidationError("Nama tier wajib diisi");
@@ -91,6 +107,7 @@ export const tripService = {
     const group = await tripRepository.findGroupById(groupId);
     if (!group || group.tripId !== tripId) throw new NotFoundError("Grup");
     const data = normalizePriceInput(input);
+    await assertTierQuotasFit(group, undefined, data.quota);
     const siblings = await tripRepository.findPricesByDepartureId(groupId);
     if (siblings.some((s) => s.name.toLowerCase() === data.name.toLowerCase())) {
       throw new ConflictError(`Tier "${data.name}" sudah ada di grup ini`);
@@ -123,6 +140,7 @@ export const tripService = {
     if (data.quota < (price.quotaBooked ?? 0)) {
       throw new ConflictError(`Kuota tidak boleh lebih kecil dari ${price.quotaBooked} kursi terisi`);
     }
+    await assertTierQuotasFit(group, priceId, data.quota);
     return tripRepository.updatePrice(priceId, {
       name: data.name,
       price: data.price,
@@ -248,7 +266,13 @@ export const tripService = {
     const updateData: Record<string, unknown> = {};
     if (data.startDate) updateData.startDate = data.startDate;
     if (data.endDate) updateData.endDate = data.endDate;
-    if (data.maxParticipants !== undefined) updateData.maxParticipants = data.maxParticipants;
+    if (data.maxParticipants !== undefined) {
+      const held = await tripRepository.countParticipantsByDepartureId(groupId);
+      if (data.maxParticipants < held) {
+        throw new ValidationError(`Kuota grup tidak boleh lebih kecil dari ${held} kursi terbooking`);
+      }
+      updateData.maxParticipants = data.maxParticipants;
+    }
     if (data.minParticipants !== undefined) updateData.minParticipants = data.minParticipants;
     if (data.notes !== undefined) updateData.notes = data.notes;
 

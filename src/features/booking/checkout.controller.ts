@@ -160,6 +160,17 @@ export const checkoutController = {
       return NextResponse.json({ error: "Jumlah peserta tidak valid" }, { status: 400 });
     }
 
+    const group = await tripRepository.findGroupById(departureId);
+    if (group && group.maxParticipants != null) {
+      const held = await tripRepository.countParticipantsByDepartureId(departureId);
+      if (held + paxNum > group.maxParticipants) {
+        return NextResponse.json(
+          { error: "Kuota grup habis. Silakan muat ulang halaman." },
+          { status: 409 }
+        );
+      }
+    }
+
     try {
       await bookingService.expireStalePendingBookings();
     } catch (e) {

@@ -30,6 +30,14 @@ describe("pickValidPrice", () => {
     expect(pickValidPrice(tiers, "2026-10-02")).toBe("50");
   });
 
+  it("falls back to cheapest valid tier without Dewasa", () => {
+    const tiers = [
+      { name: "Anak", price: "50" },
+      { name: "Early Bird", price: "30" },
+    ];
+    expect(pickValidPrice(tiers, "2026-10-02")).toBe("30");
+  });
+
   it("returns null when all expired", () => {
     expect(pickValidPrice([{ name: "Dewasa", price: "100", validUntil: "2026-09-01" }], "2026-10-02")).toBeNull();
   });
