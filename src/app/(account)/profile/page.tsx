@@ -52,8 +52,8 @@ export default function ProfilePage() {
             <ProfileHeader user={session.user} />
             <ProfileStats user={session.user} />
             <ProfileInfoCard user={session.user} />
-            <ReferralCard 
-              referralCode={session.user.referralCode} 
+            <ReferralCard
+              referralCode={(session.user as { referralCode?: string | null }).referralCode}
               stats={referralStats?.stats}
             />
             <ReferralHistory />

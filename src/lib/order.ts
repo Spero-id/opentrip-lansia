@@ -1,3 +1,8 @@
+export interface OrderItem {
+  pricePerPax: number;
+  pax: number;
+}
+
 export const OrderDomain = {
   generateOrderId() {
     const timestamp = Date.now().toString(36).toUpperCase();
@@ -9,11 +14,11 @@ export const OrderDomain = {
     return `pax-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`;
   },
 
-  calculateTotal(item) {
+  calculateTotal(item: OrderItem): number {
     return item.pricePerPax * item.pax;
   },
 
-  formatPrice(amount) {
+  formatPrice(amount: number): string {
     return "Rp " + Math.floor(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   },
 };

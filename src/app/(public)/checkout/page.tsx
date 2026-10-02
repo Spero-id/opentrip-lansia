@@ -12,6 +12,7 @@ import { DetailsStep, PaymentStep, StepProgress } from "@/features/checkout";
 
 import Subs from "@/features/newsletter/components/Subs";
 import { toDetail } from "@/lib/destination";
+import type { DestinationSummary } from "@/features/checkout";
 
 function CheckoutContent() {
   const router = useRouter();
@@ -35,7 +36,7 @@ function CheckoutContent() {
           ? data.find((d) => d.id === destId && d.status === "published")
           : undefined;
         if (found) {
-          setDestination(toDetail(found));
+          setDestination(toDetail(found) as unknown as DestinationSummary);
           setStatus("found");
         } else {
           setStatus("notfound");

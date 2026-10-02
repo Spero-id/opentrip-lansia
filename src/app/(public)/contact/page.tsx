@@ -22,14 +22,14 @@ export default function ContactPage() {
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const formRef = useRef(null);
+    const formRef = useRef<HTMLFormElement | null>(null);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
-        const formData = new FormData(formRef.current);
+        const formData = new FormData(formRef.current ?? undefined);
         const data = {
             name: formData.get("name"),
             email: formData.get("email"),
@@ -51,7 +51,7 @@ export default function ContactPage() {
 
             setSubmitted(true);
         } catch (err) {
-            setError(err.message);
+            setError(err instanceof Error ? err.message : "Gagal mengirim pesan");
         } finally {
             setLoading(false);
         }
