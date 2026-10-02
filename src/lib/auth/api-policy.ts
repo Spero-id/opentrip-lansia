@@ -100,6 +100,10 @@ export const DELEGATED_GUARD: Record<string, string> = {
   "POST /api/payments/[paymentId]/review": "src/features/payment/payment.controller.ts",
   "POST /api/payments/upload": "src/features/upload/upload.controller.ts",
   "DELETE /api/payments/upload": "src/features/upload/upload.controller.ts",
+  "GET /api/bookings/[id]": "src/features/booking/booking.controller.ts",
+  "PATCH /api/bookings/[id]": "src/features/booking/booking.controller.ts",
+  "POST /api/checkout/validate-referral": "src/features/booking/checkout-referral.controller.ts",
+  "POST /api/checkout": "src/features/booking/checkout.controller.ts",
   "POST /api/reviews": "src/features/review/review.controller.ts",
 };
 

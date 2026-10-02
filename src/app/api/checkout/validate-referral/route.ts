@@ -1,64 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/features/auth/auth.config";
-import { db } from "@/lib/db";
-import { users } from "@/db/schema/auth";
-import { eq } from "drizzle-orm";
+import { NextRequest } from "next/server";
+import { checkoutReferralController } from "@/features/booking/checkout-referral.controller";
 
 export async function POST(req: NextRequest) {
-  try {
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await req.json();
-    const { referralCode } = body;
-
-    if (!referralCode || typeof referralCode !== "string") {
-      return NextResponse.json(
-        { error: "Kode referral tidak valid" },
-        { status: 400 }
-      );
-    }
-
-    const code = referralCode.trim().toUpperCase();
-    if (code.length === 0 || code.length > 50) {
-      return NextResponse.json(
-        { error: "Kode referral tidak valid" },
-        { status: 400 }
-      );
-    }
-
-    const [referrer] = await db
-      .select({ id: users.id, name: users.name })
-      .from(users)
-      .where(eq(users.referralCode, code))
-      .limit(1);
-
-    if (!referrer) {
-      return NextResponse.json(
-        { error: "Kode referral tidak ditemukan" },
-        { status: 404 }
-      );
-    }
-
-    if (referrer.id === session.user.id) {
-      return NextResponse.json(
-        { error: "Tidak bisa menggunakan kode referral sendiri" },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json({
-      valid: true,
-      referrerName: referrer.name,
-      referrerId: referrer.id,
-    });
-  } catch (err) {
-    console.error("POST /api/checkout/validate-referral error:", err);
-    return NextResponse.json(
-      { error: "Gagal memvalidasi kode referral" },
-      { status: 500 }
-    );
-  }
+  return checkoutReferralController.validate(req);
 }
