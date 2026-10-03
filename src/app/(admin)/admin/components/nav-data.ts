@@ -3,6 +3,7 @@ import {
   Building2,
   Compass,
   FileText,
+  FolderOpen,
   LayoutDashboard,
   Route,
   Search,
@@ -64,7 +65,10 @@ export const adminNavGroups: AdminNavGroup[] = [
   },
   {
     label: "Konten",
-    items: [{ name: "Blog", href: "/admin/blogs", icon: FileText }],
+    items: [
+      { name: "Blog", href: "/admin/blogs", icon: FileText },
+      { name: "Kategori Blog", href: "/admin/blog-categories", icon: FolderOpen },
+    ],
   },
 ];
 

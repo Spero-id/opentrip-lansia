@@ -18,7 +18,7 @@ type Baseline = {
 const BASELINE: Baseline = {
   R1: 0,
   R2: [], // Fase 11: .jsx/.js habis — pelanggaran baru = error penuh
-  R3: 207, // Fase 11 client-safe; +3 feat-012, +9 P0/P1, +2 P2 audit, +1 form peserta
+  R3: 210, // Fase 11 client-safe; +6 feat-012/P0-P2, +1 form peserta (revert), +3 feat-061
   R4: [
     "app-sidebar.tsx",
     "nav-main.tsx",

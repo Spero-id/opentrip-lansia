@@ -1,4 +1,4 @@
-import type { BlogPost } from "@/features/blog/types";
+import type { BlogCategory, BlogPost } from "@/features/blog/types";
 
 export const BLOG_DATE_LOCALE = "id-ID";
 
@@ -28,4 +28,14 @@ export async function fetchPublishedBlogs(): Promise<BlogPost[]> {
 export async function fetchPostBySlug(slug: string): Promise<BlogPost | null> {
   const posts = await fetchPublishedBlogs();
   return findPostBySlug(posts, slug);
+}
+
+export async function fetchBlogCategories(): Promise<BlogCategory[]> {
+  try {
+    const res = await fetch("/api/blog-categories");
+    const data: unknown = await res.json();
+    return Array.isArray(data) ? (data as BlogCategory[]) : [];
+  } catch {
+    return [];
+  }
 }

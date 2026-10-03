@@ -65,3 +65,17 @@ describe("fetchPostBySlug", () => {
     await expect(fetchPostBySlug("tak-ada")).resolves.toBeNull();
   });
 });
+
+describe("fetchBlogCategories", () => {
+  it("returns array payload", async () => {
+    const { fetchBlogCategories } = await import("@/features/blog/api/client");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ json: () => Promise.resolve([{ id: "c1", name: "Tips", slug: "tips" }]) }));
+    await expect(fetchBlogCategories()).resolves.toEqual([{ id: "c1", name: "Tips", slug: "tips" }]);
+  });
+
+  it("returns empty list on failure", async () => {
+    const { fetchBlogCategories } = await import("@/features/blog/api/client");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("down")));
+    await expect(fetchBlogCategories()).resolves.toEqual([]);
+  });
+});

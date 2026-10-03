@@ -8,6 +8,7 @@ export const API_ACCESS: Record<string, ApiAccess> = {
   "GET /api/trips/[id]/tiers": "public",
   "GET /api/blogs": "public",
   "GET /api/blogs/[id]": "public",
+  "GET /api/blog-categories": "public",
   "GET /api/reviews": "public",
   "GET /api/horeca-types": "public",
   "GET /api/vendor-types": "public",
@@ -85,6 +86,9 @@ export const API_ACCESS: Record<string, ApiAccess> = {
   "POST /api/blogs": "admin",
   "PUT /api/blogs/[id]": "admin",
   "DELETE /api/blogs/[id]": "admin",
+  "POST /api/blog-categories": "admin",
+  "PUT /api/blog-categories/[id]": "admin",
+  "DELETE /api/blog-categories/[id]": "admin",
 
   "POST /api/destinations/categories": "admin",
   "POST /api/upload": "admin",

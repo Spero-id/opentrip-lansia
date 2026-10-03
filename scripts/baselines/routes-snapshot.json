@@ -1,6 +1,7 @@
 {
   "/(account)/my-trips/page": "/my-trips",
   "/(account)/profile/page": "/profile",
+  "/(admin)/admin/blog-categories/page": "/admin/blog-categories",
   "/(admin)/admin/blogs/page": "/admin/blogs",
   "/(admin)/admin/bookings/page": "/admin/bookings",
   "/(admin)/admin/commissions/page": "/admin/commissions",
@@ -40,6 +41,8 @@
   "/api/admin/site-settings/referral-bonus/route": "/api/admin/site-settings/referral-bonus",
   "/api/admin/site-settings/route": "/api/admin/site-settings",
   "/api/auth/[...all]/route": "/api/auth/[...all]",
+  "/api/blog-categories/[id]/route": "/api/blog-categories/[id]",
+  "/api/blog-categories/route": "/api/blog-categories",
   "/api/blogs/[id]/route": "/api/blogs/[id]",
   "/api/blogs/route": "/api/blogs",
   "/api/bookings/[id]/route": "/api/bookings/[id]",

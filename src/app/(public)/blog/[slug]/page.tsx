@@ -7,14 +7,15 @@ import { ArrowLeft } from "lucide-react";
 import Subs from "@/features/newsletter/components/Subs";
 import { sanitizeBlogContent } from "@/utils/sanitize";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { fetchPostBySlug, formatBlogDate } from "@/features/blog/api/client";
-import type { BlogPost } from "@/features/blog/types";
+import { fetchBlogCategories, fetchPostBySlug, formatBlogDate } from "@/features/blog/api/client";
+import type { BlogCategory, BlogPost } from "@/features/blog/types";
 
 type BlogDetailStatus = "loading" | "found" | "notfound";
 
 export default function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
   const [post, setPost] = useState<BlogPost | null>(null);
+  const [category, setCategory] = useState<BlogCategory | null>(null);
   const [status, setStatus] = useState<BlogDetailStatus>("loading");
 
   useEffect(() => {
@@ -25,6 +26,12 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
         if (cancelled) return;
         setPost(found);
         setStatus(found ? "found" : "notfound");
+        if (found?.categoryId) {
+          fetchBlogCategories().then((cats) => {
+            if (cancelled) return;
+            setCategory(cats.find((c) => c.id === found.categoryId) ?? null);
+          });
+        }
       })
       .catch(() => {
         if (cancelled) return;
@@ -59,6 +66,14 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
             <div className="mt-6">
               <div className="text-xs font-semibold text-[#F49D1A] uppercase tracking-wider mb-3">
                 {formatBlogDate(post.publishedAt || post.createdAt)}
+                {category && (
+                  <>
+                    {" · "}
+                    <Link href={`/blog?category=${category.slug}`} className="hover:underline">
+                      {category.name}
+                    </Link>
+                  </>
+                )}
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight text-[#1F2937]">
                 {post.title}
