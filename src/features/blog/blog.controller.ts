@@ -57,7 +57,8 @@ export const blogController = {
   async updateBlog(req: NextRequest, ctx: IdParams) {
     try {
       const body = await req.json();
-      const data = await blogService.updateBlog(await idOf(ctx), body);
+      const session = await auth.api.getSession({ headers: req.headers });
+      const data = await blogService.updateBlog(await idOf(ctx), body, session?.user?.id ?? null);
       if (!data) return NextResponse.json({ error: "Blog tidak ditemukan" }, { status: 404 });
       return NextResponse.json(data);
     } catch (err) {
@@ -65,9 +66,10 @@ export const blogController = {
     }
   },
 
-  async deleteBlog(_req: NextRequest, ctx: IdParams) {
+  async deleteBlog(req: NextRequest, ctx: IdParams) {
     try {
-      await blogRepository.delete(await idOf(ctx));
+      const session = await auth.api.getSession({ headers: req.headers });
+      await blogService.deleteBlog(await idOf(ctx), session?.user?.id ?? null);
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
@@ -85,9 +87,11 @@ export const blogController = {
   async createCategory(req: NextRequest) {
     try {
       const body = await req.json();
+      const session = await auth.api.getSession({ headers: req.headers });
       const data = await blogService.createCategory({
         name: body.name,
         description: body.description,
+        adminId: session?.user?.id ?? null,
       });
       return NextResponse.json(data, { status: 201 });
     } catch (err) {
@@ -95,9 +99,10 @@ export const blogController = {
     }
   },
 
-  async deleteCategory(_req: NextRequest, ctx: IdParams) {
+  async deleteCategory(req: NextRequest, ctx: IdParams) {
     try {
-      await blogService.deleteCategory(await idOf(ctx));
+      const session = await auth.api.getSession({ headers: req.headers });
+      await blogService.deleteCategory(await idOf(ctx), session?.user?.id ?? null);
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
@@ -107,7 +112,8 @@ export const blogController = {
   async updateCategory(req: NextRequest, ctx: IdParams) {
     try {
       const body = await req.json();
-      const data = await blogService.updateCategory(await idOf(ctx), body);
+      const session = await auth.api.getSession({ headers: req.headers });
+      const data = await blogService.updateCategory(await idOf(ctx), { ...body, adminId: session?.user?.id ?? null });
       if (!data) return NextResponse.json({ error: "Kategori tidak ditemukan" }, { status: 404 });
       return NextResponse.json(data);
     } catch (err) {
