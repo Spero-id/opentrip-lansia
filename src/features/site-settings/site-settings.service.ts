@@ -21,4 +21,10 @@ export const siteSettingsService = {
   async getAllSettings() {
     return siteSettingsRepository.getAll();
   },
+
+  /** Snapshot { key, value } for audit purposes (single key). */
+  async getSetting(key: string) {
+    const value = await siteSettingsRepository.get(key);
+    return value === null ? null : { key, value };
+  },
 };

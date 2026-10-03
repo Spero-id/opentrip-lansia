@@ -27,7 +27,7 @@ export const userController = {
       if (session?.user && session.user.id === id && body.role && body.role !== session.user.role) {
         return NextResponse.json({ error: "Tidak dapat mengubah role akun sendiri" }, { status: 400 });
       }
-      await authService.updateUser(id, body);
+      await authService.updateUser(id, body, session?.user?.id ?? null);
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
@@ -41,7 +41,7 @@ export const userController = {
       if (session?.user && session.user.id === id) {
         return NextResponse.json({ error: "Tidak dapat menghapus akun sendiri" }, { status: 400 });
       }
-      await authService.deleteUser(id);
+      await authService.deleteUser(id, session?.user?.id ?? null);
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });

@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Route,
   Search,
+  ScrollText,
   ShoppingCart,
   Star,
   Tag,
@@ -68,6 +69,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     items: [
       { name: "Blog", href: "/admin/blogs", icon: FileText },
       { name: "Kategori Blog", href: "/admin/blog-categories", icon: FolderOpen },
+      { name: "Audit Log", href: "/admin/audit-log", icon: ScrollText },
     ],
   },
 ];

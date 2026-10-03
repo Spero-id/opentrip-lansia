@@ -1,10 +1,9 @@
 import { tripRepository } from "./trip.repository";
 import { db } from "@/lib/db";
-import { auditLogs } from "@/db/schema/utility";
-import { users } from "@/db/schema/auth";
+import { auditService, diffFields, pickFields } from "@/features/audit";
 import { bookingItems } from "@/db/schema/bookings";
 import { bookings } from "@/db/schema/bookings";
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import type { UUID } from "@/types";
 import type { trips, itineraryItems } from "@/db/schema/trips";
 import type { GroupCreateInput } from "./trip.repository";
@@ -38,7 +37,31 @@ export interface TierAuditEntry {
   createdAt: Date | null;
 }
 
-export async function recordTierAudit(
+const PRICE_AUDIT_FIELDS = ["name", "price", "quota"] as const;
+const TRIP_AUDIT_FIELDS = [
+  "title",
+  "slug",
+  "status",
+  "type",
+  "durationDays",
+  "location",
+  "province",
+  "priceMin",
+  "priceMax",
+  "isFeatured",
+  "isSeniorFriendly",
+] as const;
+const GROUP_AUDIT_FIELDS = [
+  "status",
+  "startDate",
+  "endDate",
+  "maxParticipants",
+  "minParticipants",
+  "isActive",
+  "notes",
+] as const;
+
+async function recordPriceAudit(
   adminId: string | null,
   action: "create" | "update" | "delete",
   priceId: string,
@@ -46,19 +69,15 @@ export async function recordTierAudit(
   newValues: Record<string, unknown> | null,
   description: string,
 ): Promise<void> {
-  try {
-    await db.insert(auditLogs).values({
-      adminId: adminId ?? null,
-      action,
-      entityType: "trip_price",
-      entityId: priceId ?? null,
-      oldValues: oldValues as unknown as object | null,
-      newValues: newValues as unknown as object | null,
-      description,
-    });
-  } catch (err) {
-    console.error("recordTierAudit failed:", err);
-  }
+  await auditService.record({
+    adminId,
+    action,
+    entityType: "trip_price",
+    entityId: priceId,
+    oldValues,
+    newValues,
+    description,
+  });
 }
 
 export interface PriceTierInput {
@@ -160,11 +179,7 @@ export const tripService = {
       validUntil: data.validUntil,
       isActive: data.isActive,
     });
-    await recordTierAudit(adminId ?? null, "create", created.id, null, {
-      name: data.name,
-      price: data.price,
-      quota: data.quota,
-    }, `Tier "${data.name}" dibuat`);
+    await recordPriceAudit(adminId ?? null, "create", created.id, null, pickFields(data, PRICE_AUDIT_FIELDS), `Tier "${data.name}" dibuat`);
     return created;
   },
 
@@ -192,34 +207,14 @@ export const tripService = {
       validUntil: data.validUntil,
       isActive: data.isActive,
     });
-    await recordTierAudit(adminId ?? null, "update", priceId, {
-      name: price.name,
-      price: price.price,
-      quota: price.quota,
-    }, {
-      name: data.name,
-      price: data.price,
-      quota: data.quota,
-    }, `Tier "${price.name}" diubah`);
+    await recordPriceAudit(adminId ?? null, "update", priceId, pickFields(price, PRICE_AUDIT_FIELDS), pickFields(data, PRICE_AUDIT_FIELDS), `Tier "${price.name}" diubah`);
     return updated;
   },
 
   async getPriceHistory(groupId: UUID): Promise<TierAuditEntry[]> {
     const prices = await tripRepository.findPricesByDepartureId(groupId);
     if (prices.length === 0) return [];
-    const rows = await db
-      .select({
-        id: auditLogs.id,
-        action: auditLogs.action,
-        description: auditLogs.description,
-        adminName: users.name,
-        createdAt: auditLogs.createdAt,
-      })
-      .from(auditLogs)
-      .leftJoin(users, eq(users.id, auditLogs.adminId))
-      .where(inArray(auditLogs.entityId, prices.map((p) => p.id)))
-      .orderBy(desc(auditLogs.createdAt))
-      .limit(50);
+    const rows = await auditService.listByEntityIds(prices.map((p) => p.id));
     return rows;
   },
 
@@ -259,18 +254,14 @@ export const tripService = {
       throw new ConflictError("Grup harus memiliki minimal satu tier harga");
     }
     await tripRepository.deletePrice(priceId);
-    await recordTierAudit(adminId ?? null, "delete", priceId, {
-      name: price.name,
-      price: price.price,
-      quota: price.quota,
-    }, null, `Tier "${price.name}" dihapus`);
+    await recordPriceAudit(adminId ?? null, "delete", priceId, pickFields(price, PRICE_AUDIT_FIELDS), null, `Tier "${price.name}" dihapus`);
   },
 
   async reserveQuota(priceId: UUID, qty: number): Promise<boolean> {
     return tripRepository.updateQuota(priceId, qty);
   },
 
-  async createTrip(data: TripCreateInput) {
+  async createTrip(data: TripCreateInput, adminId?: string | null) {
     const { itineraryItems, departures, price, ...tripData } = data;
     const trip = await tripRepository.create(tripData);
 
@@ -290,11 +281,21 @@ export const tripService = {
       );
     }
 
+    await auditService.record({
+      adminId: adminId ?? null,
+      action: "create",
+      entityType: "trip",
+      entityId: trip.id,
+      newValues: pickFields(trip, TRIP_AUDIT_FIELDS),
+      description: `Trip "${trip.title}" dibuat`,
+    });
+
     return this.getFullTrip(trip.id);
   },
 
-  async updateTrip(id: UUID, data: TripCreateInput) {
+  async updateTrip(id: UUID, data: TripCreateInput, adminId?: string | null) {
     const { itineraryItems, departures, price, ...tripData } = data;
+    const before = await tripRepository.findById(id);
     const trip = await tripRepository.update(id, tripData);
     if (!trip) return null;
 
@@ -312,6 +313,19 @@ export const tripService = {
           price,
         }))
       );
+    }
+
+    const changes = diffFields(before, trip, TRIP_AUDIT_FIELDS);
+    if (Object.keys(changes).length > 0) {
+      await auditService.record({
+        adminId: adminId ?? null,
+        action: "update",
+        entityType: "trip",
+        entityId: id,
+        oldValues: pickFields(before, TRIP_AUDIT_FIELDS),
+        newValues: changes,
+        description: `Trip "${trip.title}" diperbarui`,
+      });
     }
 
     return this.getFullTrip(id);
@@ -338,8 +352,21 @@ export const tripService = {
     };
   },
 
-  async deleteTrip(id: UUID) {
-    return tripRepository.delete(id);
+  async deleteTrip(id: UUID, adminId?: string | null) {
+    const before = await tripRepository.findById(id);
+    const result = await tripRepository.delete(id);
+    if (before) {
+      await auditService.record({
+        adminId: adminId ?? null,
+        action: "delete",
+        entityType: "trip",
+        entityId: id,
+        oldValues: pickFields(before, TRIP_AUDIT_FIELDS),
+        newValues: null,
+        description: `Trip "${before.title}" dihapus`,
+      });
+    }
+    return result;
   },
 
   async getTripGroups(tripId: UUID) {
@@ -353,13 +380,22 @@ export const tripService = {
     return tripRepository.findGroupById(groupId);
   },
 
-  async createGroup(tripId: UUID, data: GroupCreateInput) {
+  async createGroup(tripId: UUID, data: GroupCreateInput, adminId?: string | null) {
     const trip = await tripRepository.findById(tripId);
     if (!trip) throw new NotFoundError("Trip");
-    return tripRepository.createGroup(tripId, data);
+    const group = await tripRepository.createGroup(tripId, data);
+    await auditService.record({
+      adminId: adminId ?? null,
+      action: "create",
+      entityType: "trip_group",
+      entityId: group.id,
+      newValues: pickFields(group, GROUP_AUDIT_FIELDS),
+      description: `Grup baru dibuat pada trip "${trip.title}"`,
+    });
+    return group;
   },
 
-  async updateGroup(groupId: UUID, data: Partial<GroupCreateInput>) {
+  async updateGroup(groupId: UUID, data: Partial<GroupCreateInput>, adminId?: string | null) {
     const group = await tripRepository.findGroupById(groupId);
     if (!group) throw new NotFoundError("Grup");
 
@@ -376,10 +412,23 @@ export const tripService = {
     if (data.minParticipants !== undefined) updateData.minParticipants = data.minParticipants;
     if (data.notes !== undefined) updateData.notes = data.notes;
 
-    return tripRepository.updateGroup(groupId, updateData);
+    const updated = await tripRepository.updateGroup(groupId, updateData);
+    const changes = diffFields(group, updated, GROUP_AUDIT_FIELDS);
+    if (Object.keys(changes).length > 0) {
+      await auditService.record({
+        adminId: adminId ?? null,
+        action: "update",
+        entityType: "trip_group",
+        entityId: groupId,
+        oldValues: pickFields(group, GROUP_AUDIT_FIELDS),
+        newValues: changes,
+        description: "Detail grup diperbarui",
+      });
+    }
+    return updated;
   },
 
-  async deleteGroup(groupId: UUID) {
+  async deleteGroup(groupId: UUID, adminId?: string | null) {
     const group = await tripRepository.findGroupById(groupId);
     if (!group) throw new NotFoundError("Grup");
 
@@ -388,10 +437,20 @@ export const tripService = {
       throw new ConflictError("Tidak bisa menghapus grup yang sudah memiliki booking aktif");
     }
 
-    return tripRepository.deleteGroup(groupId);
+    const result = await tripRepository.deleteGroup(groupId);
+    await auditService.record({
+      adminId: adminId ?? null,
+      action: "delete",
+      entityType: "trip_group",
+      entityId: groupId,
+      oldValues: pickFields(group, GROUP_AUDIT_FIELDS),
+      newValues: null,
+      description: "Grup dihapus",
+    });
+    return result;
   },
 
-  async activateGroup(tripId: UUID, groupId: UUID) {
+  async activateGroup(tripId: UUID, groupId: UUID, adminId?: string | null) {
     const trip = await tripRepository.findById(tripId);
     if (!trip) throw new NotFoundError("Trip");
 
@@ -404,7 +463,33 @@ export const tripService = {
       throw new ValidationError("Hanya grup dengan status scheduled atau confirmed yang bisa diaktifkan");
     }
 
-    return tripRepository.activateGroup(tripId, groupId);
+    const result = await tripRepository.activateGroup(tripId, groupId);
+    await auditService.record({
+      adminId: adminId ?? null,
+      action: "update",
+      entityType: "trip_group",
+      entityId: groupId,
+      oldValues: pickFields(group, GROUP_AUDIT_FIELDS),
+      newValues: { status: "confirmed", isActive: true },
+      description: `Grup diaktifkan pada trip "${trip.title}"`,
+    });
+    return result;
+  },
+
+  async completeGroup(groupId: UUID, adminId?: string | null) {
+    const group = await tripRepository.findGroupById(groupId);
+    if (!group) throw new NotFoundError("Grup");
+    const updated = await tripRepository.updateGroup(groupId, { status: "completed", isActive: false });
+    await auditService.record({
+      adminId: adminId ?? null,
+      action: "update",
+      entityType: "trip_group",
+      entityId: groupId,
+      oldValues: pickFields(group, GROUP_AUDIT_FIELDS),
+      newValues: { status: "completed", isActive: false },
+      description: "Grup ditandai selesai",
+    });
+    return updated;
   },
 
   async getActiveGroupInfo(tripId: UUID) {

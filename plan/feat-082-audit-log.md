@@ -14,50 +14,50 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
   - `oldValues`/`newValues` = objek field terpilih, bukan dump baris penuh
 **4 jebakan yang harus dijaga**:
   1. `entityType` varchar(100) → pakai nama tabel snake_case konsisten (`trip_price`, `payment`, `user`)
-  2. `entityId` **uuid** → hanya untuk entitas ber-uuid PK; tabel dengan varchar PK (mis. `site_settings.key`) → `entityId = null`, simpan kuncinya di `description`/newValues
+  2. `entityId` **uuid** → hanya untuk entitas ber-uuid PK; key non-uuid (mis. `users.id` = cuid text, `site_settings.key` varchar) dinormalisasi di `auditService.record`: `entity_id = null` + kunci asli disimpan di `newValues.entityRef` (**TERBUKTI live**: versi pertama gagal insert `string_to_uuid` dan jejak hilang)
   3. **Jangan log data sensitif**: no password/token/API key; nomor HP/email cukup disamarkan sebagian
   4. `audit_logs` tidak boleh ikut jadi "publik" di api-policy (hanya `GET` untuk admin)
 
 ## Fase 1 — Pisahkan helper generic (fondasi)
 
-- [ ] `src/features/audit/audit.schema.ts` — re-export `auditLogs` (ikuti `contact.schema.ts`)
-- [ ] `src/features/audit/audit.service.ts`:
+- [x] `src/features/audit/audit.schema.ts` — re-export `auditLogs` (ikuti `contact.schema.ts`)
+- [x] `src/features/audit/audit.service.ts`:
   - `recordAudit({ adminId, action, entityType, entityId?, oldValues?, newValues?, description? })`
   - `diffFields(before, after, allowlist)` → hanya field yang berubah, redaksi otomatis untuk key sensitif
   - `REDACTED_KEYS = ["password","token","secret","apiKey","authorization"]`
   - `listAudit({ entityType?, entityId?, adminId?, limit, cursor })` + `countAudit(...)` untuk pagination
-- [ ] `src/features/audit/audit.repository.ts` — query list (join `users` untuk nama admin), seperti `getPriceHistory`
-- [ ] `src/features/audit/index.ts` — barrel
-- [ ] **Tidak** controller dulu (fase 1 = infra saja, tanpa route → routes snapshot tidak berubah)
+- [x] `src/features/audit/audit.repository.ts` — query list (join `users` untuk nama admin), seperti `getPriceHistory`
+- [x] `src/features/audit/index.ts` — barrel
+- [x] **Tidak** controller dulu (fase 1 = infra saja, tanpa route → routes snapshot tidak berubah)
 
 ## Fase 2 — Backfill tier-pricing ke helper generic
 
-- [ ] Ganti `recordTierAudit` → `recordAudit` dengan `entityType: "trip_price"`
-- [ ] `getPriceHistory` → `listAudit({ entityType: "trip_price", entityId: ids })` (perilaku & respons **harus identik** → 0 ubah UI)
-- [ ] Test: `trip-api.test.ts` existing tetap hijau + test baru `audit.service.test.ts` (redaksi key, diff allowlist, toleransi error DB)
+- [x] Ganti `recordTierAudit` → `recordAudit` dengan `entityType: "trip_price"`
+- [x] `getPriceHistory` → `listAudit({ entityType: "trip_price", entityId: ids })` (perilaku & respons **harus identik** → 0 ubah UI)
+- [x] Test: `trip-api.test.ts` existing tetap hijau + test baru `audit.service.test.ts` (redaksi key, diff allowlist, toleransi error DB)
 
 ## Fase 3 — Prioritas sensitivitas ( Payments & Users )
 
-- [ ] `payment.controller.ts`: verify/reject bukti bayar, update status → `entityType: "payment"`
+- [x] `payment.controller.ts`: verify/reject bukti bayar, update status → `entityType: "payment"`
   - `newValues` whitelist: `status`, `verifiedBy`, `verifiedAt` (**jangan** `proofUrl` penuh → disamarkan)
-- [ ] `user.controller.ts`: ubah role/status/verifikasi → `entityType: "user"`
-- [ ] Test: mutasi admin menulis 1 baris audit; `actorId` null (tanpa session) tetap menulis dgn `adminId: null`
+- [x] `user.controller.ts`: ubah role/status/verifikasi → `entityType: "user"`
+- [x] Test: mutasi admin menulis 1 baris audit; `actorId` null (tanpa session) tetap menulis dgn `adminId: null`
 
 ## Fase 4 — Endpoint baca audit log (UI)
 
-- [ ] `GET /api/admin/audit-logs?entityType=&action=&adminId=&limit=&cursor=` (admin)
-- [ ] Policy: `"GET /api/admin/audit-logs": "admin"` (+ **tambah ke audit test api-auth**)
-- [ ] UI: `/admin/audit-log` (konten read-only): tabel waktu · admin · aksi · entitas · deskripsi ·-expand `oldValues → newValues`
-- [ ] Filter: entitas + aksi + rentang tanggal; **tanpa** filter "ubah" (audit immutable)
-- [ ] Nav: grup **Konten** → `Audit Log` (`ScrollText`) di `nav-data.ts` **dan** `app-sidebar.tsx` (dua sumber!)
+- [x] `GET /api/admin/audit-logs?entityType=&action=&adminId=&limit=&from=&to=` (admin)
+- [x] Policy: `"GET /api/admin/audit-logs": "admin"` (+ **tambah ke audit test api-auth**)
+- [x] UI: `/admin/audit-log` (konten read-only): tabel waktu · admin · aksi · entitas · deskripsi ·-expand `oldValues → newValues`
+- [x] Filter: entitas + aksi (+ parameter rentang tanggal & entityId di API, dipakai history tier); **tanpa** filter "ubah" (audit immutable)
+- [x] Nav: grup **Konten** → `Audit Log` (`ScrollText`) di `nav-data.ts` **dan** `app-sidebar.tsx` (dua sumber!)
 
 ## Fase 5 — Modul lain (bisa setelah PR Fase 1-4)
 
-- [ ] `trip`, `group`, `blog`, `blog_category` (CRUD admin)
-- [ ] `promotion`, `commission`, `private_trip` proposal
-- [ ] `site_settings` (`entityId` null, kunci di description)
-- [ ] `user` hapus (action `delete`)
-- [ ] Tiap modul = 1 commit terpisah (konvensi repo)
+- [x] `trip` + `trip_group` (create/update/delete/activate/complete) dan `blog` + `blog_category` (CRUD admin)
+- [x] `promotion` (create/update/delete) dan `commission` (create/update/delete) — **decided skip `private_trip` proposal**: perubahan proposal hanya via admin PATCH/PUT, jejak ditolak/tANDS masih di domain booking; lift ke ticket terpisah bila dibutuhkan
+- [x] `site_settings` (kunci non-uuid otomatis jadi `entityRef`)
+- [x] `user` hapus (action `delete`) — sudah ikut di Fase 3
+- [x] Tiap modul = 1 commit terpisah (konvensi repo): 5a trip+group · 5b blog+kategori · 5c promotion+commission+settings
 
 ## Batasan & keputusan
 
@@ -68,14 +68,14 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
 
 ## Verifikasi (tiap fase)
 
-- [ ] `npx tsc --noEmit` → 0
-- [ ] `npm run lint` → 0 error
-- [ ] `npx vitest run` → hijau (baseline 252, +test baru)
-- [ ] `npm run build` → hijau
-- [ ] `npm run check:routes` → snapshot ikut saat Fase 4 (+1 route)
-- [ ] `npx vitest run src/lib/auth` → audit policy hijau
-- [ ] `node scripts/check-structure.ts` → all rules within baseline (R5: route tipis wajib delegation)
-- [ ] Live smoke: ubah harga tier → `GET /api/admin/audit-logs` menampilkan 1 baris `update · trip_price · 350000→375000`
+- [x] `npx tsc --noEmit` → 0
+- [x] `npm run lint` → 0 error
+- [x] `npx vitest run` → hijau (baseline 252, +test baru)
+- [x] `npm run build` → hijau
+- [x] `npm run check:routes` → snapshot ikut saat Fase 4 (+1 route)
+- [x] `npx vitest run src/lib/auth` → audit policy hijau
+- [x] `node scripts/check-structure.ts` → all rules within baseline (R5: route tipis wajib delegation)
+- [x] Live smoke: ubah harga tier → `GET /api/admin/audit-logs` menampilkan 1 baris `update · trip_price · 350000→375000`
 
 ## Out of scope
 

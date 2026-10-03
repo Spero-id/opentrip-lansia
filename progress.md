@@ -2356,3 +2356,61 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 ## Session 63 — 2026-10-02
 
 **Restructure DONE — 127/127.** PR #124 (fase-11) digabung; 11.6 + 10.6 + P8-④b dicentang dengan catatan jujur. Dokumen status → DONE.
+
+## Session 71 — 2026-10-03 (feat-082 audit log, Fase 1-2, branch feat/082-audit-log)
+
+**Fakta awal:** tabel `audit_logs` sudah ada (`src/db/schema/utility.ts:14`) tapi hanya dipakai satu modul — `recordTierAudit()` di `trip.service.ts` (trip_price create/update/delete) + `GET .../prices/history`.
+
+**Fase 1 — helper generic (selesai):** modul baru `src/features/audit/`:
+- `audit.types.ts` (AuditAction/RecordInput/Entry/ListFilter) · `audit.schema.ts` (re-export) · `audit.repository.ts` (insert + list berfilter + listByEntityIds) · `audit.service.ts` (`record`, `diffFields`, `pickFields`, `isSensitiveKey`) · `index.ts`
+- `record()` **tidak pernah melempar** (swallow + `console.error`) → audit tidak bisa menggagalkan write bisnis
+- Redaksi otomatis key sensitif (`password`, `token`, `apiKey`, `pin`, dll — normalisasi nama key)
+- `diffFields(before, after, allowlist)` → hanya field terotorisasi yang berubah; jsonb tidak pernah berisi dump baris penuh
+
+**Fase 2 — backfill tier-pricing (selesai):** `trip.service.ts` sekarang pakai `auditService.record` (`entityType: "trip_price"`) + `pickFields(PRICE_AUDIT_FIELDS)`; `getPriceHistory` → `auditService.listByEntityIds`. **Respons & UI 100% identik** (0 perubahan render).
+
+**Penting (ratchet):** import lintas fitur harus lewat **barrel** `@/features/audit`, bukan path dalam → R3 naik 210→211 lalu 212 (baseline FAIL). Sudah dikoreksi ke barrel, `check-structure` kembali `all rules within baseline`.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **267** (252 + 15 test baru `audit.service.test.ts`: diff allowlist, redaksi, null≡undefined, Date/object compare, error insert ditelan) · build compiled · routes 101→101 identik · drift 0 · auth audit 10 · structure hijau.
+**Live smoke:** `PUT .../prices/:id` (350000→350001) → baris audit terisi (`entityType: trip_price`, `oldValues.price: "350000"`, `newValues.price: "350001"`, `adminId` terisi) → `GET .../prices/history` tetap sama bentuknya. Harga dikembalikan ke 350000.
+
+## Session 72 — 2026-10-03 (feat-082 audit log, Fase 3 payments & users, branch feat/082-audit-log)
+
+**Payments** (`payment.controller.ts#review`): catat `entityType: "payment"` setiap approve/reject. Allowlist `status · reviewedBy · reviewedAt · adminNote`; **`proofUrl` sengaja tidak ikut** (berkas unggahan, bukan fakta audit). Nielsen: sudah diproses → 400 dan **tidak** menulis audit; non-admin → 403 tanpa audit.
+
+**Users** (`auth.service.ts` + `user.controller.ts`): `updateUser`/`deleteUser` sekarang menerima `adminId` dari controller. Snapshot sebelum + sesudah → `diffFields(USER_AUDIT_FIELDS)` sehingga `newValues` hanya berisi field yang benar-benar berubah; **tidak ada baris audit bila tidak ada perubahan**. Allowlist `name · role · phone · emailVerified` — **email tidak pernah masuk log** (PII). Delete = snapshot lama + `newValues: null`.
+
+**Jebakan penting (TERBUKTI live, bukan teori):** `audit_logs.entity_id` bertipe **uuid**, tapi `users.id` bertipe **text** (cuid Better Auth) → insert gagal `string_to_uuid`. Karena `record()` menelan error, write bisnis tetap selamat tetapi **jejak hilang**. Perbaikan: normalisasi di layer service (`isUuid`) → key non-uuid disimpan `entity_id = null` + `newValues.entityRef`. Ini juga menutup jebakan `site_settings.key` (varchar) untuk Fase 5.
+
+**Catatan ratchet:** `vi.mock` leaf di test (`payment.service`, `payment.repository`, `auth.config`) + import controller = 4 deep import. Barrel **tidak** bisa dipakai untuk mock (leaf yang diimpor controller berbeda objek) → baseline R3 dinaikkan 210 → **214** dengan catatan alasan, sesuai pola yang sudah dipakai feat-061.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **281** (+13: normalisasi entityId, payment approve/reject/sudah-diproses/non-admin, user update/delete/no-change/null-admin/urutan update-lalu-audit) · build compiled · routes 101→101 · drift 0 · auth audit 10 · structure hijau.
+**Live smoke:** `PUT /api/users/:id` (phone) → baris `user` tertulis dengan `entityRef`, `newValues` hanya field berubah; update dengan nilai sama → **tidak** ada baris baru. `POST /api/payments/:id/review` reject → baris `payment` (pending → rejected, `adminNote` tercatat, tanpa `proofUrl`). Semua data QA dikembalikan (phone user = null, payment kembali `pending`, note dibersihkan).
+
+## Session 73 — 2026-10-03 (feat-082 audit log, Fase 4 endpoint + UI, branch feat/082-audit-log)
+
+**Endpoint:** `GET /api/admin/audit-logs?entityType=&entityId=&adminId=&action=&from=&to=&limit=` via `audit.controller.ts` (route tipis + `requireAdmin`, policy `"admin"`, R5 tetap 0). `limit` default 50, cap 200, input sampah → default.
+
+**UI `/admin/audit-log`** (konten, grup **Konten**, ikon ScrollText, ada di `nav-data.ts` **dan** `app-sidebar.tsx`): tabel waktu · admin · aksi · entitas · keterangan, tiap baris bisa di-expand untuk melihat perubahan field-per-field (`nama: lama → baru`). Filter entitas + aksi dengan reset, empty state membedakan "belum ada aktivitas" vs "tidak ada pada filter ini". **Tidak ada tombol edit/hapus** — append-only.
+
+**Catatan ratchet:** R1 (komentar Indonesia) dijaga 0 → komentar & label UI ditulis英文/bahasa netral; R8 naik 2 dari kata Indonesia di label ("harga", "Keterangan", "baca", "untuk") → label diubah ("Tier trip", "Detail", "hanya-baca" → "permanen") sampai R8 kembali 504. R3 naik 3 (route audit-logs + 2 `vi.mock` leaf di test controller) → baseline 214 → **217** dengan catatan.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **286** (+5 test controller: filter diteruskan, default/cap limit, junk limit, rentang tanggal, error 500) · build compiled · routes 101 → **103** (snapshot diperbarui: `/admin/audit-log` + `/api/admin/audit-logs`) · drift 0 · auth audit 10 · structure hijau.
+**Live smoke:** anon `401` · user biasa `403` (API) dan halaman dialihkan ke `/forbidden` · admin `200` dengan isi tabel benar. Filter `entityType=user` mengembalikan baris `user` (`newValues: phone + entityRef`). Legacy `trip_price` dengan entityId non-uuid (`p1`) otomatis ternormalisasi jadi `entityRef`. Dev server dimatikan, tidak ada data QA yang tersisa.
+
+## Session 74 — 2026-10-03 (feat-082 audit log, Fase 5 modul lain, branch feat/082-audit-log)
+
+Tiga commit terpisah sesuai konvensi repo (satu commit per modul):
+
+**5a `38159ee` — trip + trip_group.** `createTrip`/`updateTrip`/`deleteTrip` dan `createGroup`/`updateGroup`/`deleteGroup`/`activateGroup` + **baru** `completeGroup` (sebelumnya controller menulis `tripRepository.updateGroup` langsung — sekarang lewat service agar bisa diaudit). Allowlist trip: title · slug · status · type · durationDays · location · province · priceMin/Max · isFeatured · isSeniorFriendly. Allowlist grup: status · startDate · endDate · maxParticipants · minParticipants · isActive · notes. `actorId(req)` ditambahkan di `trip.controller.ts` (sebelumnya hanya `group.controller.ts` punya).
+
+**5b `a7492ab` — blog + blog_category.** `createBlog`/`updateBlog`/`deleteBlog` + create/update/delete kategori. `deleteBlog` sebelumnya memanggil `blogRepository.delete` langsung dari controller → kini lewat service `deleteBlog` (konsisten + ter-audit).
+
+**5c `ca66988` — promotion + commission + site_settings.** `commission` diam-diam milik `referral.controller.ts` (bukan modul commission sendiri) — di-situ dipoles. `site_settings` memakai kunci varchar → otomatis aman lewat normalisasi `entityRef`.
+
+**Keputusan sadar:** `private_trip` proposal **dilewati** — jejak proposal lebih dekat ke domain booking; lift ke ticket terpisah bila dibutuhkan.
+
+**Pola yang konsisten di semua modul:** create = `pickFields(new)`, update = `diffFields(before, after, allowlist)` (**tanpa perubahan = tanpa baris**,update dengan nilai identik tidak menghasilkan apa pun), delete = `pickFields(old)` + `newValues: null`.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **286** (tetap — fase ini menambah kode produksi, bukan surface test baru) · build compiled · routes 103→103 · drift 0 · auth 10 · structure hijau.
+**Live smoke:** promo create/update/delete → 3 baris (`newValues` update hanya berisi `value`, bukan dump baris); trip `location` diubah → 1 baris `update` (lokasi lama → baru), lalu dikembalikan; kategori blog create/rename/delete → 3 baris. Trip `status: published` (sudah published) dan `isFeatured: true` (sudah true) → **nol baris**, sesuai desain. Semua data QA dihapus (promo & kategori 0, lokasi trip kembali asli), dev server dimatikan.

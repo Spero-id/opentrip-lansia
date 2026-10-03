@@ -8,6 +8,7 @@ import { tripDepartures, trips } from "@/db/schema/trips";
 import { users } from "@/db/schema/auth";
 import { desc, eq, count, inArray, sql } from "drizzle-orm";
 import { toPublicError } from "@/lib/errors/to-public-error";
+import { auditService, diffFields, pickFields } from "@/features/audit";
 
 type IdParams = { params: Promise<{ id: string }> };
 
@@ -18,6 +19,7 @@ async function idOf(ctx: IdParams): Promise<string> {
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const COMMISSION_STATUSES = new Set(["pending", "approved", "paid", "rejected"]);
+const COMMISSION_AUDIT_FIELDS = ["agentId", "bookingId", "amount", "status"] as const;
 
 function invalidCommissionCreate(body: { agentId?: unknown; bookingId?: unknown; amount?: unknown; status?: unknown }): string | null {
   if (typeof body.agentId !== "string" || !body.agentId.trim()) return "agentId wajib diisi";
@@ -45,6 +47,14 @@ export const referralController = {
       if (invalid) return NextResponse.json({ error: invalid }, { status: 400 });
       const { agentId, bookingId, amount, status } = body;
       const data = await referralRepository.createCommission({ agentId: agentId.trim(), bookingId, amount, status });
+      await auditService.record({
+        adminId: (await auth.api.getSession({ headers: req.headers }))?.user?.id ?? null,
+        action: "create",
+        entityType: "commission",
+        entityId: data.id,
+        newValues: pickFields(data, COMMISSION_AUDIT_FIELDS),
+        description: `Komisi ${amount} dibuat`,
+      });
       return NextResponse.json(data, { status: 201 });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
@@ -65,6 +75,7 @@ export const referralController = {
     try {
       const id = await idOf(ctx);
       const body = await req.json();
+      const before = await referralRepository.findCommissionById(id);
       const updates: { agentId?: string; bookingId?: string; amount?: string; status?: string } = {};
       if ("agentId" in body) {
         if (typeof body.agentId !== "string" || !body.agentId.trim()) {
@@ -97,15 +108,41 @@ export const referralController = {
         );
       }
       await referralRepository.updateCommission(id, updates);
+      const after = await referralRepository.findCommissionById(id);
+      const changes = diffFields(before, after, COMMISSION_AUDIT_FIELDS);
+      if (Object.keys(changes).length > 0) {
+        await auditService.record({
+          adminId: (await auth.api.getSession({ headers: req.headers }))?.user?.id ?? null,
+          action: "update",
+          entityType: "commission",
+          entityId: id,
+          oldValues: pickFields(before, COMMISSION_AUDIT_FIELDS),
+          newValues: changes,
+          description: `Komisi diperbarui (${Object.keys(changes).join(", ")})`,
+        });
+      }
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
     }
   },
 
-  async deleteCommission(_req: NextRequest, ctx: IdParams) {
+  async deleteCommission(req: NextRequest, ctx: IdParams) {
     try {
-      await referralRepository.deleteCommission(await idOf(ctx));
+      const id = await idOf(ctx);
+      const before = await referralRepository.findCommissionById(id);
+      await referralRepository.deleteCommission(id);
+      if (before) {
+        await auditService.record({
+          adminId: (await auth.api.getSession({ headers: req.headers }))?.user?.id ?? null,
+          action: "delete",
+          entityType: "commission",
+          entityId: id,
+          oldValues: pickFields(before, COMMISSION_AUDIT_FIELDS),
+          newValues: null,
+          description: "Komisi dihapus",
+        });
+      }
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });

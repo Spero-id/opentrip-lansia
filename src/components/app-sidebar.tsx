@@ -16,7 +16,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { isHrefActive } from "@/app/(admin)/admin/components/nav-data"
-import { LayoutDashboard, Compass, Users, Tag, ShoppingCart, FileText, ExternalLink } from "lucide-react"
+import { LayoutDashboard, Compass, Users, Tag, ShoppingCart, FileText, ScrollText, ExternalLink } from "lucide-react"
 
 const data = {
   navMain: [
@@ -123,6 +123,10 @@ const data = {
         {
           title: "Kategori Blog",
           url: "/admin/blog-categories",
+        },
+        {
+          title: "Audit Log",
+          url: "/admin/audit-log",
         },
       ],
     },

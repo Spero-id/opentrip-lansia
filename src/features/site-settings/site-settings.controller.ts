@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { siteSettingsService } from "./site-settings.service";
 import { toPublicError } from "@/lib/errors/to-public-error";
+import { auditService, pickFields } from "@/features/audit";
+import { getSessionUser } from "@/lib/auth";
+
+const SETTINGS_AUDIT_FIELDS = ["key", "value"] as const;
 
 export const siteSettingsController = {
   async list() {
@@ -23,7 +27,20 @@ export const siteSettingsController = {
         if (isNaN(numVal) || numVal < 0) {
           return NextResponse.json({ error: "Nilai harus berupa angka positif" }, { status: 400 });
         }
+        const before = await siteSettingsService.getSetting(key);
         await siteSettingsService.setReferralBonusPoints(numVal);
+        const after = await siteSettingsService.getSetting(key);
+        if (before?.value !== after?.value) {
+          await auditService.record({
+            adminId: (await getSessionUser(req))?.id ?? null,
+            action: "update",
+            entityType: "site_settings",
+            entityId: key,
+            oldValues: pickFields(before, SETTINGS_AUDIT_FIELDS),
+            newValues: pickFields(after, SETTINGS_AUDIT_FIELDS),
+            description: `Pengaturan "${key}" diubah`,
+          });
+        }
       } else {
         return NextResponse.json({ error: "Setting tidak dikenali" }, { status: 400 });
       }

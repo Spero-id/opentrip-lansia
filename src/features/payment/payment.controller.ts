@@ -9,10 +9,14 @@ import { paymentRepository } from "./payment.repository";
 import { isCompleteAccount } from "./payment-account";
 import { toPublicError } from "@/lib/errors/to-public-error";
 import { notificationService } from "@/features/notification/notification.service";
+import { auditService, pickFields } from "@/features/audit";
 
 type PaymentIdParams = { params: Promise<{ paymentId: string }> };
 
 const ALLOWED_METHODS = new Set(["BCA", "BRI", "MANDIRI", "GOPAY", "OVO", "DANA", "QRIS"]);
+
+/** Payment fields allowed in audit — `proofUrl` is deliberately excluded (uploaded file). */
+const PAYMENT_AUDIT_FIELDS = ["status", "reviewedBy", "reviewedAt", "adminNote"] as const;
 
 export const paymentController = {
   async create(req: NextRequest) {
@@ -108,6 +112,15 @@ export const paymentController = {
       if (!payment) {
         return NextResponse.json({ error: "Pembayaran tidak ditemukan." }, { status: 404 });
       }
+      await auditService.record({
+        adminId: session.user.id,
+        action: "update",
+        entityType: "payment",
+        entityId: paymentId,
+        oldValues: pickFields(existing, PAYMENT_AUDIT_FIELDS),
+        newValues: pickFields(payment, PAYMENT_AUDIT_FIELDS),
+        description: action === "approve" ? "Pembayaran disetujui admin" : "Pembayaran ditolak admin",
+      });
       return NextResponse.json(payment);
     } catch (err) {
       const message = toPublicError(err, "Terjadi kesalahan");
