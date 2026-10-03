@@ -19,6 +19,8 @@ Folder perencanaan proyek. Semua dokumen berbahasa Indonesia, konsisten dengan
 |---|---|---|
 | [`spec-referral-commission.md`](./spec-fitur/spec-referral-commission.md) | feat-073 | Sistem referral: kode referral di profile, input di checkout, history referral |
 | [`spec-group-trip.md`](./spec-fitur/spec-group-trip.md) | feat-011b | Group Trip: satu trip punya banyak grup, set grup aktif, upload foto per grup |
+| [`feat-061-blog-categories.md`](./feat-061-blog-categories.md) | feat-061 | Kategori blog: CRUD backend + halaman admin `/admin/blog-categories` + filter publik |
+| [`feat-082-audit-log.md`](./feat-082-audit-log.md) | feat-082 | Audit log: helper generic `recordAudit` + endpoint/UI `/admin/audit-log` |
 
 ### 📋 Belum ada spec formal
 

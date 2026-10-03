@@ -638,7 +638,8 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "contact.schema.ts with auditLogs table"
+          "evidence": "Tabel auditLogs ada di src/db/schema/utility.ts (utility.ts:14) tapi hanya dipakai 1 modul: recordTierAudit() di src/features/trip/trip.service.ts (trip_price create/update/delete + prices/history). Plan 5 fase: infra helper generic → backfill tier → payments & users → endpoint+UI /admin/audit-log → modul lain.",
+          "plan": "plan/feat-082-audit-log.md"
         },
         {
           "id": "feat-083",
