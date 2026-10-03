@@ -4,8 +4,8 @@
   "summary": {
     "total_features": 56,
     "in_review": 18,
-    "completed": 25,
-    "to_do": 13,
+    "completed": 26,
+    "to_do": 12,
     "not_started": 0
   },
   "phases": [
@@ -514,7 +514,7 @@
           "id": "feat-061",
           "title": "Blog categories management",
           "description": "Schema blogCategories exists. Management UI and API needed.",
-          "status": "to_do",
+          "status": "completed",
           "priority": 61,
           "depends_on": [
             "feat-048"
@@ -522,7 +522,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "blog.schema.ts with blogCategories table"
+          "evidence": "CRUD kategori: repository+service (slug unik, null-kan artikel saat hapus) + controller + GET/POST /api/blog-categories (GET public) + DELETE /[id] (admin). Admin: CreatableSelect di modal + kolom tabel + manager mini (list/hapus). Publik: badge + chips filter + ?category + link di detail. Live 2026-10-03 (401/400/409-dedup, assign, hapus-null-kan, DB bersih)."
         }
       ]
     },

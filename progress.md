@@ -2346,3 +2346,9 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 ## Session 69 — 2026-10-03 (revert form peserta, BELUM COMMIT — branch feat/012-tier-pricing)
 
 **Revert total form peserta dinamis** atas permintaan user (sesuai plan: 1 form hardcoded). Dihapus: TripParticipantForms, TripParticipantEntry, aksi/reducer, wiring hook, validasi+insert server, test. Verifikasi pasca-revert: tsc 0 · lint 0E · vitest hijau · structure hijau · sweep 0 sisa.
+
+## Session 70 — 2026-10-03 (feat-061, BELUM COMMIT — branch feat/061-blog-categories)
+
+**Blog categories selesai:** repository (CRUD + slug unik + null-kan artikel) + service (AppError) + controller + GET/POST (GET public) + PUT/DELETE /[id] (admin) + policy. Admin: CreatableSelect di modal + kolom tabel + manager mini (list/hapus). Publik: badge + chips + ?category + link di detail. PUT kategori ditambahkan (CRUD penuh).
+**Live:** anon 401 · create + slug-2 dedup · kosong 400 · assign ke artikel · hapus → artikel null · test cats dibersihkan · /blog + /admin/blogs 200.
+**Verifikasi:** tsc 0 · lint 0E · vitest 252 (blog 13) · build 0 · routes 100 · audit 10 hijau · structure hijau (R3→210).

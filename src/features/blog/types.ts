@@ -8,4 +8,12 @@ export interface BlogPost {
   publishedAt?: string | null;
   createdAt?: string | null;
   status?: string;
+  categoryId?: string | null;
+}
+
+export interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
 }

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { blogs } from "@/db/schema/blog";
+import { blogs, blogCategories } from "@/db/schema/blog";
 import { eq, desc } from "drizzle-orm";
 import type { UUID } from "@/types";
 
@@ -11,6 +11,13 @@ export interface IBlogRepository {
   create(data: typeof blogs.$inferInsert): Promise<typeof blogs.$inferSelect>;
   update(id: UUID, data: Partial<typeof blogs.$inferInsert>): Promise<void>;
   delete(id: UUID): Promise<void>;
+  listCategories(): Promise<(typeof blogCategories.$inferSelect)[]>;
+  findCategoryById(id: UUID): Promise<typeof blogCategories.$inferSelect | null>;
+  findCategoryBySlug(slug: string): Promise<typeof blogCategories.$inferSelect | null>;
+  createCategory(data: typeof blogCategories.$inferInsert): Promise<typeof blogCategories.$inferSelect>;
+  updateCategory(id: UUID, data: Partial<typeof blogCategories.$inferInsert>): Promise<void>;
+  deleteCategory(id: UUID): Promise<void>;
+  clearBlogsCategory(categoryId: UUID): Promise<void>;
 }
 
 export const blogRepository: IBlogRepository = {
@@ -43,5 +50,36 @@ export const blogRepository: IBlogRepository = {
 
   async delete(id) {
     await db.delete(blogs).where(eq(blogs.id, id));
+  },
+
+  async listCategories() {
+    return db.select().from(blogCategories).orderBy(blogCategories.name);
+  },
+
+  async findCategoryById(id) {
+    const [row] = await db.select().from(blogCategories).where(eq(blogCategories.id, id)).limit(1);
+    return row ?? null;
+  },
+
+  async findCategoryBySlug(slug) {
+    const [row] = await db.select().from(blogCategories).where(eq(blogCategories.slug, slug)).limit(1);
+    return row ?? null;
+  },
+
+  async createCategory(data) {
+    const [row] = await db.insert(blogCategories).values(data).returning();
+    return row;
+  },
+
+  async updateCategory(id, data) {
+    await db.update(blogCategories).set(data).where(eq(blogCategories.id, id));
+  },
+
+  async deleteCategory(id) {
+    await db.delete(blogCategories).where(eq(blogCategories.id, id));
+  },
+
+  async clearBlogsCategory(categoryId) {
+    await db.update(blogs).set({ categoryId: null }).where(eq(blogs.categoryId, categoryId));
   },
 };

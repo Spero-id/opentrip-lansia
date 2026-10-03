@@ -120,6 +120,10 @@ const data = {
           title: "Blog",
           url: "/admin/blogs",
         },
+        {
+          title: "Kategori Blog",
+          url: "/admin/blog-categories",
+        },
       ],
     },
   ],
