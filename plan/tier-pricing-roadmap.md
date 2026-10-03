@@ -20,6 +20,7 @@ Status per 2026-10-02 · Branch: `feat/012-tier-pricing` (BELUM commit/push)
 - [x] **Hidupkan jalur kuota**: checkout pakai `updateQuota` langsung
 - [x] **Kedaluwarsa pending**: `expireStalePendingBookings` (24 jam) dipanggil lazy tiap checkout
 - [x] Verifikasi live: tier Anak end-to-end + overbooking 409 + cancel kembalikan kuota + tier kedaluwarsa ditolak + legacy pax OK + DB bersih
+- [x] **Form peserta dinamis per tier** — DIBATALKAN atas permintaan user: revert ke 1 form hardcoded sesuai plan (kode + test dihapus, diverifikasi hijau)
 
 ## P1 — Penting (mencegah salah jual)
 
@@ -32,6 +33,6 @@ Status per 2026-10-02 · Branch: `feat/012-tier-pricing` (BELUM commit/push)
 
 ## P2 — Nice to have
 
-- [ ] **Audit tier**: riwayat ubah harga (siapa/kapan/nilai lama-baru)
-- [ ] **Laporan per tier**: booking & pendapatan per tier di dashboard/grup
-- [ ] Diskon Early Bird otomatis vs kode promo: aturan main gabungan (tumpuk / pilih terbesar)
+- [x] **Audit tier**: `auditLogs` (entity `trip_price`, create/update/delete + nama admin) + endpoint history + panel Riwayat di grup; live: entri tercatat dgn nama admin
+- [x] **Laporan per tier**: booking & revenue per tier dari `booking_items` di tiap baris tier
+- [x] Aturan gabungan: **TUMPUK** (voucher dihitung di atas subtotal tier — perilaku kode saat ini, minPurchase ikut subtotal tier); dinyatakan resmi

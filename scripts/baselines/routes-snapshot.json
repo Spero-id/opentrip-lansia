@@ -78,6 +78,7 @@
   "/api/trips/[id]/groups/[groupId]/gallery/route": "/api/trips/[id]/groups/[groupId]/gallery",
   "/api/trips/[id]/groups/[groupId]/participants/route": "/api/trips/[id]/groups/[groupId]/participants",
   "/api/trips/[id]/groups/[groupId]/prices/[priceId]/route": "/api/trips/[id]/groups/[groupId]/prices/[priceId]",
+  "/api/trips/[id]/groups/[groupId]/prices/history/route": "/api/trips/[id]/groups/[groupId]/prices/history",
   "/api/trips/[id]/groups/[groupId]/prices/route": "/api/trips/[id]/groups/[groupId]/prices",
   "/api/trips/[id]/groups/[groupId]/route": "/api/trips/[id]/groups/[groupId]",
   "/api/trips/[id]/groups/route": "/api/trips/[id]/groups",
