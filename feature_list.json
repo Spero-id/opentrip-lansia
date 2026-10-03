@@ -6,7 +6,8 @@
     "in_review": 20,
     "completed": 26,
     "to_do": 10,
-    "not_started": 0
+    "not_started": 0,
+    "last_updated": "2026-10-03"
   },
   "phases": [
     {
@@ -638,7 +639,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "Helper generic src/features/audit/ (record/diffFields/pickFields + redaksi key sensitif + normalisasi entityId non-uuid). Dipakai: trip_price (fase 2), payment approve/reject, user update/delete (fase 3). Fase 4: GET /api/admin/audit-logs (admin, policy + test) + UI /admin/audit-log read-only expandable dengan filter entitas/aksi, nav di dua sumber. Sisa: fase 5 (trip/group/blog/promotion/commission/site_settings) + housekeeping retensi (ticket terpisah).",
+          "evidence": "Selesai fase 1-5. Helper generic src/features/audit/ (record/diffFields/pickFields, redaksi key sensitif, normalisasi entityId non-uuid ke entityRef, tidak pernah melempar). Entitas ter-audit: trip_price, trip, trip_group, blog, blog_category, payment, user, promotion, commission, site_settings. Endpoint GET /api/admin/audit-logs (admin) + UI /admin/audit-log read-only expandable + filter entitas/aksi. Sisa di luar scope fitur ini: housekeeping retensi (>180 hari) sebagai ticket terpisah.",
           "plan": "plan/feat-082-audit-log.md"
         },
         {

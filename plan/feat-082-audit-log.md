@@ -53,11 +53,11 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
 
 ## Fase 5 — Modul lain (bisa setelah PR Fase 1-4)
 
-- [ ] `trip`, `group`, `blog`, `blog_category` (CRUD admin)
-- [ ] `promotion`, `commission`, `private_trip` proposal
-- [ ] `site_settings` (`entityId` null, kunci di description)
-- [ ] `user` hapus (action `delete`)
-- [ ] Tiap modul = 1 commit terpisah (konvensi repo)
+- [x] `trip` + `trip_group` (create/update/delete/activate/complete) dan `blog` + `blog_category` (CRUD admin)
+- [x] `promotion` (create/update/delete) dan `commission` (create/update/delete) — **decided skip `private_trip` proposal**: perubahan proposal hanya via admin PATCH/PUT, jejak ditolak/tANDS masih di domain booking; lift ke ticket terpisah bila dibutuhkan
+- [x] `site_settings` (kunci non-uuid otomatis jadi `entityRef`)
+- [x] `user` hapus (action `delete`) — sudah ikut di Fase 3
+- [x] Tiap modul = 1 commit terpisah (konvensi repo): 5a trip+group · 5b blog+kategori · 5c promotion+commission+settings
 
 ## Batasan & keputusan
 
@@ -68,14 +68,14 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
 
 ## Verifikasi (tiap fase)
 
-- [ ] `npx tsc --noEmit` → 0
-- [ ] `npm run lint` → 0 error
-- [ ] `npx vitest run` → hijau (baseline 252, +test baru)
-- [ ] `npm run build` → hijau
-- [ ] `npm run check:routes` → snapshot ikut saat Fase 4 (+1 route)
-- [ ] `npx vitest run src/lib/auth` → audit policy hijau
-- [ ] `node scripts/check-structure.ts` → all rules within baseline (R5: route tipis wajib delegation)
-- [ ] Live smoke: ubah harga tier → `GET /api/admin/audit-logs` menampilkan 1 baris `update · trip_price · 350000→375000`
+- [x] `npx tsc --noEmit` → 0
+- [x] `npm run lint` → 0 error
+- [x] `npx vitest run` → hijau (baseline 252, +test baru)
+- [x] `npm run build` → hijau
+- [x] `npm run check:routes` → snapshot ikut saat Fase 4 (+1 route)
+- [x] `npx vitest run src/lib/auth` → audit policy hijau
+- [x] `node scripts/check-structure.ts` → all rules within baseline (R5: route tipis wajib delegation)
+- [x] Live smoke: ubah harga tier → `GET /api/admin/audit-logs` menampilkan 1 baris `update · trip_price · 350000→375000`
 
 ## Out of scope
 

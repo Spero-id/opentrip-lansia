@@ -2397,3 +2397,20 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Verifikasi:** tsc 0 · lint 0E · vitest **286** (+5 test controller: filter diteruskan, default/cap limit, junk limit, rentang tanggal, error 500) · build compiled · routes 101 → **103** (snapshot diperbarui: `/admin/audit-log` + `/api/admin/audit-logs`) · drift 0 · auth audit 10 · structure hijau.
 **Live smoke:** anon `401` · user biasa `403` (API) dan halaman dialihkan ke `/forbidden` · admin `200` dengan isi tabel benar. Filter `entityType=user` mengembalikan baris `user` (`newValues: phone + entityRef`). Legacy `trip_price` dengan entityId non-uuid (`p1`) otomatis ternormalisasi jadi `entityRef`. Dev server dimatikan, tidak ada data QA yang tersisa.
+
+## Session 74 — 2026-10-03 (feat-082 audit log, Fase 5 modul lain, branch feat/082-audit-log)
+
+Tiga commit terpisah sesuai konvensi repo (satu commit per modul):
+
+**5a `38159ee` — trip + trip_group.** `createTrip`/`updateTrip`/`deleteTrip` dan `createGroup`/`updateGroup`/`deleteGroup`/`activateGroup` + **baru** `completeGroup` (sebelumnya controller menulis `tripRepository.updateGroup` langsung — sekarang lewat service agar bisa diaudit). Allowlist trip: title · slug · status · type · durationDays · location · province · priceMin/Max · isFeatured · isSeniorFriendly. Allowlist grup: status · startDate · endDate · maxParticipants · minParticipants · isActive · notes. `actorId(req)` ditambahkan di `trip.controller.ts` (sebelumnya hanya `group.controller.ts` punya).
+
+**5b `a7492ab` — blog + blog_category.** `createBlog`/`updateBlog`/`deleteBlog` + create/update/delete kategori. `deleteBlog` sebelumnya memanggil `blogRepository.delete` langsung dari controller → kini lewat service `deleteBlog` (konsisten + ter-audit).
+
+**5c `ca66988` — promotion + commission + site_settings.** `commission` diam-diam milik `referral.controller.ts` (bukan modul commission sendiri) — di-situ dipoles. `site_settings` memakai kunci varchar → otomatis aman lewat normalisasi `entityRef`.
+
+**Keputusan sadar:** `private_trip` proposal **dilewati** — jejak proposal lebih dekat ke domain booking; lift ke ticket terpisah bila dibutuhkan.
+
+**Pola yang konsisten di semua modul:** create = `pickFields(new)`, update = `diffFields(before, after, allowlist)` (**tanpa perubahan = tanpa baris**,update dengan nilai identik tidak menghasilkan apa pun), delete = `pickFields(old)` + `newValues: null`.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **286** (tetap — fase ini menambah kode produksi, bukan surface test baru) · build compiled · routes 103→103 · drift 0 · auth 10 · structure hijau.
+**Live smoke:** promo create/update/delete → 3 baris (`newValues` update hanya berisi `value`, bukan dump baris); trip `location` diubah → 1 baris `update` (lokasi lama → baru), lalu dikembalikan; kategori blog create/rename/delete → 3 baris. Trip `status: published` (sudah published) dan `isFeatured: true` (sudah true) → **nol baris**, sesuai desain. Semua data QA dihapus (promo & kategori 0, lokasi trip kembali asli), dev server dimatikan.
