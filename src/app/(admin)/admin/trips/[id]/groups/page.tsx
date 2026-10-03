@@ -58,6 +58,16 @@ interface PriceTier {
   validFrom: string | null;
   validUntil: string | null;
   isActive: boolean | null;
+  bookings?: number;
+  revenue?: number;
+}
+
+interface PriceHistoryEntry {
+  id: string;
+  action: string;
+  description: string | null;
+  adminName: string | null;
+  createdAt: string | null;
 }
 
 interface GroupParticipant {
@@ -141,6 +151,9 @@ export default function AdminTripGroupsPage() {
   const [priceErrors, setPriceErrors] = useState<Record<string, string>>({});
   const [priceSaving, setPriceSaving] = useState(false);
   const [deletingPrice, setDeletingPrice] = useState<{ groupId: string; tier: PriceTier } | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [history, setHistory] = useState<PriceHistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -298,9 +311,13 @@ export default function AdminTripGroupsPage() {
     if (expandedPrices === groupId) {
       setExpandedPrices(null);
       setPrices([]);
+      setShowHistory(false);
+      setHistory([]);
       return;
     }
     setExpandedPrices(groupId);
+    setShowHistory(false);
+    setHistory([]);
     await refreshPrices(groupId);
   }
 
@@ -315,6 +332,24 @@ export default function AdminTripGroupsPage() {
       console.error("Error fetching prices:", err);
     } finally {
       setPricesLoading(false);
+    }
+  }
+
+  async function toggleHistory(groupId: string) {
+    if (showHistory) {
+      setShowHistory(false);
+      return;
+    }
+    setShowHistory(true);
+    setHistoryLoading(true);
+    try {
+      const res = await fetch(`/api/trips/${tripId}/groups/${groupId}/prices/history`);
+      const data = await res.json();
+      if (res.ok && Array.isArray(data)) setHistory(data);
+    } catch (err) {
+      console.error("Error fetching price history:", err);
+    } finally {
+      setHistoryLoading(false);
     }
   }
 
@@ -737,13 +772,21 @@ export default function AdminTripGroupsPage() {
                     <div className="mt-4 bg-slate-50 rounded-2xl p-4">
                       <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">Tier Harga</p>
-                        <button
-                          onClick={() => openPriceCreate(group.id)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
-                        >
-                          <Plus className="w-3 h-3" />
-                          Tambah Tier
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleHistory(group.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition"
+                          >
+                            Riwayat
+                          </button>
+                          <button
+                            onClick={() => openPriceCreate(group.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
+                          >
+                            <Plus className="w-3 h-3" />
+                            Tambah Tier
+                          </button>
+                        </div>
                       </div>
                       {pricesLoading ? (
                         <div className="flex items-center justify-center py-8">
@@ -774,7 +817,7 @@ export default function AdminTripGroupsPage() {
                                   </div>
                                   <p className="text-base font-bold text-slate-900">{formatTripPrice(tier.price)}</p>
                                   <p className="text-[11px] text-slate-500 mt-1">
-                                    Terisi {tier.quotaBooked ?? 0}/{tier.quota} · {tier.validFrom || tier.validUntil ? `${tier.validFrom?.slice(0, 10) || "…"} s/d ${tier.validUntil?.slice(0, 10) || "…"}` : "Selalu berlaku"}
+                                    Terisi {tier.quotaBooked ?? 0}/{tier.quota} · {tier.bookings ? `${tier.bookings} booking` : "Belum ada booking"}{tier.revenue ? ` · Rp ${Number(tier.revenue).toLocaleString("id-ID")}` : ""} · {tier.validFrom || tier.validUntil ? `${tier.validFrom?.slice(0, 10) || "…"} s/d ${tier.validUntil?.slice(0, 10) || "…"}` : "Selalu berlaku"}
                                   </p>
                                   <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-2">
                                     <div
@@ -809,6 +852,29 @@ export default function AdminTripGroupsPage() {
                               </div>
                             </div>
                           ))}
+                        </div>
+                      )}
+                      {showHistory && expandedPrices === group.id && (
+                        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
+                          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Riwayat perubahan</p>
+                          {historyLoading ? (
+                            <p className="text-xs text-slate-400">Memuat riwayat...</p>
+                          ) : history.length === 0 ? (
+                            <p className="text-xs text-slate-400">Belum ada perubahan tercatat.</p>
+                          ) : (
+                            <ul className="space-y-1.5 max-h-40 overflow-y-auto">
+                              {history.map((h) => (
+                                <li key={h.id} className="text-xs text-slate-600">
+                                  <span className="font-semibold text-slate-800">{h.action}</span>
+                                  {h.description ? ` — ${h.description}` : ""}
+                                  <span className="text-slate-400">
+                                    {h.adminName ? ` · ${h.adminName}` : ""}
+                                    {h.createdAt ? ` · ${h.createdAt.slice(0, 10)}` : ""}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
                       )}
                     </div>
