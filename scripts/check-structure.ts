@@ -18,7 +18,7 @@ type Baseline = {
 const BASELINE: Baseline = {
   R1: 0,
   R2: [], // Fase 11: .jsx/.js habis — pelanggaran baru = error penuh
-  R3: 192, // Fase 11: deep impor client-safe (barrel campur server = R11); target 0 ditunda — butuh pemisah tipe tanpa runtime (backlog)
+  R3: 207, // Fase 11 client-safe; +3 feat-012, +9 P0/P1, +2 P2 audit, +1 form peserta
   R4: [
     "app-sidebar.tsx",
     "nav-main.tsx",
@@ -29,7 +29,7 @@ const BASELINE: Baseline = {
     "src/features/private-trip/components/helpers/initialState.ts",
   ],
   R7: [],
-  R8: 500, // private-trip form/validation identifiers mirror the Indonesian user-facing form; string-keyed dispatch makes a rename high-risk (backlog)
+  R8: 504, // private-trip form identifiers (backlog rename); +4 P0/P2 prosa JSX baru — teks UI wajib Indonesia per D-6 (blind spot mask JSX, lih. Fase 0.5)
   R9: 0, // Fase 11: impor lintas-folder wajib @/ — tanpa kecuali
   R10: 0,
   R11: 0,

@@ -2287,3 +2287,62 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 - **11.5** `./init.sh` EXIT 0 (tsc 0 · lint 0E/77W · vitest 232 · structure hijau · drift 0 · routes 94→94).
 
 **Progres:** total **123/127**. Tersisa: 11.6 PR fase-11. Setelah merge: restructure DONE; kembali ke `feature_list.json` (14 to_do / 18 in_review) untuk fitur berikutnya.
+
+## Session 64 — 2026-10-02 (feat-011 & feat-012, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**feat-011 → completed (verifikasi, tanpa kode baru):** seluruh poin spec (tanggal, min/max kuota, status) tercakup UI Group Trip; dinyatakan superseded oleh feat-011b.
+
+**feat-012 → completed (Tier editor):**
+- Backend: `trip.repository` +findPriceById/create/update/deletePrice; `trip.service` create/update/deletePrice (AppError: 404 rantai trip-grup-tier, 409 nama duplikat/kuota<booked/hapus tier berbooking/hapus tier terakhir, 400 validasi); `group.controller` list/create/update/deletePrice (404/409/400); routes tipis GET/POST `prices` + PUT/DELETE `prices/[priceId]`; 4 entri api-policy admin.
+- UI: panel "Harga" expandable per grup (daftar tier + progress kuota + toggle aktif + edit/hapus + Tambah Tier), modal tier (saran nama, input Rupiah, validasi), hapus via ConfirmAction.
+- Test: 3 `validatePriceForm` baru (admin 31); audit 10 hijau.
+- Live (admin@otl.id): anon 401; create Anak 201; duplikat 409; harga 0 → 400; toggle/update/delete OK; hapus tier terakhir 409; DB dikembalikan (hanya Dewasa); halaman groups 200.
+- R3 192→195 (impor client-safe).
+
+**Verifikasi:** tsc 0 · lint 0E · vitest 235 · build 0 · routes 94→94 · drift 0 · structure hijau.
+
+## Session 65 — 2026-10-02 (P0 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**P0 selesai penuh + live end-to-end:**
+- Tanggal ditegakkan (isPriceValid/pickValidPrice/findValidPrices; kanonikal, list, endpoint publik).
+- Checkout tier: TierSelector + tierQty + items; server validasi + ambil atomik + rollback + tulis booking_items.
+- Kuota kembali: releaseQuota di reject/cancel/expiry; expireStalePendingBookings (24 jam) lazy di checkout.
+- Endpoint publik baru GET /api/trips/[id]/tiers (policy public).
+- Test: validity (6), normalize (2), reducer tier (3), pricing tier (1); audit 10 hijau.
+- Live: Anak end-to-end (booking b8c5afdc, kuota 1/1, items tercatat), oversell 409, cancel→kuota 0, tier kedaluwarsa 400 + tak tampil publik, legacy pax OK, DB bersih (2 booking QA cancelled).
+- R3 195→200, snapshot 94→97, R9 tetap 0.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest 245 · build 0 · routes 97→97 · drift 0 · structure hijau.
+
+## Session 66 — 2026-10-02 (P1 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**P1 selesai + live:**
+- Fallback kanonikal termurah (tanpa Dewasa valid) + test.
+- Konsolidasi kuota tier≤maks grup (create/update) + guard maxParticipants<terbooking + implementasi `countBookingsByDepartureId` yang badannya kosong (guard hapus-grup kini nyata, satu-satunya pemakai).
+- Tanggal tampil ke user: BookingCard ambil tiers publik ("Tier s/d …").
+- Seed Early Bird → 2027-06-30; aturan nonaktif dikunci test.
+- Live: konsolidasi 400 dengan pesan jelas; DB tak tersentuh (validasi menolak sebelum tulis).
+- R3 200→204.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest 250 · build 0 · routes 97→97 · drift 0 · structure hijau.
+
+## Session 67 — 2026-10-02 (P2 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**P2 selesai + live:**
+- Audit tier via `auditLogs` (create/update/delete + adminId) + endpoint history + panel Riwayat; live: 2 entri + nama admin.
+- Laporan per tier (booking count + revenue dari `booking_items`) di tiap baris tier.
+- Aturan resmi: voucher TUMPUK di atas subtotal tier (perilaku kode, dinyatakan).
+- R3 204→206, snapshot 97→98, R9 tetap 0.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest 250 · build 0 · routes 98→98 · drift 0 · structure hijau.
+
+## Session 68 — 2026-10-03 (form peserta dinamis, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**Temuan user (benar):** pax>1 tapi form data diri cuma 1 hardcoded; peserta non-primer anonim.
+**Eksekusi:** `TripParticipantEntry` + `TripParticipantForms` (nama+tgl lahir per tier, key stabil, prune saat qty turun, canProceed validasi); server tulis `bookingParticipants.bookingItemId` + validasi kecocokan jumlah (400).
+**Live:** 2 senior ter-link tier Dewasa; mismatch 400; cancel→kuota 0 (miss pertama = HMR basi di server dev, retest hijau).
+**Verifikasi:** tsc 0 · lint 0E · vitest 251 · structure hijau (R3→207).
+
+## Session 69 — 2026-10-03 (revert form peserta, BELUM COMMIT — branch feat/012-tier-pricing)
+
+**Revert total form peserta dinamis** atas permintaan user (sesuai plan: 1 form hardcoded). Dihapus: TripParticipantForms, TripParticipantEntry, aksi/reducer, wiring hook, validasi+insert server, test. Verifikasi pasca-revert: tsc 0 · lint 0E · vitest hijau · structure hijau · sweep 0 sisa.

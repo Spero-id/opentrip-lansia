@@ -60,7 +60,19 @@ export function resolveVoucher(
   };
 }
 
+export function totalTierPax(s: CheckoutState): number {
+  return Object.values(s.tierQty).reduce((sum, q) => sum + (Number(q) || 0), 0);
+}
+
 export function getTicketSubtotal(s: CheckoutState): number {
+  if (s.tiers.length > 0) {
+    const byId = new Map(s.tiers.map((t) => [t.id, t]));
+    return Object.entries(s.tierQty).reduce((sum, [id, qty]) => {
+      const tier = byId.get(id);
+      if (!tier) return sum;
+      return sum + tier.price * (Number(qty) || 0);
+    }, 0);
+  }
   return (s.destination?.priceMin ?? 0) * s.pax;
 }
 

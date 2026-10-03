@@ -14,6 +14,7 @@ export { default as PriceBreakdown } from "./components/PriceBreakdown";
 export { default as ReferralInput } from "./components/ReferralInput";
 export { default as StepProgress } from "./components/StepProgress";
 export { default as TermsModal } from "./components/TermsModal";
+export { default as TierSelector } from "./components/TierSelector";
 export { default as VoucherCard } from "./components/VoucherCard";
 export type {
   AppliedReferral,
@@ -28,4 +29,5 @@ export type {
   MeetingPoint,
   Participant,
   TermsModalType,
+  TierOption,
 } from "./types";

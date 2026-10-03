@@ -108,6 +108,10 @@ export async function PATCHStatus(req: NextRequest, ctx: IdParams) {
       updates.notes = JSON.stringify(notesObj);
     }
     await db.update(bookings).set(updates).where(eq(bookings.id, id));
+    if (status === "cancelled") {
+      const { bookingService } = await import("./booking.service");
+      await bookingService.releaseBookingQuota(id);
+    }
     return NextResponse.json({ success: true, status, adminMessage: updates.adminMessage ?? (updates.notes ? JSON.parse(String(updates.notes)).adminMessage : null) });
   } catch (err) {
     const message = toPublicError(err, "Terjadi kesalahan");

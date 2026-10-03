@@ -54,3 +54,36 @@ export function mapGroupToForm(group: RawGroup): GroupFormState {
     notes: group.notes || "",
   };
 }
+
+export interface PriceTierFormState {
+  name: string;
+  price: string;
+  quota: string | number;
+  validFrom: string;
+  validUntil: string;
+  isActive: boolean;
+}
+
+export const EMPTY_PRICE_FORM: PriceTierFormState = {
+  name: "",
+  price: "",
+  quota: "",
+  validFrom: "",
+  validUntil: "",
+  isActive: true,
+};
+
+export const PRICE_TIER_SUGGESTIONS = ["Dewasa", "Anak", "Early Bird", "Lansia"];
+
+export function validatePriceForm(form: PriceTierFormState): Record<string, string> {
+  const e: Record<string, string> = {};
+  if (!form.name.trim()) e.name = "Nama tier wajib diisi";
+  const digits = String(form.price ?? "").replace(/\D/g, "");
+  if (!digits || Number(digits) <= 0) e.price = "Harga tier harus lebih dari 0";
+  const quota = Number(form.quota);
+  if (form.quota === "" || !Number.isInteger(quota) || quota < 1) e.quota = "Kuota tier minimal 1";
+  if (form.validFrom && form.validUntil && form.validUntil < form.validFrom) {
+    e.validUntil = "Tanggal selesai harus setelah tanggal mulai";
+  }
+  return e;
+}

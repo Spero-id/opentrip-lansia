@@ -2,6 +2,7 @@
 
 import VoucherCard from "./VoucherCard";
 import ReferralInput from "./ReferralInput";
+import TierSelector from "./TierSelector";
 import PriceBreakdown from "./PriceBreakdown";
 import MeetingPointInfo from "./MeetingPointInfo";
 import CustomerForm from "./CustomerForm";
@@ -17,6 +18,8 @@ export default function DetailsStep({
 }) {
   const canProceed =
     checkout.destination &&
+    (checkout.tiers.length === 0 ||
+      checkout.tiers.reduce((sum, t) => sum + (checkout.tierQty[t.id] ?? 0), 0) > 0) &&
     checkout.customer?.fullName &&
     checkout.customer?.phone &&
     checkout.customer?.address &&
@@ -27,6 +30,13 @@ export default function DetailsStep({
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
       <div className="lg:col-span-3 space-y-6">
         <BookingSummary destination={checkout.destination} />
+
+        <TierSelector
+          tiers={checkout.tiers}
+          tierQty={checkout.tierQty}
+          loading={checkout.tiersLoading}
+          onChange={checkout.setTierQty}
+        />
 
         <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
           <h2 className="text-base font-bold text-gray-900">Data Pemesan & Kesehatan</h2>
@@ -68,6 +78,13 @@ export default function DetailsStep({
           destination={checkout.destination}
           pricePerPax={checkout.destination?.priceMin ?? 0}
           pax={checkout.pax}
+          tierLines={checkout.tiers
+            .filter((t) => (checkout.tierQty[t.id] ?? 0) > 0)
+            .map((t) => ({
+              name: t.name,
+              qty: checkout.tierQty[t.id] ?? 0,
+              amount: t.price * (checkout.tierQty[t.id] ?? 0),
+            }))}
           ticketSubtotal={checkout.ticketSubtotal}
           total={checkout.total}
           discount={checkout.discount}

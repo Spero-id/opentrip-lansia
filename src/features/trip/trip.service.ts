@@ -1,4 +1,10 @@
 import { tripRepository } from "./trip.repository";
+import { db } from "@/lib/db";
+import { auditLogs } from "@/db/schema/utility";
+import { users } from "@/db/schema/auth";
+import { bookingItems } from "@/db/schema/bookings";
+import { bookings } from "@/db/schema/bookings";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 import type { UUID } from "@/types";
 import type { trips, itineraryItems } from "@/db/schema/trips";
 import type { GroupCreateInput } from "./trip.repository";
@@ -22,6 +28,87 @@ function addDays(dateISO: string, days: number): string {
   const d = new Date(dateISO + "T00:00:00");
   d.setDate(d.getDate() + days);
   return d.toISOString().slice(0, 10);
+}
+
+export interface TierAuditEntry {
+  id: string;
+  action: string;
+  description: string | null;
+  adminName: string | null;
+  createdAt: Date | null;
+}
+
+export async function recordTierAudit(
+  adminId: string | null,
+  action: "create" | "update" | "delete",
+  priceId: string,
+  oldValues: Record<string, unknown> | null,
+  newValues: Record<string, unknown> | null,
+  description: string,
+): Promise<void> {
+  try {
+    await db.insert(auditLogs).values({
+      adminId: adminId ?? null,
+      action,
+      entityType: "trip_price",
+      entityId: priceId ?? null,
+      oldValues: oldValues as unknown as object | null,
+      newValues: newValues as unknown as object | null,
+      description,
+    });
+  } catch (err) {
+    console.error("recordTierAudit failed:", err);
+  }
+}
+
+export interface PriceTierInput {
+  name: string;
+  price: number | string;
+  quota: number;
+  validFrom?: string | null;
+  validUntil?: string | null;
+  isActive?: boolean;
+}
+
+export interface NormalizedPriceTier {
+  name: string;
+  price: string;
+  quota: number;
+  validFrom: string | null;
+  validUntil: string | null;
+  isActive: boolean;
+}
+
+async function assertTierQuotasFit(
+  group: { id: string; maxParticipants: number },
+  excludePriceId: string | undefined,
+  newQuota: number,
+): Promise<void> {
+  const siblings = await tripRepository.findPricesByDepartureId(group.id);
+  const total = siblings
+    .filter((s) => s.id !== excludePriceId && s.isActive !== false)
+    .reduce((sum, s) => sum + (s.quota ?? 0), 0) + newQuota;
+  if (total > group.maxParticipants) {
+    throw new ValidationError(
+      `Total kuota tier (${total}) melebihi kuota grup (${group.maxParticipants})`
+    );
+  }
+}
+
+export function normalizePriceInput(input: PriceTierInput): NormalizedPriceTier {
+  const name = (input.name || "").trim();
+  if (!name) throw new ValidationError("Nama tier wajib diisi");
+  if (name.length > 100) throw new ValidationError("Nama tier maksimal 100 karakter");
+  const digits = String(input.price ?? "").replace(/\D/g, "");
+  if (!digits || Number(digits) <= 0) throw new ValidationError("Harga tier harus lebih dari 0");
+  const quota = Number(input.quota);
+  if (!Number.isInteger(quota) || quota < 1) throw new ValidationError("Kuota tier minimal 1");
+  const validFrom = input.validFrom || null;
+  const validUntil = input.validUntil || null;
+  if (validFrom && validUntil && validUntil < validFrom) {
+    throw new ValidationError("Tanggal selesai harus setelah tanggal mulai");
+  }
+  return { name, price: digits, quota, validFrom, validUntil, isActive: input.isActive ?? true };
 }
 
 export const tripService = {
@@ -51,6 +138,132 @@ export const tripService = {
 
   async getPricesByDeparture(departureId: UUID) {
     return tripRepository.findPricesByDepartureId(departureId);
+  },
+
+  async createPrice(tripId: UUID, groupId: UUID, input: PriceTierInput, adminId?: string | null) {
+    const group = await tripRepository.findGroupById(groupId);
+    if (!group || group.tripId !== tripId) throw new NotFoundError("Grup");
+    const data = normalizePriceInput(input);
+    await assertTierQuotasFit(group, undefined, data.quota);
+    const siblings = await tripRepository.findPricesByDepartureId(groupId);
+    if (siblings.some((s) => s.name.toLowerCase() === data.name.toLowerCase())) {
+      throw new ConflictError(`Tier "${data.name}" sudah ada di grup ini`);
+    }
+    const created = await tripRepository.createPrice({
+      departureId: groupId,
+      name: data.name,
+      price: data.price,
+      currency: "IDR",
+      quota: data.quota,
+      quotaBooked: 0,
+      validFrom: data.validFrom,
+      validUntil: data.validUntil,
+      isActive: data.isActive,
+    });
+    await recordTierAudit(adminId ?? null, "create", created.id, null, {
+      name: data.name,
+      price: data.price,
+      quota: data.quota,
+    }, `Tier "${data.name}" dibuat`);
+    return created;
+  },
+
+  async updatePrice(tripId: UUID, groupId: UUID, priceId: UUID, input: Partial<PriceTierInput>, adminId?: string | null) {
+    const group = await tripRepository.findGroupById(groupId);
+    if (!group || group.tripId !== tripId) throw new NotFoundError("Grup");
+    const price = await tripRepository.findPriceById(priceId);
+    if (!price || price.departureId !== groupId) throw new NotFoundError("Tier harga");
+    const data = normalizePriceInput({ name: price.name, price: price.price, quota: price.quota, ...input });
+    if (input.name !== undefined) {
+      const siblings = await tripRepository.findPricesByDepartureId(groupId);
+      if (siblings.some((s) => s.id !== priceId && s.name.toLowerCase() === data.name.toLowerCase())) {
+        throw new ConflictError(`Tier "${data.name}" sudah ada di grup ini`);
+      }
+    }
+    if (data.quota < (price.quotaBooked ?? 0)) {
+      throw new ConflictError(`Kuota tidak boleh lebih kecil dari ${price.quotaBooked} kursi terisi`);
+    }
+    await assertTierQuotasFit(group, priceId, data.quota);
+    const updated = await tripRepository.updatePrice(priceId, {
+      name: data.name,
+      price: data.price,
+      quota: data.quota,
+      validFrom: data.validFrom,
+      validUntil: data.validUntil,
+      isActive: data.isActive,
+    });
+    await recordTierAudit(adminId ?? null, "update", priceId, {
+      name: price.name,
+      price: price.price,
+      quota: price.quota,
+    }, {
+      name: data.name,
+      price: data.price,
+      quota: data.quota,
+    }, `Tier "${price.name}" diubah`);
+    return updated;
+  },
+
+  async getPriceHistory(groupId: UUID): Promise<TierAuditEntry[]> {
+    const prices = await tripRepository.findPricesByDepartureId(groupId);
+    if (prices.length === 0) return [];
+    const rows = await db
+      .select({
+        id: auditLogs.id,
+        action: auditLogs.action,
+        description: auditLogs.description,
+        adminName: users.name,
+        createdAt: auditLogs.createdAt,
+      })
+      .from(auditLogs)
+      .leftJoin(users, eq(users.id, auditLogs.adminId))
+      .where(inArray(auditLogs.entityId, prices.map((p) => p.id)))
+      .orderBy(desc(auditLogs.createdAt))
+      .limit(50);
+    return rows;
+  },
+
+  async getTierStats(groupId: UUID): Promise<Record<string, { bookings: number; revenue: number }>> {
+    const prices = await tripRepository.findPricesByDepartureId(groupId);
+    if (prices.length === 0) return {};
+    const ids = prices.map((p) => p.id);
+    const rows = await db
+      .select({
+        priceId: bookingItems.tripPriceId,
+        bookings: sql<number>`count(DISTINCT ${bookingItems.bookingId})::int`,
+        revenue: sql<number>`COALESCE(SUM(${bookingItems.subtotal}::numeric), 0)`,
+      })
+      .from(bookingItems)
+      .innerJoin(bookings, eq(bookingItems.bookingId, bookings.id))
+      .where(inArray(bookingItems.tripPriceId, ids))
+      .groupBy(bookingItems.tripPriceId);
+    const stats: Record<string, { bookings: number; revenue: number }> = {};
+    for (const id of ids) stats[id] = { bookings: 0, revenue: 0 };
+    for (const r of rows) {
+      if (!r.priceId) continue;
+      stats[r.priceId] = { bookings: r.bookings ?? 0, revenue: Number(r.revenue ?? 0) };
+    }
+    return stats;
+  },
+
+  async deletePrice(tripId: UUID, groupId: UUID, priceId: UUID, adminId?: string | null) {
+    const group = await tripRepository.findGroupById(groupId);
+    if (!group || group.tripId !== tripId) throw new NotFoundError("Grup");
+    const price = await tripRepository.findPriceById(priceId);
+    if (!price || price.departureId !== groupId) throw new NotFoundError("Tier harga");
+    if ((price.quotaBooked ?? 0) > 0) {
+      throw new ConflictError("Tier yang sudah memiliki booking tidak bisa dihapus (nonaktifkan saja)");
+    }
+    const siblings = await tripRepository.findPricesByDepartureId(groupId);
+    if (siblings.length <= 1) {
+      throw new ConflictError("Grup harus memiliki minimal satu tier harga");
+    }
+    await tripRepository.deletePrice(priceId);
+    await recordTierAudit(adminId ?? null, "delete", priceId, {
+      name: price.name,
+      price: price.price,
+      quota: price.quota,
+    }, null, `Tier "${price.name}" dihapus`);
   },
 
   async reserveQuota(priceId: UUID, qty: number): Promise<boolean> {
@@ -153,7 +366,13 @@ export const tripService = {
     const updateData: Record<string, unknown> = {};
     if (data.startDate) updateData.startDate = data.startDate;
     if (data.endDate) updateData.endDate = data.endDate;
-    if (data.maxParticipants !== undefined) updateData.maxParticipants = data.maxParticipants;
+    if (data.maxParticipants !== undefined) {
+      const held = await tripRepository.countParticipantsByDepartureId(groupId);
+      if (data.maxParticipants < held) {
+        throw new ValidationError(`Kuota grup tidak boleh lebih kecil dari ${held} kursi terbooking`);
+      }
+      updateData.maxParticipants = data.maxParticipants;
+    }
     if (data.minParticipants !== undefined) updateData.minParticipants = data.minParticipants;
     if (data.notes !== undefined) updateData.notes = data.notes;
 

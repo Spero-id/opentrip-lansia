@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tripService } from "./trip.service";
 import { tripRepository } from "./trip.repository";
+import { auth } from "@/features/auth/auth.config";
+import { ConflictError, NotFoundError } from "@/lib/errors/app-error";
+
+async function actorId(req: NextRequest): Promise<string | null> {
+  try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    return session?.user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
 import { bookings } from "@/db/schema/bookings";
 import { tripGalleries, galleryMedia } from "@/db/schema/trips";
 import { media } from "@/db/schema/master";
@@ -11,6 +22,14 @@ import { toPublicError } from "@/lib/errors/to-public-error";
 type TripParams = { params: Promise<{ id: string }> };
 type GroupParams = { params: Promise<{ id: string; groupId: string }> };
 type MediaParams = { params: Promise<{ id: string; groupId: string; mediaId: string }> };
+type TripGroupParams = GroupParams;
+type PriceParams = { params: Promise<{ id: string; groupId: string; priceId: string }> };
+
+function priceErrorStatus(err: unknown): number {
+  if (err instanceof NotFoundError) return 404;
+  if (err instanceof ConflictError) return 409;
+  return 400;
+}
 
 export const groupController = {
   async list(_req: NextRequest, ctx: TripParams) {
@@ -194,6 +213,77 @@ export const groupController = {
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
+    }
+  },
+
+  async listPrices(_req: NextRequest, ctx: GroupParams) {
+    try {
+      const { groupId } = await ctx.params;
+      const [tiers, stats] = await Promise.all([
+        tripService.getPricesByDeparture(groupId),
+        tripService.getTierStats(groupId),
+      ]);
+      return NextResponse.json(
+        tiers.map((t) => ({ ...t, bookings: stats[t.id]?.bookings ?? 0, revenue: stats[t.id]?.revenue ?? 0 })),
+      );
+    } catch (err) {
+      return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 500 });
+    }
+  },
+
+  async priceHistory(_req: NextRequest, ctx: GroupParams) {
+    try {
+      const { groupId } = await ctx.params;
+      return NextResponse.json(await tripService.getPriceHistory(groupId));
+    } catch (err) {
+      return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 500 });
+    }
+  },
+
+  async createPrice(req: NextRequest, ctx: TripGroupParams) {
+    try {
+      const { id: tripId, groupId } = await ctx.params;
+      const body = await req.json();
+      const data = await tripService.createPrice(tripId, groupId, {
+        name: body.name,
+        price: body.price,
+        quota: Number(body.quota),
+        validFrom: body.validFrom || null,
+        validUntil: body.validUntil || null,
+        isActive: body.isActive ?? true,
+      }, await actorId(req));
+      return NextResponse.json(data, { status: 201 });
+    } catch (err) {
+      return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: priceErrorStatus(err) });
+    }
+  },
+
+  async updatePrice(req: NextRequest, ctx: PriceParams) {
+    try {
+      const { id: tripId, groupId, priceId } = await ctx.params;
+      const body = await req.json();
+      const patch: Record<string, unknown> = {};
+      if (body.name !== undefined) patch.name = body.name;
+      if (body.price !== undefined) patch.price = body.price;
+      if (body.quota !== undefined) patch.quota = Number(body.quota);
+      if (body.validFrom !== undefined) patch.validFrom = body.validFrom || null;
+      if (body.validUntil !== undefined) patch.validUntil = body.validUntil || null;
+      if (body.isActive !== undefined) patch.isActive = Boolean(body.isActive);
+      const data = await tripService.updatePrice(tripId, groupId, priceId, patch, await actorId(req));
+      if (!data) return NextResponse.json({ error: "Tier harga tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(data);
+    } catch (err) {
+      return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: priceErrorStatus(err) });
+    }
+  },
+
+  async deletePrice(req: NextRequest, ctx: PriceParams) {
+    try {
+      const { id: tripId, groupId, priceId } = await ctx.params;
+      await tripService.deletePrice(tripId, groupId, priceId, await actorId(req));
+      return NextResponse.json({ success: true });
+    } catch (err) {
+      return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: priceErrorStatus(err) });
     }
   },
 };

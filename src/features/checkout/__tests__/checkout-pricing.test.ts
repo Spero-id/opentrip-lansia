@@ -112,3 +112,16 @@ describe("selectors", () => {
     expect(getTotal(s)).toBe(0);
   });
 });
+
+describe("tier subtotal", () => {
+  it("sums tier qty when tiers loaded", async () => {
+    const { initialCheckoutState } = await import("@/features/checkout");
+    const s = {
+      ...initialCheckoutState,
+      tiers: [{ id: "t1", name: "Dewasa", price: 1500000, quota: 10, remaining: 10, validFrom: null, validUntil: null }],
+      tierQty: { t1: 2 },
+      pax: 2,
+    };
+    expect(getTicketSubtotal(s)).toBe(3000000);
+  });
+});

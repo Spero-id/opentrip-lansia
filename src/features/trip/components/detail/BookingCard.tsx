@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { formatRupiah } from "@/lib/format";
 import { Calendar } from "lucide-react";
 
@@ -28,6 +31,25 @@ function QuotaStatus({ booked }: { booked: number }) {
 
 export default function BookingCard({ dest }: { dest: TripDetail }) {
   const activeGroup = dest.activeGroup || null;
+  const [boundedTiers, setBoundedTiers] = useState<Array<{ name: string; validUntil: string | null }>>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/trips/${dest.id}/tiers`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled || !data || !Array.isArray(data.tiers)) return;
+        setBoundedTiers(
+          data.tiers
+            .filter((t: { validUntil?: string | null }) => t.validUntil)
+            .map((t: { name: string; validUntil: string | null }) => ({ name: t.name, validUntil: t.validUntil })),
+        );
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [dest.id]);
   const bookedCount = activeGroup?.quotaBooked ?? (typeof dest.bookedCount === "number" ? dest.bookedCount : null);
   const maxQuota = activeGroup?.maxParticipants ?? QUOTA_MAX;
   const remaining = bookedCount === null ? null : Math.max(maxQuota - bookedCount, 0);
@@ -40,6 +62,11 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
           {formatRupiah(dest.priceMin)}
         </div>
         <div className="text-sm text-gray-400 mt-1">per orang / pax</div>
+        {boundedTiers.length > 0 && (
+          <p className="text-[11px] font-semibold text-[#F49D1A] mt-1.5">
+            {boundedTiers.map((t) => `${t.name} s/d ${formatDate(t.validUntil)}`).join(" · ")}
+          </p>
+        )}
       </div>
 
       {activeGroup && (

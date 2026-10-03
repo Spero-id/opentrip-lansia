@@ -52,10 +52,21 @@ export interface DbVoucher {
   isActive?: boolean | null;
 }
 
+export interface TierOption {
+  id: string;
+  name: string;
+  price: number;
+  quota: number;
+  remaining: number;
+  validFrom?: string | null;
+  validUntil?: string | null;
+}
+
 export interface BookingSnapshot {
   orderId: string;
   destination: DestinationSummary | null;
   pax: number;
+  items?: Array<{ priceId: string; qty: number }>;
   customer: Customer;
   voucherCode: string | null;
   appliedVoucher: AppliedVoucher | null;
@@ -70,6 +81,8 @@ export interface CheckoutState {
   step: CheckoutStep;
   destination: DestinationSummary | null;
   pax: number;
+  tiers: TierOption[];
+  tierQty: Record<string, number>;
   customer: Customer;
   voucherCode: string;
   appliedVoucher: AppliedVoucher | null;
@@ -90,6 +103,8 @@ export interface CheckoutState {
 export type CheckoutAction =
   | { type: "SET_DESTINATION"; destination: DestinationSummary | null }
   | { type: "SET_PAX"; pax: number }
+  | { type: "SET_TIERS"; tiers: TierOption[] }
+  | { type: "SET_TIER_QTY"; priceId: string; qty: number }
   | { type: "SET_CUSTOMER"; field: string; value: unknown }
   | { type: "AUTOFILL_PROFILE" }
   | { type: "SET_VOUCHER_CODE"; code: string }

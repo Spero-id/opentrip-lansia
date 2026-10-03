@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { bookings, bookingItems, bookingParticipants } from "@/db/schema/bookings";
 import { payments } from "@/db/schema/payments";
-import { eq, desc, or, like } from "drizzle-orm";
+import { eq, desc, or, like, and, lt } from "drizzle-orm";
 import type { UUID } from "@/types";
 
 export interface IBookingRepository {
@@ -13,6 +13,7 @@ export interface IBookingRepository {
   update(id: UUID, data: Partial<typeof bookings.$inferInsert>): Promise<void>;
   createItems(items: (typeof bookingItems.$inferInsert)[]): Promise<void>;
   findItemsByBookingId(bookingId: UUID): Promise<(typeof bookingItems.$inferSelect)[]>;
+  findStalePending(before: Date): Promise<(typeof bookings.$inferSelect)[]>;
   createParticipants(participants: (typeof bookingParticipants.$inferInsert)[]): Promise<void>;
   findParticipantsByBookingId(bookingId: UUID): Promise<(typeof bookingParticipants.$inferSelect)[]>;
   findPaymentsByBookingId(bookingId: UUID): Promise<(typeof payments.$inferSelect)[]>;
@@ -71,6 +72,12 @@ export const bookingRepository: IBookingRepository = {
 
   async findPaymentsByBookingId(bookingId) {
     return db.select().from(payments).where(eq(payments.bookingId, bookingId)).orderBy(desc(payments.createdAt));
+  },
+  async findStalePending(before: Date) {
+    return db
+      .select()
+      .from(bookings)
+      .where(and(eq(bookings.status, "pending_payment"), lt(bookings.createdAt, before)));
   },
 };
 
