@@ -2373,3 +2373,16 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Verifikasi:** tsc 0 · lint 0E · vitest **267** (252 + 15 test baru `audit.service.test.ts`: diff allowlist, redaksi, null≡undefined, Date/object compare, error insert ditelan) · build compiled · routes 101→101 identik · drift 0 · auth audit 10 · structure hijau.
 **Live smoke:** `PUT .../prices/:id` (350000→350001) → baris audit terisi (`entityType: trip_price`, `oldValues.price: "350000"`, `newValues.price: "350001"`, `adminId` terisi) → `GET .../prices/history` tetap sama bentuknya. Harga dikembalikan ke 350000.
+
+## Session 72 — 2026-10-03 (feat-082 audit log, Fase 3 payments & users, branch feat/082-audit-log)
+
+**Payments** (`payment.controller.ts#review`): catat `entityType: "payment"` setiap approve/reject. Allowlist `status · reviewedBy · reviewedAt · adminNote`; **`proofUrl` sengaja tidak ikut** (berkas unggahan, bukan fakta audit). Nielsen: sudah diproses → 400 dan **tidak** menulis audit; non-admin → 403 tanpa audit.
+
+**Users** (`auth.service.ts` + `user.controller.ts`): `updateUser`/`deleteUser` sekarang menerima `adminId` dari controller. Snapshot sebelum + sesudah → `diffFields(USER_AUDIT_FIELDS)` sehingga `newValues` hanya berisi field yang benar-benar berubah; **tidak ada baris audit bila tidak ada perubahan**. Allowlist `name · role · phone · emailVerified` — **email tidak pernah masuk log** (PII). Delete = snapshot lama + `newValues: null`.
+
+**Jebakan penting (TERBUKTI live, bukan teori):** `audit_logs.entity_id` bertipe **uuid**, tapi `users.id` bertipe **text** (cuid Better Auth) → insert gagal `string_to_uuid`. Karena `record()` menelan error, write bisnis tetap selamat tetapi **jejak hilang**. Perbaikan: normalisasi di layer service (`isUuid`) → key non-uuid disimpan `entity_id = null` + `newValues.entityRef`. Ini juga menutup jebakan `site_settings.key` (varchar) untuk Fase 5.
+
+**Catatan ratchet:** `vi.mock` leaf di test (`payment.service`, `payment.repository`, `auth.config`) + import controller = 4 deep import. Barrel **tidak** bisa dipakai untuk mock (leaf yang diimpor controller berbeda objek) → baseline R3 dinaikkan 210 → **214** dengan catatan alasan, sesuai pola yang sudah dipakai feat-061.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **281** (+13: normalisasi entityId, payment approve/reject/sudah-diproses/non-admin, user update/delete/no-change/null-admin/urutan update-lalu-audit) · build compiled · routes 101→101 · drift 0 · auth audit 10 · structure hijau.
+**Live smoke:** `PUT /api/users/:id` (phone) → baris `user` tertulis dengan `entityRef`, `newValues` hanya field berubah; update dengan nilai sama → **tidak** ada baris baru. `POST /api/payments/:id/review` reject → baris `payment` (pending → rejected, `adminNote` tercatat, tanpa `proofUrl`). Semua data QA dikembalikan (phone user = null, payment kembali `pending`, note dibersihkan).

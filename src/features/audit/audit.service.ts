@@ -78,19 +78,38 @@ export function pickFields(
   return out;
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function isUuid(value: string): boolean {
+  return UUID_RE.test(value);
+}
+
+/**
+ * audit_logs.entity_id is uuid, but some tables use text/varchar keys (users.id from
+ * Better Auth is a cuid, site_settings.key is varchar). Writing those as entity_id
+ * fails at the DB level, so keep entity_id null and park the raw key in entityRef.
+ */
+function normalizeEntityId(entityId: string | null | undefined, newValues: Record<string, unknown> | null) {
+  if (!entityId) return { entityId: null, newValues };
+  if (isUuid(entityId)) return { entityId, newValues };
+  return { entityId: null, newValues: { ...(newValues ?? {}), entityRef: entityId } };
+}
+
 export const auditService = {
   /**
    * Append-only writer. Never throws: a failing audit must not break the business write.
    */
   async record(input: AuditRecordInput): Promise<string | null> {
     try {
+      const redactedNew = input.newValues ? redactObject(input.newValues) : null;
+      const { entityId, newValues } = normalizeEntityId(input.entityId, redactedNew);
       const row = await auditRepository.insert({
         adminId: input.adminId ?? null,
         action: input.action,
         entityType: input.entityType,
-        entityId: input.entityId ?? null,
+        entityId,
         oldValues: input.oldValues ? redactObject(input.oldValues) : null,
-        newValues: input.newValues ? redactObject(input.newValues) : null,
+        newValues,
         description: input.description ?? null,
       });
       return row?.id ?? null;

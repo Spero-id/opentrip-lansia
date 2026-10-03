@@ -104,7 +104,7 @@ describe("auditService.record", () => {
       adminId: "admin-1",
       action: "update",
       entityType: "trip_price",
-      entityId: "price-1",
+      entityId: "11111111-2222-4333-8444-555555555555",
       oldValues: { price: "350000" },
       newValues: { price: "375000" },
       description: "Tier diubah",
@@ -115,7 +115,7 @@ describe("auditService.record", () => {
       adminId: "admin-1",
       action: "update",
       entityType: "trip_price",
-      entityId: "price-1",
+      entityId: "11111111-2222-4333-8444-555555555555",
       description: "Tier diubah",
     });
   });
@@ -148,5 +148,39 @@ describe("auditService.record", () => {
       auditService.record({ action: "create", entityType: "payment" }),
     ).resolves.toBeNull();
     spy.mockRestore();
+  });
+});
+describe("auditService.record entity id normalization", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("stores uuid entity ids as entity_id", async () => {
+    mockedInsert.mockReturnValue(insertReturning([{ id: "log-4" }]));
+    await auditService.record({
+      action: "update",
+      entityType: "payment",
+      entityId: "ea005367-3891-4104-bb56-a6e201d5f90e",
+    });
+    const values = lastInsertedValues(mockedInsert);
+    expect(values.entityId).toBe("ea005367-3891-4104-bb56-a6e201d5f90e");
+    expect(values.newValues).toBeNull();
+  });
+
+  it("parks non-uuid keys in newValues.entityRef instead of failing the insert", async () => {
+    mockedInsert.mockReturnValue(insertReturning([{ id: "log-5" }]));
+    await auditService.record({
+      action: "update",
+      entityType: "user",
+      entityId: "ICklVF3Y3xlIFMzGTBRKafZdQIWcEs8A",
+      newValues: { phone: "081200011122" },
+    });
+    const values = lastInsertedValues(mockedInsert);
+    expect(values.entityId).toBeNull();
+    expect(values.newValues).toEqual({ phone: "081200011122", entityRef: "ICklVF3Y3xlIFMzGTBRKafZdQIWcEs8A" });
+  });
+
+  it("still creates newValues for a non-uuid key when there is no snapshot", async () => {
+    mockedInsert.mockReturnValue(insertReturning([{ id: "log-6" }]));
+    await auditService.record({ action: "delete", entityType: "user", entityId: "abc123" });
+    expect(lastInsertedValues(mockedInsert).newValues).toEqual({ entityRef: "abc123" });
   });
 });

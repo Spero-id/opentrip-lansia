@@ -14,7 +14,7 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
   - `oldValues`/`newValues` = objek field terpilih, bukan dump baris penuh
 **4 jebakan yang harus dijaga**:
   1. `entityType` varchar(100) → pakai nama tabel snake_case konsisten (`trip_price`, `payment`, `user`)
-  2. `entityId` **uuid** → hanya untuk entitas ber-uuid PK; tabel dengan varchar PK (mis. `site_settings.key`) → `entityId = null`, simpan kuncinya di `description`/newValues
+  2. `entityId` **uuid** → hanya untuk entitas ber-uuid PK; key non-uuid (mis. `users.id` = cuid text, `site_settings.key` varchar) dinormalisasi di `auditService.record`: `entity_id = null` + kunci asli disimpan di `newValues.entityRef` (**TERBUKTI live**: versi pertama gagal insert `string_to_uuid` dan jejak hilang)
   3. **Jangan log data sensitif**: no password/token/API key; nomor HP/email cukup disamarkan sebagian
   4. `audit_logs` tidak boleh ikut jadi "publik" di api-policy (hanya `GET` untuk admin)
 
@@ -38,10 +38,10 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
 
 ## Fase 3 — Prioritas sensitivitas ( Payments & Users )
 
-- [ ] `payment.controller.ts`: verify/reject bukti bayar, update status → `entityType: "payment"`
+- [x] `payment.controller.ts`: verify/reject bukti bayar, update status → `entityType: "payment"`
   - `newValues` whitelist: `status`, `verifiedBy`, `verifiedAt` (**jangan** `proofUrl` penuh → disamarkan)
-- [ ] `user.controller.ts`: ubah role/status/verifikasi → `entityType: "user"`
-- [ ] Test: mutasi admin menulis 1 baris audit; `actorId` null (tanpa session) tetap menulis dgn `adminId: null`
+- [x] `user.controller.ts`: ubah role/status/verifikasi → `entityType: "user"`
+- [x] Test: mutasi admin menulis 1 baris audit; `actorId` null (tanpa session) tetap menulis dgn `adminId: null`
 
 ## Fase 4 — Endpoint baca audit log (UI)
 
