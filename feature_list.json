@@ -4,8 +4,8 @@
   "summary": {
     "total_features": 56,
     "in_review": 18,
-    "completed": 26,
-    "to_do": 12,
+    "completed": 23,
+    "to_do": 15,
     "not_started": 0
   },
   "phases": [
@@ -50,7 +50,7 @@
           "id": "feat-011",
           "title": "Trip departure management",
           "description": "Admin can add/edit departures with start_date, end_date, max/min participants, status. Schema & repository exist. UI pending.",
-          "status": "completed",
+          "status": "to_do",
           "priority": 11,
           "depends_on": [
             "feat-010"
@@ -58,7 +58,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "Verified 2026-10-02: all feat-011 points covered by Group Trip UI (/admin/trips/[id]/groups) — dates, min/max quota, status lifecycle, activate, complete, gallery. Superseded by feat-011b."
+          "evidence": "Schema tripDepartures exists in module, admin UI belum ada"
         },
         {
           "id": "feat-011b",
@@ -79,7 +79,7 @@
           "id": "feat-012",
           "title": "Trip pricing (multi-tier) & quota",
           "description": "Admin can set tiered pricing (Dewasa/Anak/Early Bird) with atomic quota_booked updates. Schema & repository exist. UI pending.",
-          "status": "completed",
+          "status": "to_do",
           "priority": 12,
           "depends_on": [
             "feat-011"
@@ -87,7 +87,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "Tier editor in group management (/admin/trips/[id]/groups → Harga panel): CRUD tiers (name/price/quota/validity/active) via GET/POST /api/trips/[id]/groups/[groupId]/prices + PUT/DELETE prices/[priceId] (admin guard, AppError 400/404/409). Guards: unique name, quota>=booked, min 1 tier, no delete when booked. Live verified 2026-10-02 (anon 401, 409/400 paths, DB restored). 3 group-form tests."
+          "evidence": "Schema tripPrices + updateQuota repository exist, admin UI belum ada"
         },
         {
           "id": "feat-013",
@@ -514,7 +514,7 @@
           "id": "feat-061",
           "title": "Blog categories management",
           "description": "Schema blogCategories exists. Management UI and API needed.",
-          "status": "completed",
+          "status": "to_do",
           "priority": 61,
           "depends_on": [
             "feat-048"
@@ -522,7 +522,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "CRUD kategori: repository+service (slug unik, null-kan artikel saat hapus) + controller + GET/POST /api/blog-categories (GET public) + DELETE /[id] (admin). Admin: CreatableSelect di modal + kolom tabel + manager mini (list/hapus). Publik: badge + chips filter + ?category + link di detail. Live 2026-10-03 (401/400/409-dedup, assign, hapus-null-kan, DB bersih)."
+          "evidence": "blog.schema.ts with blogCategories table"
         }
       ]
     },

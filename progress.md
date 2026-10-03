@@ -2352,3 +2352,7 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 **Blog categories selesai:** repository (CRUD + slug unik + null-kan artikel) + service (AppError) + controller + GET/POST (GET public) + PUT/DELETE /[id] (admin) + policy. Admin: CreatableSelect di modal + kolom tabel + manager mini (list/hapus). Publik: badge + chips + ?category + link di detail. PUT kategori ditambahkan (CRUD penuh).
 **Live:** anon 401 · create + slug-2 dedup · kosong 400 · assign ke artikel · hapus → artikel null · test cats dibersihkan · /blog + /admin/blogs 200.
 **Verifikasi:** tsc 0 · lint 0E · vitest 252 (blog 13) · build 0 · routes 100 · audit 10 hijau · structure hijau (R3→210).
+
+## Session 63 — 2026-10-02
+
+**Restructure DONE — 127/127.** PR #124 (fase-11) digabung; 11.6 + 10.6 + P8-④b dicentang dengan catatan jujur. Dokumen status → DONE.

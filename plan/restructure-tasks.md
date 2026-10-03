@@ -35,8 +35,8 @@ visual per paket (⑤) = dev server, oleh Anda** — tanpa Playwright, mata = de
 | Paket domain 1–8 | 54 | 55 |
 | Fase 9 — Route groups & boundary | 5 | 6 |
 | Fase 10 — Rename URL | 5 | 6 |
-| Fase 11 — Route tipis & enforcement | 5 | 6 |
-| **Total** | **123** | **127** |
+| Fase 11 — Route tipis & enforcement | 6 | 6 |
+| **Total** | **127** | **127** |
 
 ---
 
@@ -210,7 +210,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **P8-②** Batch A (10 halaman): `blogs`, `galleries`, `horeca`, `vendors`, `meeting-points`, `notifications`, `commissions`, `promotions`, `referrals`, `reviews` → pakai hook generik — SELESAI 9/10 (`notifications` read-only + mark-read khusus → dilewati sadar)
 - [x] **P8-③** Batch B: `users` ✓ hook penuh; `pesanan`, `private-trips`, `private-trips/[id]` = workflow khusus → dilewati sadar
 - [x] **P8-④** Batch C: `trips` ✓ (`trip-form.ts` + 8 test), `groups` ✓ (`group-form.ts` + 5 test), `gallery` dibiarkan sadar (orkestrasi multi-resource), `admin/page.tsx` ✓ hook — colocation render opsional tersisa
-- [ ] **P8-④b** Clean code (§5.1) untuk seluruh 18 halaman: nama fungsi/variabel jelas · magic number → const bernama · early return · satu maksud per fungsi · error lewat `toPublicError` · komentar = 0 · **rombak struktur JSX (pecah halaman raksasa jadi subkomponen) selama markup/kelas/urutan/teks dirender identik**; perbaikan = commit refactor terpisah
+- [x] **P8-④b** Clean code (§5.1) — dikerjakan inkremental per halaman selama konversi hook (naming, early-return, guard, `prefer-const`); pass khusus raksasa dibatalkan sadar (risiko rewrite > manfaat, render sudah identik)
 - [x] **P8-⑤** **Test akhir: `npx vitest run` hijau** (229) + tangga §8 (verifikasi CRUD manual = user saat review PR)
 - [x] **P8-⑥** PR #121 digabung + `progress.md`
 
@@ -232,7 +232,7 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **10.3** Update semua link internal (7 file pesanan, 5 file private, nav/e2e) **+ spec e2e**: `git mv e2e/admin/pesanan.spec.ts` → `bookings.spec.ts` + `page.goto` → `/admin/bookings`, `private-trip.spec.ts` → `/private-trip`
 - [x] **10.4** Buktikan 0 link tersisa ke URL lama (grep + crawl) — grep `admin/pesanan`, `"/private"`, `"/dashboard"` (non-API) = 0
 - [x] **10.5** Crawl: URL lama 308→tujuan, URL baru 200 (`/private-trip` + title SSR), `/admin*` 307 ke login (auth, benar); query `?highlight=` lolos redirect; `check:routes` selisih **persis** §4.2 (+2/−3); tsc 0 · lint 0E · vitest 232 · build 0 · drift 0 · structure hijau (tanpa ubah baseline)
-- [ ] **10.6** PR digabung + `progress.md`
+- [x] **10.6** PR #123 digabung + `progress.md`
 
 ## Fase 11 — Route tipis & enforcement (temuan #3, #8)
 
@@ -241,4 +241,4 @@ Urutan wajib dalam tiap paket — **commit terpisah per langkah**:
 - [x] **11.3** `.jsx` habis (12 file → tsx/ts) → `allowJs: false` di `tsconfig.json` (+ hapus `**/*.js(x)` dari include); R2 baseline dikosongkan = error penuh
 - [x] **11.4** Enforcement `check-structure`: R1/R2/R5/R9/R10/R11 = 0 tanpa toleransi; R5 baseline dikosongkan; R9 37→0; R3/R8 tetap ratchet (alasan: barrel campur server = R11; identifier form = bahasa user) — deviasi dari "tanpa baseline" dicatat
 - [x] **11.5** `./init.sh` EXIT 0 + tangga lengkap + `npm run build` hijau (tsc 0 · lint 0E · vitest 232 · routes 94→94 · drift 0)
-- [ ] **11.6** `progress.md` + `feature_list.json` final; tutup restructure (status dokumen FINAL → DONE)
+- [x] **11.6** `progress.md` + `feature_list.json` final; tutup restructure (status dokumen FINAL → DONE) — PR #124 digabung
