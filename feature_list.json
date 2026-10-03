@@ -1,11 +1,11 @@
 {
   "project": "OpenTrip Lansia (OTL)",
-  "last_updated": "2026-10-02",
+  "last_updated": "2026-10-03",
   "summary": {
     "total_features": 56,
     "in_review": 18,
-    "completed": 23,
-    "to_do": 15,
+    "completed": 26,
+    "to_do": 12,
     "not_started": 0
   },
   "phases": [
@@ -50,7 +50,7 @@
           "id": "feat-011",
           "title": "Trip departure management",
           "description": "Admin can add/edit departures with start_date, end_date, max/min participants, status. Schema & repository exist. UI pending.",
-          "status": "to_do",
+          "status": "completed",
           "priority": 11,
           "depends_on": [
             "feat-010"
@@ -79,7 +79,7 @@
           "id": "feat-012",
           "title": "Trip pricing (multi-tier) & quota",
           "description": "Admin can set tiered pricing (Dewasa/Anak/Early Bird) with atomic quota_booked updates. Schema & repository exist. UI pending.",
-          "status": "to_do",
+          "status": "completed",
           "priority": 12,
           "depends_on": [
             "feat-011"
@@ -514,7 +514,7 @@
           "id": "feat-061",
           "title": "Blog categories management",
           "description": "Schema blogCategories exists. Management UI and API needed.",
-          "status": "to_do",
+          "status": "completed",
           "priority": 61,
           "depends_on": [
             "feat-048"

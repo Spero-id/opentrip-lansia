@@ -2288,7 +2288,7 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Progres:** total **123/127**. Tersisa: 11.6 PR fase-11. Setelah merge: restructure DONE; kembali ke `feature_list.json` (14 to_do / 18 in_review) untuk fitur berikutnya.
 
-## Session 64 — 2026-10-02 (feat-011 & feat-012, BELUM COMMIT — branch feat/012-tier-pricing)
+## Session 64 — 2026-10-02 (feat-011 & feat-012, PR #125)
 
 **feat-011 → completed (verifikasi, tanpa kode baru):** seluruh poin spec (tanggal, min/max kuota, status) tercakup UI Group Trip; dinyatakan superseded oleh feat-011b.
 
@@ -2301,7 +2301,7 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Verifikasi:** tsc 0 · lint 0E · vitest 235 · build 0 · routes 94→94 · drift 0 · structure hijau.
 
-## Session 65 — 2026-10-02 (P0 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+## Session 65 — 2026-10-02 (P0 tier-pricing, PR #125)
 
 **P0 selesai penuh + live end-to-end:**
 - Tanggal ditegakkan (isPriceValid/pickValidPrice/findValidPrices; kanonikal, list, endpoint publik).
@@ -2314,7 +2314,7 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Verifikasi:** tsc 0 · lint 0E · vitest 245 · build 0 · routes 97→97 · drift 0 · structure hijau.
 
-## Session 66 — 2026-10-02 (P1 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+## Session 66 — 2026-10-02 (P1 tier-pricing, PR #125)
 
 **P1 selesai + live:**
 - Fallback kanonikal termurah (tanpa Dewasa valid) + test.
@@ -2326,7 +2326,7 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Verifikasi:** tsc 0 · lint 0E · vitest 250 · build 0 · routes 97→97 · drift 0 · structure hijau.
 
-## Session 67 — 2026-10-02 (P2 tier-pricing, BELUM COMMIT — branch feat/012-tier-pricing)
+## Session 67 — 2026-10-02 (P2 tier-pricing, PR #125)
 
 **P2 selesai + live:**
 - Audit tier via `auditLogs` (create/update/delete + adminId) + endpoint history + panel Riwayat; live: 2 entri + nama admin.
@@ -2336,18 +2336,18 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Verifikasi:** tsc 0 · lint 0E · vitest 250 · build 0 · routes 98→98 · drift 0 · structure hijau.
 
-## Session 68 — 2026-10-03 (form peserta dinamis, BELUM COMMIT — branch feat/012-tier-pricing)
+## Session 68 — 2026-10-03 (form peserta, di-REVERT sebelum commit, PR #125)
 
 **Temuan user (benar):** pax>1 tapi form data diri cuma 1 hardcoded; peserta non-primer anonim.
 **Eksekusi:** `TripParticipantEntry` + `TripParticipantForms` (nama+tgl lahir per tier, key stabil, prune saat qty turun, canProceed validasi); server tulis `bookingParticipants.bookingItemId` + validasi kecocokan jumlah (400).
 **Live:** 2 senior ter-link tier Dewasa; mismatch 400; cancel→kuota 0 (miss pertama = HMR basi di server dev, retest hijau).
 **Verifikasi:** tsc 0 · lint 0E · vitest 251 · structure hijau (R3→207).
 
-## Session 69 — 2026-10-03 (revert form peserta, BELUM COMMIT — branch feat/012-tier-pricing)
+## Session 69 — 2026-10-03 (revert form peserta, sebelum PR #125)
 
 **Revert total form peserta dinamis** atas permintaan user (sesuai plan: 1 form hardcoded). Dihapus: TripParticipantForms, TripParticipantEntry, aksi/reducer, wiring hook, validasi+insert server, test. Verifikasi pasca-revert: tsc 0 · lint 0E · vitest hijau · structure hijau · sweep 0 sisa.
 
-## Session 70 — 2026-10-03 (feat-061, BELUM COMMIT — branch feat/061-blog-categories)
+## Session 70 — 2026-10-03 (feat-061, PR #126)
 
 **Blog categories selesai:** repository (CRUD + slug unik + null-kan artikel) + service (AppError) + controller + GET/POST (GET public) + PUT/DELETE /[id] (admin) + policy. Admin: CreatableSelect di modal + kolom tabel + manager mini (list/hapus). Publik: badge + chips + ?category + link di detail. PUT kategori ditambahkan (CRUD penuh).
 **Live:** anon 401 · create + slug-2 dedup · kosong 400 · assign ke artikel · hapus → artikel null · test cats dibersihkan · /blog + /admin/blogs 200.
