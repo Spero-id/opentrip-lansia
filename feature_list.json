@@ -640,7 +640,8 @@
             "npm run lint"
           ],
           "evidence": "Selesai fase 1-5. Helper generic src/features/audit/ (record/diffFields/pickFields, redaksi key sensitif, normalisasi entityId non-uuid ke entityRef, tidak pernah melempar). Entitas ter-audit: trip_price, trip, trip_group, blog, blog_category, payment, user, promotion, commission, site_settings. Endpoint GET /api/admin/audit-logs (admin) + UI /admin/audit-log read-only expandable + filter entitas/aksi. Sisa di luar scope fitur ini: housekeeping retensi (>180 hari) sebagai ticket terpisah.",
-          "plan": "plan/feat-082-audit-log.md"
+          "plan": "plan/feat-082-audit-log.md",
+          "notes_retention": "Retensi: TIDAK ada penghapusan log saat ini (sengaja). Tabel audit_logs hanya 22 baris dan tumbuh sangat lambat (aksi admin). Kalau nanti membesar, perbaikannya: index created_at + delete berkala. Belum jadi prioritas."
         },
         {
           "id": "feat-083",
