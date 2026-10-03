@@ -3,9 +3,9 @@
   "last_updated": "2026-10-03",
   "summary": {
     "total_features": 56,
-    "in_review": 18,
+    "in_review": 19,
     "completed": 26,
-    "to_do": 12,
+    "to_do": 11,
     "not_started": 0
   },
   "phases": [
@@ -616,7 +616,7 @@
           "id": "feat-081",
           "title": "File upload (media/gallery)",
           "description": "Image upload system for trip media, gallery, review media, blog covers. Schema media exists.",
-          "status": "to_do",
+          "status": "in_review",
           "priority": 80,
           "depends_on": [
             "feat-001"
@@ -624,7 +624,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "master.schema.ts with media table"
+          "evidence": "Sudah ada upload untuk trip media (/admin/trips image-manager), galeri grup, blog cover, dan bukti bayar (payments/upload) via /api/upload + hardening feat-084 (admin guard, magic-byte, anti-SVG, path guard). SISA 1 gap: user belum bisa melampirkan foto ke ulasan (tabel review_media ada, tak ada alur unggah di form ulasan /my-trips)."
         },
         {
           "id": "feat-082",
