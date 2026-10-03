@@ -45,11 +45,11 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
 
 ## Fase 4 — Endpoint baca audit log (UI)
 
-- [ ] `GET /api/admin/audit-logs?entityType=&action=&adminId=&limit=&cursor=` (admin)
-- [ ] Policy: `"GET /api/admin/audit-logs": "admin"` (+ **tambah ke audit test api-auth**)
-- [ ] UI: `/admin/audit-log` (konten read-only): tabel waktu · admin · aksi · entitas · deskripsi ·-expand `oldValues → newValues`
-- [ ] Filter: entitas + aksi + rentang tanggal; **tanpa** filter "ubah" (audit immutable)
-- [ ] Nav: grup **Konten** → `Audit Log` (`ScrollText`) di `nav-data.ts` **dan** `app-sidebar.tsx` (dua sumber!)
+- [x] `GET /api/admin/audit-logs?entityType=&action=&adminId=&limit=&from=&to=` (admin)
+- [x] Policy: `"GET /api/admin/audit-logs": "admin"` (+ **tambah ke audit test api-auth**)
+- [x] UI: `/admin/audit-log` (konten read-only): tabel waktu · admin · aksi · entitas · deskripsi ·-expand `oldValues → newValues`
+- [x] Filter: entitas + aksi (+ parameter rentang tanggal & entityId di API, dipakai history tier); **tanpa** filter "ubah" (audit immutable)
+- [x] Nav: grup **Konten** → `Audit Log` (`ScrollText`) di `nav-data.ts` **dan** `app-sidebar.tsx` (dua sumber!)
 
 ## Fase 5 — Modul lain (bisa setelah PR Fase 1-4)
 

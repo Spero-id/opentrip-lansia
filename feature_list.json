@@ -3,9 +3,9 @@
   "last_updated": "2026-10-03",
   "summary": {
     "total_features": 56,
-    "in_review": 19,
+    "in_review": 20,
     "completed": 26,
-    "to_do": 11,
+    "to_do": 10,
     "not_started": 0
   },
   "phases": [
@@ -630,7 +630,7 @@
           "id": "feat-082",
           "title": "Audit log system",
           "description": "Tabel auditLogs sudah ada. Integrasi ke modul-modul lain untuk mencatat perubahan status.",
-          "status": "to_do",
+          "status": "in_review",
           "priority": 81,
           "depends_on": [
             "feat-080"
@@ -638,7 +638,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "Tabel auditLogs ada (src/db/schema/utility.ts:14) tapi hanya dipakai trip_price. Helper generic src/features/audit/ (record/diffFields/pickFields + redaksi key sensitif + normalisasi entityId non-uuid) dipakai trip_price (fase 2), payment approve/reject, user update/delete (fase 3). Sisa: endpoint + UI /admin/audit-log (fase 4) dan modul lain (fase 5). Plan 5 fase: plan/feat-082-audit-log.md",
+          "evidence": "Helper generic src/features/audit/ (record/diffFields/pickFields + redaksi key sensitif + normalisasi entityId non-uuid). Dipakai: trip_price (fase 2), payment approve/reject, user update/delete (fase 3). Fase 4: GET /api/admin/audit-logs (admin, policy + test) + UI /admin/audit-log read-only expandable dengan filter entitas/aksi, nav di dua sumber. Sisa: fase 5 (trip/group/blog/promotion/commission/site_settings) + housekeeping retensi (ticket terpisah).",
           "plan": "plan/feat-082-audit-log.md"
         },
         {

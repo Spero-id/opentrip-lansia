@@ -1,6 +1,7 @@
 {
   "/(account)/my-trips/page": "/my-trips",
   "/(account)/profile/page": "/profile",
+  "/(admin)/admin/audit-log/page": "/admin/audit-log",
   "/(admin)/admin/blog-categories/page": "/admin/blog-categories",
   "/(admin)/admin/blogs/page": "/admin/blogs",
   "/(admin)/admin/bookings/page": "/admin/bookings",
@@ -34,6 +35,7 @@
   "/(public)/trips/page": "/trips",
   "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found",
+  "/api/admin/audit-logs/route": "/api/admin/audit-logs",
   "/api/admin/dashboard/route": "/api/admin/dashboard",
   "/api/admin/notifications/[id]/read/route": "/api/admin/notifications/[id]/read",
   "/api/admin/notifications/read-all/route": "/api/admin/notifications/read-all",

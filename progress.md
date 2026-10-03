@@ -2386,3 +2386,14 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 
 **Verifikasi:** tsc 0 · lint 0E · vitest **281** (+13: normalisasi entityId, payment approve/reject/sudah-diproses/non-admin, user update/delete/no-change/null-admin/urutan update-lalu-audit) · build compiled · routes 101→101 · drift 0 · auth audit 10 · structure hijau.
 **Live smoke:** `PUT /api/users/:id` (phone) → baris `user` tertulis dengan `entityRef`, `newValues` hanya field berubah; update dengan nilai sama → **tidak** ada baris baru. `POST /api/payments/:id/review` reject → baris `payment` (pending → rejected, `adminNote` tercatat, tanpa `proofUrl`). Semua data QA dikembalikan (phone user = null, payment kembali `pending`, note dibersihkan).
+
+## Session 73 — 2026-10-03 (feat-082 audit log, Fase 4 endpoint + UI, branch feat/082-audit-log)
+
+**Endpoint:** `GET /api/admin/audit-logs?entityType=&entityId=&adminId=&action=&from=&to=&limit=` via `audit.controller.ts` (route tipis + `requireAdmin`, policy `"admin"`, R5 tetap 0). `limit` default 50, cap 200, input sampah → default.
+
+**UI `/admin/audit-log`** (konten, grup **Konten**, ikon ScrollText, ada di `nav-data.ts` **dan** `app-sidebar.tsx`): tabel waktu · admin · aksi · entitas · keterangan, tiap baris bisa di-expand untuk melihat perubahan field-per-field (`nama: lama → baru`). Filter entitas + aksi dengan reset, empty state membedakan "belum ada aktivitas" vs "tidak ada pada filter ini". **Tidak ada tombol edit/hapus** — append-only.
+
+**Catatan ratchet:** R1 (komentar Indonesia) dijaga 0 → komentar & label UI ditulis英文/bahasa netral; R8 naik 2 dari kata Indonesia di label ("harga", "Keterangan", "baca", "untuk") → label diubah ("Tier trip", "Detail", "hanya-baca" → "permanen") sampai R8 kembali 504. R3 naik 3 (route audit-logs + 2 `vi.mock` leaf di test controller) → baseline 214 → **217** dengan catatan.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **286** (+5 test controller: filter diteruskan, default/cap limit, junk limit, rentang tanggal, error 500) · build compiled · routes 101 → **103** (snapshot diperbarui: `/admin/audit-log` + `/api/admin/audit-logs`) · drift 0 · auth audit 10 · structure hijau.
+**Live smoke:** anon `401` · user biasa `403` (API) dan halaman dialihkan ke `/forbidden` · admin `200` dengan isi tabel benar. Filter `entityType=user` mengembalikan baris `user` (`newValues: phone + entityRef`). Legacy `trip_price` dengan entityId non-uuid (`p1`) otomatis ternormalisasi jadi `entityRef`. Dev server dimatikan, tidak ada data QA yang tersisa.

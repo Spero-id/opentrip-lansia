@@ -19,6 +19,7 @@ export const API_ACCESS: Record<string, ApiAccess> = {
   "GET /api/uploads/[...path]": "public",
 
   "GET /api/admin/dashboard": "admin",
+  "GET /api/admin/audit-logs": "admin",
   "GET /api/admin/notifications": "admin",
   "POST /api/admin/notifications/read-all": "admin",
   "PATCH /api/admin/notifications/[id]/read": "admin",
