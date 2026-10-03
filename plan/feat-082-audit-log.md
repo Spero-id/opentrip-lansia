@@ -20,21 +20,21 @@ Status per 2026-10-03 · Branch: (belum dibuat, usul `feat/082-audit-log`)
 
 ## Fase 1 — Pisahkan helper generic (fondasi)
 
-- [ ] `src/features/audit/audit.schema.ts` — re-export `auditLogs` (ikuti `contact.schema.ts`)
-- [ ] `src/features/audit/audit.service.ts`:
+- [x] `src/features/audit/audit.schema.ts` — re-export `auditLogs` (ikuti `contact.schema.ts`)
+- [x] `src/features/audit/audit.service.ts`:
   - `recordAudit({ adminId, action, entityType, entityId?, oldValues?, newValues?, description? })`
   - `diffFields(before, after, allowlist)` → hanya field yang berubah, redaksi otomatis untuk key sensitif
   - `REDACTED_KEYS = ["password","token","secret","apiKey","authorization"]`
   - `listAudit({ entityType?, entityId?, adminId?, limit, cursor })` + `countAudit(...)` untuk pagination
-- [ ] `src/features/audit/audit.repository.ts` — query list (join `users` untuk nama admin), seperti `getPriceHistory`
-- [ ] `src/features/audit/index.ts` — barrel
-- [ ] **Tidak** controller dulu (fase 1 = infra saja, tanpa route → routes snapshot tidak berubah)
+- [x] `src/features/audit/audit.repository.ts` — query list (join `users` untuk nama admin), seperti `getPriceHistory`
+- [x] `src/features/audit/index.ts` — barrel
+- [x] **Tidak** controller dulu (fase 1 = infra saja, tanpa route → routes snapshot tidak berubah)
 
 ## Fase 2 — Backfill tier-pricing ke helper generic
 
-- [ ] Ganti `recordTierAudit` → `recordAudit` dengan `entityType: "trip_price"`
-- [ ] `getPriceHistory` → `listAudit({ entityType: "trip_price", entityId: ids })` (perilaku & respons **harus identik** → 0 ubah UI)
-- [ ] Test: `trip-api.test.ts` existing tetap hijau + test baru `audit.service.test.ts` (redaksi key, diff allowlist, toleransi error DB)
+- [x] Ganti `recordTierAudit` → `recordAudit` dengan `entityType: "trip_price"`
+- [x] `getPriceHistory` → `listAudit({ entityType: "trip_price", entityId: ids })` (perilaku & respons **harus identik** → 0 ubah UI)
+- [x] Test: `trip-api.test.ts` existing tetap hijau + test baru `audit.service.test.ts` (redaksi key, diff allowlist, toleransi error DB)
 
 ## Fase 3 — Prioritas sensitivitas ( Payments & Users )
 

@@ -1,10 +1,9 @@
 import { tripRepository } from "./trip.repository";
 import { db } from "@/lib/db";
-import { auditLogs } from "@/db/schema/utility";
-import { users } from "@/db/schema/auth";
+import { auditService, pickFields } from "@/features/audit";
 import { bookingItems } from "@/db/schema/bookings";
 import { bookings } from "@/db/schema/bookings";
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import type { UUID } from "@/types";
 import type { trips, itineraryItems } from "@/db/schema/trips";
 import type { GroupCreateInput } from "./trip.repository";
@@ -38,7 +37,9 @@ export interface TierAuditEntry {
   createdAt: Date | null;
 }
 
-export async function recordTierAudit(
+const PRICE_AUDIT_FIELDS = ["name", "price", "quota"] as const;
+
+async function recordPriceAudit(
   adminId: string | null,
   action: "create" | "update" | "delete",
   priceId: string,
@@ -46,19 +47,15 @@ export async function recordTierAudit(
   newValues: Record<string, unknown> | null,
   description: string,
 ): Promise<void> {
-  try {
-    await db.insert(auditLogs).values({
-      adminId: adminId ?? null,
-      action,
-      entityType: "trip_price",
-      entityId: priceId ?? null,
-      oldValues: oldValues as unknown as object | null,
-      newValues: newValues as unknown as object | null,
-      description,
-    });
-  } catch (err) {
-    console.error("recordTierAudit failed:", err);
-  }
+  await auditService.record({
+    adminId,
+    action,
+    entityType: "trip_price",
+    entityId: priceId,
+    oldValues,
+    newValues,
+    description,
+  });
 }
 
 export interface PriceTierInput {
@@ -160,11 +157,7 @@ export const tripService = {
       validUntil: data.validUntil,
       isActive: data.isActive,
     });
-    await recordTierAudit(adminId ?? null, "create", created.id, null, {
-      name: data.name,
-      price: data.price,
-      quota: data.quota,
-    }, `Tier "${data.name}" dibuat`);
+    await recordPriceAudit(adminId ?? null, "create", created.id, null, pickFields(data, PRICE_AUDIT_FIELDS), `Tier "${data.name}" dibuat`);
     return created;
   },
 
@@ -192,34 +185,14 @@ export const tripService = {
       validUntil: data.validUntil,
       isActive: data.isActive,
     });
-    await recordTierAudit(adminId ?? null, "update", priceId, {
-      name: price.name,
-      price: price.price,
-      quota: price.quota,
-    }, {
-      name: data.name,
-      price: data.price,
-      quota: data.quota,
-    }, `Tier "${price.name}" diubah`);
+    await recordPriceAudit(adminId ?? null, "update", priceId, pickFields(price, PRICE_AUDIT_FIELDS), pickFields(data, PRICE_AUDIT_FIELDS), `Tier "${price.name}" diubah`);
     return updated;
   },
 
   async getPriceHistory(groupId: UUID): Promise<TierAuditEntry[]> {
     const prices = await tripRepository.findPricesByDepartureId(groupId);
     if (prices.length === 0) return [];
-    const rows = await db
-      .select({
-        id: auditLogs.id,
-        action: auditLogs.action,
-        description: auditLogs.description,
-        adminName: users.name,
-        createdAt: auditLogs.createdAt,
-      })
-      .from(auditLogs)
-      .leftJoin(users, eq(users.id, auditLogs.adminId))
-      .where(inArray(auditLogs.entityId, prices.map((p) => p.id)))
-      .orderBy(desc(auditLogs.createdAt))
-      .limit(50);
+    const rows = await auditService.listByEntityIds(prices.map((p) => p.id));
     return rows;
   },
 
@@ -259,11 +232,7 @@ export const tripService = {
       throw new ConflictError("Grup harus memiliki minimal satu tier harga");
     }
     await tripRepository.deletePrice(priceId);
-    await recordTierAudit(adminId ?? null, "delete", priceId, {
-      name: price.name,
-      price: price.price,
-      quota: price.quota,
-    }, null, `Tier "${price.name}" dihapus`);
+    await recordPriceAudit(adminId ?? null, "delete", priceId, pickFields(price, PRICE_AUDIT_FIELDS), null, `Tier "${price.name}" dihapus`);
   },
 
   async reserveQuota(priceId: UUID, qty: number): Promise<boolean> {

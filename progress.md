@@ -2356,3 +2356,20 @@ https://github.com/Spero-id/opentrip-lansia/pull/new/restructure%2Ffase-1
 ## Session 63 — 2026-10-02
 
 **Restructure DONE — 127/127.** PR #124 (fase-11) digabung; 11.6 + 10.6 + P8-④b dicentang dengan catatan jujur. Dokumen status → DONE.
+
+## Session 71 — 2026-10-03 (feat-082 audit log, Fase 1-2, branch feat/082-audit-log)
+
+**Fakta awal:** tabel `audit_logs` sudah ada (`src/db/schema/utility.ts:14`) tapi hanya dipakai satu modul — `recordTierAudit()` di `trip.service.ts` (trip_price create/update/delete) + `GET .../prices/history`.
+
+**Fase 1 — helper generic (selesai):** modul baru `src/features/audit/`:
+- `audit.types.ts` (AuditAction/RecordInput/Entry/ListFilter) · `audit.schema.ts` (re-export) · `audit.repository.ts` (insert + list berfilter + listByEntityIds) · `audit.service.ts` (`record`, `diffFields`, `pickFields`, `isSensitiveKey`) · `index.ts`
+- `record()` **tidak pernah melempar** (swallow + `console.error`) → audit tidak bisa menggagalkan write bisnis
+- Redaksi otomatis key sensitif (`password`, `token`, `apiKey`, `pin`, dll — normalisasi nama key)
+- `diffFields(before, after, allowlist)` → hanya field terotorisasi yang berubah; jsonb tidak pernah berisi dump baris penuh
+
+**Fase 2 — backfill tier-pricing (selesai):** `trip.service.ts` sekarang pakai `auditService.record` (`entityType: "trip_price"`) + `pickFields(PRICE_AUDIT_FIELDS)`; `getPriceHistory` → `auditService.listByEntityIds`. **Respons & UI 100% identik** (0 perubahan render).
+
+**Penting (ratchet):** import lintas fitur harus lewat **barrel** `@/features/audit`, bukan path dalam → R3 naik 210→211 lalu 212 (baseline FAIL). Sudah dikoreksi ke barrel, `check-structure` kembali `all rules within baseline`.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **267** (252 + 15 test baru `audit.service.test.ts`: diff allowlist, redaksi, null≡undefined, Date/object compare, error insert ditelan) · build compiled · routes 101→101 identik · drift 0 · auth audit 10 · structure hijau.
+**Live smoke:** `PUT .../prices/:id` (350000→350001) → baris audit terisi (`entityType: trip_price`, `oldValues.price: "350000"`, `newValues.price: "350001"`, `adminId` terisi) → `GET .../prices/history` tetap sama bentuknya. Harga dikembalikan ke 350000.
