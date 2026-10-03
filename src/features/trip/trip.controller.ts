@@ -3,6 +3,11 @@ import { tripService } from "./trip.service";
 import { tripRepository } from "./trip.repository";
 import { slugify } from "@/utils/helpers";
 import { toPublicError } from "@/lib/errors/to-public-error";
+import { getSessionUser } from "@/lib/auth";
+
+async function actorId(req: NextRequest): Promise<string | null> {
+  return (await getSessionUser(req))?.id ?? null;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -38,7 +43,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const slug = body.slug || slugify(body.title) + "-" + Date.now();
-    const trip = await tripService.createTrip({ ...body, slug });
+    const trip = await tripService.createTrip({ ...body, slug }, await actorId(req));
     return NextResponse.json(trip, { status: 201 });
   } catch (err) {
     const message = toPublicError(err, "Terjadi kesalahan");
@@ -50,7 +55,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const body = await req.json();
-    const trip = await tripService.updateTrip(id, body);
+    const trip = await tripService.updateTrip(id, body, await actorId(req));
     if (!trip) {
       return NextResponse.json({ error: "Trip tidak ditemukan" }, { status: 404 });
     }

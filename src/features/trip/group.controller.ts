@@ -57,7 +57,7 @@ export const groupController = {
         maxParticipants: body.maxParticipants,
         minParticipants: body.minParticipants ?? 1,
         notes: body.notes,
-      });
+      }, await actorId(req));
       return NextResponse.json(group, { status: 201 });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
@@ -74,41 +74,41 @@ export const groupController = {
         maxParticipants: body.maxParticipants,
         minParticipants: body.minParticipants,
         notes: body.notes,
-      });
+      }, await actorId(req));
       return NextResponse.json(group);
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
     }
   },
 
-  async remove(_req: NextRequest, ctx: GroupParams) {
+  async remove(req: NextRequest, ctx: GroupParams) {
     try {
       const { groupId } = await ctx.params;
-      await tripService.deleteGroup(groupId);
+      await tripService.deleteGroup(groupId, await actorId(req));
       return NextResponse.json({ success: true });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
     }
   },
 
-  async activate(_req: NextRequest, ctx: GroupParams) {
+  async activate(req: NextRequest, ctx: GroupParams) {
     try {
       const { id, groupId } = await ctx.params;
-      const result = await tripService.activateGroup(id, groupId);
+      const result = await tripService.activateGroup(id, groupId, await actorId(req));
       return NextResponse.json({ success: true, activatedGroupId: result.activated, deactivatedGroupId: result.deactivated });
     } catch (err) {
       return NextResponse.json({ error: toPublicError(err, "Terjadi kesalahan") }, { status: 400 });
     }
   },
 
-  async complete(_req: NextRequest, ctx: GroupParams) {
+  async complete(req: NextRequest, ctx: GroupParams) {
     try {
       const { id: tripId, groupId } = await ctx.params;
       const group = await tripRepository.findGroupById(groupId);
       if (!group || group.tripId !== tripId) {
         return NextResponse.json({ error: "Grup tidak ditemukan" }, { status: 404 });
       }
-      await tripRepository.updateGroup(groupId, { status: "completed", isActive: false });
+      await tripService.completeGroup(groupId, await actorId(req));
       await db
         .update(bookings)
         .set({ status: "completed", updatedAt: new Date() })
