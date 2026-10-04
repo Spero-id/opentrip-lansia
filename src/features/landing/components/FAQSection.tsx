@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Plus, ChevronLeft, ChevronRight, Send } from "lucide-react";
-import { faqs } from "@/lib/data";
+import { faqs } from "./content";
 import {
   NEXT_PUBLIC_WHATSAPP_MESSAGE,
   NEXT_PUBLIC_WHATSAPP_NUMBER,

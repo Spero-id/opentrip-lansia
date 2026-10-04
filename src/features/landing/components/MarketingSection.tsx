@@ -6,7 +6,7 @@ import {
   ArrowDownToLine,
   ChevronDown,
 } from "lucide-react";
-import { features } from "@/lib/data";
+import { features } from "./content";
 
 
 export default function MarketingSection() {
