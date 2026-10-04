@@ -2546,3 +2546,17 @@ Tabel perilaku setelah perbaikan (semua sudah dikunci test):
 Yang ditegaskan dalam commit message: perpindahan folder **tidak menambah pengaman apa pun**. bcryptjs secara teknis bisa dibundel ke browser tanpa error, dan tetap bisa diimpor dari komponen client baik dari `utils/` maupun `lib/`. Pengaman hanya bisa datang dari guard mekanis (mis. R12 "client bundle mencapai paket server-only"), analogous R11 yang sudah ada. Guard itu belum dibuat — dicatat sebagai pekerjaan lanjutan.
 
 **Verifikasi:** tsc 0 · lint 0E · vitest **343** hijau · build compiled · check-structure all rules within baseline · R3 220 · R6 2 · R9 0.
+
+## Session 83 — 2026-10-03 (guard R12 + test verifyPassword, branch refactor/lib-cleanup)
+
+**R12 `client bundle reaches server-only package` (target 0).** Untuk setiap entry ber-`"use client"`, graf import lokal ditelusuri, lalu setiap file yang terjangkau diperiksa untuk import paket `bcryptjs`, `pg`, atau `nodemailer`. Menutup kelas bug "kode server ikut ke bundel browser" yang sebelumnya tanpa penjaga — tidak peduli file-nya di `utils/` atau `lib/`. Sekalian refactor: R11 sebelumnya punya BFS sendiri sendiri; keduanya kini memakai helper `clientEntries()` dan `reachableFrom()` yang sama.
+
+**Efektivitas R12 dibuktikan dengan probe, bukan asumsi.** File sementara ber-`"use client"` yang mengimpor `@/lib/auth/password` → R12 FAIL dengan sampel `src/lib/auth/password.ts: bcryptjs` (file penyebabnya, bukan cuma entry-nya), lalu dihapus → R12 kembali 0.
+
+**Test `verifyPassword` (10 test, `src/lib/auth/__tests__/password.test.ts`).** Cabang SHA-256 legacy yang tadinya 0% coverage kini dikunci: password cocok diterima, password salah ditolak, hash rusak (`"bukan-hash"`, `"$2a$10$potong"`) tidak melempar. Ditambah pembedaan `isLegacySha256` untuk bcrypt vs hex-64, efek salt (hash sama untuk password sama tetap berbeda tapi keduanya verifikasi), dan password kosong ditolak.
+
+**Test yang saya buang sendiri sebelum commit:** sempat menulis `it("tidak membandingkan hash secara timing-unsafe")` yang isinya cuma memeriksa dua hasil `false` — tidak menguji timing sama sekali. Nama test menjanjikan sesuatu yang tidak diperiksa; jenis rasa aman palsu yang justru saya kritisi di sesi-sesi sebelumnya. Dihapus, bukan dipoles.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **353** hijau (+10, 42 → 43 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R11 0 · **R12 0**.
+
+**Sisa temuan audit coverage yang belum dikerjakan:** `utils/helpers.ts` 0% (`slugify` + `generateCode`) — dan `slugify` ternyata punya 3 salinan dengan 2 implementasi berbeda (lihat Session 82), jadi ini prioritas duplikasi, bukan test. `generateCode` masih memakai `Math.random()` untuk kode referral dan kode booking. `lib/auth/session.ts` 0%, `lib/auth/auth-server.ts` 0%.
