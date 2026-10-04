@@ -40,8 +40,15 @@ describe("env/server", () => {
     ).rejects.toThrow("Invalid environment variables");
   });
 
-  it("menyetujui URL dengan skema non-http", async () => {
-    const url = "postgres://user:pass@host:5432/db?sslmode=require";
+  it("menolak string koneksi tanpa skema postgres", async () => {
+    await expect(
+      loadServer({ ...VALID, DATABASE_URL: "localhost:5432/db" }),
+    ).rejects.toThrow("Invalid environment variables");
+  });
+
+  it("menerima URL NeonDB postgresql://", async () => {
+    const url =
+      "postgresql://user:pass@ep-frost-azrtnxj8.aws.neon.tech/neondb?sslmode=require";
     const env = await loadServer({ ...VALID, DATABASE_URL: url });
     expect(env.DATABASE_URL).toBe(url);
   });

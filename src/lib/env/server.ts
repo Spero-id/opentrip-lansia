@@ -2,9 +2,15 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 import { clientRuntimeEnv, clientSchema } from "./client";
 
+const POSTGRES_URL_RE = /^postgres(ql)?:\/\//;
+
 const server = createEnv({
   server: {
-    DATABASE_URL: z.url(),
+    DATABASE_URL: z
+      .url()
+      .refine((v) => POSTGRES_URL_RE.test(v), {
+        message: "harus diawali postgres:// atau postgresql://",
+      }),
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
     GOOGLE_CLIENT_ID: z.string().default(""),
