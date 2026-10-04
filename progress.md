@@ -2455,3 +2455,21 @@ Branch `refactor/lib-cleanup` dibuat dari `main` **setelah** PR #127 (feat-082 a
 **Verifikasi akhir:** tsc 0 · lint 0E (80 warning, baseline) · vitest **295** hijau · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R3 220 · **R8 468** (dari 504) · R9 0 · R11 0.
 
 **Sisa pekerjaan yang sengaja di luar scope:** `src/lib/mail.ts` masih satu file dengan `transporter` di module scope (koneksi SMTP dibentuk begitu file di-import) dan HTML template menyatu — slated menjadi ticket sendiri supaya vendor email bisa diganti tanpa menyentuh consumer. Kelima commit di `plan/lib-cleanup.md` sudah habis; langkah berikutnya tinggal push branch + PR.
+
+## Session 77 — 2026-10-03 (refactor mail, branch refactor/lib-cleanup)
+
+Ticket terpisah dari `plan/lib-cleanup.md` (itu sudah habis di commit 5): `src/lib/mail.ts` 96 baris dipecah menjadi `src/lib/mail/` supaya vendor email bisa diganti tanpa menyentuh consumer.
+
+**Struktur:** `transport.ts` (interface `MailTransport` + `MailMessage`) · `nodemailer.ts` (driver + `getTransport()`) · `templates.ts` (HTML template sebagai fungsi murni) · `index.ts` (barrel). `features/contact/contact.service.ts` dan `features/newsletter/newsletter.service.ts` **tidak berubah sama sekali** — masih `import { sendContactEmail } from "@/lib/mail"`.
+
+**Perbaikan nyata: transporter jadi lazy.** Sebelumnya `nodemailer.createTransport()` berjalan di module scope, jadi koneksi SMTP dibentuk begitu file di-import — termasuk saat build dan saat test yang sama sekali tidak mengirim email. Sekarang `getTransport()` memakai memoized singleton yang baru dibentuk pada pengiriman pertama. Dikunci test: `createTransport` tidak dipanggil saat import, dipanggil tepat 1× pada `getTransport()` pertama, dan instance-nya sama pada panggilan berikutnya.
+
+**Dua selisih HTML ketahuan lewat test parity** (saya tulis implementasi lama sebagai acuan, lalu bandingkan string-nya):
+1. `width: 120px` awalnya ikut ke semua baris tabel, padahal versi lama hanya di baris pertama → seluruh kolom jadi lebar seragam.
+2. Teks footer sempat disamakan jadi "dari sistem Jelajah Memoria" untuk semua template; aslinya berbeda — "formulir Contact Us" untuk contact, "sistem newsletter" untuk newsletter.
+
+Satu jebakan lagi: import relatif `../nodemailer` di test menaikkan R9 (termasuk import dinamis `await import(...)` yang tidak tertangkap sed regex statis) → diganti alias `@/lib/mail/nodemailer`.
+
+**Catatanoperasional:** `package.json` kini punya `@t3-oss/env-core`, `@t3-oss/env-nextjs`, `zod` — tiga dependensi baru yang masuk di commit env. `nodemailer` masih satu-satunya vendor email; tinggal tambah `resend.ts` + flip satu baris di `getTransport()` untuk pindah vendor.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **302** hijau (+7) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R9 0. Satu test (`quota-guards`) sempat gagal sekali lalu hijau pada dua jalan berikutnya — flaky, bukan regresi.
