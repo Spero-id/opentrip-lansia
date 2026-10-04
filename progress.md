@@ -2473,3 +2473,19 @@ Satu jebakan lagi: import relatif `../nodemailer` di test menaikkan R9 (termasuk
 **Catatanoperasional:** `package.json` kini punya `@t3-oss/env-core`, `@t3-oss/env-nextjs`, `zod` — tiga dependensi baru yang masuk di commit env. `nodemailer` masih satu-satunya vendor email; tinggal tambah `resend.ts` + flip satu baris di `getTransport()` untuk pindah vendor.
 
 **Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **302** hijau (+7) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R9 0. Satu test (`quota-guards`) sempat gagal sekali lalu hijau pada dua jalan berikutnya — flaky, bukan regresi.
+
+## Session 78 — 2026-10-03 (test untuk src/lib/env dan src/lib/db, branch refactor/lib-cleanup)
+
+`src/lib/env` dan `src/lib/db` tadinya **tanpa test sama sekali**, padahal keduanya punya cabang yang mudah regresi diam-diam: skema validasi env (commit 5 baru kemarin) dan logika retry read-only vs transient.
+
+**`src/lib/env/__tests__/`** (13 test, `vi.resetModules()` + `vi.stubEnv()` per kasus supaya tiap skenario dapat environment sendiri):
+- `client.test.ts`: nilai dari environment dibaca apa adanya, default saat variabel hilang (`NEXT_PUBLIC_BETTER_AUTH_URL` → `http://localhost:3000`), URL tidak valid ditolak, nilai boolean di luar `true`/`false` ditolak
+- `server.test.ts`: `DATABASE_URL` wajib ada, `BETTER_AUTH_SECRET` wajib dan minimal 1 karakter, `SMTP_PORT` dikoersi string → number, `SMTP_SECURE` string → boolean, default untuk 4 variabel opsional
+
+**`src/lib/db/__tests__/`** (16 test):
+- `retry.test.ts`: `isReadOnlyCall` mengenali `select` (termasuk huruf besar, spasi awal, dan batch), menolak `insert`/`update`/`delete`/`truncate`, menolak batch yang hanya berisi satu perintah tulis di antara beberapa `select`, menolak batch kosong dan argumen non-string; `isTransientError` untuk koneksi database, HTTP 429, 5xx, failed query, string biasa, dan `undefined`; `RETRY_DELAYS_MS` wajib naik
+- `utils.test.ts`: `increment` memakai `sql.identifier` untuk nama kolom (bukan interpolasi mentah) dan default amount 1; `withTransaction` mendelegasikan ke `db.transaction`, meneruskan argumen apa adanya, dan meneruskan error dari callback
+
+**Temuan yang layak dicatat:** `z.url()` **menerima** `"localhost:5432/db"` sebagai URL sah, karena `localhost:` terbaca sebagai skema yang valid. Artinya `z.url()` bukan penjaga kuat untuk string koneksi — `DATABSE_URL=localhost:5432/db` (typo `postgres` hilang) akan lolos validasi dan baru gagal saat query. Test-nya diganti ke input yang benar-benar invalid, plus test yang mengunci skema non-http (`postgres://`) tetap diterima. Kalau mau lebih ketat, `DATABASE_URL` perlu refinements (harus diawali `postgres://` atau `postgresql://`) — dicatat, belum dikerjakan karena mengubahnya menyentuh `docs/database` dan `.env.example`.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **331** hijau (+29, 37 → 41 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R6 2 · R9 0.
