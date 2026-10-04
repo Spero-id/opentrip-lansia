@@ -2584,3 +2584,17 @@ Slug yang sudah tersimpan di DB **tidak berubah** sampai judulnya diedit. Bentuk
 **Verifikasi:** tsc 0 · lint 0E · vitest **364** hijau (+11, 43 → 44 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R11 0 · R12 0 · **`src/utils` coverage 0% → 91.17%**.
 
 **Sisa temuan audit coverage:** `lib/auth/session.ts` 0% dan `lib/auth/auth-server.ts` 0% — keduanya jalur otorisasi, dan `auth-server.ts` dipakai guard halaman admin (`requireAdminLayout`). Prioritas berikutnya.
+
+## Session 85 — 2026-10-03 (test guard session + requireAdminLayout, branch refactor/lib-cleanup)
+
+Menutup dua file otorisasi yang tadinya **0% coverage**.
+
+**`src/lib/auth/__tests__/session.test.ts` (14 test).** `getSessionUser`: null tanpa sesi, null saat `getSession` melempar (**tidak** melempar ke pemanggil — fail-open ke "tidak terautentikasi", bukan crash request), id+role diteruskan, `role` jadi `undefined` bila user tidak punya role. `requireSession`: 401 tanpa sesi dan 401 saat error. `requireRole`: **403** untuk role yang tidak diminta, **401 bukan 403** saat tidak ada sesi, 401 saat error, 403 untuk user tanpa role — pembedaan 401/403 ini yang paling mudah salah kalau suatu saat berubah. `requireAdmin` = `requireRole(["admin"])`.
+
+**`src/lib/auth/__tests__/auth-server.test.ts` (6 test).** Guard halaman admin: admin dapat sesi kembali tanpa redirect; tanpa sesi → `/login?redirect=%2Fadmin` (tujuan ter-encode, dikunci lewat string persis); role selain admin **dan** user tanpa role → `/forbidden`; error dari `getSession` dibiarkan naik apa adanya, tidak ditelan jadi redirect — perilaku ini **sengaja** (layout admin lebih baik error 500 daripada diam-diam mengarahkan user ke halaman yang salah) dan sekarang terdokumentasi lewat test.
+
+**Jebakan `next/headers`.** `headers()` di luar request scope melempar `E251`, jadi 6 test pertama gagal dengan `headers was called outside a request scope`. Diperbaiki dengan mock yang mengembalikan `Headers` sungguhan, lalu ditambahkan test yang memastikan `getSession` benar-benar menerima `headers()` dari Next — bukan objek buatan test.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **384** hijau (+20, 44 → 46 file) · build compiled · check-structure all rules within baseline · **`lib/auth` coverage 0% → 94.59%**.
+
+**Status audit coverage:** `src/utils` 55.88% → 91.17% (sesi 84) · `lib/auth` 77.3% → 94.59% · `lib/env` 100% statement · `utils/errors` 92.3% · `lib/db` punya test tapi angka per-file tidak terbaca di tabel coverage. Yang masih 0%: `lib/auth/session.ts` **sudah tertutup di sesi ini**;sisanya `db/schema/*` (bersifat deklaratif, wajar) dan repository fitur yang butuh DB nyata.
