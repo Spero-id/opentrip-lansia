@@ -2560,3 +2560,27 @@ Yang ditegaskan dalam commit message: perpindahan folder **tidak menambah pengam
 **Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **353** hijau (+10, 42 → 43 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R11 0 · **R12 0**.
 
 **Sisa temuan audit coverage yang belum dikerjakan:** `utils/helpers.ts` 0% (`slugify` + `generateCode`) — dan `slugify` ternyata punya 3 salinan dengan 2 implementasi berbeda (lihat Session 82), jadi ini prioritas duplikasi, bukan test. `generateCode` masih memakai `Math.random()` untuk kode referral dan kode booking. `lib/auth/session.ts` 0%, `lib/auth/auth-server.ts` 0%.
+
+## Session 84 — 2026-10-03 (konsolidasi slugify + generateCode crypto, branch refactor/lib-cleanup)
+
+**`slugify`: 3 salinan → 1.** `features/blog/blog.service.ts` dan `app/(admin)/admin/blogs/page.tsx` punya versi lokal (buang karakter non-alnum dulu, baru ganti spasi); `utils/helpers.ts` punya versi lain (semua non a-z0-9 jadi pemisah). Dua-duanya dihapus, blog service dan admin page kini mengimpor dari `@/utils/helpers`.
+
+**Perubahan perilaku yang disengaja dan harus diketahui:** versi kanonik memakai aturan lama `utils/helpers`, sehingga slug blog dengan huruf non-Latin atau simbol berubah bentuk **saat judul diedit ulang**:
+
+| Judul | Dulu (versi blog) | Sekarang |
+|---|---|---|
+| `Trip Ünïcode` | `trip-nicode` | `trip-n-code` |
+| `Promo 20% Off` | `promo-20off` | `promo-20-off` |
+| `Bromo & Ijen` | `bromo-ijen` | `bromo-ijen` |
+
+Slug yang sudah tersimpan di DB **tidak berubah** sampai judulnya diedit. Bentuk slug baru justru lebih baik untuk SEO karena memisahkan kata, bukan menempelkannya.
+
+**`generateCode` pindah dari `Math.random()` ke `globalThis.crypto.getRandomValues`** dengan rejection sampling — 36 membagi 256 dengan sisa 4, jadi tanpa penyaringan ada modulo bias. Dipakai untuk kode referral dan kode booking. Sengaja memakai Web Crypto global, bukan `node:crypto`, karena `utils/helpers.ts` juga diimpor `app/(admin)/admin/trips/page.tsx` yang ber-`"use client"`; mengimpor `node:crypto` akan merusak build client. ** incidentally guard R12 dari sesi sebelumnya tidak menangkap ini karena `node:crypto` belum masuk daftar paket server-only.
+
+**Test (11 test, `src/utils/__tests__/helpers.test.ts`)** menutup 0% coverage: bentuk slug untuk spasi beruntun, trim, underscore, simbol, huruf non-Latin, input kosong; invariants tanpa `--` dan tanpa tanda hubung di tepi; `generateCode` memakai prefix, hanya alfabet yang diizinkan, 500 kode unik, dan **terbukti tidak menyentuh `Math.random`** (test membakar `Math.random` dengan fungsi yang melempar).
+
+**Ekspektasi test sempat salah dan itu justru buktinya.** Saya menulis `slugify("Trip Ünïcode")` → `"trip-nicode"`, padahal hasil kanonik `"trip-n-code"` karena `ü` **dan** `ï` sama-sama jadi pemisah. Test gagal, ekspektasi diperbaiki. Kalau tidak menguji, perubahan ini akan lolos tanpa terdeteksi.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **364** hijau (+11, 43 → 44 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R11 0 · R12 0 · **`src/utils` coverage 0% → 91.17%**.
+
+**Sisa temuan audit coverage:** `lib/auth/session.ts` 0% dan `lib/auth/auth-server.ts` 0% — keduanya jalur otorisasi, dan `auth-server.ts` dipakai guard halaman admin (`requireAdminLayout`). Prioritas berikutnya.
