@@ -3,7 +3,7 @@ import { notificationService } from "@/features/notification/notification.servic
 import { db } from "@/lib/db";
 import { users } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
-import { AppError, ConflictError, UnauthorizedError, ValidationError } from "@/lib/errors/app-error";
+import { AppError, ConflictError, UnauthorizedError, ValidationError } from "@/utils/errors/app-error";
 
 type RequestStatus = "draft" | "submitted" | "reviewed" | "approved" | "rejected" | "revision";
 type ProposalStatus = "pending" | "accepted" | "rejected" | "revised";

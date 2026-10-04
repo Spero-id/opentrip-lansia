@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { generateCode } from "@/utils/helpers";
 import type { UUID } from "@/types";
 import { notificationService } from "@/features/notification/notification.service";
-import { ConflictError } from "@/lib/errors/app-error";
+import { ConflictError } from "@/utils/errors/app-error";
 
 export interface BookingItemInput {
   priceId: string;

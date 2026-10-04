@@ -1,7 +1,7 @@
 import { subscriberRepository } from "./newsletter.repository";
 import { subscribeSchema, type SubscribeInput } from "./newsletter.schema";
 import { sendSubscriptionConfirmationEmail } from "@/lib/mail";
-import { ValidationError, ConflictError } from "@/lib/errors/app-error";
+import { ValidationError, ConflictError } from "@/utils/errors/app-error";
 
 export const subscribeService = {
   async subscribe(data: SubscribeInput) {

@@ -1,5 +1,5 @@
 import { promotionRepository } from "./promotion.repository";
-import { ConflictError, ValidationError } from "@/lib/errors/app-error";
+import { ConflictError, ValidationError } from "@/utils/errors/app-error";
 import { computePromoDiscount } from "@/features/promotion";
 import { parseMoney } from "@/features/promotion";
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { fetchReferralHistory } from "@/features/profile";
 import { DEFAULT_HISTORY_LIMIT } from "@/features/profile";
 import type { ReferralHistoryItem, ReferralPagination } from "@/features/profile";

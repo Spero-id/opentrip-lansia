@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { buildTripImages, fetchMyBookings, fetchTrips, normalizeList } from "@/features/my-trips";
 import type { MyTripBooking } from "@/features/my-trips";
 

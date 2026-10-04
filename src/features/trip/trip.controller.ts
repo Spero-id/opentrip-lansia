@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { tripService } from "./trip.service";
 import { tripRepository } from "./trip.repository";
 import { slugify } from "@/utils/helpers";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { getSessionUser } from "@/lib/auth";
 
 async function actorId(req: NextRequest): Promise<string | null> {

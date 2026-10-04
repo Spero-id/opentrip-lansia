@@ -7,7 +7,7 @@ import { bookings } from "@/db/schema/bookings";
 import { tripDepartures, trips } from "@/db/schema/trips";
 import { users } from "@/db/schema/auth";
 import { desc, eq, count, inArray, sql } from "drizzle-orm";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { auditService, diffFields, pickFields } from "@/features/audit";
 
 type IdParams = { params: Promise<{ id: string }> };

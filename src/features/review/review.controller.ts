@@ -6,7 +6,7 @@ import { tripDepartures } from "@/db/schema/trips";
 import { db } from "@/lib/db";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@/features/auth/auth.config";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 
 type IdParams = { params: Promise<{ id: string }> };
 
