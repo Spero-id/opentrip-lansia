@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { MapPin, Star, ArrowRight, Heart } from "lucide-react";
-import { formatRupiah } from "@/lib/format-rupiah";
+import { formatIDR } from "@/utils/format";
 import type { TripDetail } from "@/features/trip/types";
 
 interface DestinationCardProps {
@@ -70,7 +70,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
           <div>
             <p className="text-[11px] text-gray-400">mulai dari</p>
             <p className="text-sm font-bold text-gray-900">
-              {formatRupiah(dest.priceMin)}
+              {formatIDR(dest.priceMin)}
             </p>
           </div>
           <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#F49D1A] flex items-center justify-center transition-colors flex-shrink-0">

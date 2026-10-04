@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { OrderDomain } from "@/lib/order";
+import { generateOrderId } from "@/features/checkout";
 import {
   ApiRequestError,
   checkoutReducer,
@@ -202,7 +202,7 @@ export function useCheckout(initialDestination: DestinationSummary | null) {
           .filter((i) => i.qty > 0)
       : undefined;
     const snapshot: BookingSnapshot = {
-      orderId: OrderDomain.generateOrderId(),
+      orderId: generateOrderId(),
       destination: s.destination,
       pax: s.pax,
       items,

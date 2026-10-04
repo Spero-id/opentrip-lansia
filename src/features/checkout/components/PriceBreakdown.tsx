@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import TermsModal from "./TermsModal";
-import { OrderDomain } from "@/lib/order";
+import { formatIDR } from "@/utils/format";
 import type { AppliedVoucher, DestinationSummary, TermsModalType } from "@/features/checkout";
 
 export default function PriceBreakdown({
@@ -56,21 +56,21 @@ export default function PriceBreakdown({
           <div>
             <p className="text-gray-600">Tiket wisata</p>
             <p className="text-xs text-gray-400 mt-0.5">
-              {destination?.title} · {OrderDomain.formatPrice(pricePerPax)} ×{" "}
+              {destination?.title} · {formatIDR(pricePerPax)} ×{" "}
               {pax} peserta
             </p>
             {tierLines && tierLines.length > 0 && (
               <div className="mt-1.5 space-y-0.5">
                 {tierLines.map((line) => (
                   <p key={line.name} className="text-[11px] text-gray-400">
-                    {line.name} × {line.qty} = {OrderDomain.formatPrice(line.amount)}
+                    {line.name} × {line.qty} = {formatIDR(line.amount)}
                   </p>
                 ))}
               </div>
             )}
           </div>
           <span className="font-semibold text-gray-700">
-            {OrderDomain.formatPrice(ticketSubtotal)}
+            {formatIDR(ticketSubtotal)}
           </span>
         </div>
 
@@ -97,7 +97,7 @@ export default function PriceBreakdown({
               </div>
             </div>
             <span className="font-bold text-[#F49D1A]">
-              −{OrderDomain.formatPrice(discount)}
+              −{formatIDR(discount)}
             </span>
           </div>
         )}
@@ -106,11 +106,11 @@ export default function PriceBreakdown({
           <div>
             <p className="text-sm font-bold text-gray-700">Total Pembayaran</p>
             <p className="text-xs text-gray-400 mt-0.5">
-              {OrderDomain.formatPrice(perPax)} / peserta
+              {formatIDR(perPax)} / peserta
             </p>
           </div>
           <span className="text-xl font-bold text-gray-900">
-            {OrderDomain.formatPrice(total)}
+            {formatIDR(total)}
           </span>
         </div>
       </div>

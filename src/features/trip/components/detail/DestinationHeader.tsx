@@ -1,4 +1,4 @@
-import { formatNumber } from "@/lib/format";
+import { formatNumber } from "@/utils/format";
 import { Star } from "lucide-react";
 
 import type { TripDetail } from "@/features/trip/types";

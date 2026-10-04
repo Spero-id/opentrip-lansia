@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { formatRupiah } from "@/lib/format";
+import { formatIDR } from "@/utils/format";
 import { Calendar } from "lucide-react";
 
 const A = "#F49D1A";
@@ -59,7 +59,7 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
       <div className="pb-6 border-b border-gray-100">
         <div className="text-sm text-gray-400 font-semibold mb-1 uppercase tracking-wider">Mulai dari</div>
         <div className="text-3xl font-bold" style={{ color: A }}>
-          {formatRupiah(dest.priceMin)}
+          {formatIDR(dest.priceMin)}
         </div>
         <div className="text-sm text-gray-400 mt-1">per orang / pax</div>
         {boundedTiers.length > 0 && (

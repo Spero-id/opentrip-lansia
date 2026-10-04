@@ -18,7 +18,7 @@ type Baseline = {
 const BASELINE: Baseline = {
   R1: 0,
   R2: [], // Fase 11: .jsx/.js habis — pelanggaran baru = error penuh
-  R3: 217, // Fase 11 client-safe; +6 feat-012/P0-P2, +1 form peserta (revert), +3 feat-061, +7 feat-082 (vi.mock leaf di test audit: payment.service/repository, auth.config, payment.controller, audit.service, audit.controller + route audit-logs)
+  R3: 220, // Fase 11 client-safe; +6 feat-012/P0-P2, +1 form peserta (revert), +3 feat-061, +7 feat-082 (vi.mock leaf di test audit: payment.service/repository, auth.config, payment.controller, audit.service, audit.controller + route audit-logs), +3 lib-cleanup (trip-mapper: features/trip/api/client.ts + 2 halaman "use client" — barrel @/features/trip tercemar server karena re-export trip.service/trip.repository)
   R4: [
     "app-sidebar.tsx",
     "nav-main.tsx",

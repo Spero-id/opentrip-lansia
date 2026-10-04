@@ -11,7 +11,7 @@ import {
 import { DetailsStep, PaymentStep, StepProgress } from "@/features/checkout";
 
 import Subs from "@/features/newsletter/components/Subs";
-import { toDetail } from "@/lib/destination";
+import { toDetail } from "@/features/trip/trip-mapper";
 import type { DestinationSummary } from "@/features/checkout";
 
 function CheckoutContent() {

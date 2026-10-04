@@ -8,12 +8,3 @@ export function generateCode(prefix: string): string {
   for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return `${prefix}-${code}`;
 }
-
-export function formatCurrency(amount: string): string {
-  const num = parseInt(amount);
-  return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(num);
-}
-
-export function parseAmount(amount: string): number {
-  return parseInt(amount) || 0;
-}

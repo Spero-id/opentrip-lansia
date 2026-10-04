@@ -1,4 +1,4 @@
-import { toDetail } from "@/lib/destination";
+import { toDetail } from "@/features/trip/trip-mapper";
 import { toPublicError } from "@/lib/errors/to-public-error";
 import type { TripDetail, TripReview } from "@/features/trip/types";
 

@@ -67,23 +67,6 @@ function firstString(...values: unknown[]): string | null {
   return null;
 }
 
-export const DestinationDomain = {
-  calculateTotalPrice(destination: { priceMin: number }, pax: number): number {
-    if (pax <= 0) return 0;
-    return pax * destination.priceMin;
-  },
-
-  isPopular(destination: { rating: number; reviewCount: number }): boolean {
-    return destination.rating >= 4.7 && destination.reviewCount >= 2000;
-  },
-
-  getShortLocation(destination: { location?: string | null }): string {
-    return destination.location ? destination.location.split(",")[0].trim() : "Indonesia";
-  },
-};
-
-export const DEFAULT_RATING = 5.0;
-
 export function toDetail(dest: RawTripData): TripDetailData {
   const rawImages = asStringArray(dest.images);
   const images = rawImages.length > 0 ? rawImages : firstString(dest.image) ? [firstString(dest.image) as string] : [];
@@ -115,4 +98,8 @@ export function toDetail(dest: RawTripData): TripDetailData {
     bookedCount: typeof dest.bookedCount === "number" ? dest.bookedCount : null,
     activeGroup: dest.activeGroup ?? null,
   };
+}
+
+export function getShortLocation(location?: string | null): string {
+  return location ? location.split(",")[0].trim() : "Indonesia";
 }
