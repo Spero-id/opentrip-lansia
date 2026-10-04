@@ -2489,3 +2489,11 @@ Satu jebakan lagi: import relatif `../nodemailer` di test menaikkan R9 (termasuk
 **Temuan yang layak dicatat:** `z.url()` **menerima** `"localhost:5432/db"` sebagai URL sah, karena `localhost:` terbaca sebagai skema yang valid. Artinya `z.url()` bukan penjaga kuat untuk string koneksi — `DATABSE_URL=localhost:5432/db` (typo `postgres` hilang) akan lolos validasi dan baru gagal saat query. Test-nya diganti ke input yang benar-benar invalid, plus test yang mengunci skema non-http (`postgres://`) tetap diterima. Kalau mau lebih ketat, `DATABASE_URL` perlu refinements (harus diawali `postgres://` atau `postgresql://`) — dicatat, belum dikerjakan karena mengubahnya menyentuh `docs/database` dan `.env.example`.
 
 **Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **331** hijau (+29, 37 → 41 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R6 2 · R9 0.
+
+## Session 79 — 2026-10-03 (pengetat DATABASE_URL, branch refactor/lib-cleanup)
+
+Lanjutan temuan Session 78. `z.url()` ternyata **menerima** `"localhost:5432/db"` sebagai URL sah karena `localhost:` terbaca sebagai skema yang valid, jadi typo skema pada string koneksi (mis. `postgres` → hilang) lolos validasi dan baru gagal saat query. String koneksi proyek ini selalu NeonDB `postgresql://`, jadi `DATABASE_URL` kini punya refinement: wajib diawali `postgres://` atau `postgresql://`.
+
+Test: `localhost:5432/db` ditolak, URL NeonDB `postgresql://...neon.tech/neondb?sslmode=require` diterima. Verifikasi tambahan: `npx tsx --env-file=.env` memuat `src/lib/env/server` sungguhan dan lolos (tanpa flag itu `.env` memang tidak terbaca karena tidak ada dotenv di path tsx).
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **332** hijau · build compiled · check-structure all rules within baseline.
