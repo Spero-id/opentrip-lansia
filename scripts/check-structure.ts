@@ -13,6 +13,7 @@ type Baseline = {
   R9: number;
   R10: number;
   R11: number;
+  R12: number;
 };
 
 const BASELINE: Baseline = {
@@ -33,6 +34,7 @@ const BASELINE: Baseline = {
   R9: 0, // Fase 11: impor lintas-folder wajib @/ — tanpa kecuali
   R10: 0,
   R11: 0,
+  R12: 0,
 };
 
 const ID_COMMENT_WORDS = [
@@ -269,6 +271,8 @@ function main(): void {
   const ENV_SERVER = "src/lib/env/server.ts";
   const ENV_CLIENT = "src/lib/env/client.ts";
   const STATIC_IMPORT_RE = /(?:import|export)[^'"]*?from\s*["']([^"']+)["']/g;
+const BARE_IMPORT_RE = /(?:from\s*|import\s*\(\s*|require\s*\(\s*)["']([^"'\n.]+[^"'\n]*)["']/g;
+const SERVER_ONLY_PACKAGES = new Set(["bcryptjs", "pg", "nodemailer"]);
   const importCache = new Map<string, string[]>();
   function resolveLocal(fromFile: string, spec: string): string | null {
     let base: string;
@@ -300,33 +304,64 @@ function main(): void {
     importCache.set(file, out);
     return out;
   }
-  const r11Samples: string[] = [];
-  for (const f of walk(SRC)) {
-    if (!CODE_EXT.has(path.extname(f))) continue;
-    if (!fs.readFileSync(f, "utf8").slice(0, 200).includes('"use client"')) continue;
-    const seen = new Set<string>([f]);
-    const queue: string[] = [f];
-    let bad = false;
-    while (queue.length && !bad) {
+  function bareImports(file: string): string[] {
+    const text = fs.readFileSync(file, "utf8");
+    const out: string[] = [];
+    BARE_IMPORT_RE.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = BARE_IMPORT_RE.exec(text)) !== null) {
+      out.push(m[1]);
+    }
+    return out;
+  }
+  function clientEntries(): string[] {
+    return walk(SRC).filter(
+      (f) =>
+        CODE_EXT.has(path.extname(f)) &&
+        fs.readFileSync(f, "utf8").slice(0, 200).includes('"use client"'),
+    );
+  }
+  function reachableFrom(entry: string): string[] {
+    const seen = new Set<string>([entry]);
+    const queue: string[] = [entry];
+    const out: string[] = [];
+    while (queue.length) {
       const cur = queue.shift() as string;
+      out.push(cur);
       for (const dep of localImports(cur)) {
-        if (rel(dep) === ENV_SERVER) {
-          bad = true;
-          break;
-        }
-        if (!seen.has(dep)) {
-          seen.add(dep);
-          queue.push(dep);
-        }
+        if (seen.has(dep)) continue;
+        seen.add(dep);
+        queue.push(dep);
       }
     }
-    if (bad) r11Samples.push(rel(f));
+    return out;
+  }
+  const r11Samples: string[] = [];
+  for (const f of clientEntries()) {
+    if (reachableFrom(f).some((dep) => rel(dep) === ENV_SERVER)) {
+      r11Samples.push(rel(f));
+    }
   }
   const r11Client = ENV_CLIENT;
   if (localImports(r11Client).includes(ENV_SERVER)) {
     r11Samples.push(`${rel(r11Client)} imports ${rel(ENV_SERVER)}`);
   }
   const r11 = r11Samples.length;
+
+  const r12Samples: string[] = [];
+  const reachable = new Set<string>();
+  for (const f of clientEntries()) for (const dep of reachableFrom(f)) reachable.add(dep);
+  for (const f of reachable) {
+    for (const spec of bareImports(f)) {
+      const pkg = spec.startsWith("@")
+        ? spec.split("/").slice(0, 2).join("/")
+        : spec.split("/")[0];
+      if (SERVER_ONLY_PACKAGES.has(pkg) && !r12Samples.includes(`${rel(f)}: ${pkg}`)) {
+        r12Samples.push(`${rel(f)}: ${pkg}`);
+      }
+    }
+  }
+  const r12 = r12Samples.length;
 
   const rules: RuleState[] = [
     { id: "R1", title: "Indonesian comment lines (target 0)", current: r1, baseline: BASELINE.R1, samples: r1Samples },
@@ -340,6 +375,7 @@ function main(): void {
     { id: "R9", title: "relative ../ imports (ratchet)", current: r9, baseline: BASELINE.R9, samples: r9Samples },
     { id: "R10", title: "chrome imports outside SiteChrome/layout (target 0)", current: r10, baseline: BASELINE.R10, samples: r10Samples },
     { id: "R11", title: "client bundle reaches env.server (target 0)", current: r11, baseline: BASELINE.R11, samples: r11Samples },
+    { id: "R12", title: "client bundle reaches server-only package (target 0)", current: r12, baseline: BASELINE.R12, samples: r12Samples },
   ];
 
   if (process.argv.includes("--print-baseline")) {
