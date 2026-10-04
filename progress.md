@@ -2414,3 +2414,23 @@ Tiga commit terpisah sesuai konvensi repo (satu commit per modul):
 
 **Verifikasi:** tsc 0 · lint 0E · vitest **286** (tetap — fase ini menambah kode produksi, bukan surface test baru) · build compiled · routes 103→103 · drift 0 · auth 10 · structure hijau.
 **Live smoke:** promo create/update/delete → 3 baris (`newValues` update hanya berisi `value`, bukan dump baris); trip `location` diubah → 1 baris `update` (lokasi lama → baru), lalu dikembalikan; kategori blog create/rename/delete → 3 baris. Trip `status: published` (sudah published) dan `isFeatured: true` (sudah true) → **nol baris**, sesuai desain. Semua data QA dihapus (promo & kategori 0, lokasi trip kembali asli), dev server dimatikan.
+
+## Session 75 — 2026-10-03 (lib-cleanup commit 1-2, branch refactor/lib-cleanup)
+
+Branch `refactor/lib-cleanup` dibuat dari `main` **setelah** PR #127 (feat-082 audit log) ter-merge. Awalnya branch ini dibuat dari `feat/082-audit-log` sehingga isinya identik dengan audit branch — sudah dirapikan: checkout ke `main`, fast-forward ke `1cb38a3`, lalu branch baru dibuat dari sana. Plan: `plan/lib-cleanup.md` (5 commit).
+
+**Commit 1 `52afe99` — bubarkan pola `*Domain`.** `OrderDomain` (`src/lib/order.ts`) dan `DestinationDomain` (`src/lib/destination.ts`) terbukti **dua-satunya objek `*Domain` di seluruh codebase** — semua domain lain sudah pola repo (`*.service.ts` / `*.repository.ts` atau file datar seperti `pricing.ts`, `reducer.ts`). Kedua file dihapus: `generateOrderId()` → `features/checkout/order-id.ts` (ekspor lewat barrel), `toDetail()` + `getShortLocation()` → `features/trip/trip-mapper.ts`. Sekalian 8 export mati: `AVAILABLE_VOUCHERS`, `OrderDomain.calculateTotal`, `generateParticipantId`, `DestinationDomain.calculateTotalPrice`, `RawTripData`, `DEFAULT_RATING`, `utils/helpers#formatCurrency`, `#parseAmount`. `src/lib/format.ts` → `src/utils/format.ts`.
+
+**Jebakan client bundle (R3 naik, unavoidable).** `toDetail`/`getShortLocation` dipakai 3 file `"use client"`. Barrel `@/features/trip` **tidak bisa** dipakai karena me-re-export `trip.service.ts` + `trip.repository.ts` (Drizzle) — menarik server code ke client bundle. Alternatifnya relative import `../` menaikkan R9 yang targetnya 0, dan bertentangan dengan konvensi alias repo. Dipilih deep import `@/features/trip/trip-mapper`, R3 baseline 217 → 220 dengan catatan alasannya di `scripts/check-structure.ts`.
+
+**Nama `formatIDR`, bukan `formatRupiah`.** `"rupiah"` ada di `ID_IDENTIFIER_WORDS` → tiap pemakaian `formatRupiah` menambah R8. Karena R8 ratchet ke arah 0, nama kanonik justru menambah debt. Setelah rename: **R8 turun 504 → 498**.
+
+**Commit 2 `612e9bd` — satukan 12 format uang.** 9 implementasi lokal dihapus (4 di `app/(admin)`, 2 di `features/private-trip`, 2 di `features/my-trips`, 1 di `FilterPanel`). Fallback yang dulu menumpang di dalam fungsi pindah ke call site: `?? "-"` (private-trips/[id], SuccessState), `?? "Rp 0"` (FilterPanel). `admin/page.tsx` ternyata bukan duplikat — punya satuan ringkas (`Rp 1.8Jt`) → jadi fungsi terpisah `formatIDRCompact`, bukan dipaksa masuk `formatIDR`.
+
+**Jebakan uang yang ketahuan lewat test.** Versi pertama `formatIDR` menerima `"1.250.000"` sebagai angka desimal → `Number("1.250.000")` = 1.25 → tampil `Rp 1`. Diperbaiki: string hanya diformat kalau `/^-?\d+$/`, selebihnya dikembalikan apa adanya. 9 test baru di `src/utils/__tests__/format.test.ts` mengunci ini. Sumber risikonya nyata: `my-trips`/`admin` menerima string dari DB yang bisa sudah terformat.
+
+**Selisih byte yang disengaja:** `"Rp 350.000"` dari `Intl` currency memakai non-breaking space (U+00A0), kini regular space. Rendering identik.
+
+**Verifikasi akhir 2 commit:** tsc 0 · lint 0E (80 warning, baseline) · vitest **295** (286 + 9) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R3 220 · **R8 468** (turun 36) · R9 0.
+
+**Belum dikerjakan:** commit 3 (`lib/data.ts` → `features/landing/content/`), commit 4 (`lib/errors/` → `utils/errors/`, 33 import), commit 5 (split env + T3 Env). Catatan: `@t3-oss/env-core` sudah ter-install di `package.json` di luar sesi ini dan **belum di-commit** — `zod` + `@t3-oss/env-nextjs` masih perlu untuk commit 5.

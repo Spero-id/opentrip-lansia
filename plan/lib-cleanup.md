@@ -19,14 +19,14 @@ Tiga di antaranya **duplikat persis** (regex identik `"Rp " + Math.floor(n).toSt
 
 | File | Bentuk | Pemakai |
 |---|---|---|
-| `src/lib/format.ts:5` `formatRupiah` | `number → string` | `features/trip/components/detail/BookingCard.tsx` |
-| `src/lib/format-rupiah.ts:3` `formatRupiah` | identik | `features/trip/components/DestinationCard.tsx` |
-| `src/lib/order.ts:21` `OrderDomain.formatPrice` | identik | `features/checkout/*` (7 call site) |
+| `src/lib/format.ts` | `formatRupiah` | `features/trip/components/detail/BookingCard.tsx` | → `formatIDR` di `@/utils/format` |
+| `src/lib/format-rupiah.ts:3` `formatRupiah` | identik | `features/trip/components/DestinationCard.tsx` | → `formatIDR` |
+| `src/lib/order.ts:21` `OrderDomain.formatPrice` | identik | `features/checkout/*` (7 call site) | → `formatIDR` |
 | `src/features/private-trip/components/helpers/formatting.ts:1` | `null → ""` | 2 komponen |
 | `src/features/my-trips/components/constants.tsx:69` | `toLocaleString("id-ID")`, `null → null` | 3 komponen |
 | `src/features/private-trip/components/SuccessState.tsx:13` | lokal | 1 |
-| `src/app/(admin)/admin/page.tsx:21` | lokal, arg `string` | 1 |
-| `src/app/(admin)/admin/notifications/page.tsx:110` | lokal | 1 |
+| `src/app/(admin)/admin/page.tsx:21` | lokal, arg `string`, satuan ringkas | 1 | → `formatIDRCompact` |
+| `src/app/(admin)/admin/notifications/page.tsx:110` | lokal, `Intl` currency | 1 | → `formatIDR` |
 | `src/app/(admin)/admin/AdminShell.tsx:102` | lokal | 1 |
 | `src/app/(admin)/admin/private-trips/[id]/page.tsx:244` | lokal | 1 |
 | `src/features/trip/components/FilterPanel.tsx:77` | lokal | 1 |
@@ -87,7 +87,7 @@ src/features/trip/
 
 ## Commit
 
-### 1 — Bubarkan pola `*Domain`
+### 1 — Bubarkan pola `*Domain` ✅ `52afe99`
 
 `OrderDomain` dan `DestinationDomain` adalah **dua-satunya objek `*Domain` di seluruh codebase**; sisa domain sudah mengikuti pola repo (`*.service.ts` / `*.repository.ts`, atau file datar seperti `pricing.ts`, `reducer.ts`). Dua file dihapus sepenuhnya.
 
@@ -106,23 +106,29 @@ Method mati ikut hilang di commit ini: `OrderDomain.calculateTotal`, `OrderDomai
 
 Commit: `refactor(lib): dissolve OrderDomain and DestinationDomain into feature modules`.
 
-### 2 — Satukan 12 implementasi format uang
+### 2 — Satukan 12 implementasi format uang ✅ `612e9bd`
+
+Hasil di lapangan: nama kanonik **`formatIDR`**, bukan `formatRupiah`, karena `"rupiah"` ada di `ID_IDENTIFIER_WORDS` (`check-structure.ts:54`) — memakai `formatRupiah` menambah R8 di tiap call site. R8 turun 504 → 468.
 
 `src/utils/format.ts` (dibuat di commit 1) menjadi satu-satunya sumber:
 
 - `formatNumber(value: number | string): string`
-- `formatRupiah(value: number | string | null | undefined): string | null`
+- `formatIDR(value: number | string | null | undefined): string | null`
+- `formatIDRCompact(value)` — ringkasan satuan (`Rp 1.8Jt`, `Rp 2.5M`) yang sebelumnya inline di `admin/page.tsx`; **bukan** duplikat, jadi tetap fungsi terpisah
 
-Perilaku yang harus dipertahankan per pemanggil, bukan diseragamkan paksa:
-- Input yang sudah berawalan `"Rp "` atau berisi pemisah ribuan → dikembalikan apa adanya (source `admin/*`, `my-trips`, `private-trip` menerima string dari DB).
-- `null`/`undefined`/`""` → `null` (bukan `"Rp 0"`).
+Perilaku yang dipertahankan, decided di call site:
+- Input yang **sudah** berawalan `"Rp "` atau memakai pemisah ribuan → dikembalikan apa adanya (source `admin/*`, `my-trips`, `private-trip` menerima string dari DB). Regex hanya menerima digit bulat, `"1.250.000"` tidak boleh terbaca sebagai desimal — ini jebakan yang ketahuan lewat test.
+- `null`/`undefined`/`""` → `null`, dan `null` tidak di-render React sama dengan `""` lama, jadi tampilan tidak bergeser.
 - angka desimal → `Math.floor`, sama seperti sekarang.
+- Fallback yang dulu menumpang di dalam fungsi dipindah ke call site: `?? "-"` (private-trips/[id], SuccessState), `?? "Rp 0"` (FilterPanel).
 
-Hapus: `src/lib/format.ts` (seluruhnya — isinya sudah pindah ke `src/utils/format.ts`), `src/lib/format-rupiah.ts`, `src/utils/helpers.ts#formatCurrency`, `src/utils/helpers.ts#parseAmount` (0 pemakai, sudah dibuang di commit 1).
+Hapus: `src/lib/format-rupiah.ts`, `formatCurrency`/`parseAmount` di `src/utils/helpers.ts`, `my-trips/constants#formatRupiah`, `private-trip/components/helpers/formatting#formatRupiah`, dan 7 implementasi lokal lain.
 
-Sisa 9 implementasi lokal (4 di `app/(admin)`, 4 di `features/*`, 1 di `features/trip/components/FilterPanel.tsx`) memakai `formatRupiah` dari `@/utils/format`.
+Test baru `src/utils/__tests__/format.test.ts` (9 test).
 
-Verifikasi wajib: `PriceBreakdown` (`features/checkout/components`) dan `admin/page.tsx` dicek visual sebelum/sesudah — ini tempat output paling mungkin bergeser. Commit: `refactor(format): single formatRupiah implementation, drop duplicates`.
+Catatan output: `"Rp 350.000"` dari `Intl` currency memakai non-breaking space, kini regular space. Rendering identik, hanya byte berbeda.
+
+Commit: `refactor(format): unify 12 money formatters into utils/format`.
 
 ### 3 — Pindahkan `data.ts` ke `features/landing`
 
