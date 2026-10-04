@@ -2434,3 +2434,24 @@ Branch `refactor/lib-cleanup` dibuat dari `main` **setelah** PR #127 (feat-082 a
 **Verifikasi akhir 2 commit:** tsc 0 · lint 0E (80 warning, baseline) · vitest **295** (286 + 9) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R3 220 · **R8 468** (turun 36) · R9 0.
 
 **Belum dikerjakan:** commit 3 (`lib/data.ts` → `features/landing/content/`), commit 4 (`lib/errors/` → `utils/errors/`, 33 import), commit 5 (split env + T3 Env). Catatan: `@t3-oss/env-core` sudah ter-install di `package.json` di luar sesi ini dan **belum di-commit** — `zod` + `@t3-oss/env-nextjs` masih perlu untuk commit 5.
+
+## Session 76 — 2026-10-03 (lib-cleanup commit 3-5, branch refactor/lib-cleanup, plan SELESAI)
+
+**Commit 3 `31c089c` — `lib/data.ts` → `features/landing/components/content.ts`.** Awalnya direncanakan `features/landing/content/index.ts`, tapi itu memaksa deep import (`@/features/landing/content` → R3 naik) atau `../content` (→ R9 naik). Dipindah ke `components/content.ts` mengikuti preseden `my-trips/components/constants.tsx` dan `private-trip/components/helpers/`, jadi R3 dan R9 dua-duanya tetap 0.
+
+**Commit 4 `5a56938` — `lib/errors/` → `utils/errors/`.** 33 file berubah satu baris (11 × `app-error`, 26 × `to-public-error`). `lib/db/utils.ts` tetap di `lib/db/` agar `db` tidak terpecah.
+
+**Commit 5 `a10f5ee` — split env + T3 Env.** `lib/env.ts` + `lib/env.server.ts` (nama `.server` **tidak** memblokir bundel) → `lib/env/{client,server}.ts` dengan validasi zod. Sebelumnya env cuma `required()` untuk 2 var dan `?? ""` untuk 13 sisanya, jadi typo `DATABSE_URL` lolos sampai query gagal; sekarang `DATABASE_URL` = `z.url()` dan `BETTER_AUTH_SECRET` = `z.string().min(1)`, gagal cepat saat boot. Dependensi baru: `@t3-oss/env-core`, `@t3-oss/env-nextjs`, `zod`. `@t3-oss/env-core` sudah ada di `package.json` sebelum sesi ini, sekarang ikut ter-commit bersama dua lainnya.
+
+**Tiga jebakan T3 Env yang ditemukan (semuanya sudah ditulis di plan):**
+1. `createEnv` **tidak menerima `clientPrefix`**, dan `extends` harus berupa **array** (`extends: [client]`) yang bentrok tipe dengan `runtimeEnv`. Solusi: `server.ts` mendeklarasikan ulang `client: clientSchema` dengan runtimeEnv gabungan.
+2. **7 test server harus pindah ke `environment: "node"`** (docblock `// @vitest-environment node`). T3 Env menetapkan `isServer` dari `typeof window === "undefined"`, sedangkan suite default `jsdom` — tanpa itu import `lib/db` → `env/server` melempar "Attempted to access a server-side environment variable on the client". 6 file yang memang butuh jsdom (testing-library) tidak diubah.
+3. **`BASE_URL` bentrok dengan konstanta bawaan Vite** yang meng-inject `BASE_URL="/"` ke `process.env` → `z.url()` gagal di seluruh test. Diperbaiki di `vitest.config.mts` (`env: { BASE_URL: "http://localhost:3000" }`), **nama variabel tidak diubah** demi kompatibilitas deployment; kalau nanti mau bebas dari tabrakan, rename ke `SITE_URL`. `BASE_URL` juga dicatat di `.env.example` (belum pernah ada).
+
+**Guard baru di `check-structure.ts`:** `ENV_SERVER` → `src/lib/env/server.ts`, plus `client.ts` tidak boleh mengimpor `server.ts` (R11 tetap 0).
+
+**Struktur akhir tercapai:** `src/lib/{auth,db,env,mail.ts,utils.ts}` + `src/utils/{errors,format,helpers,image-guard,password,sanitize}`.
+
+**Verifikasi akhir:** tsc 0 · lint 0E (80 warning, baseline) · vitest **295** hijau · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R3 220 · **R8 468** (dari 504) · R9 0 · R11 0.
+
+**Sisa pekerjaan yang sengaja di luar scope:** `src/lib/mail.ts` masih satu file dengan `transporter` di module scope (koneksi SMTP dibentuk begitu file di-import) dan HTML template menyatu — slated menjadi ticket sendiri supaya vendor email bisa diganti tanpa menyentuh consumer. Kelima commit di `plan/lib-cleanup.md` sudah habis; langkah berikutnya tinggal push branch + PR.

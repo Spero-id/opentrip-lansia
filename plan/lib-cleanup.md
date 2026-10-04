@@ -83,6 +83,9 @@ src/features/checkout/
 
 src/features/trip/
 └── trip-mapper.ts   toDetail() · getShortLocation()
+
+src/features/landing/components/
+└── content.ts   reviews · destinations · features · faqs
 ```
 
 ## Commit
@@ -130,21 +133,21 @@ Catatan output: `"Rp 350.000"` dari `Intl` currency memakai non-breaking space, 
 
 Commit: `refactor(format): unify 12 money formatters into utils/format`.
 
-### 3 — Pindahkan `data.ts` ke `features/landing`
+### 3 — Pindahkan `data.ts` ke `features/landing` ✅ `31c089c`
 
-`src/lib/data.ts` → `src/features/landing/content/index.ts`. Update 3 import: `FAQSection.tsx`, `MarketingSection.tsx`, `TestimonialsSection.tsx` (jadi lokal relatif — R9 tetap 0).
+`src/lib/data.ts` → `src/features/landing/components/content.ts`. Update 3 import: `FAQSection.tsx`, `MarketingSection.tsx`, `TestimonialsSection.tsx`.
 
-`data.ts` satu-satunya file di `src/lib/` yang punya 0 dependensi framework dan 100% konten UI. Commit: `refactor(landing): move marketing content out of lib`.
+Ditempatkan di `components/` (bukan `features/landing/content/`) mengikuti preseden `my-trips/components/constants.tsx` dan `private-trip/components/helpers/`: alias `@/features/landing/content` menambah R3, `../content` menambah R9. Import sibling `"./content"` membuat keduanya tetap 0.
 
-### 4 — Pindahkan `lib/errors/` ke `utils/errors/`
+### 4 — Pindahkan `lib/errors/` ke `utils/errors/` ✅ `5a56938`
 
-33 file mengimpor `@/lib/errors/*`; semua berubah satu baris. `__tests__/to-public-error.test.ts` ikut pindah.
+33 file mengimpor `@/lib/errors/*` (11 × `app-error`, 26 × `to-public-error`); semua berubah satu baris. `__tests__/to-public-error.test.ts` ikut pindah.
 
 `src/lib/db/utils.ts` tetap di `lib/db/` agar `db` tidak terpecah dua tempat.
 
-Verifikasi: `check-structure` R7 (`src/shared`, `src/lib/hooks`) tidak tersentuh. Commit: `refactor(utils): move error classes to src/utils/errors`.
+Commit: `refactor(utils): move error classes to src/utils/errors`.
 
-### 5 — `lib/env/` jadi dua file + T3 Env
+### 5 — `lib/env/` jadi dua file + T3 Env ✅ `a10f5ee`
 
 ```
 src/lib/env/
@@ -154,12 +157,13 @@ src/lib/env/
                 ADMIN_EMAIL · BASE_URL
 ```
 
-Baru setelah itu, migrasi ke `@t3-oss/env-core` + `@t3-oss/env-nextjs` + `zod`: `client.ts` = `createEnv({ client, shared, runtimeEnv })`, `server.ts` = `createEnv({ server, client, runtimeEnv, extends: env })`. Values saat ini **nol validasi** selain `required()` 2 var — `DATABSE_URL` typo lolos diam-diam sampai query gagal.
+Baru setelah itu, migrasi ke `@t3-oss/env-core` + `@t3-oss/env-nextjs` + `zod`: `client.ts` = `createEnv({ client, shared, runtimeEnv })`, `server.ts` = `createEnv({ server, client, runtimeEnv })`. Values saat ini **nol validasi** selain `required()` 2 var — `DATABSE_URL` typo lolos diam-diam sampai query gagal.
 
-**Jebakan yang harus ditangani di commit ini:**
-- `scripts/check-structure.ts:269` hardcode `const ENV_SERVER = "src/lib/env.server.ts"` untuk ratchet R11. Harus jadi `src/lib/env/server.ts`, plus guard baru: `client.ts` tidak boleh mengimpor `server.ts`.
-- 13 file mengimpor `@/lib/env` atau `@/lib/env.server`; setelah split, tiap import harus eksplisit memilih client atau server.
-- `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY` dipakai komponen client (`WhatsAppFloat.tsx`) → harus tetap dari `client.ts`.
+**Tiga jebakan yang ternyata muncul (semua sudah ditangani):**
+- `createEnv` T3 Env **tidak menerima `clientPrefix`**, dan `extends` eksplisit berbentuk **array** (`extends: [client]`) yang memicu konflik tipe dengan `runtimeEnv`. Solusi: `server.ts` mendeklarasikan ulang `client: clientSchema` dengan runtimeEnv gabungan.
+- **7 test server harus pindah ke `environment: "node"`** (docblock `// @vitest-environment node`). T3 Env menentukan `isServer` dari `typeof window === "undefined"`, sedangkan suite ini default `jsdom` — tanpa itu, import `lib/db` → `env/server` melempar "Attempted to access a server-side environment variable on the client". File yang butuh jsdom (6 file testing-library) tidak diubah.
+- **`BASE_URL` bentrok dengan konstanta bawaan Vite.** Vite meng-inject `BASE_URL="/"` ke `process.env`, menabrak nama variabel aplikasi → `z.url()` gagal di seluruh test. Diperbaiki di `vitest.config.mts` lewat `env: { BASE_URL: "http://localhost:3000" }`. Nama variabel tidak diubah demi kompatibilitas deployment; kalau nanti mau bebas, rename ke `SITE_URL`.
+- `check-structure.ts` ENV_SERVER → `src/lib/env/server.ts`, plus guard baru `client.ts` tidak boleh mengimpor `server.ts`.
 
 Commit: `feat(env): split env into client/server modules with T3 Env validation`.
 
