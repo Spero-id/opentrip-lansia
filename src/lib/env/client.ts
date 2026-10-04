@@ -22,7 +22,7 @@ export const clientRuntimeEnv = {
 const client = createEnv({
   client: clientSchema,
   runtimeEnv: clientRuntimeEnv,
-  emptyStringAsUndefined: false,
+  emptyStringAsUndefined: true,
 });
 
 export const NEXT_PUBLIC_BETTER_AUTH_URL = client.NEXT_PUBLIC_BETTER_AUTH_URL;

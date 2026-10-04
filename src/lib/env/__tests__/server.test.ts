@@ -101,4 +101,42 @@ describe("env/server", () => {
     expect(env.ADMIN_EMAIL).toBe("");
     expect(env.BASE_URL).toBe("http://localhost:3000");
   });
+
+  it("memperlakukan string kosong sebagai belum diisi", async () => {
+    const env = await loadServer({
+      ...VALID,
+      SMTP_PORT: "",
+      SMTP_SECURE: "",
+      SMTP_HOST: "",
+      BETTER_AUTH_URL: "",
+      BASE_URL: "",
+    });
+
+    expect(env.SMTP_PORT).toBe(587);
+    expect(env.SMTP_SECURE).toBe(false);
+    expect(env.SMTP_HOST).toBe("");
+    expect(env.BETTER_AUTH_URL).toBe("http://localhost:3000");
+    expect(env.BASE_URL).toBe("http://localhost:3000");
+  });
+
+  it("tetap gagal bila variabel wajib diisi kosong", async () => {
+    await expect(
+      loadServer({ ...VALID, BETTER_AUTH_SECRET: "" }),
+    ).rejects.toThrow("Invalid environment variables");
+  });
+
+  it("menolak SMTP_PORT yang bukan angka", async () => {
+    await expect(loadServer({ ...VALID, SMTP_PORT: "abc" })).rejects.toThrow(
+      "Invalid environment variables",
+    );
+  });
+
+  it("menolak SMTP_PORT di luar rentang port", async () => {
+    await expect(loadServer({ ...VALID, SMTP_PORT: "70000" })).rejects.toThrow(
+      "Invalid environment variables",
+    );
+    await expect(loadServer({ ...VALID, SMTP_PORT: "0" })).rejects.toThrow(
+      "Invalid environment variables",
+    );
+  });
 });

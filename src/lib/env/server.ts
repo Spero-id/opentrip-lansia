@@ -16,7 +16,13 @@ const server = createEnv({
     GOOGLE_CLIENT_ID: z.string().default(""),
     GOOGLE_CLIENT_SECRET: z.string().default(""),
     SMTP_HOST: z.string().default(""),
-    SMTP_PORT: z.coerce.number().default(587),
+    SMTP_PORT: z
+      .preprocess((v) => (typeof v === "string" ? Number(v) : v), z
+        .number()
+        .int()
+        .min(1)
+        .max(65535))
+      .default(587),
     SMTP_SECURE: z
       .enum(["true", "false"])
       .default("false")
@@ -44,7 +50,7 @@ const server = createEnv({
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     BASE_URL: process.env.BASE_URL,
   },
-  emptyStringAsUndefined: false,
+  emptyStringAsUndefined: true,
 });
 
 export const DATABASE_URL = server.DATABASE_URL;

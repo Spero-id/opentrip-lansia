@@ -54,4 +54,16 @@ describe("env/client", () => {
       loadClient({ NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION: "yes" }),
     ).rejects.toThrow("Invalid environment variables");
   });
+
+  it("memperlakukan string kosong sebagai belum diisi", async () => {
+    const env = await loadClient({
+      NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION: "",
+      NEXT_PUBLIC_BETTER_AUTH_URL: "",
+      NEXT_PUBLIC_WHATSAPP_NUMBER: "",
+    });
+
+    expect(env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION).toBe(false);
+    expect(env.NEXT_PUBLIC_BETTER_AUTH_URL).toBe("http://localhost:3000");
+    expect(env.NEXT_PUBLIC_WHATSAPP_NUMBER).toBe("");
+  });
 });
