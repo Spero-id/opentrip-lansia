@@ -2532,3 +2532,17 @@ Tabel perilaku setelah perbaikan (semua sudah dikunci test):
 **Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **343** hijau (+6, 41 → 42 file) · check-structure all rules within baseline · R9 0.
 
 **Pekerjaan yang masih menggantung dari sesi ini:** penghapusan `BASE_URL` dari env (aman — hanya dipakai `scripts/check-routes.ts` di cabang `--crawl` yang sudah punya flag `--base`, dan `check:routes` yang dipakai `init.sh` tidak menyentuhnya sama sekali).
+
+## Session 82 — 2026-10-03 (audit coverage, koreksi klaim sendiri, pindah password + sanitize, branch refactor/lib-cleanup)
+
+**Koreksi klaim yang salah.** Saya sempat bilang "`slugify` dipakai 13×, risk tinggi". Angka itu salah hitung: hanya **2 file** yang mengimpor `@/utils/helpers#slugify` (`admin/trips/page.tsx`, `master.repository.ts`, `trip.controller.ts`), sedangkan `slugify` versi lokal ada di `features/blog/blog.service.ts` dan `app/(admin)/admin/blogs/page.tsx`. Jadi bukan gap test melainkan **duplikasi 3 salinan dengan 2 implementasi berbeda** — temuan kategori yang sama seperti `format`, bukan prioritas test. Angka "13×" dihitung dari kemunculan kata, bukan pemakai util.
+
+**Coverage 作为 facts:** statements 48.29% · branches 42.87% · functions 34.38%. 343 test hijau tapi hanya ~setengah codebase tersentuh. Titik lemah terverifikasi di area sesi ini: `utils/helpers.ts` 0%, `lib/auth/session.ts` 0%, `lib/auth/auth-server.ts` 0%, `utils/password.ts` 28.6% (cabang SHA-256 legacy tak tersentuh), `lib/env/server.ts` branch 50%.
+
+**Risiko tertinggi: `verifyPassword` cabang legacy SHA-256.** Salah satu cara berarti semua pengguna lama tidak bisa login dengan gejala "password salah" (bukan error), dan `===` bukan perbandingan timing-safe seperti `bcrypt.compare` — jadi karakter keamanan kedua jalur verifikasi berbeda dan jalur lemah tidak diuji.
+
+**Commit `e4a6b64` — pindah `password.ts` dan `sanitize.ts`.** Keduanya satu-satunya file di `src/utils/` dengan package pihak ketiga sebagai ketergantungan tunggal (bcryptjs + node:crypto; sanitize-html). Dipindah ke `src/lib/auth/password.ts` dan `src/lib/html/sanitize.ts`, 5 pemanggil diperbarui. Dipindahkan **berdua** karena dasar aturannya sama; hanya `password.ts` menyisakan aturan setengah jadi.
+
+Yang ditegaskan dalam commit message: perpindahan folder **tidak menambah pengaman apa pun**. bcryptjs secara teknis bisa dibundel ke browser tanpa error, dan tetap bisa diimpor dari komponen client baik dari `utils/` maupun `lib/`. Pengaman hanya bisa datang dari guard mekanis (mis. R12 "client bundle mencapai paket server-only"), analogous R11 yang sudah ada. Guard itu belum dibuat — dicatat sebagai pekerjaan lanjutan.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **343** hijau · build compiled · check-structure all rules within baseline · R3 220 · R6 2 · R9 0.
