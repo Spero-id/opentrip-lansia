@@ -2517,3 +2517,18 @@ Tabel perilaku setelah perbaikan (semua sudah dikunci test):
 **Pelajaran yang dicatat:** test yang hanya menguji jalur bahagia schemas easily memberi rasa aman palsu. Yang menangkap kedua bug ini adalah probe perilaku yang justru **tidak** dikunci test (empty string, non-numeric, di luar rentang) — pola yang sekarang dipakai di `env/__tests__` dan `db/__tests__`.
 
 **Verifikasi:** `.env` sungguhan termuat (`tsx --env-file=.env`: port 587, secure false, base default) · tsc 0 · lint 0E · vitest **337** hijau (env 14 → 19) · build compiled · check-structure all rules within baseline.
+
+## Session 81 — 2026-10-03 (test env memakai .env sungguhan, branch refactor/lib-cleanup)
+
+**Lubang yang ditunjukkan:** seluruh test `src/lib/env` memakai fixture fake (`VALID = postgresql://user:pass@host:5432/db`, secret `"s"`) — **nol test yang memuat `.env` sungguhan**. Padahal baru dua commit lalu skema env diperketat, jadi justru berkas yang paling perlu diuji tidak pernah disentuh suite. Pola tes erstwhile hanya membuktikan skema benar terhadap input buatan, bukan bahwa setup ny actually benar.
+
+**`src/lib/env/__tests__/real-env.test.ts` (6 test):**
+- Memuat `env/server` dan `env/client` dari `process.env` asli (dotenv sudah dimuat `src/testing/setup-tests.ts`) dan memeriksa invarian yang **tidak** bergantung pada host Neon: skema postgres, `BETTER_AUTH_SECRET` tidak kosong, `BASE_URL` dan `BETTER_AUTH_URL` bisa di-`URL`-parse, `SMTP_PORT` integer 1–65535, `SMTP_SECURE` boolean, dan `client env` tidak mengekspos `DATABASE_URL`/`BETTER_AUTH_SECRET`.
+- Drift guard `.env.example` ↔ skema dua arah: setiap variabel yang dideklarasikan wajib tercatat di `.env.example`, dan tidak boleh ada variabel basi. Ini menahan penyebab klasik deploy gagal — variabel baru yang lupa didokumentasikan.
+- `describe.skipIf(!process.env.DATABASE_URL)` supaya suite tetap hijau di mesin tanpa `.env`.
+
+**Efektivitas test dibuktikan, bukan diasumsikan.** Regex pertama saya (`^\s{4}(KEY):\s*z\.`) hanya menangkap 4 dari 18 variabel karena rantai zod multi-baris (`DATABASE_URL: z\n.url()`) tidak cocok — test-nya lulus hampa. Diperbaiki ke `^export const (KEY) =`, yang persis mencerminkan API modul. Lalu dihapus satu baris `SMTP_PASS` dari `.env.example`: test **gagal** dengan `expected [ 'SMTP_PASS' ] to deeply equal []`, lalu dipulihkan. Guard-nya terbukti punya gigi.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **343** hijau (+6, 41 → 42 file) · check-structure all rules within baseline · R9 0.
+
+**Pekerjaan yang masih menggantung dari sesi ini:** penghapusan `BASE_URL` dari env (aman — hanya dipakai `scripts/check-routes.ts` di cabang `--crawl` yang sudah punya flag `--base`, dan `check:routes` yang dipakai `init.sh` tidak menyentuhnya sama sekali).
