@@ -10,7 +10,7 @@ import { promotionRepository } from "@/features/promotion";
 import { computePromoDiscount } from "@/features/promotion";
 import { tripRepository } from "@/features/trip/trip.repository";
 import { and, eq, asc, count } from "drizzle-orm";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { withTransaction } from "@/lib/db/utils";
 import { bookingService } from "./booking.service";
 

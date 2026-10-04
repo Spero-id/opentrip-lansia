@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Compass, Calendar, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
 import { useAdminDashboard } from "@/features/admin";
+import { formatIDRCompact } from "@/utils/format";
 
 function formatStatus(status: string): { label: string; className: string } {
   switch (status) {
@@ -16,14 +17,6 @@ function formatStatus(status: string): { label: string; className: string } {
     default:
       return { label: "Pending", className: "bg-amber-100 text-amber-800" };
   }
-}
-
-function formatRupiah(value: string): string {
-  const num = Number(value);
-  if (isNaN(num)) return value;
-  if (num >= 1_000_000_000) return `Rp ${(num / 1_000_000_000).toFixed(1)}M`;
-  if (num >= 1_000_000) return `Rp ${(num / 1_000_000).toFixed(1)}Jt`;
-  return `Rp ${num.toLocaleString("id-ID")}`;
 }
 
 function StatCardSkeleton() {
@@ -181,7 +174,7 @@ export default function AdminDashboard() {
                         <td className="px-4 py-3 font-mono font-bold text-slate-900">{row.bookingCode}</td>
                         <td className="px-4 py-3 font-medium">{row.customerName}</td>
                         <td className="px-4 py-3 text-slate-500">{row.tripName}</td>
-                        <td className="px-4 py-3 font-bold text-[#F49D1A]">{formatRupiah(row.totalAmount)}</td>
+                        <td className="px-4 py-3 font-bold text-[#F49D1A]">{formatIDRCompact(row.totalAmount)}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${className}`}>
                             {label}

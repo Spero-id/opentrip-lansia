@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { reviews } from "@/lib/data";
+import { reviews } from "./content";
 
 type LandingReview = (typeof reviews)[number] & { avatar?: string };
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { PROPOSAL_COLOR, PROPOSAL_LABEL, formatRupiah } from "./constants";
+import { PROPOSAL_COLOR, PROPOSAL_LABEL } from "./constants";
+import { formatIDR } from "@/utils/format";
 import type { PrivateProposal } from "@/features/my-trips";
 
 export default function ProposalCard({
@@ -40,7 +41,7 @@ export default function ProposalCard({
         <div>
           <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Proposal</p>
           <p className="text-xs font-bold text-gray-800 mt-1">
-            Estimasi Harga: {formatRupiah(proposal.estimatedPrice)}
+            Estimasi Harga: {formatIDR(proposal.estimatedPrice)}
           </p>
         </div>
         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${PROPOSAL_COLOR[proposal.status] || "bg-gray-100 text-gray-600"}`}>

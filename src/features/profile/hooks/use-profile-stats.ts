@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { fetchReferralSummary } from "@/features/profile";
 import type { ReferralSummary } from "@/features/profile";
 

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Filter, MapPin, DollarSign, Tag, Heart, X, ChevronDown, ChevronUp, Check } from "lucide-react";
+import { formatIDR } from "@/utils/format";
 
 const A = "#F49D1A";
 const MAX_RUPIAH = 100_000_000;
@@ -74,10 +75,8 @@ export default function FilterPanel({
     [destinations]
   );
 
-  function formatRupiah(value: string | number) {
-    const num = Number(value);
-    if (!value || Number.isNaN(num) || num <= 0) return "Rp 0";
-    return "Rp " + Math.floor(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  function formatFilterPrice(value: string | number): string {
+    return formatIDR(value) ?? "Rp 0";
   }
 
   const activeCount = [
@@ -341,7 +340,7 @@ export default function FilterPanel({
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
-                  {priceMin !== "" ? formatRupiah(priceMin) : "Tanpa batas minimal"}
+                  {priceMin !== "" ? formatFilterPrice(priceMin) : "Tanpa batas minimal"}
                 </p>
               </div>
               <div className="space-y-1">
@@ -375,7 +374,7 @@ export default function FilterPanel({
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
-                  {priceMax !== "" ? formatRupiah(priceMax) : "Tanpa batas maksimal"}
+                  {priceMax !== "" ? formatFilterPrice(priceMax) : "Tanpa batas maksimal"}
                 </p>
               </div>
             </div>

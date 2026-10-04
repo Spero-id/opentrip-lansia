@@ -1,7 +1,7 @@
 import { contactRepository } from "./contact.repository";
 import { contactMessageSchema, type ContactMessageInput } from "./contact.schema";
 import { sendContactEmail } from "@/lib/mail";
-import { ValidationError } from "@/lib/errors/app-error";
+import { ValidationError } from "@/utils/errors/app-error";
 
 export const contactService = {
   async submitMessage(data: ContactMessageInput) {

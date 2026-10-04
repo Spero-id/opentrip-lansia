@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/lib/db";
-import { hashPassword, verifyPassword } from "@/utils/password";
+import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { generateCode } from "@/utils/helpers";
 import { users } from "@/db/schema/auth";
 import { session, account, verification } from "@/db/schema/auth";
@@ -10,7 +10,7 @@ import {
   BETTER_AUTH_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-} from "@/lib/env.server";
+} from "@/lib/env/server";
 
 export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,

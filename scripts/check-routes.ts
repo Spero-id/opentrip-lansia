@@ -1,7 +1,7 @@
 import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
-import { BASE_URL } from "@/lib/env.server";
+import { BASE_URL } from "@/lib/env/server";
 
 const ROOT = process.cwd();
 const BUILD_MANIFEST = path.join(ROOT, ".next", "app-path-routes-manifest.json");

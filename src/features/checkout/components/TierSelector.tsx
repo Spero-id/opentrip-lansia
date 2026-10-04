@@ -1,7 +1,7 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
-import { OrderDomain } from "@/lib/order";
+import { formatIDR } from "@/utils/format";
 import type { TierOption } from "@/features/checkout/types";
 
 interface TierSelectorProps {
@@ -36,7 +36,7 @@ export default function TierSelector({ tiers, tierQty, loading, onChange }: Tier
               <div className="min-w-0">
                 <p className="text-sm font-bold text-gray-900 truncate">{tier.name}</p>
                 <p className="text-xs text-gray-500">
-                  {OrderDomain.formatPrice(tier.price)} · sisa {tier.remaining}
+                  {formatIDR(tier.price)} · sisa {tier.remaining}
                   {tier.validUntil ? ` · s/d ${tier.validUntil}` : ""}
                 </p>
               </div>

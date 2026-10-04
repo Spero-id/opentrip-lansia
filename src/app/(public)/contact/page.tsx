@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { NEXT_PUBLIC_WHATSAPP_MESSAGE } from "@/lib/env";
+import { NEXT_PUBLIC_WHATSAPP_MESSAGE } from "@/lib/env/client";
 import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User } from "lucide-react";
 
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(

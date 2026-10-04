@@ -6,7 +6,7 @@ import { auth } from "@/features/auth/auth.config";
 import { detectImageKind, extensionForImage } from "@/utils/image-guard";
 import { db } from "@/lib/db";
 import { media } from "@/db/schema/master";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const UPLOADS_DIR = path.join(process.cwd(), "uploads");

@@ -1,5 +1,5 @@
-import { toDetail } from "@/lib/destination";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toDetail } from "@/features/trip/trip-mapper";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import type { TripDetail, TripReview } from "@/features/trip/types";
 
 function toTripDetail(raw: unknown): TripDetail {

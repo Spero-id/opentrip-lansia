@@ -1,6 +1,6 @@
 import { A } from "./helpers/constants";
 import { Star, Heart } from "lucide-react";
-import { formatRupiah } from "./helpers/formatting";
+import { formatIDR } from "@/utils/format";
 import type { PrivateTripDestination } from "@/features/private-trip/types";
 
 export default function DestinationCard({
@@ -51,7 +51,7 @@ export default function DestinationCard({
           ) : (
             <span className="font-medium text-gray-500">Belum ada ulasan</span>
           )}
-          <span>{formatRupiah(dest.priceMin)}</span>
+          <span>{formatIDR(dest.priceMin)}</span>
         </p>
         {dest.isSeniorFriendly && (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium text-[#065F46] bg-[#ECFDF5] border border-[#A7F3D0] w-fit">

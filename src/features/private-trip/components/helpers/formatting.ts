@@ -1,12 +1,4 @@
-export function formatRupiah(v: string | number | null | undefined): string {
-  if (!v && v !== 0) return "";
-  return (
-    "Rp " +
-    Math.floor(Number(v))
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-  );
-}
+
 
 export function inputCls(error: string | null | undefined, extra = ""): string {
   return [

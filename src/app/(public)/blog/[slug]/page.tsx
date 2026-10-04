@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import Subs from "@/features/newsletter/components/Subs";
-import { sanitizeBlogContent } from "@/utils/sanitize";
+import { sanitizeBlogContent } from "@/lib/html/sanitize";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { fetchBlogCategories, fetchPostBySlug, formatBlogDate } from "@/features/blog/api/client";
 import type { BlogCategory, BlogPost } from "@/features/blog/types";

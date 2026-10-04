@@ -7,7 +7,7 @@ import { eq, inArray, sql } from "drizzle-orm";
 import type { UUID } from "@/types";
 import type { trips, itineraryItems } from "@/db/schema/trips";
 import type { GroupCreateInput } from "./trip.repository";
-import { ConflictError, NotFoundError, ValidationError } from "@/lib/errors/app-error";
+import { ConflictError, NotFoundError, ValidationError } from "@/utils/errors/app-error";
 
 type TripInsert = typeof trips.$inferInsert;
 type ItineraryInsert = typeof itineraryItems.$inferInsert;

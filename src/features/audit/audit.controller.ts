@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auditService } from "./audit.service";
 import type { AuditListFilter } from "./audit.types";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 
 const MAX_LIMIT = 200;
 const DEFAULT_LIMIT = 50;

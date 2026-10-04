@@ -1,24 +1,15 @@
 import { blogRepository } from "./blog.repository";
 import { blogs } from "@/db/schema/blog";
-import { sanitizeBlogContent } from "@/utils/sanitize";
-import { NotFoundError, ValidationError } from "@/lib/errors/app-error";
+import { sanitizeBlogContent } from "@/lib/html/sanitize";
+import { NotFoundError, ValidationError } from "@/utils/errors/app-error";
 import type { UUID } from "@/types";
 import { auditService, diffFields, pickFields } from "@/features/audit";
+import { slugify } from "@/utils/helpers";
 
 const BLOG_AUDIT_FIELDS = ["title", "slug", "status", "categoryId", "tags"] as const;
 const CATEGORY_AUDIT_FIELDS = ["name", "slug", "description"] as const;
 
 type BlogInsert = typeof blogs.$inferInsert;
-
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
 
 async function ensureUniqueSlug(base: string): Promise<string> {
   let slug = base;

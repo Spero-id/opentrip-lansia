@@ -1,4 +1,4 @@
-import { OrderDomain } from "@/lib/order";
+import { formatIDR } from "@/utils/format";
 import { computePromoDiscount } from "@/features/promotion/promo-discount";
 import { parseMoney, parsePromoValue } from "@/features/promotion/promo-value";
 import type {
@@ -26,7 +26,7 @@ export function resolveVoucher(
   if (minPurchase > 0 && subtotal < minPurchase) {
     return {
       appliedVoucher: null,
-      voucherError: `Minimal order ${OrderDomain.formatPrice(minPurchase)} untuk voucher ini.`,
+      voucherError: `Minimal order ${formatIDR(minPurchase)} untuk voucher ini.`,
     };
   }
 

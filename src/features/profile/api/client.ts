@@ -1,4 +1,4 @@
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import type {
   ReferralHistoryItem,
   ReferralPagination,

@@ -2414,3 +2414,187 @@ Tiga commit terpisah sesuai konvensi repo (satu commit per modul):
 
 **Verifikasi:** tsc 0 · lint 0E · vitest **286** (tetap — fase ini menambah kode produksi, bukan surface test baru) · build compiled · routes 103→103 · drift 0 · auth 10 · structure hijau.
 **Live smoke:** promo create/update/delete → 3 baris (`newValues` update hanya berisi `value`, bukan dump baris); trip `location` diubah → 1 baris `update` (lokasi lama → baru), lalu dikembalikan; kategori blog create/rename/delete → 3 baris. Trip `status: published` (sudah published) dan `isFeatured: true` (sudah true) → **nol baris**, sesuai desain. Semua data QA dihapus (promo & kategori 0, lokasi trip kembali asli), dev server dimatikan.
+
+## Session 75 — 2026-10-03 (lib-cleanup commit 1-2, branch refactor/lib-cleanup)
+
+Branch `refactor/lib-cleanup` dibuat dari `main` **setelah** PR #127 (feat-082 audit log) ter-merge. Awalnya branch ini dibuat dari `feat/082-audit-log` sehingga isinya identik dengan audit branch — sudah dirapikan: checkout ke `main`, fast-forward ke `1cb38a3`, lalu branch baru dibuat dari sana. Plan: `plan/lib-cleanup.md` (5 commit).
+
+**Commit 1 `52afe99` — bubarkan pola `*Domain`.** `OrderDomain` (`src/lib/order.ts`) dan `DestinationDomain` (`src/lib/destination.ts`) terbukti **dua-satunya objek `*Domain` di seluruh codebase** — semua domain lain sudah pola repo (`*.service.ts` / `*.repository.ts` atau file datar seperti `pricing.ts`, `reducer.ts`). Kedua file dihapus: `generateOrderId()` → `features/checkout/order-id.ts` (ekspor lewat barrel), `toDetail()` + `getShortLocation()` → `features/trip/trip-mapper.ts`. Sekalian 8 export mati: `AVAILABLE_VOUCHERS`, `OrderDomain.calculateTotal`, `generateParticipantId`, `DestinationDomain.calculateTotalPrice`, `RawTripData`, `DEFAULT_RATING`, `utils/helpers#formatCurrency`, `#parseAmount`. `src/lib/format.ts` → `src/utils/format.ts`.
+
+**Jebakan client bundle (R3 naik, unavoidable).** `toDetail`/`getShortLocation` dipakai 3 file `"use client"`. Barrel `@/features/trip` **tidak bisa** dipakai karena me-re-export `trip.service.ts` + `trip.repository.ts` (Drizzle) — menarik server code ke client bundle. Alternatifnya relative import `../` menaikkan R9 yang targetnya 0, dan bertentangan dengan konvensi alias repo. Dipilih deep import `@/features/trip/trip-mapper`, R3 baseline 217 → 220 dengan catatan alasannya di `scripts/check-structure.ts`.
+
+**Nama `formatIDR`, bukan `formatRupiah`.** `"rupiah"` ada di `ID_IDENTIFIER_WORDS` → tiap pemakaian `formatRupiah` menambah R8. Karena R8 ratchet ke arah 0, nama kanonik justru menambah debt. Setelah rename: **R8 turun 504 → 498**.
+
+**Commit 2 `612e9bd` — satukan 12 format uang.** 9 implementasi lokal dihapus (4 di `app/(admin)`, 2 di `features/private-trip`, 2 di `features/my-trips`, 1 di `FilterPanel`). Fallback yang dulu menumpang di dalam fungsi pindah ke call site: `?? "-"` (private-trips/[id], SuccessState), `?? "Rp 0"` (FilterPanel). `admin/page.tsx` ternyata bukan duplikat — punya satuan ringkas (`Rp 1.8Jt`) → jadi fungsi terpisah `formatIDRCompact`, bukan dipaksa masuk `formatIDR`.
+
+**Jebakan uang yang ketahuan lewat test.** Versi pertama `formatIDR` menerima `"1.250.000"` sebagai angka desimal → `Number("1.250.000")` = 1.25 → tampil `Rp 1`. Diperbaiki: string hanya diformat kalau `/^-?\d+$/`, selebihnya dikembalikan apa adanya. 9 test baru di `src/utils/__tests__/format.test.ts` mengunci ini. Sumber risikonya nyata: `my-trips`/`admin` menerima string dari DB yang bisa sudah terformat.
+
+**Selisih byte yang disengaja:** `"Rp 350.000"` dari `Intl` currency memakai non-breaking space (U+00A0), kini regular space. Rendering identik.
+
+**Verifikasi akhir 2 commit:** tsc 0 · lint 0E (80 warning, baseline) · vitest **295** (286 + 9) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R3 220 · **R8 468** (turun 36) · R9 0.
+
+**Belum dikerjakan:** commit 3 (`lib/data.ts` → `features/landing/content/`), commit 4 (`lib/errors/` → `utils/errors/`, 33 import), commit 5 (split env + T3 Env). Catatan: `@t3-oss/env-core` sudah ter-install di `package.json` di luar sesi ini dan **belum di-commit** — `zod` + `@t3-oss/env-nextjs` masih perlu untuk commit 5.
+
+## Session 76 — 2026-10-03 (lib-cleanup commit 3-5, branch refactor/lib-cleanup, plan SELESAI)
+
+**Commit 3 `31c089c` — `lib/data.ts` → `features/landing/components/content.ts`.** Awalnya direncanakan `features/landing/content/index.ts`, tapi itu memaksa deep import (`@/features/landing/content` → R3 naik) atau `../content` (→ R9 naik). Dipindah ke `components/content.ts` mengikuti preseden `my-trips/components/constants.tsx` dan `private-trip/components/helpers/`, jadi R3 dan R9 dua-duanya tetap 0.
+
+**Commit 4 `5a56938` — `lib/errors/` → `utils/errors/`.** 33 file berubah satu baris (11 × `app-error`, 26 × `to-public-error`). `lib/db/utils.ts` tetap di `lib/db/` agar `db` tidak terpecah.
+
+**Commit 5 `a10f5ee` — split env + T3 Env.** `lib/env.ts` + `lib/env.server.ts` (nama `.server` **tidak** memblokir bundel) → `lib/env/{client,server}.ts` dengan validasi zod. Sebelumnya env cuma `required()` untuk 2 var dan `?? ""` untuk 13 sisanya, jadi typo `DATABSE_URL` lolos sampai query gagal; sekarang `DATABASE_URL` = `z.url()` dan `BETTER_AUTH_SECRET` = `z.string().min(1)`, gagal cepat saat boot. Dependensi baru: `@t3-oss/env-core`, `@t3-oss/env-nextjs`, `zod`. `@t3-oss/env-core` sudah ada di `package.json` sebelum sesi ini, sekarang ikut ter-commit bersama dua lainnya.
+
+**Tiga jebakan T3 Env yang ditemukan (semuanya sudah ditulis di plan):**
+1. `createEnv` **tidak menerima `clientPrefix`**, dan `extends` harus berupa **array** (`extends: [client]`) yang bentrok tipe dengan `runtimeEnv`. Solusi: `server.ts` mendeklarasikan ulang `client: clientSchema` dengan runtimeEnv gabungan.
+2. **7 test server harus pindah ke `environment: "node"`** (docblock `// @vitest-environment node`). T3 Env menetapkan `isServer` dari `typeof window === "undefined"`, sedangkan suite default `jsdom` — tanpa itu import `lib/db` → `env/server` melempar "Attempted to access a server-side environment variable on the client". 6 file yang memang butuh jsdom (testing-library) tidak diubah.
+3. **`BASE_URL` bentrok dengan konstanta bawaan Vite** yang meng-inject `BASE_URL="/"` ke `process.env` → `z.url()` gagal di seluruh test. Diperbaiki di `vitest.config.mts` (`env: { BASE_URL: "http://localhost:3000" }`), **nama variabel tidak diubah** demi kompatibilitas deployment; kalau nanti mau bebas dari tabrakan, rename ke `SITE_URL`. `BASE_URL` juga dicatat di `.env.example` (belum pernah ada).
+
+**Guard baru di `check-structure.ts`:** `ENV_SERVER` → `src/lib/env/server.ts`, plus `client.ts` tidak boleh mengimpor `server.ts` (R11 tetap 0).
+
+**Struktur akhir tercapai:** `src/lib/{auth,db,env,mail.ts,utils.ts}` + `src/utils/{errors,format,helpers,image-guard,password,sanitize}`.
+
+**Verifikasi akhir:** tsc 0 · lint 0E (80 warning, baseline) · vitest **295** hijau · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R3 220 · **R8 468** (dari 504) · R9 0 · R11 0.
+
+**Sisa pekerjaan yang sengaja di luar scope:** `src/lib/mail.ts` masih satu file dengan `transporter` di module scope (koneksi SMTP dibentuk begitu file di-import) dan HTML template menyatu — slated menjadi ticket sendiri supaya vendor email bisa diganti tanpa menyentuh consumer. Kelima commit di `plan/lib-cleanup.md` sudah habis; langkah berikutnya tinggal push branch + PR.
+
+## Session 77 — 2026-10-03 (refactor mail, branch refactor/lib-cleanup)
+
+Ticket terpisah dari `plan/lib-cleanup.md` (itu sudah habis di commit 5): `src/lib/mail.ts` 96 baris dipecah menjadi `src/lib/mail/` supaya vendor email bisa diganti tanpa menyentuh consumer.
+
+**Struktur:** `transport.ts` (interface `MailTransport` + `MailMessage`) · `nodemailer.ts` (driver + `getTransport()`) · `templates.ts` (HTML template sebagai fungsi murni) · `index.ts` (barrel). `features/contact/contact.service.ts` dan `features/newsletter/newsletter.service.ts` **tidak berubah sama sekali** — masih `import { sendContactEmail } from "@/lib/mail"`.
+
+**Perbaikan nyata: transporter jadi lazy.** Sebelumnya `nodemailer.createTransport()` berjalan di module scope, jadi koneksi SMTP dibentuk begitu file di-import — termasuk saat build dan saat test yang sama sekali tidak mengirim email. Sekarang `getTransport()` memakai memoized singleton yang baru dibentuk pada pengiriman pertama. Dikunci test: `createTransport` tidak dipanggil saat import, dipanggil tepat 1× pada `getTransport()` pertama, dan instance-nya sama pada panggilan berikutnya.
+
+**Dua selisih HTML ketahuan lewat test parity** (saya tulis implementasi lama sebagai acuan, lalu bandingkan string-nya):
+1. `width: 120px` awalnya ikut ke semua baris tabel, padahal versi lama hanya di baris pertama → seluruh kolom jadi lebar seragam.
+2. Teks footer sempat disamakan jadi "dari sistem Jelajah Memoria" untuk semua template; aslinya berbeda — "formulir Contact Us" untuk contact, "sistem newsletter" untuk newsletter.
+
+Satu jebakan lagi: import relatif `../nodemailer` di test menaikkan R9 (termasuk import dinamis `await import(...)` yang tidak tertangkap sed regex statis) → diganti alias `@/lib/mail/nodemailer`.
+
+**Catatanoperasional:** `package.json` kini punya `@t3-oss/env-core`, `@t3-oss/env-nextjs`, `zod` — tiga dependensi baru yang masuk di commit env. `nodemailer` masih satu-satunya vendor email; tinggal tambah `resend.ts` + flip satu baris di `getTransport()` untuk pindah vendor.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **302** hijau (+7) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R9 0. Satu test (`quota-guards`) sempat gagal sekali lalu hijau pada dua jalan berikutnya — flaky, bukan regresi.
+
+## Session 78 — 2026-10-03 (test untuk src/lib/env dan src/lib/db, branch refactor/lib-cleanup)
+
+`src/lib/env` dan `src/lib/db` tadinya **tanpa test sama sekali**, padahal keduanya punya cabang yang mudah regresi diam-diam: skema validasi env (commit 5 baru kemarin) dan logika retry read-only vs transient.
+
+**`src/lib/env/__tests__/`** (13 test, `vi.resetModules()` + `vi.stubEnv()` per kasus supaya tiap skenario dapat environment sendiri):
+- `client.test.ts`: nilai dari environment dibaca apa adanya, default saat variabel hilang (`NEXT_PUBLIC_BETTER_AUTH_URL` → `http://localhost:3000`), URL tidak valid ditolak, nilai boolean di luar `true`/`false` ditolak
+- `server.test.ts`: `DATABASE_URL` wajib ada, `BETTER_AUTH_SECRET` wajib dan minimal 1 karakter, `SMTP_PORT` dikoersi string → number, `SMTP_SECURE` string → boolean, default untuk 4 variabel opsional
+
+**`src/lib/db/__tests__/`** (16 test):
+- `retry.test.ts`: `isReadOnlyCall` mengenali `select` (termasuk huruf besar, spasi awal, dan batch), menolak `insert`/`update`/`delete`/`truncate`, menolak batch yang hanya berisi satu perintah tulis di antara beberapa `select`, menolak batch kosong dan argumen non-string; `isTransientError` untuk koneksi database, HTTP 429, 5xx, failed query, string biasa, dan `undefined`; `RETRY_DELAYS_MS` wajib naik
+- `utils.test.ts`: `increment` memakai `sql.identifier` untuk nama kolom (bukan interpolasi mentah) dan default amount 1; `withTransaction` mendelegasikan ke `db.transaction`, meneruskan argumen apa adanya, dan meneruskan error dari callback
+
+**Temuan yang layak dicatat:** `z.url()` **menerima** `"localhost:5432/db"` sebagai URL sah, karena `localhost:` terbaca sebagai skema yang valid. Artinya `z.url()` bukan penjaga kuat untuk string koneksi — `DATABSE_URL=localhost:5432/db` (typo `postgres` hilang) akan lolos validasi dan baru gagal saat query. Test-nya diganti ke input yang benar-benar invalid, plus test yang mengunci skema non-http (`postgres://`) tetap diterima. Kalau mau lebih ketat, `DATABASE_URL` perlu refinements (harus diawali `postgres://` atau `postgresql://`) — dicatat, belum dikerjakan karena mengubahnya menyentuh `docs/database` dan `.env.example`.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **331** hijau (+29, 37 → 41 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R1 0 · R6 2 · R9 0.
+
+## Session 79 — 2026-10-03 (pengetat DATABASE_URL, branch refactor/lib-cleanup)
+
+Lanjutan temuan Session 78. `z.url()` ternyata **menerima** `"localhost:5432/db"` sebagai URL sah karena `localhost:` terbaca sebagai skema yang valid, jadi typo skema pada string koneksi (mis. `postgres` → hilang) lolos validasi dan baru gagal saat query. String koneksi proyek ini selalu NeonDB `postgresql://`, jadi `DATABASE_URL` kini punya refinement: wajib diawali `postgres://` atau `postgresql://`.
+
+Test: `localhost:5432/db` ditolak, URL NeonDB `postgresql://...neon.tech/neondb?sslmode=require` diterima. Verifikasi tambahan: `npx tsx --env-file=.env` memuat `src/lib/env/server` sungguhan dan lolos (tanpa flag itu `.env` memang tidak terbaca karena tidak ada dotenv di path tsx).
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **332** hijau · build compiled · check-structure all rules within baseline.
+
+## Session 80 — 2026-10-03 (audit test env, dua cacat skema ditemukan, branch refactor/lib-cleanup)
+
+Saya audit ulang test `src/lib/env` yang saya buat sendiri di Session 78, dengan cara menulis probe untuk perilaku yang **tidak** dikunci test. Dua cacat nyata ketahuan — keduanya cacat di skema, bukan di test.
+
+**1. String kosong membuat boot gagal.** `emptyStringAsUndefined: false` bermakna `BETTER_AUTH_URL=` (kosong) ditolak `z.url()`, dan `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION=` ditolak enum. Padahal sebelum T3 Env, string kosong tidak masalah (`process.env.X === "true"` → `false`). Artinya migrasi T3 Env sendiri adalah regresi potensial untuk `.env` yang memuat variabel kosong. Diperbaiki: `emptyStringAsUndefined: true` di kedua file, jadi `""` berarti "belum diisi" → `SMTP_PORT` 587, `BETTER_AUTH_URL` default, `MIDTRANS_IS_PRODUCTION` false. Variabel wajib tetap gagal: `DATABASE_URL` dan `BETTER_AUTH_SECRET`.
+
+**2. `SMTP_PORT` bisa bernilai 0 tanpa suara.** `z.coerce.number()` mengubah `""` menjadi `0`, dan `""` lolos karena `emptyStringAsUndefined` sebelumnya false. Port 0 tidak ditolak, tidak ada batas atas, dan `Number("abc")` pun tidak diuji. Nodemailer akan gagal dengan error yang membingungkan. Diperbaiki: preprocess ke number lalu `int()` rentang 1–65535.
+
+Tabel perilaku setelah perbaikan (semua sudah dikunci test):
+
+| Input | `\"\"` | tidak diisi | `abc` | `0` | `70000` | `2525` |
+|---|---|---|---|---|---|---|
+| `SMTP_PORT` | 587 | 587 | throw | throw | throw | 2525 |
+
+`DATABASE_URL` dan `BETTER_AUTH_SECRET` tetap menolak string kosong. URL NeonDB `postgresql://` tetap diterima.
+
+**Pelajaran yang dicatat:** test yang hanya menguji jalur bahagia schemas easily memberi rasa aman palsu. Yang menangkap kedua bug ini adalah probe perilaku yang justru **tidak** dikunci test (empty string, non-numeric, di luar rentang) — pola yang sekarang dipakai di `env/__tests__` dan `db/__tests__`.
+
+**Verifikasi:** `.env` sungguhan termuat (`tsx --env-file=.env`: port 587, secure false, base default) · tsc 0 · lint 0E · vitest **337** hijau (env 14 → 19) · build compiled · check-structure all rules within baseline.
+
+## Session 81 — 2026-10-03 (test env memakai .env sungguhan, branch refactor/lib-cleanup)
+
+**Lubang yang ditunjukkan:** seluruh test `src/lib/env` memakai fixture fake (`VALID = postgresql://user:pass@host:5432/db`, secret `"s"`) — **nol test yang memuat `.env` sungguhan**. Padahal baru dua commit lalu skema env diperketat, jadi justru berkas yang paling perlu diuji tidak pernah disentuh suite. Pola tes erstwhile hanya membuktikan skema benar terhadap input buatan, bukan bahwa setup ny actually benar.
+
+**`src/lib/env/__tests__/real-env.test.ts` (6 test):**
+- Memuat `env/server` dan `env/client` dari `process.env` asli (dotenv sudah dimuat `src/testing/setup-tests.ts`) dan memeriksa invarian yang **tidak** bergantung pada host Neon: skema postgres, `BETTER_AUTH_SECRET` tidak kosong, `BASE_URL` dan `BETTER_AUTH_URL` bisa di-`URL`-parse, `SMTP_PORT` integer 1–65535, `SMTP_SECURE` boolean, dan `client env` tidak mengekspos `DATABASE_URL`/`BETTER_AUTH_SECRET`.
+- Drift guard `.env.example` ↔ skema dua arah: setiap variabel yang dideklarasikan wajib tercatat di `.env.example`, dan tidak boleh ada variabel basi. Ini menahan penyebab klasik deploy gagal — variabel baru yang lupa didokumentasikan.
+- `describe.skipIf(!process.env.DATABASE_URL)` supaya suite tetap hijau di mesin tanpa `.env`.
+
+**Efektivitas test dibuktikan, bukan diasumsikan.** Regex pertama saya (`^\s{4}(KEY):\s*z\.`) hanya menangkap 4 dari 18 variabel karena rantai zod multi-baris (`DATABASE_URL: z\n.url()`) tidak cocok — test-nya lulus hampa. Diperbaiki ke `^export const (KEY) =`, yang persis mencerminkan API modul. Lalu dihapus satu baris `SMTP_PASS` dari `.env.example`: test **gagal** dengan `expected [ 'SMTP_PASS' ] to deeply equal []`, lalu dipulihkan. Guard-nya terbukti punya gigi.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **343** hijau (+6, 41 → 42 file) · check-structure all rules within baseline · R9 0.
+
+**Pekerjaan yang masih menggantung dari sesi ini:** penghapusan `BASE_URL` dari env (aman — hanya dipakai `scripts/check-routes.ts` di cabang `--crawl` yang sudah punya flag `--base`, dan `check:routes` yang dipakai `init.sh` tidak menyentuhnya sama sekali).
+
+## Session 82 — 2026-10-03 (audit coverage, koreksi klaim sendiri, pindah password + sanitize, branch refactor/lib-cleanup)
+
+**Koreksi klaim yang salah.** Saya sempat bilang "`slugify` dipakai 13×, risk tinggi". Angka itu salah hitung: hanya **2 file** yang mengimpor `@/utils/helpers#slugify` (`admin/trips/page.tsx`, `master.repository.ts`, `trip.controller.ts`), sedangkan `slugify` versi lokal ada di `features/blog/blog.service.ts` dan `app/(admin)/admin/blogs/page.tsx`. Jadi bukan gap test melainkan **duplikasi 3 salinan dengan 2 implementasi berbeda** — temuan kategori yang sama seperti `format`, bukan prioritas test. Angka "13×" dihitung dari kemunculan kata, bukan pemakai util.
+
+**Coverage 作为 facts:** statements 48.29% · branches 42.87% · functions 34.38%. 343 test hijau tapi hanya ~setengah codebase tersentuh. Titik lemah terverifikasi di area sesi ini: `utils/helpers.ts` 0%, `lib/auth/session.ts` 0%, `lib/auth/auth-server.ts` 0%, `utils/password.ts` 28.6% (cabang SHA-256 legacy tak tersentuh), `lib/env/server.ts` branch 50%.
+
+**Risiko tertinggi: `verifyPassword` cabang legacy SHA-256.** Salah satu cara berarti semua pengguna lama tidak bisa login dengan gejala "password salah" (bukan error), dan `===` bukan perbandingan timing-safe seperti `bcrypt.compare` — jadi karakter keamanan kedua jalur verifikasi berbeda dan jalur lemah tidak diuji.
+
+**Commit `e4a6b64` — pindah `password.ts` dan `sanitize.ts`.** Keduanya satu-satunya file di `src/utils/` dengan package pihak ketiga sebagai ketergantungan tunggal (bcryptjs + node:crypto; sanitize-html). Dipindah ke `src/lib/auth/password.ts` dan `src/lib/html/sanitize.ts`, 5 pemanggil diperbarui. Dipindahkan **berdua** karena dasar aturannya sama; hanya `password.ts` menyisakan aturan setengah jadi.
+
+Yang ditegaskan dalam commit message: perpindahan folder **tidak menambah pengaman apa pun**. bcryptjs secara teknis bisa dibundel ke browser tanpa error, dan tetap bisa diimpor dari komponen client baik dari `utils/` maupun `lib/`. Pengaman hanya bisa datang dari guard mekanis (mis. R12 "client bundle mencapai paket server-only"), analogous R11 yang sudah ada. Guard itu belum dibuat — dicatat sebagai pekerjaan lanjutan.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **343** hijau · build compiled · check-structure all rules within baseline · R3 220 · R6 2 · R9 0.
+
+## Session 83 — 2026-10-03 (guard R12 + test verifyPassword, branch refactor/lib-cleanup)
+
+**R12 `client bundle reaches server-only package` (target 0).** Untuk setiap entry ber-`"use client"`, graf import lokal ditelusuri, lalu setiap file yang terjangkau diperiksa untuk import paket `bcryptjs`, `pg`, atau `nodemailer`. Menutup kelas bug "kode server ikut ke bundel browser" yang sebelumnya tanpa penjaga — tidak peduli file-nya di `utils/` atau `lib/`. Sekalian refactor: R11 sebelumnya punya BFS sendiri sendiri; keduanya kini memakai helper `clientEntries()` dan `reachableFrom()` yang sama.
+
+**Efektivitas R12 dibuktikan dengan probe, bukan asumsi.** File sementara ber-`"use client"` yang mengimpor `@/lib/auth/password` → R12 FAIL dengan sampel `src/lib/auth/password.ts: bcryptjs` (file penyebabnya, bukan cuma entry-nya), lalu dihapus → R12 kembali 0.
+
+**Test `verifyPassword` (10 test, `src/lib/auth/__tests__/password.test.ts`).** Cabang SHA-256 legacy yang tadinya 0% coverage kini dikunci: password cocok diterima, password salah ditolak, hash rusak (`"bukan-hash"`, `"$2a$10$potong"`) tidak melempar. Ditambah pembedaan `isLegacySha256` untuk bcrypt vs hex-64, efek salt (hash sama untuk password sama tetap berbeda tapi keduanya verifikasi), dan password kosong ditolak.
+
+**Test yang saya buang sendiri sebelum commit:** sempat menulis `it("tidak membandingkan hash secara timing-unsafe")` yang isinya cuma memeriksa dua hasil `false` — tidak menguji timing sama sekali. Nama test menjanjikan sesuatu yang tidak diperiksa; jenis rasa aman palsu yang justru saya kritisi di sesi-sesi sebelumnya. Dihapus, bukan dipoles.
+
+**Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **353** hijau (+10, 42 → 43 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R11 0 · **R12 0**.
+
+**Sisa temuan audit coverage yang belum dikerjakan:** `utils/helpers.ts` 0% (`slugify` + `generateCode`) — dan `slugify` ternyata punya 3 salinan dengan 2 implementasi berbeda (lihat Session 82), jadi ini prioritas duplikasi, bukan test. `generateCode` masih memakai `Math.random()` untuk kode referral dan kode booking. `lib/auth/session.ts` 0%, `lib/auth/auth-server.ts` 0%.
+
+## Session 84 — 2026-10-03 (konsolidasi slugify + generateCode crypto, branch refactor/lib-cleanup)
+
+**`slugify`: 3 salinan → 1.** `features/blog/blog.service.ts` dan `app/(admin)/admin/blogs/page.tsx` punya versi lokal (buang karakter non-alnum dulu, baru ganti spasi); `utils/helpers.ts` punya versi lain (semua non a-z0-9 jadi pemisah). Dua-duanya dihapus, blog service dan admin page kini mengimpor dari `@/utils/helpers`.
+
+**Perubahan perilaku yang disengaja dan harus diketahui:** versi kanonik memakai aturan lama `utils/helpers`, sehingga slug blog dengan huruf non-Latin atau simbol berubah bentuk **saat judul diedit ulang**:
+
+| Judul | Dulu (versi blog) | Sekarang |
+|---|---|---|
+| `Trip Ünïcode` | `trip-nicode` | `trip-n-code` |
+| `Promo 20% Off` | `promo-20off` | `promo-20-off` |
+| `Bromo & Ijen` | `bromo-ijen` | `bromo-ijen` |
+
+Slug yang sudah tersimpan di DB **tidak berubah** sampai judulnya diedit. Bentuk slug baru justru lebih baik untuk SEO karena memisahkan kata, bukan menempelkannya.
+
+**`generateCode` pindah dari `Math.random()` ke `globalThis.crypto.getRandomValues`** dengan rejection sampling — 36 membagi 256 dengan sisa 4, jadi tanpa penyaringan ada modulo bias. Dipakai untuk kode referral dan kode booking. Sengaja memakai Web Crypto global, bukan `node:crypto`, karena `utils/helpers.ts` juga diimpor `app/(admin)/admin/trips/page.tsx` yang ber-`"use client"`; mengimpor `node:crypto` akan merusak build client. ** incidentally guard R12 dari sesi sebelumnya tidak menangkap ini karena `node:crypto` belum masuk daftar paket server-only.
+
+**Test (11 test, `src/utils/__tests__/helpers.test.ts`)** menutup 0% coverage: bentuk slug untuk spasi beruntun, trim, underscore, simbol, huruf non-Latin, input kosong; invariants tanpa `--` dan tanpa tanda hubung di tepi; `generateCode` memakai prefix, hanya alfabet yang diizinkan, 500 kode unik, dan **terbukti tidak menyentuh `Math.random`** (test membakar `Math.random` dengan fungsi yang melempar).
+
+**Ekspektasi test sempat salah dan itu justru buktinya.** Saya menulis `slugify("Trip Ünïcode")` → `"trip-nicode"`, padahal hasil kanonik `"trip-n-code"` karena `ü` **dan** `ï` sama-sama jadi pemisah. Test gagal, ekspektasi diperbaiki. Kalau tidak menguji, perubahan ini akan lolos tanpa terdeteksi.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **364** hijau (+11, 43 → 44 file) · build compiled · routes 103 → 103 identik · check-structure all rules within baseline · R11 0 · R12 0 · **`src/utils` coverage 0% → 91.17%**.
+
+**Sisa temuan audit coverage:** `lib/auth/session.ts` 0% dan `lib/auth/auth-server.ts` 0% — keduanya jalur otorisasi, dan `auth-server.ts` dipakai guard halaman admin (`requireAdminLayout`). Prioritas berikutnya.
+
+## Session 85 — 2026-10-03 (test guard session + requireAdminLayout, branch refactor/lib-cleanup)
+
+Menutup dua file otorisasi yang tadinya **0% coverage**.
+
+**`src/lib/auth/__tests__/session.test.ts` (14 test).** `getSessionUser`: null tanpa sesi, null saat `getSession` melempar (**tidak** melempar ke pemanggil — fail-open ke "tidak terautentikasi", bukan crash request), id+role diteruskan, `role` jadi `undefined` bila user tidak punya role. `requireSession`: 401 tanpa sesi dan 401 saat error. `requireRole`: **403** untuk role yang tidak diminta, **401 bukan 403** saat tidak ada sesi, 401 saat error, 403 untuk user tanpa role — pembedaan 401/403 ini yang paling mudah salah kalau suatu saat berubah. `requireAdmin` = `requireRole(["admin"])`.
+
+**`src/lib/auth/__tests__/auth-server.test.ts` (6 test).** Guard halaman admin: admin dapat sesi kembali tanpa redirect; tanpa sesi → `/login?redirect=%2Fadmin` (tujuan ter-encode, dikunci lewat string persis); role selain admin **dan** user tanpa role → `/forbidden`; error dari `getSession` dibiarkan naik apa adanya, tidak ditelan jadi redirect — perilaku ini **sengaja** (layout admin lebih baik error 500 daripada diam-diam mengarahkan user ke halaman yang salah) dan sekarang terdokumentasi lewat test.
+
+**Jebakan `next/headers`.** `headers()` di luar request scope melempar `E251`, jadi 6 test pertama gagal dengan `headers was called outside a request scope`. Diperbaiki dengan mock yang mengembalikan `Headers` sungguhan, lalu ditambahkan test yang memastikan `getSession` benar-benar menerima `headers()` dari Next — bukan objek buatan test.
+
+**Verifikasi:** tsc 0 · lint 0E · vitest **384** hijau (+20, 44 → 46 file) · build compiled · check-structure all rules within baseline · **`lib/auth` coverage 0% → 94.59%**.
+
+**Status audit coverage:** `src/utils` 55.88% → 91.17% (sesi 84) · `lib/auth` 77.3% → 94.59% · `lib/env` 100% statement · `utils/errors` 92.3% · `lib/db` punya test tapi angka per-file tidak terbaca di tabel coverage. Yang masih 0%: `lib/auth/session.ts` **sudah tertutup di sesi ini**;sisanya `db/schema/*` (bersifat deklaratif, wajar) dan repository fitur yang butuh DB nyata.

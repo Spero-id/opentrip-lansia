@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
-import { A, STATUS_COLOR, STATUS_LABEL, formatRupiah, toRequestCode, icons } from "./constants";
+import { A, STATUS_COLOR, STATUS_LABEL, toRequestCode, icons } from "./constants";
+import { formatIDR } from "@/utils/format";
 import ParsedPreferences from "./ParsedPreferences";
 import ProposalCard from "./ProposalCard";
 import type { PrivateTripRequest } from "@/features/my-trips";
@@ -47,7 +48,7 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
             <span>{req.durationDays} Hari</span>
             <span>·</span>
             <span>{req.participantsCount} Peserta</span>
-            {req.budgetEstimate && (<><span>·</span><span>{formatRupiah(req.budgetEstimate)}</span></>)}
+            {req.budgetEstimate && (<><span>·</span><span>{formatIDR(req.budgetEstimate)}</span></>)}
           </div>
         </div>
         <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">

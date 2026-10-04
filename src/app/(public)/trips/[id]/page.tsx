@@ -4,7 +4,7 @@ import { Suspense, use, useEffect, useOptimistic, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Subs from "@/features/newsletter/components/Subs";
-import { DestinationDomain } from "@/lib/destination";
+import { getShortLocation } from "@/features/trip/trip-mapper";
 import Lightbox from "@/features/trip/components/detail/Lightbox";
 import DestinationHeader from "@/features/trip/components/detail/DestinationHeader";
 import DestinationGallery from "@/features/trip/components/detail/DestinationGallery";
@@ -65,7 +65,7 @@ export default function DestinationDetailPage({ params }: { params: Promise<{ id
   }
 
   const images = getTripImages(dest);
-  const shortLocation = DestinationDomain.getShortLocation(dest);
+  const shortLocation = getShortLocation(dest.location);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 selection:bg-[#F49D1A]/30">

@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { formatIDR } from "@/utils/format";
 import {
   Bell,
   Check,
@@ -107,12 +108,7 @@ function formatTimeAgo(dateString: string) {
   return `${diffDays} hari lalu`;
 }
 
-function formatRupiah(amount?: string | null) {
-  if (!amount) return "";
-  const num = parseInt(amount);
-  if (isNaN(num)) return amount;
-  return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(num);
-}
+
 
 export default function AdminNotifications() {
   const router = useRouter();
@@ -252,7 +248,7 @@ export default function AdminNotifications() {
                             <Clock className="w-3 h-3" />
                             {formatTimeAgo(notification.createdAt)}
                           </div>
-                          {notification.amount ? <p className="text-xs font-bold text-[#F49D1A] mt-1">{formatRupiah(notification.amount)}</p> : null}
+                          {notification.amount ? <p className="text-xs font-bold text-[#F49D1A] mt-1">{formatIDR(notification.amount)}</p> : null}
                         </div>
                       </div>
                       <div className="flex items-center gap-3 mt-2 flex-wrap">

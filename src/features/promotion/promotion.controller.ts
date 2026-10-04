@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promotionRepository } from "./promotion.repository";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { auditService, diffFields, pickFields } from "@/features/audit";
 import { getSessionUser } from "@/lib/auth";
 

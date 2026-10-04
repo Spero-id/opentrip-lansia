@@ -9,6 +9,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import WysiwygEditor from "@/features/blog/components/wysiwyg-editor";
 import BlogCoverUploader from "@/app/(admin)/admin/components/blog-cover-uploader";
 import { useAdminCrud } from "@/features/admin";
+import { slugify } from "@/utils/helpers";
 
 interface Blog {
   id: string;
@@ -42,15 +43,7 @@ interface BlogForm {
 
 const emptyForm: BlogForm = { title: "", slug: "", content: "", excerpt: "", coverImage: "", status: "draft", categoryId: "" };
 
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
+
 
 export default function AdminBlogs() {
   const {

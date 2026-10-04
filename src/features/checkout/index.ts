@@ -1,4 +1,5 @@
 export * from "./api/client";
+export * from "./order-id";
 export * from "./pricing";
 export * from "./reducer";
 export * from "./hooks/use-checkout";

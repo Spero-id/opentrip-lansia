@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { masterRepository } from "./master.repository";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 
 type IdParams = { params: Promise<{ id: string }> };
 

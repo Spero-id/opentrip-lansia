@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
-import { NEXT_PUBLIC_WHATSAPP_NUMBER } from "@/lib/env";
+import { NEXT_PUBLIC_WHATSAPP_NUMBER } from "@/lib/env/client";
 import FeedbackModal from "./FeedbackModal";
 import GalleryModal from "./GalleryModal";
 import type { BookingNotes, MyTripBooking } from "@/features/my-trips";
@@ -11,9 +11,9 @@ import {
   OPEN_TRIP_STATUS_COLOR,
   PAYMENT_STATUS_LABEL,
   PAYMENT_STATUS_COLOR,
-  formatRupiah,
   icons,
 } from "./constants";
+import { formatIDR } from "@/utils/format";
 
 export default function OpenTripBookingCard({
   booking,
@@ -122,7 +122,7 @@ export default function OpenTripBookingCard({
         <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
           <div className="text-right">
             <p className="text-sm font-extrabold" style={{ color: A }}>
-              {formatRupiah(booking.totalAmount) || "IDR " + booking.totalAmount}
+              {formatIDR(booking.totalAmount) ?? "IDR " + booking.totalAmount}
             </p>
             <span className={`inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${OPEN_TRIP_STATUS_COLOR[booking.status ?? ""] || "bg-teal-100 text-teal-800"}`}>
               {OPEN_TRIP_STATUS_LABEL[booking.status ?? ""] || booking.status}
@@ -195,17 +195,17 @@ export default function OpenTripBookingCard({
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rincian Pembayaran</p>
             <div className="flex justify-between text-xs text-gray-600">
               <span>Subtotal ({booking.totalParticipants} pax)</span>
-              <span>{formatRupiah(booking.subtotal) || booking.subtotal}</span>
+              <span>{formatIDR(booking.subtotal) ?? booking.subtotal}</span>
             </div>
             {Number(booking.discountAmount) > 0 && (
               <div className="flex justify-between text-xs text-teal-600 font-medium">
                 <span>Diskon Voucher</span>
-                <span>-{formatRupiah(booking.discountAmount)}</span>
+                <span>-{formatIDR(booking.discountAmount)}</span>
               </div>
             )}
             <div className="border-t border-gray-100 pt-2 flex justify-between text-sm font-bold text-gray-900">
               <span>Total Pembayaran</span>
-              <span style={{ color: A }}>{formatRupiah(booking.totalAmount)}</span>
+              <span style={{ color: A }}>{formatIDR(booking.totalAmount)}</span>
             </div>
             <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500">
               <span>Metode: <strong className="uppercase">{paymentMethod}</strong></span>

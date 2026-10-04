@@ -1,7 +1,7 @@
 import { auth } from "./auth.config";
 import { authRepository } from "./auth.repository";
 import { auditService, diffFields, pickFields } from "@/features/audit";
-import { hashPassword, isLegacySha256 } from "@/utils/password";
+import { hashPassword, isLegacySha256 } from "@/lib/auth/password";
 
 /** User fields allowed in audit — email is deliberately excluded (PII). */
 const USER_AUDIT_FIELDS = ["name", "role", "phone", "emailVerified"] as const;

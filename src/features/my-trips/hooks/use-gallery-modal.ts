@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { downloadMedia, fetchGalleryMedia } from "@/features/my-trips";
 import type { GalleryMedia } from "@/features/my-trips";
 

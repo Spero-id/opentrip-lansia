@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { siteSettingsService } from "./site-settings.service";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { auditService, pickFields } from "@/features/audit";
 import { getSessionUser } from "@/lib/auth";
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactService } from "./contact.service";
-import { AppError } from "@/lib/errors/app-error";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { AppError } from "@/utils/errors/app-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 
 export const contactController = {
   async create(req: NextRequest) {

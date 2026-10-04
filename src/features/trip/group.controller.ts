@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { tripService } from "./trip.service";
 import { tripRepository } from "./trip.repository";
 import { auth } from "@/features/auth/auth.config";
-import { ConflictError, NotFoundError } from "@/lib/errors/app-error";
+import { ConflictError, NotFoundError } from "@/utils/errors/app-error";
 
 async function actorId(req: NextRequest): Promise<string | null> {
   try {
@@ -17,7 +17,7 @@ import { tripGalleries, galleryMedia } from "@/db/schema/trips";
 import { media } from "@/db/schema/master";
 import { db } from "@/lib/db";
 import { eq, and } from "drizzle-orm";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 
 type TripParams = { params: Promise<{ id: string }> };
 type GroupParams = { params: Promise<{ id: string; groupId: string }> };

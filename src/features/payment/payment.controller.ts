@@ -7,7 +7,7 @@ import { auth } from "@/features/auth/auth.config";
 import { paymentService } from "./payment.service";
 import { paymentRepository } from "./payment.repository";
 import { isCompleteAccount } from "./payment-account";
-import { toPublicError } from "@/lib/errors/to-public-error";
+import { toPublicError } from "@/utils/errors/to-public-error";
 import { notificationService } from "@/features/notification/notification.service";
 import { auditService, pickFields } from "@/features/audit";
 
