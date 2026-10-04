@@ -2497,3 +2497,23 @@ Lanjutan temuan Session 78. `z.url()` ternyata **menerima** `"localhost:5432/db"
 Test: `localhost:5432/db` ditolak, URL NeonDB `postgresql://...neon.tech/neondb?sslmode=require` diterima. Verifikasi tambahan: `npx tsx --env-file=.env` memuat `src/lib/env/server` sungguhan dan lolos (tanpa flag itu `.env` memang tidak terbaca karena tidak ada dotenv di path tsx).
 
 **Verifikasi:** tsc 0 · lint 0E (80 warning, baseline) · vitest **332** hijau · build compiled · check-structure all rules within baseline.
+
+## Session 80 — 2026-10-03 (audit test env, dua cacat skema ditemukan, branch refactor/lib-cleanup)
+
+Saya audit ulang test `src/lib/env` yang saya buat sendiri di Session 78, dengan cara menulis probe untuk perilaku yang **tidak** dikunci test. Dua cacat nyata ketahuan — keduanya cacat di skema, bukan di test.
+
+**1. String kosong membuat boot gagal.** `emptyStringAsUndefined: false` bermakna `BETTER_AUTH_URL=` (kosong) ditolak `z.url()`, dan `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION=` ditolak enum. Padahal sebelum T3 Env, string kosong tidak masalah (`process.env.X === "true"` → `false`). Artinya migrasi T3 Env sendiri adalah regresi potensial untuk `.env` yang memuat variabel kosong. Diperbaiki: `emptyStringAsUndefined: true` di kedua file, jadi `""` berarti "belum diisi" → `SMTP_PORT` 587, `BETTER_AUTH_URL` default, `MIDTRANS_IS_PRODUCTION` false. Variabel wajib tetap gagal: `DATABASE_URL` dan `BETTER_AUTH_SECRET`.
+
+**2. `SMTP_PORT` bisa bernilai 0 tanpa suara.** `z.coerce.number()` mengubah `""` menjadi `0`, dan `""` lolos karena `emptyStringAsUndefined` sebelumnya false. Port 0 tidak ditolak, tidak ada batas atas, dan `Number("abc")` pun tidak diuji. Nodemailer akan gagal dengan error yang membingungkan. Diperbaiki: preprocess ke number lalu `int()` rentang 1–65535.
+
+Tabel perilaku setelah perbaikan (semua sudah dikunci test):
+
+| Input | `\"\"` | tidak diisi | `abc` | `0` | `70000` | `2525` |
+|---|---|---|---|---|---|---|
+| `SMTP_PORT` | 587 | 587 | throw | throw | throw | 2525 |
+
+`DATABASE_URL` dan `BETTER_AUTH_SECRET` tetap menolak string kosong. URL NeonDB `postgresql://` tetap diterima.
+
+**Pelajaran yang dicatat:** test yang hanya menguji jalur bahagia schemas easily memberi rasa aman palsu. Yang menangkap kedua bug ini adalah probe perilaku yang justru **tidak** dikunci test (empty string, non-numeric, di luar rentang) — pola yang sekarang dipakai di `env/__tests__` dan `db/__tests__`.
+
+**Verifikasi:** `.env` sungguhan termuat (`tsx --env-file=.env`: port 587, secure false, base default) · tsc 0 · lint 0E · vitest **337** hijau (env 14 → 19) · build compiled · check-structure all rules within baseline.
