@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/lib/db";
-import { hashPassword, verifyPassword } from "@/utils/password";
+import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { generateCode } from "@/utils/helpers";
 import { users } from "@/db/schema/auth";
 import { session, account, verification } from "@/db/schema/auth";

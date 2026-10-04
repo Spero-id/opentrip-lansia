@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { hashPassword } from "@/utils/password";
+import { hashPassword } from "@/lib/auth/password";
 import { db } from "@/lib/db";
 import {
   destinationCategories, horecaTypes, horeca,

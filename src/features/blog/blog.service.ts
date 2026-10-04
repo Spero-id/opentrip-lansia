@@ -1,6 +1,6 @@
 import { blogRepository } from "./blog.repository";
 import { blogs } from "@/db/schema/blog";
-import { sanitizeBlogContent } from "@/utils/sanitize";
+import { sanitizeBlogContent } from "@/lib/html/sanitize";
 import { NotFoundError, ValidationError } from "@/utils/errors/app-error";
 import type { UUID } from "@/types";
 import { auditService, diffFields, pickFields } from "@/features/audit";
