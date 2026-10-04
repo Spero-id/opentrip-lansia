@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Send, AlertCircle, CheckCircle2, XCircle, RefreshCw, MapPin, ClipboardCheck, FileSignature, Ban } from "lucide-react";
+import { formatIDR } from "@/utils/format";
 
 interface Proposal {
   id: string;
@@ -241,11 +242,7 @@ export default function AdminPrivateTripDetail() {
     fetchDetail();
   }
 
-  function formatRupiah(val: string | null) {
-    if (!val) return "-";
-    const num = Number(val);
-    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num);
-  }
+  
 
   if (loading) return <div className="p-12 text-center text-slate-400">Memuat detail request...</div>;
   if (error || !data) return <div className="p-12 text-center text-red-500">{error || "Data tidak ditemukan"}</div>;
@@ -339,7 +336,7 @@ export default function AdminPrivateTripDetail() {
           </div>
           <div>
             <span className="block text-[11px] font-semibold text-slate-400 uppercase">Budget</span>
-            <span className="font-bold text-slate-900">{formatRupiah(data.budgetEstimate)}</span>
+            <span className="font-bold text-slate-900">{formatIDR(data.budgetEstimate) ?? "-"}</span>
           </div>
           <div>
             <span className="block text-[11px] font-semibold text-slate-400 uppercase">Tgl Submit</span>
@@ -383,7 +380,7 @@ export default function AdminPrivateTripDetail() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div>
                     <span className="block font-semibold text-slate-500">Estimasi Harga</span>
-                    <span className="font-bold text-[#F49D1A]">{formatRupiah(prop.estimatedPrice)}</span>
+                    <span className="font-bold text-[#F49D1A]">{formatIDR(prop.estimatedPrice) ?? "-"}</span>
                   </div>
                   <div>
                     <span className="block font-semibold text-slate-500">Termasuk</span>

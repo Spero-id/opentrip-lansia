@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
+import { formatIDR } from "@/utils/format";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Check, X, AlertCircle, ShoppingCart, User, ShoppingBag, LogOut, Shield } from "lucide-react";
 import { useNotifications, getNotificationHref } from "@/hooks/use-notifications";
@@ -99,12 +100,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     return `${diffDays} hari lalu`;
   };
 
-  const formatRupiah = (amount?: string | null) => {
-    if (!amount) return "";
-    const num = parseInt(amount);
-    if (isNaN(num)) return amount;
-    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(num);
-  };
+  
 
   return (
     <SidebarProvider>
@@ -210,7 +206,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                                   <>
                                     <span className="text-[11px] text-muted-foreground/80">•</span>
                                     <span className="text-[11px] font-medium">
-                                      {formatRupiah(notification.amount)}
+                                      {formatIDR(notification.amount)}
                                     </span>
                                   </>
                                 ) : null}

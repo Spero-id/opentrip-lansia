@@ -66,14 +66,7 @@ export const PAYMENT_STATUS_COLOR: Record<string, string> = {
   pending_payment: "text-amber-700",
 };
 
-export function formatRupiah(val: string | number | null | undefined): string | null {
-  if (!val && val !== 0) return null;
-  const num = typeof val === "string"
-    ? parseFloat(val.replace(/[^\d.]/g, ""))
-    : val;
-  if (isNaN(num)) return null;
-  return "Rp " + Math.floor(num).toLocaleString("id-ID");
-}
+
 
 export function toRequestCode(id: string): string {
   return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();

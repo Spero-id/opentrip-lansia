@@ -1,4 +1,5 @@
 import { A } from "./helpers/constants";
+import { formatIDR } from "@/utils/format";
 import type { ReactNode } from "react";
 import type { PrivateTripForm } from "@/features/private-trip/types";
 import Subs from "@/features/newsletter/components/Subs";
@@ -10,10 +11,7 @@ function generateRequestCode(id: string | null | undefined): string | null {
   return "PTR-" + id.replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
-function formatRupiah(v: string | number | null | undefined): string {
-  if (!v && v !== 0) return "-";
-  return "Rp " + Math.floor(Number(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
+
 
 const icons = {
   user: (
@@ -181,7 +179,7 @@ export default function SuccessState({
                     <p className="text-xs font-semibold text-gray-800 truncate">{form.selectedDestinasi.title}</p>
                     <p className="text-[11px] text-gray-400 mt-0.5">{form.selectedDestinasi.location}</p>
                     <p className="text-[11px] font-semibold mt-0.5" style={{ color: A }}>
-                      {form.selectedDestinasi.rating != null ? `★ ${Number(form.selectedDestinasi.rating).toFixed(1)} · ` : ""}mulai {formatRupiah(form.selectedDestinasi.priceMin)}
+                      {form.selectedDestinasi.rating != null ? `★ ${Number(form.selectedDestinasi.rating).toFixed(1)} · ` : ""}mulai {formatIDR(form.selectedDestinasi.priceMin) ?? "-"}
                     </p>
                   </div>
                 </div>
@@ -194,7 +192,7 @@ export default function SuccessState({
                 >
                   <span className="text-xs font-semibold text-gray-700">Estimasi Budget</span>
                   <span className="text-sm font-bold text-gray-900">
-                    {formatRupiah(form.tripType === "explorer" ? form.selectedDestinasi?.priceMin : form.budget)}
+                    {formatIDR(form.tripType === "explorer" ? form.selectedDestinasi?.priceMin : form.budget) ?? "-"}
                     <span className="text-xs font-normal text-gray-400"> /pax</span>
                   </span>
                 </div>
