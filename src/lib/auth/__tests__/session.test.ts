@@ -8,8 +8,6 @@ vi.mock("@/features/auth/auth.config", () => ({
   auth: { api: { getSession } },
 }));
 
-type SessionUser = { id: string; role?: string };
-
 async function load() {
   vi.resetModules();
   return import("@/lib/auth/session");
