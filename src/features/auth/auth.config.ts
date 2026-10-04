@@ -10,7 +10,7 @@ import {
   BETTER_AUTH_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-} from "@/lib/env.server";
+} from "@/lib/env/server";
 
 export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,

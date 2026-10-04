@@ -9,6 +9,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/testing/setup-tests.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
+    env: { BASE_URL: "http://localhost:3000" },
     exclude: [...configDefaults.exclude, "e2e/**", "public/**"],
   },
 });

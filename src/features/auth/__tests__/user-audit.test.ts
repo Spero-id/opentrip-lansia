@@ -1,3 +1,4 @@
+// @vitest-environment node
 vi.mock("@/lib/db", () => ({
   db: {
     select: vi.fn(),

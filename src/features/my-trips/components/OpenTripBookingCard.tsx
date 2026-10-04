@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
-import { NEXT_PUBLIC_WHATSAPP_NUMBER } from "@/lib/env";
+import { NEXT_PUBLIC_WHATSAPP_NUMBER } from "@/lib/env/client";
 import FeedbackModal from "./FeedbackModal";
 import GalleryModal from "./GalleryModal";
 import type { BookingNotes, MyTripBooking } from "@/features/my-trips";

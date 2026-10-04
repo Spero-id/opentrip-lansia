@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { parseMoney, parsePromoValue, computePromoDiscount } from "@/features/promotion";
 import { resolveVoucher } from "@/features/checkout";

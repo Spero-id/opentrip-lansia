@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   NEXT_PUBLIC_WHATSAPP_MESSAGE,
   NEXT_PUBLIC_WHATSAPP_NUMBER,
-} from "@/lib/env";
+} from "@/lib/env/client";
 
 const WHATSAPP_NUMBER = NEXT_PUBLIC_WHATSAPP_NUMBER;
 const WHATSAPP_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;

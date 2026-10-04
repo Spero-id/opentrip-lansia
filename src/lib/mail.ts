@@ -7,7 +7,7 @@ import {
   SMTP_PORT,
   SMTP_SECURE,
   SMTP_USER,
-} from "@/lib/env.server";
+} from "@/lib/env/server";
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,

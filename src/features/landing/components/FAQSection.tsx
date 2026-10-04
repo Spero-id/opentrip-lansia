@@ -6,7 +6,7 @@ import { faqs } from "./content";
 import {
   NEXT_PUBLIC_WHATSAPP_MESSAGE,
   NEXT_PUBLIC_WHATSAPP_NUMBER,
-} from "@/lib/env";
+} from "@/lib/env/client";
 
 const PAGE_SIZE = 6;
 

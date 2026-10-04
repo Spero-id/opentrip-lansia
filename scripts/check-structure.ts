@@ -266,7 +266,8 @@ function main(): void {
   }
   const r10 = r10Samples.length;
 
-  const ENV_SERVER = "src/lib/env.server.ts";
+  const ENV_SERVER = "src/lib/env/server.ts";
+  const ENV_CLIENT = "src/lib/env/client.ts";
   const STATIC_IMPORT_RE = /(?:import|export)[^'"]*?from\s*["']([^"']+)["']/g;
   const importCache = new Map<string, string[]>();
   function resolveLocal(fromFile: string, spec: string): string | null {
@@ -320,6 +321,10 @@ function main(): void {
       }
     }
     if (bad) r11Samples.push(rel(f));
+  }
+  const r11Client = ENV_CLIENT;
+  if (localImports(r11Client).includes(ENV_SERVER)) {
+    r11Samples.push(`${rel(r11Client)} imports ${rel(ENV_SERVER)}`);
   }
   const r11 = r11Samples.length;
 
