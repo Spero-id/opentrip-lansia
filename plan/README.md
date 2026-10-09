@@ -8,7 +8,6 @@ Folder perencanaan proyek. Semua dokumen berbahasa Indonesia, konsisten dengan
 | Dokumen | Isi |
 |---|---|
 | [`overview.md`](./overview.md) | Ringkasan proyek: visi, status, arsitektur, tech stack |
-| [`roadmap.md`](./roadmap.md) | Fase kerja + prioritas berdasarkan `feature_list.json` |
 | [`spec-fitur/`](./spec-fitur/) | Spesifikasi per fitur (satu file per fitur) |
 
 ## Spec fitur
@@ -19,8 +18,6 @@ Folder perencanaan proyek. Semua dokumen berbahasa Indonesia, konsisten dengan
 |---|---|---|
 | [`spec-referral-commission.md`](./spec-fitur/spec-referral-commission.md) | feat-073 | Sistem referral: kode referral di profile, input di checkout, history referral |
 | [`spec-group-trip.md`](./spec-fitur/spec-group-trip.md) | feat-011b | Group Trip: satu trip punya banyak grup, set grup aktif, upload foto per grup |
-| [`feat-061-blog-categories.md`](./feat-061-blog-categories.md) | feat-061 | Kategori blog: CRUD backend + halaman admin `/admin/blog-categories` + filter publik |
-| [`feat-082-audit-log.md`](./feat-082-audit-log.md) | feat-082 | Audit log: helper generic `recordAudit` + endpoint/UI `/admin/audit-log` |
 
 ### 📋 Belum ada spec formal
 
@@ -35,8 +32,7 @@ Folder perencanaan proyek. Semua dokumen berbahasa Indonesia, konsisten dengan
 ## Cara pakai
 
 1. Mulai dari **`overview.md`** untuk memahami status proyek saat ini.
-2. Lanjut ke **`roadmap.md`** untuk melihat sisa pekerjaan dan prioritas.
-3. Saat mengerjakan fitur, buka spec fitur terkait untuk detail:
+2. Saat mengerjakan fitur, buka spec fitur terkait untuk detail:
    alur, API, model data, kriteria penerimaan.
 
 ## Catatan penting

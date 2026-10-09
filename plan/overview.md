@@ -1,8 +1,7 @@
 # Overview — OpenTrip Lansia (OTL)
 
 > Dokumen ini adalah ringkasan tingkat tinggi proyek: visi, status saat ini,
-> arsitektur, dan sumber referensi. Untuk detail per fitur lihat `plan/spec-fitur/`,
-> untuk urutan kerja lihat `plan/roadmap.md`.
+> arsitektur, dan sumber referensi. Untuk detail per fitur lihat `plan/spec-fitur/`.
 
 ## 1. Ringkasan
 
