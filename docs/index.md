@@ -14,6 +14,12 @@
 | `database/PANDUAN_DATABASE.md` | Implementation guide for DB schema — constraints, atomic updates, encryption, indexes, business flows |
 | `database/erd_revisi.mermaid` | Complete ERD v2 in Mermaid — all tables, columns, types, FK relationships |
 
+### Related (repo root)
+
+| File | Description |
+|------|-------------|
+| `../design.md` | Design System & UI Specification — token warna (oklch; sumber kebenaran di `src/app/globals.css`), tipografi, spesifikasi komponen & halaman |
+
 ---
 
 ## Database Schema Index (ERD v2 — ~35 tables)

@@ -521,9 +521,9 @@ export default function ReferralCard({ referralCode, stats }) {
       </div>
 
       {/* Referral Code Display */}
-      <div className="mt-4 flex items-center gap-3 p-4 rounded-xl bg-[#FEF6E7] border border-[#F3E2C0]">
+      <div className="mt-4 flex items-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20">
         <div className="flex-1">
-          <p className="text-2xl font-mono font-bold text-[#c47d12] tracking-wider">
+          <p className="text-2xl font-mono font-bold text-primary-foreground tracking-wider">
             {referralCode}
           </p>
         </div>
@@ -532,7 +532,7 @@ export default function ReferralCard({ referralCode, stats }) {
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
             copied
               ? "bg-green-500 text-white"
-              : "bg-[#F49D1A] text-white hover:bg-[#c47d12]"
+              : "bg-primary text-primary-foreground hover:bg-primary/90"
           }`}
         >
           {copied ? (
@@ -703,8 +703,8 @@ export default function ReferralHistory() {
                   className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors"
                 >
                   {/* Avatar */}
-                  <div className="h-10 w-10 rounded-full bg-[#FEF6E7] flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-[#c47d12]">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-primary-foreground">
                       {(item.referredUserName ?? "U").charAt(0).toUpperCase()}
                     </span>
                   </div>

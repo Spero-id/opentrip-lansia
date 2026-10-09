@@ -2614,3 +2614,39 @@ Menutup dua file otorisasi yang tadinya **0% coverage**.
 **Temuan yang perlu keputusan pemilik:** file `env` tanpa titik di root berisi kredensial asli (termasuk `SMTP_PASS`) dan tidak dibaca Next.js (hanya `.env*` yang dimuat). Sempat ditambahkan `/env` ke `.gitignore`, lalu **file dihapus** setelah konfirmasi pemilik (entri `.gitignore` dicabut lagi). `.env` sekarang memakai `onboarding@resend.dev` sebagai pengirim.
 
 **Verifikasi:** `tsc --noEmit` 0 error · `npm run lint` 0 error (80 warning, baseline) · `vitest run` **379 hijau** (46 file; dari 372/12 gagal) · `npm run build` sukses 103 route · `check:structure` semua rule dalam baseline (R12 tetap 0).
+
+## Session 87 — 2026-10-09 (audit warna lanjutan + token semantik, branch design-tokens)
+
+**Temuan audit lanjutan (yang lolos codemod sebelumnya).**
+
+1. **Atribut SVG bernama warna (8)** — `stroke="white"` (6×) dan `stroke="black"` (2×) di `PaymentStep`, `FacilitiesSection`, `SuccessState`, `TermsModal`, `TripDetailSection`, `TripFromSection`, `TripOptionSection` masih hardcoded; diganti `stroke="currentColor"` agar ikut token teks.
+2. **`text-white` di atas latar primary inline (15)** — lolos karena latar di-set via `style={{ backgroundColor: A }}`, bukan `bg-primary`, sehingga tidak tertangkap codemod `bg-primary ... text-white`. Diganti `text-primary-foreground` (`SuccessState`, `TermsModal`, `BookingCard`, `SubmitBar`, `EmptyState`, `FilterPanel`, plus `SearchBar`, `TutorialSection`, submit `contact`, accordion `MarketingSection`, hover `DestinationCard`).
+3. **`bg-secondary text-white` (2)** — `secondary` kini abu terang, teks putih tak terbaca; diganti `text-secondary-foreground` (`admin/bookings/page.tsx`, `OpenTripBookingCard.tsx`).
+
+**Token semantik status (keputusan "Opsi B").** Ditambahkan `--success`, `--warning`, `--info`, `--destructive-foreground` (+ `-foreground` masing-masing) di `:root`, lalu **skala lengkap 50–950** di `@theme inline` yang **di-alias ke palet asal** (`success` ← emerald, `warning` ← amber, `info` ← blue, `destructive` ← red) sehingga tampilan identik tapi utility memakai nama semantik. **496 kelas palet** dikonversi (`red` → `destructive-*`, `emerald`/`green` → `success-*`, `amber`/`yellow`/`orange` → `warning-*`, `blue` → `info-*`). Warna kategorikal yang memang harus berbeda (`purple` revisi, `teal` ramah-lansia, `indigo` request, `violet` reviewed — 45 kelas) sengaja **tidak** dikonversi.
+
+**Absolutes ditokenkan.** `bg-white` solid (227) → `bg-card`; `text-black` (12) → `text-foreground`; `bg-black` (33, termasuk scrim `/40`) → `bg-foreground`. `bg-white/10`-style overlay di atas foto dibiarkan (memang translucent putih).
+
+**Dokumen disinkronkan.** `design.md` ditulis ulang: brand diseragamkan ke **Jelajah Memoria** ("open trip" = kategori produk), §2 duplikat/bertabrakan dihapus, typo (`extrawith`, `DESTINASI IMPAN`, "Oranye Oranye") hilang, palet dijelaskan sebagai token `oklch` (bukan hex), status pakai token semantik, ditambah aturan kontribusi. `docs/index.md` menautkan `../design.md`. Contoh hex di `plan/spec-fitur/spec-referral-commission.md` diganti token. `BRAND_COLOR` template email → `#FDC700` (≈ primary baru; email tetap hex literal karena klien email).
+
+**Verifikasi:** `build` 0 error · `tsc --noEmit` 0 · `lint` 0 error (81 warning baseline) · `vitest` **379 hijau** (46 file). Utility token dipastikan ter-generate di CSS produksi (`.bg-success-500 { background-color: var(--color-emerald-500) }`). Sisa hex di kode = template email + test-nya saja.
+
+**Lanjutan — pass konsistensi token ("pastikan konsisten sepanjang halaman").**
+
+- **Page root diseragamkan**: semua wrapper `min-h-screen`/`min-h-dvh` (termasuk `<body>`) memakai **`bg-background`** (24 root); kartu/panel/modal/dropdown tetap **`bg-card`**. Root `contact` sebelumnya `bg-card` ikut diperbaiki.
+- **Netral gray/slate (~2.000 utility) dipetakan ke token**: `text-900/800/700` → `text-foreground`; `text-600/500/400/300` → `text-muted-foreground`; `border-*` → `border-border`; `bg-50/100` → `bg-muted`, `bg-200/300` → `bg-border`; `divide-*` → `divide-border`; `ring-slate-400` → `ring-ring`; `placeholder-gray-400` → `placeholder:text-muted-foreground` (sebelumnya kelas mati di v4). **Sisa utility netral = 0.**
+- **Section `bg-foreground` adaptif**: teks `text-white*` → `text-background*` (Footer, Navbar saat scrolled, panel `contact`, `MarketingSection`, `DestinationGallery`); `border-white/*`/`bg-white/*` di dalamnya → `border-background/*`/`bg-background/*`. Teks di atas foto/gradient hitam (hero, kolom auth, banner newsletter) tetap `text-white`.
+- **Verifikasi ulang:** build 0 · tsc 0 · lint 0 error (81 warning baseline) · vitest **379** hijau.
+
+## Session 88 — 2026-10-09 (cek visual + perbaikan kontras, branch design-tokens)
+
+**Cara audit.** Model tidak bisa menampilkan gambar, jadi screenshot 18 halaman (desktop+mobile) di `visual/` hanya untuk ditinjau manusia; verifikasi otomatis dilakukan lewat *computed style* + **matriks kontras WCAG dihitung dari nilai `oklch` token** (bukan dari browser — Chromium mengembalikan `oklab()/lab()` dan canvas `fillStyle` tidak mem-parse-nya sehingga rasio jadi palsu). 9 rute publik dirender **tanpa `pageerror`**; dark mode terkonfirmasi (`body` gelap, footer `bg-foreground text-background` otomatis terbalik).
+
+**Temuan & perbaikan.**
+
+1. **`text-primary` di latar terang = 1.57 (FAIL).** Warna primary kuning terang (`oklch(0.852 0.199 91.936)`) tidak terbaca sebagai teks di putih. Diganti **`text-primary-foreground`** (cokelat gelap, rasio **8.69** di putih) — **126** kelas statis. Konteks gelap **sengaja dipertahankan** `text-primary`: footer, panel `contact`, logo halaman login/register di atas foto, sidebar admin.
+1b. **Varian `hover:`/`group-hover:` di latar terang (36)** ikut diperbaiki (`hover:text-primary` → `hover:text-primary-foreground`, termasuk `hover:text-primary/90`); hanya `Footer`/`Navbar`/`admin-sidebar` (gelap) yang dipertahankan.
+2. **Teks aksen via inline/konstanta.** `style={{ color: "var(--primary)" }}` (2), dan `const A` yang dipakai sebagai warna teks (`color: A`, **23**) → `var(--primary-foreground)`; `A` yang jadi tak terpakai dibersihkan dari 6 file. Latar `backgroundColor: A` tetap.
+3. **Badge solid.** `bg-success-500 text-white` (2.35), `bg-warning-500 text-white` (≈2.0), `bg-info-500 text-white` (3.66) gagal. Diganti teks gelap **`text-success-950`** (6.14) / **`text-warning-950`** (6.99) untuk success & warning, `bg-info-600 text-white` (5.26) untuk info, `bg-destructive-500 text-white` → `bg-destructive-600 text-white` (4.76).
+
+**Verifikasi:** `tsc --noEmit` 0 · `lint` 0 error (**80** warning, turun 1 dari baseline 81) · `npm run build` sukses · `vitest run` **379** hijau (46 file). Matriks kontras pasca-fix: `primary-foreground`/putih 8.69, success-950 6.14, warning-950 6.99, white/info-600 5.26, white/destructive-600 4.76. Screenshot `visual/` masih untracked (belum di-commit).
