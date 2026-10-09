@@ -1,9 +1,19 @@
 # Spesifikasi Fitur: Sistem Referral & Komisi
 
 > **Fitur ID:** feat-073 (User Referral System)
-> **Status:** Draft
+> **Status:** 🔄 In review
 > **Tanggal:** 6 September 2026
 > **Depends on:** feat-021 (auth), feat-030 (booking)
+
+> **Status implementasi (9 Okt 2026):** 🔄 `in_review` di `feature_list.json` —
+> implementasi sudah ada, belum ditutup penuh. Dokumen ini ditulis saat modul
+> masih di `src/modules/` dan DB di `src/shared/db`. Kondisi kode sekarang:
+> - schema: `src/db/schema/referral.ts` (+ kolom referral di `src/db/schema/auth.ts`)
+> - logic: `src/features/referral/` (`referral.controller.ts`, `referral.repository.ts`)
+> - API: `/api/user/referral`, `/api/referrals`, `/api/referrals/history`,
+>   `/api/checkout/validate-referral`
+> - UI: halaman `/profile` dan admin `/admin/referrals`
+> - helper DB: `src/lib/db` (dulu `src/shared/db`)
 
 ---
 
@@ -63,7 +73,7 @@ SU-04: Saya ingin melihat semua referral di admin
 
 ## 3. Database Schema (Existing)
 
-Schema sudah ada di `src/modules/referral/referral.schema.ts`:
+Schema sudah ada di `src/db/schema/referral.ts`:
 
 ### 3.1 Tabel `users` (sudah ada)
 
@@ -1198,15 +1208,15 @@ cancelled (jika booking dibatalkan)
 
 ## 11. References
 
-- Existing schema: `src/modules/referral/referral.schema.ts`
-- Existing repository: `src/modules/referral/referral.repository.ts`
-- Admin commissions: `src/app/admin/commissions/page.tsx`
-- Profile page: `src/app/profile/page.jsx`
-- Checkout page: `src/app/checkout/page.jsx`
-- useCheckout hook: `src/lib/hooks/useCheckout.js`
+- Schema: `src/db/schema/referral.ts`
+- Repository: `src/features/referral/referral.repository.ts`
+- Admin commissions: `src/app/(admin)/admin/commissions/page.tsx`
+- Profile page: `src/app/(account)/profile/page.tsx`
+- Checkout page: `src/app/(public)/checkout/page.tsx`
+- useCheckout hook: `src/features/checkout/hooks/use-checkout.ts`
 
 ---
 
-*Document created: 6 September 2026*
-*Author: AI Assistant*
-*Status: Draft — Menunggu review*
+*Dibuat: 6 September 2026*
+*Terakhir diperbarui: 9 Oktober 2026*
+*Status: In review (lihat `feature_list.json`)*
