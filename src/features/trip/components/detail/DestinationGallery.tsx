@@ -15,7 +15,7 @@ export default function DestinationGallery({ images, title, onOpenLightbox }: De
 
   if (validImages.length === 0) {
     return (
-      <div className="h-[30vh] min-h-[200px] md:h-[420px] lg:h-[500px] rounded-3xl bg-gray-100 flex items-center justify-center text-gray-400 text-sm font-medium px-4 text-center">
+      <div className="h-[30vh] min-h-[200px] md:h-[420px] lg:h-[500px] rounded-3xl bg-muted flex items-center justify-center text-muted-foreground text-sm font-medium px-4 text-center">
         Gambar tidak tersedia
       </div>
     );
@@ -33,13 +33,13 @@ export default function DestinationGallery({ images, title, onOpenLightbox }: De
           onClick={() => onOpenLightbox(mobileSlide)}
           className="w-full h-full object-cover cursor-pointer"
         />
-        <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+        <div className="absolute bottom-3 right-3 bg-foreground/50 text-background text-xs font-semibold px-2.5 py-1 rounded-full">
           {mobileSlide + 1} / {len}
         </div>
         {len > 1 && (
           <button
             onClick={() => setMobileSlide((i) => (i - 1 + len) % len)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-white transition-colors"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-foreground/40 hover:bg-foreground/60 flex items-center justify-center text-background transition-colors"
             aria-label="Sebelumnya"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -50,7 +50,7 @@ export default function DestinationGallery({ images, title, onOpenLightbox }: De
         {len > 1 && (
           <button
             onClick={() => setMobileSlide((i) => (i + 1) % len)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-white transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-foreground/40 hover:bg-foreground/60 flex items-center justify-center text-background transition-colors"
             aria-label="Berikutnya"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -62,7 +62,7 @@ export default function DestinationGallery({ images, title, onOpenLightbox }: De
           {imagesList.map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all ${i === mobileSlide ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"}`}
+              className={`rounded-full transition-all ${i === mobileSlide ? "w-4 h-1.5 bg-card" : "w-1.5 h-1.5 bg-white/50"}`}
             />
           ))}
         </div>
@@ -95,10 +95,10 @@ export default function DestinationGallery({ images, title, onOpenLightbox }: De
             />
             {len > 3 && (
               <div
-                className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer hover:bg-black/60 transition-colors"
+                className="absolute inset-0 bg-foreground/50 flex items-center justify-center cursor-pointer hover:bg-foreground/60 transition-colors"
                 onClick={() => onOpenLightbox(3)}
               >
-                <span className="text-white font-bold text-2xl">+{hiddenCount}</span>
+                <span className="text-background font-bold text-2xl">+{hiddenCount}</span>
               </div>
             )}
           </div>

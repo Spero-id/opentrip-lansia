@@ -47,24 +47,24 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {status !== "found" || !post ? (
-        <div className="flex items-center justify-center min-h-[60vh] text-sm text-[#6B7280]">
+        <div className="flex items-center justify-center min-h-[60vh] text-sm text-muted-foreground">
           Memuat artikel...
         </div>
       ) : (
-        <main className="min-h-screen bg-[#F9FAFB]">
+        <main className="min-h-screen bg-background">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#6B7280] hover:text-[#F49D1A] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary-foreground transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Kembali ke Blog
             </Link>
 
             <div className="mt-6">
-              <div className="text-xs font-semibold text-[#F49D1A] uppercase tracking-wider mb-3">
+              <div className="text-xs font-semibold text-primary-foreground uppercase tracking-wider mb-3">
                 {formatBlogDate(post.publishedAt || post.createdAt)}
                 {category && (
                   <>
@@ -75,11 +75,11 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
                   </>
                 )}
               </div>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight text-[#1F2937]">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight text-foreground">
                 {post.title}
               </h1>
               {post.excerpt && (
-                <p className="text-sm sm:text-base text-[#6B7280] mt-4 leading-relaxed">
+                <p className="text-sm sm:text-base text-muted-foreground mt-4 leading-relaxed">
                   {post.excerpt}
                 </p>
               )}
@@ -92,11 +92,11 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
               )}
             </div>
 
-            <div className="mt-8 border-t border-slate-200 pt-8">
-              <Suspense fallback={<div className="py-8 text-center text-sm text-[#6B7280]">Memuat konten...</div>}>
+            <div className="mt-8 border-t border-border pt-8">
+              <Suspense fallback={<div className="py-8 text-center text-sm text-muted-foreground">Memuat konten...</div>}>
                 <ErrorBoundary>
                   <div
-                    className="text-sm text-[#475569] leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
+                    className="text-sm text-muted-foreground leading-7 prose prose-slate max-w-none [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-bold [&>h3]:text-lg [&>h3]:font-bold"
                     dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) || "Konten artikel belum tersedia." }}
                   />
                 </ErrorBoundary>

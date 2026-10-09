@@ -38,9 +38,9 @@ export default function DetailsStep({
           onChange={checkout.setTierQty}
         />
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
-          <h2 className="text-base font-bold text-gray-900">Data Pemesan & Kesehatan</h2>
-          <p className="text-xs text-gray-400">
+        <div className="bg-card border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+          <h2 className="text-base font-bold text-foreground">Data Pemesan & Kesehatan</h2>
+          <p className="text-xs text-muted-foreground">
             Mohon isi data diri dan kondisi kesehatan peserta dengan benar untuk keperluan tiket dan
             asuransi perjalanan.
           </p>

@@ -68,27 +68,27 @@ export default function Navbar() {
   const navClasses = cn(
     "w-full p-2 sticky top-0 z-40 transition-all duration-300",
     isScrolled
-      ? "bg-black/50 backdrop-blur-sm shadow-lg border-b border-white/10"
+      ? "bg-foreground/50 backdrop-blur-sm shadow-lg border-b border-background/10"
       : "bg-transparent border-b border-transparent",
-    isOpen && "bg-white/10 backdrop-blur-xl"
+    isOpen && "bg-background/10 backdrop-blur-xl"
   );
 
   const logoClasses = cn(
     "flex items-center gap-2 text-xl font-bold transition-colors",
-    isScrolled ? "text-gray-900" : "text-black"
+    isScrolled ? "text-foreground" : "text-foreground"
   );
 
   const desktopLinkClasses = isScrolled
-    ? "hidden lg:flex font-medium text-sm text-white hover:text-[#F49D1A]"
-    : "hidden lg:flex font-medium text-sm text-black hover:text-[#F49D1A]";
+    ? "hidden lg:flex font-medium text-sm text-background hover:text-primary"
+    : "hidden lg:flex font-medium text-sm text-foreground hover:text-primary";
 
   const loginButtonClasses = isScrolled
-    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-white/0 border border-white/20 text-white hover:text-[#F49D1A] hover:border-[#F49D1A] hover:bg-white/10"
-    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-[#F49D1A]/20 hover:border-[#F49D1A]/20 hover:text-[#F49D1A]";
+    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-background/0 border border-background/20 text-background hover:text-primary hover:border-primary hover:bg-background/10"
+    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-background/10 border border-primary text-primary-foreground backdrop-blur-sm hover:bg-primary/20 hover:border-primary/20 hover:text-primary";
 
   const toggleButtonClasses = cn(
     "p-2 transition-colors",
-    isScrolled ? "text-white" : "text-slate-700"
+    isScrolled ? "text-background" : "text-foreground"
   );
 
   return (
@@ -129,7 +129,7 @@ export default function Navbar() {
                       <span
                         className={cn(
                           "max-w-[140px] truncate text-sm font-semibold",
-                          isScrolled ? "text-white" : "text-black"
+                          isScrolled ? "text-background" : "text-foreground"
                         )}
                       >
                         {sessionUser.name || "Pengguna"}
@@ -137,7 +137,7 @@ export default function Navbar() {
                       <span
                         className={cn(
                           "text-[11px] font-medium",
-                          isScrolled ? "text-white/70" : "text-slate-500"
+                          isScrolled ? "text-background/70" : "text-muted-foreground"
                         )}
                       >
                         {sessionRole === "admin"
@@ -148,7 +148,7 @@ export default function Navbar() {
                       </span>
                     </span>
 
-                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
+                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors group-hover:bg-primary/90 overflow-hidden">
                       <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
                         {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "U"}
                       </span>
@@ -163,18 +163,18 @@ export default function Navbar() {
                           className="absolute inset-0 h-full w-full object-cover"
                         />
                       )}
-                      <span className="absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                      <span className="absolute inset-0 bg-foreground/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                     </span>
 
                   </button>
 
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
-                      <div className="px-4 py-3 border-b border-slate-200">
-                        <p className="text-sm font-medium text-slate-900 truncate">
+                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-card border border-border/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                      <div className="px-4 py-3 border-b border-border">
+                        <p className="text-sm font-medium text-foreground truncate">
                           {sessionUser.name || "Pengguna"}
                         </p>
-                        <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
+                        <p className="text-xs text-muted-foreground truncate mt-0.5 font-medium">
                           {sessionUser.email}
                         </p>
                       </div>
@@ -183,7 +183,7 @@ export default function Navbar() {
                         <Link
                           href="/profile"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-border hover:text-foreground transition-colors"
                         >
                           <User className="w-4 h-4 shrink-0" />
                           Profil Saya
@@ -192,7 +192,7 @@ export default function Navbar() {
                           <Link
                             href="/admin"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-border hover:text-foreground transition-colors"
                           >
                             <Shield className="w-4 h-4 shrink-0" />
                             Halaman Admin
@@ -201,14 +201,14 @@ export default function Navbar() {
                         <Link
                           href="/my-trips"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-border hover:text-foreground transition-colors"
                         >
                           <ShoppingBag className="w-4 h-4 shrink-0" />
                           Riwayat Trip
                         </Link>
                       </div>
 
-                      <div className="border-t border-slate-200 py-1.5">
+                      <div className="border-t border-border py-1.5">
                         <button
                           type="button"
                           onClick={async () => {
@@ -217,7 +217,7 @@ export default function Navbar() {
                             router.push("/login");
                             router.refresh();
                           }}
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-slate-200 cursor-pointer"
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-destructive-600 transition-colors hover:bg-border cursor-pointer"
                         >
                           <LogOut className="w-4 h-4 shrink-0" />
                           Keluar dari Akun
@@ -233,7 +233,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/login"
-                    className="bg-[#F49D1A] border border-[#F49D1A] text-white px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-[#c47d12] hover:border-[#c47d12] hover:shadow-xl"
+                    className="bg-primary border border-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-primary/90 hover:border-primary/90 hover:shadow-xl"
                   >
                     Masuk
                   </Link>

@@ -31,19 +31,19 @@ export default function ConfirmDelete({
 
   return (
     <Modal open={open} onClose={onClose} title={title} size="sm">
-      <p className="text-sm text-slate-600">{message}</p>
+      <p className="text-sm text-muted-foreground">{message}</p>
       <div className="flex items-center gap-3 mt-6">
         <button
           onClick={handleConfirm}
           disabled={loading}
-          className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50"
+          className="rounded-xl bg-destructive-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-destructive-700 transition disabled:opacity-50"
         >
           {loading ? "Menghapus..." : "Ya, Hapus"}
         </button>
         <button
           onClick={onClose}
           disabled={loading}
-          className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition disabled:opacity-50"
+          className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-muted transition disabled:opacity-50"
         >
           Batal
         </button>

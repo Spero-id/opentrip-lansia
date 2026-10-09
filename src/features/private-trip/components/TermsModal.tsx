@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 
-const A = "#F49D1A";
+const A = "var(--primary)";
 
 const TERMS_CONTENT = [
   {
@@ -84,21 +84,21 @@ export default function TermsModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center px-4 py-8"
+      className="fixed inset-0 z-[9999] bg-foreground/50 flex items-center justify-center px-4 py-8"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl border border-gray-200/50 shadow-xl w-full max-w-lg flex flex-col overflow-hidden"
+        className="bg-card rounded-2xl border border-border/50 shadow-xl w-full max-w-lg flex flex-col overflow-hidden"
         style={{ maxHeight: "85vh" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-2.5">
             <span
               className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-              style={{ backgroundColor: `${A}15` }}
+              style={{ backgroundColor: `color-mix(in srgb, var(--primary) 8%, transparent)` }}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={A} strokeWidth="2.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="stroke-primary" strokeWidth="2.5">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="16" y1="13" x2="8" y2="13" />
@@ -106,13 +106,13 @@ export default function TermsModal({
               </svg>
             </span>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Syarat &amp; Ketentuan</p>
-              <p className="text-[10px] text-gray-400 font-normal">Private Trip · Jelajah Memoria</p>
+              <p className="text-sm font-semibold text-foreground">Syarat &amp; Ketentuan</p>
+              <p className="text-[10px] text-muted-foreground font-normal">Private Trip · Jelajah Memoria</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-muted-foreground hover:bg-muted transition-colors"
             aria-label="Tutup"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -125,8 +125,8 @@ export default function TermsModal({
         <div
           className="flex items-center gap-2 px-5 py-2 text-xs shrink-0 border-b"
           style={hasScrolledToBottom
-            ? { backgroundColor: "#f0fdf4", borderColor: "#bbf7d0", color: "#16a34a" }
-            : { backgroundColor: `${A}08`, borderColor: `${A}20`, color: A }
+            ? { backgroundColor: "var(--color-green-50)", borderColor: "var(--color-green-200)", color: "var(--color-green-600)" }
+            : { backgroundColor: `color-mix(in srgb, var(--primary) 3%, transparent)`, borderColor: `color-mix(in srgb, var(--primary) 13%, transparent)`, color: "var(--primary-foreground)" }
           }
         >
           {hasScrolledToBottom ? (
@@ -150,14 +150,14 @@ export default function TermsModal({
           ref={scrollRef}
           onScroll={handleScroll}
           className="flex-1 overflow-y-auto px-5 py-4 space-y-4"
-          style={{ scrollbarWidth: "thin", scrollbarColor: "#e5e7eb transparent" }}
+          style={{ scrollbarWidth: "thin", scrollbarColor: "var(--border) transparent" }}
         >
           {TERMS_CONTENT.map((section) => (
-            <div key={section.title} className="pb-3 border-b border-gray-50 last:border-0">
-              <p className="text-xs font-semibold text-gray-700 mb-1.5">
+            <div key={section.title} className="pb-3 border-b border-border last:border-0">
+              <p className="text-xs font-semibold text-foreground mb-1.5">
                 {section.title}
               </p>
-              <p className="text-xs text-gray-500 leading-relaxed font-normal">
+              <p className="text-xs text-muted-foreground leading-relaxed font-normal">
                 {section.body}
               </p>
             </div>
@@ -165,24 +165,24 @@ export default function TermsModal({
           <div className="h-2" />
         </div>
 
-        <div className="px-5 py-4 border-t border-gray-100 bg-gray-50/50 shrink-0 space-y-3">
+        <div className="px-5 py-4 border-t border-border bg-muted/50 shrink-0 space-y-3">
           <div className="flex items-start gap-2.5">
             <div
               className="w-4 h-4 mt-0.5 rounded border-2 flex items-center justify-center shrink-0 transition-all"
               style={hasScrolledToBottom
                 ? { backgroundColor: A, borderColor: A }
-                : { borderColor: "#d1d5db" }
+                : { borderColor: "var(--border)" }
               }
             >
               {hasScrolledToBottom && (
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               )}
             </div>
-            <p className="text-[11px] text-gray-500 leading-relaxed">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
               {hasScrolledToBottom
-                ? <span>Saya telah membaca dan menyetujui <span className="font-medium text-gray-700">Syarat & Ketentuan</span> Private Trip yang berlaku.</span>
+                ? <span>Saya telah membaca dan menyetujui <span className="font-medium text-foreground">Syarat & Ketentuan</span> Private Trip yang berlaku.</span>
                 : "Baca semua ketentuan di atas terlebih dahulu sebelum melanjutkan."
               }
             </p>
@@ -192,7 +192,7 @@ export default function TermsModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 rounded-xl border border-border bg-card text-xs font-semibold text-muted-foreground hover:bg-muted transition-colors"
             >
               Batal
             </button>
@@ -200,12 +200,12 @@ export default function TermsModal({
               type="button"
               onClick={hasScrolledToBottom ? onAgree : undefined}
               disabled={!hasScrolledToBottom}
-              className="flex-1 py-2.5 rounded-xl text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+              className="flex-1 py-2.5 rounded-xl text-primary-foreground text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
               style={hasScrolledToBottom
                 ? { backgroundColor: A }
-                : { backgroundColor: "#d1d5db", cursor: "not-allowed" }
+                : { backgroundColor: "var(--border)", cursor: "not-allowed" }
               }
-              onMouseEnter={e => { if (hasScrolledToBottom) e.currentTarget.style.backgroundColor = "#c47d12"; }}
+              onMouseEnter={e => { if (hasScrolledToBottom) e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--primary) 90%, var(--foreground))"; }}
               onMouseLeave={e => { if (hasScrolledToBottom) e.currentTarget.style.backgroundColor = A; }}
             >
               Setuju &amp; Lanjutkan

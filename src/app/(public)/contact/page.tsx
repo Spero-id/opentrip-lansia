@@ -12,11 +12,11 @@ const WA_NUMBER = "6285110511403";
 const WA_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
 import Subs from "@/features/newsletter/components/Subs";
 
-const A = "#F49D1A";
-const A_HOVER = "#c47d12";
+const A = "var(--primary)";
+const A_HOVER = "color-mix(in srgb, var(--primary) 90%, var(--foreground))";
 const baseInput =
-    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
-const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
+    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors";
+const normalBorder = "border-border focus:border-primary";
 
 export default function ContactPage() {
     const [submitted, setSubmitted] = useState(false);
@@ -58,7 +58,7 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="bg-white">
+        <div className="bg-background">
 
             <section
                 className="relative bg-cover bg-center py-24 sm:py-40"
@@ -69,12 +69,12 @@ export default function ContactPage() {
                 <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
                     <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-                        Contact <span className="text-[#F49D1A]">Us</span>
+                        Contact <span className="text-primary">Us</span>
                     </h1>
                 </div>
 
                 <div
-                    className="absolute bottom-0 left-0 right-0 h-16 bg-white"
+                    className="absolute bottom-0 left-0 right-0 h-16 bg-background"
                     style={{
                         clipPath: "polygon(0 100%, 100% 100%, 70% 10%, 50% 0, 10% 100%, 0 0)",
                     }}
@@ -83,7 +83,7 @@ export default function ContactPage() {
 
             <section className="relative z-20 -mt-24 sm:-mt-32 pb-16 sm:pb-20">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl overflow-hidden">
+                    <div className="bg-card rounded-2xl border border-border shadow-2xl overflow-hidden">
                         <div className="grid lg:grid-cols-5">
                             <div
                                 className="lg:col-span-2 relative bg-cover bg-center p-8 sm:p-10 flex flex-col justify-between overflow-hidden"
@@ -91,25 +91,25 @@ export default function ContactPage() {
                                     backgroundImage: "url('/contact-panel-image.jpg')",
                                 }}
                             >
-                                <div className="absolute inset-0 bg-gray-900" />
+                                <div className="absolute inset-0 bg-foreground" />
 
                                 <div className="relative">
-                                    <h2 className="text-2xl font-bold text-white mb-3">Hubungi Kami</h2>
-                                    <p className="text-white/60 text-sm leading-relaxed mb-10 max-w-sm">
+                                    <h2 className="text-2xl font-bold text-background mb-3">Hubungi Kami</h2>
+                                    <p className="text-background/60 text-sm leading-relaxed mb-10 max-w-sm">
                                         Tim kami siap bantu kamu lewat kontak di bawah ini, atau
                                         langsung datang ke lokasi kantor kami.
                                     </p>
 
                                     <ul className="space-y-8">
                                         <li className="flex items-start gap-4">
-                                            <Phone className="w-4 h-4 text-[#F49D1A] shrink-0 mt-0.5" />
+                                            <Phone className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                             <div>
-                                                <p className="text-xs text-white/50">Telepon</p>
+                                                <p className="text-xs text-background/50">Telepon</p>
                                                 <a
                                                     href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(WA_MESSAGE)}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm font-normal text-white hover:underline underline-offset-2 decoration-white/60"
+                                                    className="text-sm font-normal text-background hover:underline underline-offset-2 decoration-background/60"
                                                 >
                                                     +62 851-1051-1403
                                                 </a>
@@ -117,14 +117,14 @@ export default function ContactPage() {
                                         </li>
 
                                         <li className="flex items-start gap-4">
-                                            <Mail className="w-4 h-4 text-[#F49D1A] shrink-0 mt-0.5" />
+                                            <Mail className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                             <div>
-                                                <p className="text-xs text-white/50">Email</p>
+                                                <p className="text-xs text-background/50">Email</p>
                                                 <a
                                                     href="https://mail.google.com/mail/?view=cm&fs=1&to=jelajahmemoria@gmail.com"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm font-normal text-white hover:underline underline-offset-2 decoration-white/60"
+                                                    className="text-sm font-normal text-background hover:underline underline-offset-2 decoration-background/60"
                                                 >
                                                     jelajahmemoria@gmail.com
                                                 </a>
@@ -132,14 +132,14 @@ export default function ContactPage() {
                                         </li>
 
                                         <li className="flex items-start gap-4">
-                                            <MapPin className="w-4 h-4 text-[#F49D1A] shrink-0 mt-0.5" />
+                                            <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                             <div>
-                                                <p className="text-xs text-white/50">Alamat</p>
+                                                <p className="text-xs text-background/50">Alamat</p>
                                                 <a
                                                     href={MAPS_URL}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-sm font-normal text-white leading-relaxed max-w-[240px] hover:underline underline-offset-2 decoration-white/60"
+                                                    className="text-sm font-normal text-background leading-relaxed max-w-[240px] hover:underline underline-offset-2 decoration-background/60"
                                                 >
                                                     Jl. Ratu Bidadari 3 no 2, Ciputat, Tangerang Selatan
                                                 </a>
@@ -150,21 +150,21 @@ export default function ContactPage() {
                             </div>
 
                             <div className="lg:col-span-3 p-8 sm:p-10">
-                                <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2A37] mb-3">
+                                <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
                                     Get In Touch
                                 </h2>
-                                <p className="text-[#6B7280] text-sm leading-relaxed mb-8 max-w-md">
+                                <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-md">
                                     Isi form di bawah dan tim kami akan segera menghubungi kamu kembali,
                                     biasanya dalam 1x24 jam kerja.
                                 </p>
 
                                 {submitted ? (
-                                    <div className="flex flex-col items-center justify-center text-center py-16 border border-dashed border-[#E5E7EB] rounded-xl">
-                                        <div className="w-14 h-14 rounded-full bg-[#F49D1A]/10 flex items-center justify-center mb-4">
-                                            <Send className="w-5 h-5 text-[#F49D1A]" />
+                                    <div className="flex flex-col items-center justify-center text-center py-16 border border-dashed border-border rounded-xl">
+                                        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                            <Send className="w-5 h-5 text-primary" />
                                         </div>
-                                        <h3 className="font-bold text-[#1F2A37] mb-1">Pesan terkirim!</h3>
-                                        <p className="text-sm text-[#6B7280] max-w-xs">
+                                        <h3 className="font-bold text-foreground mb-1">Pesan terkirim!</h3>
+                                        <p className="text-sm text-muted-foreground max-w-xs">
                                             Terima kasih, tim kami akan segera menghubungi kamu kembali.
                                         </p>
                                     </div>
@@ -172,68 +172,68 @@ export default function ContactPage() {
                                     <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
                                         <div className="grid sm:grid-cols-2 gap-5">
                                             <div>
-                                                <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                    Email <span className="text-red-500">*</span>
+                                                <label className="block text-[13px] font-medium text-foreground mb-2">
+                                                    Email <span className="text-destructive-500">*</span>
                                                 </label>
                                                 <div className="relative">
-                                                    <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+                                                    <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                                     <input
                                                         type="email"
                                                         name="email"
                                                         placeholder="Cth: budi@email.com"
                                                         required
-                                                        className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
+                                                        className={`${baseInput} pl-11 pr-4 text-foreground ${normalBorder}`}
                                                     />
                                                 </div>
                                             </div>
                                             <div>
-                                                <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                    Telepon <span className="text-red-500">*</span>
+                                                <label className="block text-[13px] font-medium text-foreground mb-2">
+                                                    Telepon <span className="text-destructive-500">*</span>
                                                 </label>
                                                 <div className="relative">
-                                                    <Phone className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+                                                    <Phone className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                                     <input
                                                         type="tel"
                                                         name="phone"
                                                         placeholder="081234567890"
                                                         required
-                                                        className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
+                                                        className={`${baseInput} pl-11 pr-4 text-foreground ${normalBorder}`}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Nama Lengkap <span className="text-red-500">*</span>
+                                            <label className="block text-[13px] font-medium text-foreground mb-2">
+                                                Nama Lengkap <span className="text-destructive-500">*</span>
                                             </label>
                                             <div className="relative">
-                                                <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+                                                <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                                 <input
                                                     type="text"
                                                     name="name"
                                                     placeholder="Cth: Budi Santoso"
                                                     required
-                                                    className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
+                                                    className={`${baseInput} pl-11 pr-4 text-foreground ${normalBorder}`}
                                                 />
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Pesan <span className="text-red-500">*</span>
+                                            <label className="block text-[13px] font-medium text-foreground mb-2">
+                                                Pesan <span className="text-destructive-500">*</span>
                                             </label>
                                             <textarea
                                                 rows={5}
                                                 name="message"
                                                 placeholder="Tulis pesan kamu di sini..."
                                                 required
-                                                className={`${baseInput} text-[#1F2A37] resize-none ${normalBorder}`}
+                                                className={`${baseInput} text-foreground resize-none ${normalBorder}`}
                                             />
                                         </div>
 
                                         {error && (
-                                            <p className="text-sm text-red-500 bg-red-50 border border-red-300 rounded-lg px-4 py-3">
+                                            <p className="text-sm text-destructive-500 bg-destructive-50 border border-destructive-300 rounded-lg px-4 py-3">
                                                 {error}
                                             </p>
                                         )}
@@ -249,7 +249,7 @@ export default function ContactPage() {
                                                 onMouseLeave={(e) => {
                                                     if (!loading) e.currentTarget.style.backgroundColor = A;
                                                 }}
-                                                className="px-6 py-3 rounded-lg text-white font-semibold text-[13px] tracking-wide transition-all active:scale-[0.98] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer shrink-0 shadow-sm"
+                                                className="px-6 py-3 rounded-lg text-primary-foreground font-semibold text-[13px] tracking-wide transition-all active:scale-[0.98] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer shrink-0 shadow-sm"
                                             >
                                                 {loading ? "Mengirim..." : "Kirim Pesan"}
                                                 {loading ? (

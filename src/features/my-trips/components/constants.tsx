@@ -1,4 +1,4 @@
-export const A = "#F49D1A";
+export const A = "var(--primary)";
 
 export const STATUS_LABEL: Record<string, string> = {
   draft: "Draft",
@@ -10,12 +10,12 @@ export const STATUS_LABEL: Record<string, string> = {
 };
 
 export const STATUS_COLOR: Record<string, string> = {
-  draft: "bg-gray-100 text-gray-600",
-  submitted: "bg-blue-100 text-blue-700",
+  draft: "bg-muted text-muted-foreground",
+  submitted: "bg-info-100 text-info-700",
   reviewed: "bg-violet-100 text-violet-700",
-  approved: "bg-emerald-100 text-emerald-700",
-  rejected: "bg-red-100 text-red-700",
-  revision: "bg-amber-100 text-amber-700",
+  approved: "bg-success-100 text-success-700",
+  rejected: "bg-destructive-100 text-destructive-700",
+  revision: "bg-warning-100 text-warning-700",
 };
 
 export const PROPOSAL_LABEL: Record<string, string> = {
@@ -26,10 +26,10 @@ export const PROPOSAL_LABEL: Record<string, string> = {
 };
 
 export const PROPOSAL_COLOR: Record<string, string> = {
-  pending: "bg-blue-100 text-blue-700",
-  accepted: "bg-emerald-100 text-emerald-700",
-  rejected: "bg-red-100 text-red-700",
-  revised: "bg-amber-100 text-amber-700",
+  pending: "bg-info-100 text-info-700",
+  accepted: "bg-success-100 text-success-700",
+  rejected: "bg-destructive-100 text-destructive-700",
+  revised: "bg-warning-100 text-warning-700",
 };
 
 export const OPEN_TRIP_STATUS_LABEL: Record<string, string> = {
@@ -42,12 +42,12 @@ export const OPEN_TRIP_STATUS_LABEL: Record<string, string> = {
 };
 
 export const OPEN_TRIP_STATUS_COLOR: Record<string, string> = {
-  pending_payment: "bg-amber-100 text-amber-700",
-  confirmed: "bg-emerald-100 text-emerald-700",
-  pending: "bg-blue-100 text-blue-700",
-  awaiting_verification: "bg-orange-100 text-orange-700",
-  cancelled: "bg-red-100 text-red-700",
-  completed: "bg-gray-100 text-gray-600",
+  pending_payment: "bg-warning-100 text-warning-700",
+  confirmed: "bg-success-100 text-success-700",
+  pending: "bg-info-100 text-info-700",
+  awaiting_verification: "bg-warning-100 text-warning-700",
+  cancelled: "bg-destructive-100 text-destructive-700",
+  completed: "bg-muted text-muted-foreground",
 };
 
 export const PAYMENT_STATUS_LABEL: Record<string, string> = {
@@ -59,11 +59,11 @@ export const PAYMENT_STATUS_LABEL: Record<string, string> = {
 };
 
 export const PAYMENT_STATUS_COLOR: Record<string, string> = {
-  pending: "text-blue-700",
-  paid: "text-emerald-700",
-  rejected: "text-red-700",
-  awaiting_verification: "text-orange-700",
-  pending_payment: "text-amber-700",
+  pending: "text-info-700",
+  paid: "text-success-700",
+  rejected: "text-destructive-700",
+  awaiting_verification: "text-warning-700",
+  pending_payment: "text-warning-700",
 };
 
 

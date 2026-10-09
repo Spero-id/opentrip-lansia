@@ -102,11 +102,11 @@ function formatDate(val: string | null | undefined): string {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  scheduled: "bg-slate-100 text-slate-600",
-  confirmed: "bg-blue-100 text-blue-700",
-  ongoing: "bg-amber-100 text-amber-700",
-  completed: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-600",
+  scheduled: "bg-muted text-muted-foreground",
+  confirmed: "bg-info-100 text-info-700",
+  ongoing: "bg-warning-100 text-warning-700",
+  completed: "bg-success-100 text-success-700",
+  cancelled: "bg-destructive-100 text-destructive-600",
 };
 
 export default function AdminTripGroupsPage() {
@@ -466,11 +466,11 @@ export default function AdminTripGroupsPage() {
 
   function getPaymentStatusLabel(status: string): { label: string; className: string } {
     const statuses: Record<string, { label: string; className: string }> = {
-      pending: { label: "Menunggu Bayar", className: "bg-amber-100 text-amber-700" },
-      approved: { label: "Dikonfirmasi", className: "bg-green-100 text-green-700" },
-      rejected: { label: "Ditolak", className: "bg-red-100 text-red-600" },
+      pending: { label: "Menunggu Bayar", className: "bg-warning-100 text-warning-700" },
+      approved: { label: "Dikonfirmasi", className: "bg-success-100 text-success-700" },
+      rejected: { label: "Ditolak", className: "bg-destructive-100 text-destructive-600" },
     };
-    return statuses[status] || { label: status, className: "bg-slate-100 text-slate-600" };
+    return statuses[status] || { label: status, className: "bg-muted text-muted-foreground" };
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -489,7 +489,7 @@ export default function AdminTripGroupsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#F49D1A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary-foreground" />
       </div>
     );
   }
@@ -500,18 +500,18 @@ export default function AdminTripGroupsPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition"
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-extrabold text-slate-900">Error</h1>
+          <h1 className="text-2xl font-extrabold text-foreground">Error</h1>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
-          <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-          <p className="text-red-700 font-medium">{error}</p>
+        <div className="bg-destructive-50 border border-destructive-200 rounded-2xl p-6 text-center">
+          <AlertCircle className="w-10 h-10 text-destructive-500 mx-auto mb-3" />
+          <p className="text-destructive-700 font-medium">{error}</p>
           <button
             onClick={fetchData}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition"
+            className="mt-4 px-4 py-2 bg-destructive-600 text-white rounded-xl text-sm font-semibold hover:bg-destructive-700 transition"
           >
             Coba Lagi
           </button>
@@ -522,26 +522,26 @@ export default function AdminTripGroupsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div className="flex items-start gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition mt-1"
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition mt-1"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
               Kelola Grup Trip
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {trip?.title || "Memuat..."} — Atur jadwal keberangkatan dan grup perjalanan
             </p>
           </div>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Grup Baru</span>
@@ -549,17 +549,17 @@ export default function AdminTripGroupsPage() {
       </div>
 
       {groups.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
-            <Users className="w-8 h-8 text-slate-400" />
+        <div className="bg-card rounded-3xl border border-border/80 shadow-xs p-12 text-center">
+          <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
+            <Users className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-bold text-slate-700">Belum ada grup</h3>
-          <p className="text-sm text-slate-500 mt-2 max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-foreground">Belum ada grup</h3>
+          <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
             Buat grup keberangkatan pertama untuk trip ini. Setiap grup punya tanggal dan kuota sendiri.
           </p>
           <button
             onClick={openCreate}
-            className="mt-6 px-6 py-3 bg-[#F49D1A] text-white rounded-2xl text-sm font-semibold hover:bg-[#c47d12] transition inline-flex items-center gap-2"
+            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-primary/90 transition inline-flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Buat Grup Pertama
@@ -570,74 +570,74 @@ export default function AdminTripGroupsPage() {
           {groups.map((group) => (
             <div
               key={group.id}
-              className={`bg-white rounded-3xl border shadow-xs overflow-hidden transition ${
+              className={`bg-card rounded-3xl border shadow-xs overflow-hidden transition ${
                 group.isActive
-                  ? "border-slate-200/80 shadow-md"
-                  : "border-slate-200/80"
+                  ? "border-border/80 shadow-md"
+                  : "border-border/80"
               }`}
             >
               <div className="p-5 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className={`p-2 rounded-xl ${group.isActive ? "bg-[#1CA6B7]/10" : "bg-slate-100"}`}>
-                        <Calendar className={`w-5 h-5 ${group.isActive ? "text-[#1CA6B7]" : "text-slate-500"}`} />
+                      <div className={`p-2 rounded-xl ${group.isActive ? "bg-secondary/10" : "bg-muted"}`}>
+                        <Calendar className={`w-5 h-5 ${group.isActive ? "text-secondary-foreground" : "text-muted-foreground"}`} />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-bold text-slate-900">
+                          <h3 className="text-lg font-bold text-foreground">
                             {formatDate(group.startDate)}
                           </h3>
                           {group.isActive && group.status !== "completed" && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#1CA6B7]/15 text-[#1CA6B7]">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-secondary/15 text-secondary-foreground">
                               <Check className="w-3 h-3" />
                               AKTIF
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-muted-foreground">
                           Sampai {formatDate(group.endDate)}
                         </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-                      <div className="bg-slate-50 rounded-xl p-3">
-                        <p className="text-[10px] font-semibold text-slate-500 uppercase">Kuota</p>
-                        <p className="text-lg font-bold text-slate-900">
+                      <div className="bg-muted rounded-xl p-3">
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase">Kuota</p>
+                        <p className="text-lg font-bold text-foreground">
                           {group.quotaBooked}/{group.maxParticipants}
                         </p>
                       </div>
-                      <div className="bg-slate-50 rounded-xl p-3">
-                        <p className="text-[10px] font-semibold text-slate-500 uppercase">Booking</p>
-                        <p className="text-lg font-bold text-slate-900">{group.bookingCount}</p>
+                      <div className="bg-muted rounded-xl p-3">
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase">Booking</p>
+                        <p className="text-lg font-bold text-foreground">{group.bookingCount}</p>
                       </div>
-                      <div className="bg-slate-50 rounded-xl p-3">
-                        <p className="text-[10px] font-semibold text-slate-500 uppercase">Galeri</p>
-                        <p className="text-lg font-bold text-slate-900">{group.galleryCount} foto</p>
+                      <div className="bg-muted rounded-xl p-3">
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase">Galeri</p>
+                        <p className="text-lg font-bold text-foreground">{group.galleryCount} foto</p>
                       </div>
 
                     </div>
 
                     {group.notes && (
-                      <p className="mt-3 text-xs text-slate-500 bg-slate-50 rounded-xl px-3 py-2">
+                      <p className="mt-3 text-xs text-muted-foreground bg-muted rounded-xl px-3 py-2">
                         {group.notes}
                       </p>
                     )}
                   </div>
 
                   <div className="flex flex-row sm:flex-col gap-2">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${STATUS_COLORS[group.status] || "bg-slate-100 text-slate-600"}`}>
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${STATUS_COLORS[group.status] || "bg-muted text-muted-foreground"}`}>
                       {group.status}
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-slate-100">
+                <div className="mt-4 pt-4 border-t border-border">
                   <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => toggleParticipants(group.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-muted-foreground bg-muted hover:bg-border rounded-xl transition"
                   >
                     <Users className="w-3.5 h-3.5" />
                     Peserta ({group.bookingCount})
@@ -649,7 +649,7 @@ export default function AdminTripGroupsPage() {
                   </button>
                   <button
                     onClick={() => togglePrices(group.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-muted-foreground bg-muted hover:bg-border rounded-xl transition"
                   >
                     <Tag className="w-3.5 h-3.5" />
                     Harga{expandedPrices === group.id && !pricesLoading ? ` (${prices.length})` : ""}
@@ -662,36 +662,36 @@ export default function AdminTripGroupsPage() {
                   </div>
 
                   {expandedGroup === group.id && (
-                    <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+                    <div className="mt-4 bg-muted rounded-2xl p-4">
                       {participantsLoading ? (
                         <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-[#F49D1A]" />
-                          <span className="ml-2 text-sm text-slate-500">Memuat data peserta...</span>
+                          <Loader2 className="w-6 h-6 animate-spin text-primary-foreground" />
+                          <span className="ml-2 text-sm text-muted-foreground">Memuat data peserta...</span>
                         </div>
                       ) : participants.length === 0 ? (
                         <div className="text-center py-8">
-                          <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                          <p className="text-sm text-slate-500">Belum ada peserta terdaftar</p>
+                          <Users className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">Belum ada peserta terdaftar</p>
                         </div>
                       ) : (
                         <div className="space-y-3">
                           {participants.map((booking) => (
                             <div
                               key={booking.bookingId}
-                              className="bg-white rounded-xl border border-slate-200 p-4"
+                              className="bg-card rounded-xl border border-border p-4"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-2">
-                                    <span className="font-mono font-bold text-[#F49D1A] text-sm">
+                                    <span className="font-mono font-bold text-primary-foreground text-sm">
                                       {booking.bookingCode}
                                     </span>
                                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
                                       booking.bookingStatus === "confirmed"
-                                        ? "bg-green-100 text-green-700"
+                                        ? "bg-success-100 text-success-700"
                                         : booking.bookingStatus === "pending"
-                                        ? "bg-amber-100 text-amber-700"
-                                        : "bg-slate-100 text-slate-600"
+                                        ? "bg-warning-100 text-warning-700"
+                                        : "bg-muted text-muted-foreground"
                                     }`}>
                                       {booking.bookingStatus === "confirmed"
                                         ? "Terkonfirmasi"
@@ -703,14 +703,14 @@ export default function AdminTripGroupsPage() {
                                   <div className="space-y-1.5">
                                     {booking.participants.map((p, idx) => (
                                       <div key={idx} className="flex items-center gap-2 text-sm">
-                                        <span className="w-5 h-5 rounded-full bg-[#1CA6B7]/10 text-[#1CA6B7] flex items-center justify-center text-[10px] font-bold shrink-0">
+                                        <span className="w-5 h-5 rounded-full bg-secondary/10 text-secondary-foreground flex items-center justify-center text-[10px] font-bold shrink-0">
                                           {p.isPrimary ? "P" : idx + 1}
                                         </span>
-                                        <span className="text-slate-700 truncate">
+                                        <span className="text-foreground truncate">
                                           {p.fullName}
                                         </span>
                                         {p.phone && (
-                                          <span className="text-xs text-slate-400 shrink-0">
+                                          <span className="text-xs text-muted-foreground shrink-0">
                                             {p.phone}
                                           </span>
                                         )}
@@ -719,23 +719,23 @@ export default function AdminTripGroupsPage() {
                                   </div>
                                 </div>
                                 <div className="text-right shrink-0">
-                                  <p className="text-xs text-slate-500">{booking.totalParticipants} org</p>
-                                  <p className="text-xs font-bold text-slate-700">
+                                  <p className="text-xs text-muted-foreground">{booking.totalParticipants} org</p>
+                                  <p className="text-xs font-bold text-foreground">
                                     Rp {Number(booking.totalAmount).toLocaleString("id-ID")}
                                   </p>
                                 </div>
                               </div>
 
-                              <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                              <div className="mt-3 pt-3 border-t border-border flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   {booking.payment ? (
                                     <>
                                       {booking.payment.proofUrl ? (
-                                        <FileCheck className="w-4 h-4 text-green-600" />
+                                        <FileCheck className="w-4 h-4 text-success-600" />
                                       ) : (
-                                        <Clock className="w-4 h-4 text-amber-500" />
+                                        <Clock className="w-4 h-4 text-warning-500" />
                                       )}
-                                      <span className="text-xs text-slate-600">
+                                      <span className="text-xs text-muted-foreground">
                                         {booking.payment.method || "Transfer"}
                                       </span>
                                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -745,7 +745,7 @@ export default function AdminTripGroupsPage() {
                                       </span>
                                     </>
                                   ) : (
-                                    <span className="text-xs text-slate-400 italic">
+                                    <span className="text-xs text-muted-foreground italic">
                                       Belum ada pembayaran
                                     </span>
                                   )}
@@ -755,7 +755,7 @@ export default function AdminTripGroupsPage() {
                                     href={booking.payment.proofUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 text-xs text-[#1CA6B7] hover:underline"
+                                    className="inline-flex items-center gap-1 text-xs text-secondary-foreground hover:underline"
                                   >
                                     <ExternalLink className="w-3 h-3" />
                                     Lihat Bukti
@@ -769,19 +769,19 @@ export default function AdminTripGroupsPage() {
                     </div>
                   )}
                   {expandedPrices === group.id && (
-                    <div className="mt-4 bg-slate-50 rounded-2xl p-4">
+                    <div className="mt-4 bg-muted rounded-2xl p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">Tier Harga</p>
+                        <p className="text-xs font-bold text-foreground uppercase tracking-wide">Tier Harga</p>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => toggleHistory(group.id)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-muted-foreground bg-card border border-border hover:bg-muted rounded-xl transition"
                           >
                             Riwayat
                           </button>
                           <button
                             onClick={() => openPriceCreate(group.id)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl transition"
                           >
                             <Plus className="w-3 h-3" />
                             Tambah Tier
@@ -790,38 +790,38 @@ export default function AdminTripGroupsPage() {
                       </div>
                       {pricesLoading ? (
                         <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-[#F49D1A]" />
-                          <span className="ml-2 text-sm text-slate-500">Memuat tier harga...</span>
+                          <Loader2 className="w-6 h-6 animate-spin text-primary-foreground" />
+                          <span className="ml-2 text-sm text-muted-foreground">Memuat tier harga...</span>
                         </div>
                       ) : prices.length === 0 ? (
                         <div className="text-center py-8">
-                          <Tag className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                          <p className="text-sm text-slate-500">Belum ada tier harga</p>
+                          <Tag className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">Belum ada tier harga</p>
                         </div>
                       ) : (
                         <div className="space-y-2.5">
                           {prices.map((tier) => (
                             <div
                               key={tier.id}
-                              className="bg-white rounded-xl border border-slate-200 p-3.5"
+                              className="bg-card rounded-xl border border-border p-3.5"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F49D1A]/10 text-[#F49D1A]">
+                                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary-foreground">
                                       {tier.name}
                                     </span>
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${tier.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${tier.isActive ? "bg-success-100 text-success-700" : "bg-muted text-muted-foreground"}`}>
                                       {tier.isActive ? "Aktif" : "Nonaktif"}
                                     </span>
                                   </div>
-                                  <p className="text-base font-bold text-slate-900">{formatTripPrice(tier.price)}</p>
-                                  <p className="text-[11px] text-slate-500 mt-1">
+                                  <p className="text-base font-bold text-foreground">{formatTripPrice(tier.price)}</p>
+                                  <p className="text-[11px] text-muted-foreground mt-1">
                                     Terisi {tier.quotaBooked ?? 0}/{tier.quota} · {tier.bookings ? `${tier.bookings} booking` : "Belum ada booking"}{tier.revenue ? ` · Rp ${Number(tier.revenue).toLocaleString("id-ID")}` : ""} · {tier.validFrom || tier.validUntil ? `${tier.validFrom?.slice(0, 10) || "…"} s/d ${tier.validUntil?.slice(0, 10) || "…"}` : "Selalu berlaku"}
                                   </p>
-                                  <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-2">
+                                  <div className="h-1.5 rounded-full bg-muted overflow-hidden mt-2">
                                     <div
-                                      className="h-full rounded-full bg-[#F49D1A] transition-all"
+                                      className="h-full rounded-full bg-primary transition-all"
                                       style={{ width: `${Math.min(((tier.quotaBooked ?? 0) / Math.max(tier.quota, 1)) * 100, 100)}%` }}
                                     />
                                   </div>
@@ -830,21 +830,21 @@ export default function AdminTripGroupsPage() {
                                   <button
                                     onClick={() => handlePriceToggleActive(group.id, tier)}
                                     title={tier.isActive ? "Nonaktifkan" : "Aktifkan"}
-                                    className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition"
+                                    className="p-2 text-muted-foreground hover:text-secondary-foreground hover:bg-secondary/10 rounded-xl transition"
                                   >
                                     <Check className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => openPriceEdit(group.id, tier)}
                                     title="Edit tier"
-                                    className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                                    className="p-2 text-muted-foreground hover:text-primary-foreground hover:bg-primary/10 rounded-xl transition"
                                   >
                                     <Edit className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => setDeletingPrice({ groupId: group.id, tier })}
                                     title="Hapus tier"
-                                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                                    className="p-2 text-muted-foreground hover:text-destructive-600 hover:bg-destructive-50 rounded-xl transition"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
@@ -855,19 +855,19 @@ export default function AdminTripGroupsPage() {
                         </div>
                       )}
                       {showHistory && expandedPrices === group.id && (
-                        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
-                          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Riwayat perubahan</p>
+                        <div className="mt-3 rounded-xl border border-border bg-card p-3">
+                          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide mb-2">Riwayat perubahan</p>
                           {historyLoading ? (
-                            <p className="text-xs text-slate-400">Memuat riwayat...</p>
+                            <p className="text-xs text-muted-foreground">Memuat riwayat...</p>
                           ) : history.length === 0 ? (
-                            <p className="text-xs text-slate-400">Belum ada perubahan tercatat.</p>
+                            <p className="text-xs text-muted-foreground">Belum ada perubahan tercatat.</p>
                           ) : (
                             <ul className="space-y-1.5 max-h-40 overflow-y-auto">
                               {history.map((h) => (
-                                <li key={h.id} className="text-xs text-slate-600">
-                                  <span className="font-semibold text-slate-800">{h.action}</span>
+                                <li key={h.id} className="text-xs text-muted-foreground">
+                                  <span className="font-semibold text-foreground">{h.action}</span>
                                   {h.description ? ` — ${h.description}` : ""}
-                                  <span className="text-slate-400">
+                                  <span className="text-muted-foreground">
                                     {h.adminName ? ` · ${h.adminName}` : ""}
                                     {h.createdAt ? ` · ${h.createdAt.slice(0, 10)}` : ""}
                                   </span>
@@ -881,10 +881,10 @@ export default function AdminTripGroupsPage() {
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-100">
+                <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-border">
                   <button
                     onClick={() => openEdit(group)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-muted-foreground bg-muted hover:bg-border rounded-xl transition"
                   >
                     <Edit className="w-3.5 h-3.5" />
                     Edit
@@ -893,7 +893,7 @@ export default function AdminTripGroupsPage() {
                   {!group.isActive && ["scheduled", "confirmed"].includes(group.status) && (
                     <button
                       onClick={() => handleActivate(group.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#1CA6B7] hover:bg-[#159ba9] rounded-xl transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-secondary hover:bg-secondary rounded-xl transition"
                     >
                       <Check className="w-3.5 h-3.5" />
                       Aktifkan
@@ -902,7 +902,7 @@ export default function AdminTripGroupsPage() {
 
                   <button
                     onClick={() => window.location.href = `/admin/trips/${tripId}/groups/${group.id}/gallery`}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-muted-foreground bg-muted hover:bg-border rounded-xl transition"
                   >
                     <Image className="w-3.5 h-3.5" />
                     Galeri
@@ -911,7 +911,7 @@ export default function AdminTripGroupsPage() {
                   {group.status !== "completed" && (
                     <button
                       onClick={() => handleComplete(group.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl transition"
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
                       Tandai Selesai
@@ -923,7 +923,7 @@ export default function AdminTripGroupsPage() {
                       setDeletingId(group.id);
                       setDeleteOpen(true);
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition ml-auto"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-destructive-600 bg-destructive-50 hover:bg-destructive-100 rounded-xl transition ml-auto"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Hapus
@@ -937,16 +937,16 @@ export default function AdminTripGroupsPage() {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setModalOpen(false)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">
+          <div className="absolute inset-0 bg-foreground/40" onClick={() => setModalOpen(false)} />
+          <div className="relative bg-card rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold text-foreground mb-4">
               {editingGroup ? "Edit Grup" : "Tambah Grup Baru"}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-foreground">
                     Tanggal Berangkat *
                   </label>
                   <input
@@ -954,16 +954,16 @@ export default function AdminTripGroupsPage() {
                     name="startDate"
                     value={form.startDate}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${
-                      formErrors.startDate ? "border-red-400" : "border-slate-300"
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${
+                      formErrors.startDate ? "border-destructive-400" : "border-border"
                     }`}
                   />
                   {formErrors.startDate && (
-                    <p className="mt-1 text-xs text-red-600">{formErrors.startDate}</p>
+                    <p className="mt-1 text-xs text-destructive-600">{formErrors.startDate}</p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-foreground">
                     Tanggal Pulang *
                   </label>
                   <input
@@ -971,19 +971,19 @@ export default function AdminTripGroupsPage() {
                     name="endDate"
                     value={form.endDate}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${
-                      formErrors.endDate ? "border-red-400" : "border-slate-300"
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${
+                      formErrors.endDate ? "border-destructive-400" : "border-border"
                     }`}
                   />
                   {formErrors.endDate && (
-                    <p className="mt-1 text-xs text-red-600">{formErrors.endDate}</p>
+                    <p className="mt-1 text-xs text-destructive-600">{formErrors.endDate}</p>
                   )}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-foreground">
                     Kuota Maksimal *
                   </label>
                   <input
@@ -992,16 +992,16 @@ export default function AdminTripGroupsPage() {
                     min={1}
                     value={form.maxParticipants}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${
-                      formErrors.maxParticipants ? "border-red-400" : "border-slate-300"
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${
+                      formErrors.maxParticipants ? "border-destructive-400" : "border-border"
                     }`}
                   />
                   {formErrors.maxParticipants && (
-                    <p className="mt-1 text-xs text-red-600">{formErrors.maxParticipants}</p>
+                    <p className="mt-1 text-xs text-destructive-600">{formErrors.maxParticipants}</p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-foreground">
                     Kuota Minimal
                   </label>
                   <input
@@ -1010,20 +1010,20 @@ export default function AdminTripGroupsPage() {
                     min={1}
                     value={form.minParticipants}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                    className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700">Catatan</label>
+                <label className="block text-sm font-medium text-foreground">Catatan</label>
                 <textarea
                   name="notes"
                   value={form.notes}
                   onChange={handleChange}
                   rows={2}
                   placeholder="Opsional: catatan untuk grup ini..."
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                  className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                 />
               </div>
 
@@ -1031,14 +1031,14 @@ export default function AdminTripGroupsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition disabled:opacity-50"
                 >
                   {saving ? "Menyimpan..." : "Simpan"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                  className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-muted transition"
                 >
                   Batal
                 </button>
@@ -1050,32 +1050,32 @@ export default function AdminTripGroupsPage() {
 
       {priceModalGroup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setPriceModalGroup(null)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">
+          <div className="absolute inset-0 bg-foreground/40" onClick={() => setPriceModalGroup(null)} />
+          <div className="relative bg-card rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold text-foreground mb-4">
               {editingPrice ? "Edit Tier Harga" : "Tambah Tier Harga"}
             </h2>
             <form onSubmit={handlePriceSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700">Nama Tier *</label>
+                <label className="block text-sm font-medium text-foreground">Nama Tier *</label>
                 <input
                   name="name"
                   value={priceForm.name}
                   onChange={handlePriceChange}
                   list="tier-suggestions"
                   placeholder="cth: Dewasa, Anak, Early Bird"
-                  className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.name ? "border-red-400" : "border-slate-300"}`}
+                  className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${priceErrors.name ? "border-destructive-400" : "border-border"}`}
                 />
                 <datalist id="tier-suggestions">
                   {PRICE_TIER_SUGGESTIONS.map((s) => (
                     <option key={s} value={s} />
                   ))}
                 </datalist>
-                {priceErrors.name && <p className="mt-1 text-xs text-red-600">{priceErrors.name}</p>}
+                {priceErrors.name && <p className="mt-1 text-xs text-destructive-600">{priceErrors.name}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Harga (Rp) *</label>
+                  <label className="block text-sm font-medium text-foreground">Harga (Rp) *</label>
                   <input
                     name="price"
                     value={formatTripPrice(priceForm.price) || priceForm.price}
@@ -1090,44 +1090,44 @@ export default function AdminTripGroupsPage() {
                     }}
                     inputMode="numeric"
                     placeholder="cth: 1500000"
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.price ? "border-red-400" : "border-slate-300"}`}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${priceErrors.price ? "border-destructive-400" : "border-border"}`}
                   />
-                  {priceErrors.price && <p className="mt-1 text-xs text-red-600">{priceErrors.price}</p>}
+                  {priceErrors.price && <p className="mt-1 text-xs text-destructive-600">{priceErrors.price}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Kuota *</label>
+                  <label className="block text-sm font-medium text-foreground">Kuota *</label>
                   <input
                     type="number"
                     name="quota"
                     min={1}
                     value={priceForm.quota}
                     onChange={handlePriceChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.quota ? "border-red-400" : "border-slate-300"}`}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${priceErrors.quota ? "border-destructive-400" : "border-border"}`}
                   />
-                  {priceErrors.quota && <p className="mt-1 text-xs text-red-600">{priceErrors.quota}</p>}
+                  {priceErrors.quota && <p className="mt-1 text-xs text-destructive-600">{priceErrors.quota}</p>}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Berlaku Dari</label>
+                  <label className="block text-sm font-medium text-foreground">Berlaku Dari</label>
                   <input
                     type="date"
                     name="validFrom"
                     value={priceForm.validFrom}
                     onChange={handlePriceChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                    className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Sampai</label>
+                  <label className="block text-sm font-medium text-foreground">Sampai</label>
                   <input
                     type="date"
                     name="validUntil"
                     value={priceForm.validUntil}
                     onChange={handlePriceChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.validUntil ? "border-red-400" : "border-slate-300"}`}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary ${priceErrors.validUntil ? "border-destructive-400" : "border-border"}`}
                   />
-                  {priceErrors.validUntil && <p className="mt-1 text-xs text-red-600">{priceErrors.validUntil}</p>}
+                  {priceErrors.validUntil && <p className="mt-1 text-xs text-destructive-600">{priceErrors.validUntil}</p>}
                 </div>
               </div>
               <label className="flex items-center gap-3 text-sm">
@@ -1136,22 +1136,22 @@ export default function AdminTripGroupsPage() {
                   type="checkbox"
                   checked={priceForm.isActive}
                   onChange={handlePriceChange}
-                  className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30"
+                  className="w-4 h-4 rounded border-border text-primary-foreground focus:ring-primary/30"
                 />
-                <span className="font-medium text-slate-700">Tier aktif</span>
+                <span className="font-medium text-foreground">Tier aktif</span>
               </label>
               <div className="flex items-center gap-3 pt-2">
                 <button
                   type="submit"
                   disabled={priceSaving}
-                  className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition disabled:opacity-50"
                 >
                   {priceSaving ? "Menyimpan..." : "Simpan"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setPriceModalGroup(null)}
-                  className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                  className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-muted transition"
                 >
                   Batal
                 </button>
@@ -1163,14 +1163,14 @@ export default function AdminTripGroupsPage() {
 
       {deleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteOpen(false)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-sm p-6">
+          <div className="absolute inset-0 bg-foreground/40" onClick={() => setDeleteOpen(false)} />
+          <div className="relative bg-card rounded-3xl shadow-xl w-full max-w-sm p-6">
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
-                <Trash2 className="w-6 h-6 text-red-600" />
+              <div className="w-12 h-12 mx-auto rounded-full bg-destructive-100 flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6 text-destructive-600" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">Hapus Grup?</h3>
-              <p className="text-sm text-slate-500 mt-2">
+              <h3 className="text-lg font-bold text-foreground">Hapus Grup?</h3>
+              <p className="text-sm text-muted-foreground mt-2">
                 Grup yang sudah memiliki booking tidak bisa dihapus.
               </p>
             </div>
@@ -1180,13 +1180,13 @@ export default function AdminTripGroupsPage() {
                   setDeleteOpen(false);
                   setDeletingId(null);
                 }}
-                className="flex-1 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-muted transition"
               >
                 Batal
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition"
+                className="flex-1 rounded-xl bg-destructive-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-destructive-700 transition"
               >
                 Hapus
               </button>
@@ -1201,7 +1201,7 @@ export default function AdminTripGroupsPage() {
         title="Tandai Grup Selesai"
         message="Tandai grup ini sebagai selesai? Semua booking akan diselesaikan dan peserta dapat memberikan ulasan."
         confirmLabel="Ya, Tandai Selesai"
-        confirmClassName="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
 
       <ConfirmAction
@@ -1211,7 +1211,7 @@ export default function AdminTripGroupsPage() {
         title={alertModal.title}
         message={alertModal.message}
         confirmLabel="OK"
-        confirmClassName="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
       <ConfirmAction
         open={deletingPrice !== null}
@@ -1220,7 +1220,7 @@ export default function AdminTripGroupsPage() {
         title="Hapus Tier?"
         message={deletingPrice ? `Hapus tier "${deletingPrice.tier.name}" (${formatTripPrice(deletingPrice.tier.price)})? Tier yang sudah memiliki booking tidak bisa dihapus.` : ""}
         confirmLabel="Ya, Hapus"
-        confirmClassName="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-destructive-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-destructive-700 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
     </div>
   );

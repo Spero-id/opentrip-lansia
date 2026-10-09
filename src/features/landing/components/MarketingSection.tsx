@@ -17,15 +17,15 @@ export default function MarketingSection() {
   };
 
   return (
-    <section className="relative bg-white py-16">
+    <section className="relative bg-card py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug mb-6 max-w-md">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground leading-snug mb-6 max-w-md">
               Kenapa Harus Pilih{" "}
-              <span className="text-[#F49D1A]">Jelajah Memoria Ini</span>?
+              <span className="text-primary-foreground">Jelajah Memoria Ini</span>?
             </h2>
-            <p className="text-gray-500 mb-8 max-w-md leading-relaxed">
+            <p className="text-muted-foreground mb-8 max-w-md leading-relaxed">
               Kami siap membantu setiap perjalanan Anda menjadi lebih mudah, aman, dan terjangkau, mulai dari proses pemesanan hingga tiba di destinasi impian.
             </p>
 
@@ -37,8 +37,8 @@ export default function MarketingSection() {
                   <div
                     key={i}
                     className={`rounded-xl border transition-colors duration-300 ${isOpen
-                      ? "border-[#F49D1A]/30 bg-[#F49D1A]/10 shadow-xs"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-primary/30 bg-primary/10 shadow-xs"
+                      : "border-border bg-card hover:border-border"
                       }`}
                   >
                     <button
@@ -46,26 +46,26 @@ export default function MarketingSection() {
                       className="w-full flex items-center gap-4 px-5 py-4 text-left"
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${isOpen ? "bg-[#F49D1A]" : "bg-gray-100"
+                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${isOpen ? "bg-primary" : "bg-muted"
                           }`}
                       >
                         <Icon
                           size={20}
-                          className={isOpen ? "text-white" : "text-gray-700"}
+                          className={isOpen ? "text-primary-foreground" : "text-foreground"}
                         />
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                        <p className="font-semibold text-foreground text-sm sm:text-base">
                           {feature.title}
                         </p>
-                        <p className="text-sm text-gray-500 mt-0.5">
+                        <p className="text-sm text-muted-foreground mt-0.5">
                           {feature.desc}
                         </p>
                       </div>
 
                       <span
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? "bg-[#F49D1A] text-white rotate-180" : "bg-gray-100 text-gray-600"
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? "bg-primary text-primary-foreground rotate-180" : "bg-muted text-muted-foreground"
                           }`}
                       >
                         <ChevronDown size={16} />
@@ -77,7 +77,7 @@ export default function MarketingSection() {
                         }`}
                     >
                       <div className="overflow-hidden">
-                        <p className="text-sm text-gray-600 leading-relaxed px-5 pb-4 pt-1 pl-[4.75rem] border-t border-gray-300">
+                        <p className="text-sm text-muted-foreground leading-relaxed px-5 pb-4 pt-1 pl-[4.75rem] border-t border-border">
                           {feature.detail}
                         </p>
                       </div>
@@ -113,12 +113,12 @@ export default function MarketingSection() {
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-foreground/40" />
               <div className="relative z-10 flex items-center justify-center gap-3 px-6">
-                <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0">
-                  <ArrowDownToLine size={18} className="text-gray-900" />
+                <div className="w-9 h-9 rounded-full bg-card flex items-center justify-center shrink-0">
+                  <ArrowDownToLine size={18} className="text-foreground" />
                 </div>
-                <span className="text-white font-bold text-xl tracking-wide">
+                <span className="text-background font-bold text-xl tracking-wide">
                   Book A Trip Now
                 </span>
               </div>

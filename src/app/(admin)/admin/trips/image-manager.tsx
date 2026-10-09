@@ -48,15 +48,15 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-slate-700">Gambar Trip</label>
+      <label className="block text-sm font-medium text-foreground">Gambar Trip</label>
 
       {images.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {images.map((url) => (
-            <div key={url} className="relative rounded-xl border border-slate-200 overflow-hidden group">
+            <div key={url} className="relative rounded-xl border border-border overflow-hidden group">
               <img src={url} alt="" className="w-full h-28 object-cover" />
               {cover === url && (
-                <span className="absolute top-2 left-2 bg-[#F49D1A] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
                   Sampul
                 </span>
               )}
@@ -71,7 +71,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
                 <button
                   type="button"
                   onClick={() => remove(url)}
-                  className="text-[10px] font-semibold text-white bg-red-500/80 hover:bg-red-600 rounded-lg px-2 py-1 transition"
+                  className="text-[10px] font-semibold text-white bg-destructive-600/80 hover:bg-destructive-600 rounded-lg px-2 py-1 transition"
                 >
                   Hapus
                 </button>
@@ -80,7 +80,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
+        <div className="rounded-xl border-2 border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           Belum ada gambar. Unggah gambar trip di bawah.
         </div>
       )}
@@ -90,7 +90,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted transition disabled:opacity-50"
         >
           {uploading ? "Mengunggah..." : "+ Unggah Gambar"}
         </button>
@@ -101,7 +101,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
           className="hidden"
           onChange={(e) => handleUpload(e.target.files?.[0])}
         />
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        {error && <p className="text-xs text-destructive-600">{error}</p>}
       </div>
     </div>
   );

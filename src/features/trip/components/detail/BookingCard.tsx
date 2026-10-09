@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { formatIDR } from "@/utils/format";
 import { Calendar } from "lucide-react";
 
-const A = "#F49D1A";
+const A = "var(--primary)";
 
 const QUOTA_MAX = 10;
 const MIN_TO_GO = 6;
@@ -21,12 +21,12 @@ import type { TripDetail } from "@/features/trip/types";
 
 function QuotaStatus({ booked }: { booked: number }) {
   if (booked >= QUOTA_MAX) {
-    return <span className="rounded-full bg-red-100 px-2.5 py-1 text-[10px] font-bold text-red-600">Kuota Penuh</span>;
+    return <span className="rounded-full bg-destructive-100 px-2.5 py-1 text-[10px] font-bold text-destructive-600">Kuota Penuh</span>;
   }
   if (booked >= MIN_TO_GO) {
-    return <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold text-emerald-600">To Go</span>;
+    return <span className="rounded-full bg-success-100 px-2.5 py-1 text-[10px] font-bold text-success-600">To Go</span>;
   }
-  return <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-600">Menunggu Kuota</span>;
+  return <span className="rounded-full bg-warning-100 px-2.5 py-1 text-[10px] font-bold text-warning-600">Menunggu Kuota</span>;
 }
 
 export default function BookingCard({ dest }: { dest: TripDetail }) {
@@ -55,42 +55,42 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
   const remaining = bookedCount === null ? null : Math.max(maxQuota - bookedCount, 0);
 
   return (
-    <div className="sticky top-28 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col gap-6">
-      <div className="pb-6 border-b border-gray-100">
-        <div className="text-sm text-gray-400 font-semibold mb-1 uppercase tracking-wider">Mulai dari</div>
-        <div className="text-3xl font-bold" style={{ color: A }}>
+    <div className="sticky top-28 bg-card p-6 rounded-3xl shadow-xl border border-border flex flex-col gap-6">
+      <div className="pb-6 border-b border-border">
+        <div className="text-sm text-muted-foreground font-semibold mb-1 uppercase tracking-wider">Mulai dari</div>
+        <div className="text-3xl font-bold" style={{ color: "var(--primary-foreground)" }}>
           {formatIDR(dest.priceMin)}
         </div>
-        <div className="text-sm text-gray-400 mt-1">per orang / pax</div>
+        <div className="text-sm text-muted-foreground mt-1">per orang / pax</div>
         {boundedTiers.length > 0 && (
-          <p className="text-[11px] font-semibold text-[#F49D1A] mt-1.5">
+          <p className="text-[11px] font-semibold text-primary-foreground mt-1.5">
             {boundedTiers.map((t) => `${t.name} s/d ${formatDate(t.validUntil)}`).join(" · ")}
           </p>
         )}
       </div>
 
       {activeGroup && (
-        <div className="bg-[#1CA6B7]/5 border border-[#1CA6B7]/20 rounded-2xl p-4">
+        <div className="bg-secondary/5 border border-secondary/20 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Calendar className="w-4 h-4 text-[#1CA6B7]" />
-            <span className="text-sm font-bold text-[#1CA6B7]">Jadwal Aktif</span>
+            <Calendar className="w-4 h-4 text-secondary-foreground" />
+            <span className="text-sm font-bold text-secondary-foreground">Jadwal Aktif</span>
           </div>
-          <div className="text-sm font-semibold text-gray-900">
+          <div className="text-sm font-semibold text-foreground">
             {formatDate(activeGroup.startDate)}
             {activeGroup.endDate && activeGroup.endDate !== activeGroup.startDate && (
-              <span className="text-gray-500"> s/d {formatDate(activeGroup.endDate)}</span>
+              <span className="text-muted-foreground"> s/d {formatDate(activeGroup.endDate)}</span>
             )}
           </div>
         </div>
       )}
 
       {bookedCount !== null && (
-        <div className="pt-4 border-t border-gray-100">
+        <div className="pt-4 border-t border-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-gray-500">Kuota Tersedia</span>
+            <span className="text-xs font-semibold text-muted-foreground">Kuota Tersedia</span>
             <QuotaStatus booked={bookedCount} />
           </div>
-          <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+          <div className="h-2 rounded-full bg-muted overflow-hidden">
             <div
               className="h-full rounded-full transition-all"
               style={{
@@ -99,11 +99,11 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
               }}
             />
           </div>
-          <div className="flex items-center justify-between mt-2 text-xs font-semibold text-gray-600">
+          <div className="flex items-center justify-between mt-2 text-xs font-semibold text-muted-foreground">
             <span>Sudah booking {bookedCount} orang</span>
             <span>Tinggal {remaining} slot</span>
           </div>
-          <p className="text-[11px] text-gray-400 mt-1.5">
+          <p className="text-[11px] text-muted-foreground mt-1.5">
             Minimal {MIN_TO_GO} peserta agar trip berangkat.
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
         {activeGroup ? (
           <Link href={`/checkout?destination=${dest.id}`} className="block w-full">
             <button
-              className="w-full py-3.5 rounded-xl text-white font-semibold text-base shadow-sm hover:shadow-lg transition-all cursor-pointer"
+              className="w-full py-3.5 rounded-xl text-primary-foreground font-semibold text-base shadow-sm hover:shadow-lg transition-all cursor-pointer"
               style={{ backgroundColor: A }}
             >
               Pesan Sekarang
@@ -122,21 +122,21 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
         ) : (
           <button
             disabled
-            className="w-full py-3.5 rounded-xl text-gray-400 bg-gray-100 font-semibold text-base cursor-not-allowed"
+            className="w-full py-3.5 rounded-xl text-muted-foreground bg-muted font-semibold text-base cursor-not-allowed"
           >
             Belum Ada Jadwal
           </button>
         )}
-        <p className="text-center text-xs text-gray-400 mt-4">Belum dipungut biaya saat ini.</p>
+        <p className="text-center text-xs text-muted-foreground mt-4">Belum dipungut biaya saat ini.</p>
       </div>
 
-      <div className="mt-2 pt-4 border-t border-gray-100 grid grid-cols-2 gap-3 text-xs font-semibold text-gray-600">
+      <div className="mt-2 pt-4 border-t border-border grid grid-cols-2 gap-3 text-xs font-semibold text-muted-foreground">
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F49D1A]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary-foreground"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Bebas Reschedule
         </div>
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F49D1A]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary-foreground"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Pemandu Lokal
         </div>
       </div>

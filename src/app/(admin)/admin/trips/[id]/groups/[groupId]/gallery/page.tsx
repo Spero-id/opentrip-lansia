@@ -202,7 +202,7 @@ export default function AdminGroupGalleryPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#F49D1A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary-foreground" />
       </div>
     );
   }
@@ -213,18 +213,18 @@ export default function AdminGroupGalleryPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition"
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-extrabold text-slate-900">Error</h1>
+          <h1 className="text-2xl font-extrabold text-foreground">Error</h1>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
-          <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-          <p className="text-red-700 font-medium">{error}</p>
+        <div className="bg-destructive-50 border border-destructive-200 rounded-2xl p-6 text-center">
+          <AlertCircle className="w-10 h-10 text-destructive-500 mx-auto mb-3" />
+          <p className="text-destructive-700 font-medium">{error}</p>
           <button
             onClick={fetchData}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition"
+            className="mt-4 px-4 py-2 bg-destructive-600 text-white rounded-xl text-sm font-semibold hover:bg-destructive-700 transition"
           >
             Coba Lagi
           </button>
@@ -235,26 +235,26 @@ export default function AdminGroupGalleryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div className="flex items-start gap-3">
           <button
             onClick={() => router.push(`/admin/trips/${tripId}/groups`)}
-            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition mt-1"
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition mt-1"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
               Galeri Foto Grup
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {trip?.title || "Trip"} — {formatDate(group?.startDate)} s/d {formatDate(group?.endDate)}
             </p>
           </div>
         </div>
         <button
           onClick={() => setUploadOpen(true)}
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition inline-flex items-center gap-2 shrink-0"
         >
           <Upload className="w-4 h-4" />
           <span>Upload Foto</span>
@@ -262,17 +262,17 @@ export default function AdminGroupGalleryPage() {
       </div>
 
       {media.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
-            <ImageIcon className="w-8 h-8 text-slate-400" />
+        <div className="bg-card rounded-3xl border border-border/80 shadow-xs p-12 text-center">
+          <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
+            <ImageIcon className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-bold text-slate-700">Belum ada foto</h3>
-          <p className="text-sm text-slate-500 mt-2 max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-foreground">Belum ada foto</h3>
+          <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
             Upload foto-foto dari trip grup ini. Foto akan tersimpan dan bisa dilihat oleh peserta.
           </p>
           <button
             onClick={() => setUploadOpen(true)}
-            className="mt-6 px-6 py-3 bg-[#F49D1A] text-white rounded-2xl text-sm font-semibold hover:bg-[#c47d12] transition inline-flex items-center gap-2"
+            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-primary/90 transition inline-flex items-center gap-2"
           >
             <Upload className="w-4 h-4" />
             Upload Foto Pertama
@@ -283,7 +283,7 @@ export default function AdminGroupGalleryPage() {
           {media.map((item) => (
             <div
               key={item.id}
-              className="group relative bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden aspect-square"
+              className="group relative bg-card rounded-2xl border border-border/80 shadow-xs overflow-hidden aspect-square"
             >
               {item.url ? (
                 <img
@@ -292,16 +292,16 @@ export default function AdminGroupGalleryPage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-slate-100 flex items-center justify-center">
-                  <ImageIcon className="w-8 h-8 text-slate-300" />
+                <div className="w-full h-full bg-muted flex items-center justify-center">
+                  <ImageIcon className="w-8 h-8 text-muted-foreground" />
                 </div>
               )}
 
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDeleteMedia(item.id)}
-                    className="p-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                    className="p-2 bg-destructive-600 text-white rounded-xl hover:bg-destructive-700 transition"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -314,10 +314,10 @@ export default function AdminGroupGalleryPage() {
 
       {uploadOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={() => !uploading && setUploadOpen(false)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+          <div className="absolute inset-0 bg-foreground/40" onClick={() => !uploading && setUploadOpen(false)} />
+          <div className="relative bg-card rounded-3xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-slate-900">Upload Foto</h2>
+              <h2 className="text-lg font-bold text-foreground">Upload Foto</h2>
               {!uploading && (
                 <button
                   onClick={() => {
@@ -325,7 +325,7 @@ export default function AdminGroupGalleryPage() {
                     setSelectedFiles([]);
                     setPreviewUrls([]);
                   }}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                  className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-muted rounded-xl transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -334,7 +334,7 @@ export default function AdminGroupGalleryPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Pilih Foto (bisa multiple)
                 </label>
                 <input
@@ -342,18 +342,18 @@ export default function AdminGroupGalleryPage() {
                   accept="image/*"
                   multiple
                   onChange={handleFileSelect}
-                  className="w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#F49D1A]/10 file:text-[#F49D1A] hover:file:bg-[#F49D1A]/20"
+                  className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                 />
               </div>
 
               {previewUrls.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium text-slate-700 mb-2">
+                  <p className="text-sm font-medium text-foreground mb-2">
                     Preview ({selectedFiles.length} foto)
                   </p>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto">
                     {previewUrls.map((url, idx) => (
-                      <div key={idx} className="aspect-square rounded-xl overflow-hidden bg-slate-100">
+                      <div key={idx} className="aspect-square rounded-xl overflow-hidden bg-muted">
                         <img src={url} alt="" className="w-full h-full object-cover" />
                       </div>
                     ))}
@@ -365,7 +365,7 @@ export default function AdminGroupGalleryPage() {
                 <button
                   onClick={handleUpload}
                   disabled={selectedFiles.length === 0 || uploading}
-                  className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition disabled:opacity-50"
                 >
                   {uploading ? (
                     <span className="inline-flex items-center gap-2">
@@ -383,7 +383,7 @@ export default function AdminGroupGalleryPage() {
                       setSelectedFiles([]);
                       setPreviewUrls([]);
                     }}
-                    className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                    className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-muted transition"
                   >
                     Batal
                   </button>
@@ -400,7 +400,7 @@ export default function AdminGroupGalleryPage() {
         title="Hapus Foto"
         message="Foto ini akan dihapus permanen dan tidak bisa dikembalikan."
         confirmLabel="Ya, Hapus"
-        confirmClassName="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-destructive-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-destructive-700 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
     </div>
   );

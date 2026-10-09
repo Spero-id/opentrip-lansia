@@ -16,12 +16,12 @@ interface PrivateRequest {
 }
 
 const statusStyles: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-700",
-  submitted: "bg-amber-100 text-amber-800",
-  reviewed: "bg-blue-100 text-blue-700",
+  draft: "bg-muted text-foreground",
+  submitted: "bg-warning-100 text-warning-800",
+  reviewed: "bg-info-100 text-info-700",
   revision: "bg-purple-100 text-purple-700",
-  approved: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
-  rejected: "bg-red-100 text-red-700",
+  approved: "bg-secondary/15 text-secondary-foreground",
+  rejected: "bg-destructive-100 text-destructive-700",
 };
 
 function toRequestCode(id: string) {
@@ -40,9 +40,9 @@ function CopyCodeButton({ code }: { code: string }) {
     <button
       onClick={handleCopy}
       title="Salin Kode"
-      className="ml-1 p-0.5 hover:text-slate-900 transition"
+      className="ml-1 p-0.5 hover:text-foreground transition"
     >
-      {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+      {copied ? <Check className="w-3.5 h-3.5 text-success-500" /> : <Copy className="w-3.5 h-3.5" />}
     </button>
   );
 }
@@ -121,21 +121,21 @@ export default function AdminPrivateTripsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Private Trip Request</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola permintaan Private Trip dari pengguna.</p>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Private Trip Request</h1>
+          <p className="text-sm text-muted-foreground mt-1">Kelola permintaan Private Trip dari pengguna.</p>
         </div>
       </div>
 
       {fetchError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-3 text-sm font-medium">
+        <div className="bg-destructive-50 border border-destructive-200 text-destructive-700 rounded-2xl px-5 py-3 text-sm font-medium">
           {fetchError}
         </div>
       )}
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+      <div className="bg-card rounded-3xl border border-border/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+        <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
           <Filter className="w-4 h-4" />
           <span>Filter:</span>
         </div>
@@ -143,7 +143,7 @@ export default function AdminPrivateTripsList() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-300 bg-white px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+            className="appearance-none rounded-xl border border-border bg-card px-4 py-2 pr-8 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
           >
             <option value="">Semua Status</option>
             <option value="submitted">Submitted</option>
@@ -151,24 +151,24 @@ export default function AdminPrivateTripsList() {
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
           </select>
-          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari judul atau kode PTR-..."
-          className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] w-full sm:w-56"
+          className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary w-full sm:w-56"
         />
-        <span className="text-xs text-slate-400 ml-auto">
+        <span className="text-xs text-muted-foreground ml-auto">
           {isCodeSearch ? `${visibleRows.length} hasil` : `${total} request`}
         </span>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-card rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Kode</th>
                 <th className="px-6 py-4">Judul Perjalanan</th>
@@ -179,30 +179,30 @@ export default function AdminPrivateTripsList() {
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-border text-foreground">
               {loading ? (
-                <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">Memuat data...</td></tr>
               ) : visibleRows.length === 0 ? (
-                <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">Belum ada request Private Trip.</td></tr>
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">Belum ada request Private Trip.</td></tr>
               ) : (
                 visibleRows.map((r) => {
                   const busy = actioningId === r.id;
                   const canAct = r.status === "submitted" || r.status === "reviewed" || r.status === "revision";
                   const code = toRequestCode(r.id);
                   return (
-                    <tr key={r.id} className="hover:bg-slate-50/60 transition">
+                    <tr key={r.id} className="hover:bg-muted/60 transition">
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-0.5 font-mono text-slate-700 bg-slate-100 rounded px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap">
+                        <span className="inline-flex items-center gap-0.5 font-mono text-foreground bg-muted rounded px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap">
                           {code}
                           <CopyCodeButton code={code} />
                         </span>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-900 max-w-xs truncate">{r.title}</td>
-                      <td className="px-6 py-4 text-slate-500">{r.participantsCount} org</td>
-                      <td className="px-6 py-4 text-slate-500">{r.durationDays} hari</td>
-                      <td className="px-6 py-4 text-slate-500">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString("id-ID") : "-"}</td>
+                      <td className="px-6 py-4 font-semibold text-foreground max-w-xs truncate">{r.title}</td>
+                      <td className="px-6 py-4 text-muted-foreground">{r.participantsCount} org</td>
+                      <td className="px-6 py-4 text-muted-foreground">{r.durationDays} hari</td>
+                      <td className="px-6 py-4 text-muted-foreground">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString("id-ID") : "-"}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[r.status] || "bg-slate-100 text-slate-600"}`}>
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[r.status] || "bg-muted text-muted-foreground"}`}>
                           {r.status}
                         </span>
                       </td>
@@ -213,7 +213,7 @@ export default function AdminPrivateTripsList() {
                               disabled={busy}
                               onClick={() => quickAction(r.id, "review")}
                               title="Tandai Sudah Ditinjau"
-                              className="inline-flex items-center gap-1 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
+                              className="inline-flex items-center gap-1 rounded-xl bg-info-50 text-info-600 hover:bg-info-600 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
                             >
                               <ClipboardCheck className="w-3.5 h-3.5" />
                               <span className="hidden lg:inline">Tinjau</span>
@@ -223,7 +223,7 @@ export default function AdminPrivateTripsList() {
                             <Link
                               href={`/admin/private-trips/${r.id}?proposal=1`}
                               title="Buat Proposal"
-                              className="inline-flex items-center gap-1 rounded-xl bg-[#F49D1A]/10 text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition"
+                              className="inline-flex items-center gap-1 rounded-xl bg-primary/10 text-primary-foreground hover:bg-primary hover:text-primary-foreground px-2.5 py-1.5 text-[11px] font-bold transition"
                             >
                               <FileSignature className="w-3.5 h-3.5" />
                               <span className="hidden lg:inline">Proposal</span>
@@ -234,7 +234,7 @@ export default function AdminPrivateTripsList() {
                               disabled={busy}
                               onClick={() => quickAction(r.id, "reject")}
                               title="Tolak Request"
-                              className="inline-flex items-center gap-1 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
+                              className="inline-flex items-center gap-1 rounded-xl bg-destructive-50 text-destructive-500 hover:bg-destructive-600 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
                             >
                               <Ban className="w-3.5 h-3.5" />
                               <span className="hidden lg:inline">Tolak</span>
@@ -243,7 +243,7 @@ export default function AdminPrivateTripsList() {
                           <Link
                             href={`/admin/private-trips/${r.id}`}
                             title="Lihat Detail"
-                            className="inline-flex items-center gap-1 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-700 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition"
+                            className="inline-flex items-center gap-1 rounded-xl bg-muted text-muted-foreground hover:bg-foreground hover:text-background px-2.5 py-1.5 text-[11px] font-bold transition"
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span className="hidden lg:inline">Detail</span>

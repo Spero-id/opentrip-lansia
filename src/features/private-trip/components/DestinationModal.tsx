@@ -7,8 +7,8 @@ import DestinationCard from "./DestinationCard";
 import type { PrivateTripDestination } from "@/features/private-trip/types";
 
 const baseInput =
-  "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
-const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
+  "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors";
+const normalBorder = "border-border focus:border-primary";
 
 export default function DestinationModal({
   isOpen,
@@ -48,23 +48,23 @@ export default function DestinationModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center px-4 py-8"
+      className="fixed inset-0 z-[9999] bg-foreground/50 flex items-center justify-center px-4 py-8"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm w-full max-w-4xl flex flex-col overflow-hidden"
+        className="bg-card rounded-xl border border-border shadow-sm w-full max-w-4xl flex flex-col overflow-hidden"
         style={{ maxHeight: "85vh" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-5 sm:px-6 pt-5 pb-4 border-b border-[#E5E7EB]">
+        <div className="px-5 sm:px-6 pt-5 pb-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
-              <Package size={16} strokeWidth={1.8} color="#6B7280" className="shrink-0" />
+            <h3 className="text-[14px] font-semibold text-foreground flex items-center gap-2">
+              <Package size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
               Pilih Paket Web
             </h3>
             <button
               onClick={onClose}
-              className="w-6 h-6 rounded-lg flex items-center justify-center text-[#6B7280] hover:text-[#374151] hover:bg-gray-100 transition-colors"
+              className="w-6 h-6 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               aria-label="Tutup"
             >
               <X size={14} />
@@ -74,7 +74,7 @@ export default function DestinationModal({
 
         <div className="px-5 sm:px-6 pt-5 pb-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280]" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
             <input
               type="text"
               placeholder="Ketik nama paket..."
@@ -87,11 +87,11 @@ export default function DestinationModal({
 
         <div
           className="flex-1 overflow-y-auto px-5 sm:px-6 pt-3 pb-5"
-          style={{ scrollbarWidth: "thin", scrollbarColor: "#e5e7eb transparent" }}
+          style={{ scrollbarWidth: "thin", scrollbarColor: "var(--border) transparent" }}
         >
           {destinations.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-[13px] text-[#6B7280]">
+              <p className="text-[13px] text-muted-foreground">
                 Tidak ada paket tersedia
               </p>
             </div>

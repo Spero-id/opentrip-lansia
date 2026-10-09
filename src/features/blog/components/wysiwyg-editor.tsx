@@ -7,7 +7,7 @@ const Editor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-64 border border-slate-300 rounded-lg p-4 bg-slate-50 text-slate-400 animate-pulse text-sm flex items-center justify-center">
+      <div className="h-64 border border-border rounded-lg p-4 bg-muted text-muted-foreground animate-pulse text-sm flex items-center justify-center">
         Memuat Text Editor...
       </div>
     ),

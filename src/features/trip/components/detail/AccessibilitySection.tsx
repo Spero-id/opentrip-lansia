@@ -9,7 +9,7 @@ export default function AccessibilitySection({ dest }: { dest: TripDetail }) {
         <SectionHeading className="mb-3 sm:mb-4">
           Aksesibilitas
         </SectionHeading>
-        <p className="text-base leading-relaxed text-gray-600 sm:text-md sm:leading-loose">
+        <p className="text-base leading-relaxed text-muted-foreground sm:text-md sm:leading-loose">
           {dest.accessibilityInfo || "Belum ada informasi aksesibilitas."}
         </p>
       </section>

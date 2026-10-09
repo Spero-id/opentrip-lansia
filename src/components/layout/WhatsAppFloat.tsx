@@ -14,7 +14,7 @@ export default function WhatsAppFloat() {
     <div className="fixed bottom-5 right-5 z-50">
       <Link
         href={whatsappUrl}
-        className="group inline-flex items-center justify-center gap-0 md:gap-2 w-14 h-14 aspect-square md:w-auto md:h-auto md:aspect-auto px-0 md:px-4 py-0 md:py-3 overflow-hidden rounded-full bg-[#25D366] shadow-xl transition duration-200 hover:bg-[#1ebe57] hover:shadow-2xl"
+        className="group inline-flex items-center justify-center gap-0 md:gap-2 w-14 h-14 aspect-square md:w-auto md:h-auto md:aspect-auto px-0 md:px-4 py-0 md:py-3 overflow-hidden rounded-full bg-success-500 shadow-xl transition duration-200 hover:bg-success-600 hover:shadow-2xl"
         aria-label="WhatsApp"
         target="_blank"
         rel="noopener noreferrer"

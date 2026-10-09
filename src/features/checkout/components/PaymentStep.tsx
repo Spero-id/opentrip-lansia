@@ -39,7 +39,7 @@ export default function PaymentStep({
         <ProofUploader checkout={checkout} />
 
         {checkout.error && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+          <div className="p-4 rounded-xl bg-destructive-50 border border-destructive-200 text-sm text-destructive-700">
             {checkout.error}
           </div>
         )}
@@ -47,7 +47,7 @@ export default function PaymentStep({
         <div className="flex gap-3">
           <button
             onClick={onBack}
-            className="px-6 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-6 py-3 border border-border rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors"
           >
             Kembali
           </button>
@@ -59,7 +59,7 @@ export default function PaymentStep({
               checkout.isLoading ||
               accountsStatus === "loading"
             }
-            className="flex-1 bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {checkout.isLoading ? (
               <>
@@ -117,10 +117,10 @@ function PaymentSelector({
   const isQRIS = selected === "QRIS";
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
+    <div className="bg-card border border-border rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
-        <h2 className="text-base font-bold text-gray-900">Metode Pembayaran</h2>
-        <p className="text-xs text-gray-400 mt-0.5">
+        <h2 className="text-base font-bold text-foreground">Metode Pembayaran</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
           Pilih salah satu metode pembayaran di bawah ini.
         </p>
       </div>
@@ -129,22 +129,22 @@ function PaymentSelector({
         {status === "loading" && (
           <div
             aria-hidden="true"
-            className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 p-4 animate-pulse"
+            className="flex items-center justify-between rounded-xl border border-border bg-muted p-4 animate-pulse"
           >
             <div className="flex items-center gap-3">
-              <div className="w-14 h-9 rounded bg-gray-200" />
+              <div className="w-14 h-9 rounded bg-border" />
               <div className="space-y-1.5">
-                <div className="h-3 w-12 rounded bg-gray-200" />
-                <div className="h-2.5 w-24 rounded bg-gray-200" />
+                <div className="h-3 w-12 rounded bg-border" />
+                <div className="h-2.5 w-24 rounded bg-border" />
               </div>
             </div>
-            <div className="h-5 w-5 rounded-full border-2 border-gray-200" />
+            <div className="h-5 w-5 rounded-full border-2 border-border" />
           </div>
         )}
 
         {showBCA && (
           <label
-            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
+            className="flex items-center justify-between rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition"
             onClick={() => setPaymentMethod?.("BCA")}
           >
             <div className="flex items-center gap-3">
@@ -152,15 +152,15 @@ function PaymentSelector({
                 <Image src="https://vectorseek.com/wp-content/uploads/2022/07/vectorseek.com-BCA-Bank-Logo-Vector.png" alt="BCA" width={62} height={62} className="object-contain max-h-9" />
               </div>
               <div>
-                <p className="text-sm font-bold text-gray-900">BCA</p>
-                <p className="text-[11px] text-gray-500">Transfer Bank BCA</p>
+                <p className="text-sm font-bold text-foreground">BCA</p>
+                <p className="text-[11px] text-muted-foreground">Transfer Bank BCA</p>
               </div>
             </div>
             <span className="w-5 h-5 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: isBCA ? "#F49D1A" : "transparent", border: isBCA ? "none" : "2px solid #D1D5DB" }}
+              style={{ backgroundColor: isBCA ? "var(--primary)" : "transparent", border: isBCA ? "none" : "2px solid var(--border)" }}
             >
               {isBCA && (
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               )}
@@ -173,7 +173,7 @@ function PaymentSelector({
         )}
 
         <label
-          className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
+          className="flex items-center justify-between rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition"
           onClick={() => setPaymentMethod?.("QRIS")}
         >
           <div className="flex items-center gap-3">
@@ -187,15 +187,15 @@ function PaymentSelector({
               />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">QRIS</p>
-              <p className="text-[11px] text-gray-500">Scan QRIS untuk pembayaran</p>
+              <p className="text-sm font-bold text-foreground">QRIS</p>
+              <p className="text-[11px] text-muted-foreground">Scan QRIS untuk pembayaran</p>
             </div>
           </div>
           <span className="w-5 h-5 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: isQRIS ? "#F49D1A" : "transparent", border: isQRIS ? "none" : "2px solid #D1D5DB" }}
+            style={{ backgroundColor: isQRIS ? "var(--primary)" : "transparent", border: isQRIS ? "none" : "2px solid var(--border)" }}
           >
             {isQRIS && (
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             )}
@@ -203,16 +203,16 @@ function PaymentSelector({
         </label>
 
         {isQRIS && (
-          <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center">
-            <p className="text-xs font-semibold text-gray-600 mb-2">QR Code QRIS</p>
+          <div className="rounded-xl border border-border bg-muted p-4 text-center">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">QR Code QRIS</p>
             <Image
               src="/qris_sivarya.jpeg"
               alt="QRIS QR Code"
               width={200}
               height={200}
-              className="mx-auto object-contain rounded-lg bg-white p-2"
+              className="mx-auto object-contain rounded-lg bg-card p-2"
             />
-            <p className="text-[11px] text-gray-400 mt-2">Scan kode QR di atas menggunakan aplikasi e-wallet/banking</p>
+            <p className="text-[11px] text-muted-foreground mt-2">Scan kode QR di atas menggunakan aplikasi e-wallet/banking</p>
           </div>
         )}
       </div>
@@ -240,28 +240,28 @@ function AccountCard({ account }: { account: PaymentAccountLike }) {
   if (!bankName && !accountHolder && !accountNumber) return null;
 
   return (
-    <div className="rounded-xl border border-[#1CA6B7]/20 bg-[#1CA6B7]/5 p-4 space-y-2">
-      <p className="text-xs font-bold text-gray-900">Transfer ke:</p>
+    <div className="rounded-xl border border-secondary/20 bg-secondary/5 p-4 space-y-2">
+      <p className="text-xs font-bold text-foreground">Transfer ke:</p>
       {bankName && (
         <div className="flex justify-between text-xs">
-          <span className="text-gray-500">Bank</span>
-          <span className="font-semibold text-gray-800">{bankName}</span>
+          <span className="text-muted-foreground">Bank</span>
+          <span className="font-semibold text-foreground">{bankName}</span>
         </div>
       )}
       {accountHolder && (
         <div className="flex justify-between text-xs">
-          <span className="text-gray-500">Atas Nama</span>
-          <span className="font-semibold text-gray-800">{accountHolder}</span>
+          <span className="text-muted-foreground">Atas Nama</span>
+          <span className="font-semibold text-foreground">{accountHolder}</span>
         </div>
       )}
       {accountNumber && (
-        <div className="flex justify-between gap-2 text-xs bg-white rounded-lg px-3 py-2">
-          <span className="text-gray-500">Nomor</span>
+        <div className="flex justify-between gap-2 text-xs bg-card rounded-lg px-3 py-2">
+          <span className="text-muted-foreground">Nomor</span>
           <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-[#F49D1A] tracking-wide">{accountNumber}</span>
+            <span className="font-mono font-bold text-primary-foreground tracking-wide">{accountNumber}</span>
             <button
               onClick={copy}
-              className="text-[11px] font-semibold text-[#1CA6B7] hover:underline"
+              className="text-[11px] font-semibold text-secondary-foreground hover:underline"
             >
               {copied ? "Tersalin" : "Salin"}
             </button>
@@ -308,10 +308,10 @@ function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> 
   }
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
+    <div className="bg-card border border-border rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
-        <h2 className="text-base font-bold text-gray-900">Bukti Transfer</h2>
-        <p className="text-xs text-gray-400 mt-0.5">
+        <h2 className="text-base font-bold text-foreground">Bukti Transfer</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
           Upload bukti transfer senilai total pembayaran di atas.
         </p>
       </div>
@@ -321,31 +321,31 @@ function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> 
           <img
             src={checkout.proofUrl}
             alt="Bukti transfer"
-            className="w-full max-h-64 object-contain rounded-xl border border-gray-200 bg-gray-50"
+            className="w-full max-h-64 object-contain rounded-xl border border-border bg-muted"
           />
           <button
             onClick={removeProof}
-            className="text-xs font-semibold text-red-600 hover:underline"
+            className="text-xs font-semibold text-destructive-600 hover:underline"
           >
             Hapus Bukti
           </button>
         </div>
       ) : (
-        <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition">
+        <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border rounded-xl p-6 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition">
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
           {uploading ? (
-            <div className="w-6 h-6 rounded-full border-2 border-[#F49D1A]/30 border-t-[#F49D1A] animate-spin" />
+            <div className="w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
           ) : (
-            <Upload className="w-6 h-6 text-gray-400" />
+            <Upload className="w-6 h-6 text-muted-foreground" />
           )}
-          <span className="text-xs font-semibold text-gray-600">
+          <span className="text-xs font-semibold text-muted-foreground">
             {uploading ? "Mengupload..." : "Klik untuk upload bukti transfer"}
           </span>
-          <span className="text-[11px] text-gray-400">JPG, PNG, WEBP — maksimal 5MB</span>
+          <span className="text-[11px] text-muted-foreground">JPG, PNG, WEBP — maksimal 5MB</span>
         </label>
       )}
 
-      {uploadError && <p className="text-xs text-red-600 font-medium">{uploadError}</p>}
+      {uploadError && <p className="text-xs text-destructive-600 font-medium">{uploadError}</p>}
     </div>
   );
 }

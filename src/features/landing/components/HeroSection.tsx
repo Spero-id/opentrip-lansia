@@ -38,8 +38,8 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
 
-      <div className="absolute top-20 left-10 w-72 h-72 bg-[#F49D1A]/20 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#1CA6B7]/10 rounded-full blur-[120px] animate-pulse delay-1000" />
+      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] animate-pulse delay-1000" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
         <div className="grid lg:grid-cols-[1fr_0.85fr] gap-12 items-center">
@@ -47,12 +47,12 @@ export default function HeroSection() {
 
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
               Jelajahi{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F49D1A] to-[#F7931A]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary">
                 Nusantara
               </span>
               <br />
               Ciptakan{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1CA6B7] to-[#20B2AA]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-secondary">
                 Memori
               </span>
             </h1>
@@ -62,19 +62,19 @@ export default function HeroSection() {
             </p>
 
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 max-w-xl">
-              <div className="flex-1 flex items-center gap-3 bg-white backdrop-blur-md rounded-2xl px-5 py-3.5 border border-white/20">
-                <Search size={18} className="text-[#F49D1A] shrink-0" />
+              <div className="flex-1 flex items-center gap-3 bg-card backdrop-blur-md rounded-2xl px-5 py-3.5 border border-white/20">
+                <Search size={18} className="text-primary-foreground shrink-0" />
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Cari destinasi impianmu..."
-                  className="bg-transparent text-sm text-black placeholder:text-gray-400 w-full focus:outline-none"
+                  className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground w-full focus:outline-none"
                 />
               </div>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 bg-[#F49D1A] hover:bg-[#c47d12] text-white px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-[#F49D1A]/25 whitespace-nowrap cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-primary/25 whitespace-nowrap cursor-pointer"
               >
                 Jelajahi
                 <ArrowRight size={16} />
@@ -82,17 +82,17 @@ export default function HeroSection() {
             </form>
 
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
-                <MapPin size={14} className="text-[#F49D1A]" />
-                <span className="text-xs text-black">Semua Destinasi</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-white/10 backdrop-blur-sm">
+                <MapPin size={14} className="text-primary-foreground" />
+                <span className="text-xs text-foreground">Semua Destinasi</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
-                <Calendar size={14} className="text-[#F49D1A]" />
-                <span className="text-xs text-black">Fleksibel Jadwal</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-white/10 backdrop-blur-sm">
+                <Calendar size={14} className="text-primary-foreground" />
+                <span className="text-xs text-foreground">Fleksibel Jadwal</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-white/10 backdrop-blur-sm">
-                <Users size={14} className="text-[#F49D1A]" />
-                <span className="text-xs text-black">Ramah Lansia</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-white/10 backdrop-blur-sm">
+                <Users size={14} className="text-primary-foreground" />
+                <span className="text-xs text-foreground">Ramah Lansia</span>
               </div>
             </div>
 
@@ -143,14 +143,14 @@ export default function HeroSection() {
               </div>
             </div>
 
-            <div className="relative mt-4 w-full bg-white backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
+            <div className="relative mt-4 w-full bg-card backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#F49D1A]/20 flex items-center justify-center">
-                  <Users size={18} className="text-[#F49D1A]" />
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Users size={18} className="text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-black text-sm font-semibold">10rb+ Traveler</p>
-                  <p className="text-black/70 text-xs">Sudah percaya kami</p>
+                  <p className="text-foreground text-sm font-semibold">10rb+ Traveler</p>
+                  <p className="text-foreground/70 text-xs">Sudah percaya kami</p>
                 </div>
               </div>
             </div>

@@ -37,16 +37,16 @@ export default function ProfileStats({ user }: { user?: ProfileUser | null }) {
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
+          className="rounded-2xl border border-border bg-card p-4 sm:p-5"
         >
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FEF6E7] text-[#c47d12]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary-foreground/90">
               <stat.icon size={17} />
             </div>
-            <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+            <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
           </div>
 
-          <p className="mt-3 truncate text-lg font-bold text-slate-900">
+          <p className="mt-3 truncate text-lg font-bold text-foreground">
             {stat.value}
           </p>
         </div>

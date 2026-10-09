@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable}`}>
-      <body className="min-h-dvh bg-white text-slate-900 antialiased">
+      <body className="min-h-dvh bg-background text-foreground antialiased">
         {children}
       </body>
     </html>

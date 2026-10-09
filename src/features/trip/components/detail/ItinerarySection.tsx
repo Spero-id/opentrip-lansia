@@ -10,28 +10,28 @@ export default function ItinerarySection({ dest, shortLocation }: { dest: TripDe
 
       <div className="relative">
         <div
-          className="absolute bottom-3 left-4 top-3 w-px bg-slate-200"
+          className="absolute bottom-3 left-4 top-3 w-px bg-border"
           aria-hidden
         />
         <ol className="space-y-5">
           {dest.itinerary?.map((item, index) => (
             <li key={index} className="relative pl-12">
-              <div className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF6E7] text-xs font-bold text-[#c47d12] ring-4 ring-white">
+              <div className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary-foreground/90 ring-4 ring-white">
                 {item.day}
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-[#F49D1A]/40 hover:shadow-md sm:p-5">
+              <div className="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:p-5">
                 <div className="mb-1.5 flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wide text-[#F49D1A]">
+                  <span className="text-[11px] font-bold uppercase tracking-wide text-primary-foreground">
                     Hari {item.day}
                   </span>
-                  <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-500">
+                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
                     {shortLocation}
                   </span>
                 </div>
-                <h4 className="text-base font-bold text-gray-900 sm:text-lg">
+                <h4 className="text-base font-bold text-foreground sm:text-lg">
                   {item.title}
                 </h4>
-                <p className="mt-1.5 text-sm leading-relaxed text-gray-500">
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                   {item.description}
                 </p>
               </div>

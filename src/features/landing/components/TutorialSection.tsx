@@ -46,18 +46,18 @@ const steps = [
 
 export default function TutorialSection() {
   return (
-    <section id="tutorial" className="relative bg-white py-10 sm:py-20">
+    <section id="tutorial" className="relative bg-card py-10 sm:py-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-[0.85fr_1.15fr] md:gap-10 lg:gap-16">
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">
+            <p className="text-primary-foreground font-semibold text-sm tracking-wide mb-3">
               CARA BOOKING
             </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground leading-snug mb-4">
               Booking Trip Impian mu Cuma{" "}
-              <span className="text-[#F49D1A]">5 Langkah</span>
+              <span className="text-primary-foreground">5 Langkah</span>
             </h2>
-            <p className="text-gray-500 mb-8 max-w-sm leading-relaxed">
+            <p className="text-muted-foreground mb-8 max-w-sm leading-relaxed">
               Gak perlu ribet, dari cari destinasi sampe siap berangkat, semua
               bisa kamu lakuin langsung dari HP.
             </p>
@@ -73,14 +73,14 @@ export default function TutorialSection() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#F49D1A] flex items-center justify-center flex-shrink-0">
-                  <Send size={16} className="text-white" />
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                  <Send size={16} className="text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-foreground">
                     E-voucher terkirim
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Langsung ke email & WhatsApp
                   </p>
                 </div>
@@ -90,26 +90,26 @@ export default function TutorialSection() {
 
           <div>
             <div className="relative space-y-10">
-              <div className="absolute left-6 top-2 bottom-2 w-px bg-gray-300" />
+              <div className="absolute left-6 top-2 bottom-2 w-px bg-border" />
 
               {steps.map((step) => {
                 const Icon = step.icon;
                 return (
                   <div key={step.number} className="relative flex gap-6">
-                    <div className="relative z-10 w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                      <Icon size={18} className="text-gray-900" />
+                    <div className="relative z-10 w-12 h-12 rounded-full bg-border flex items-center justify-center shrink-0">
+                      <Icon size={18} className="text-foreground" />
                     </div>
 
                     <div className="flex-1 pt-1">
                       <div className="flex items-baseline gap-3 mb-1.5">
-                        <span className="text-xs font-bold text-[#F49D1A] tracking-widest">
+                        <span className="text-xs font-bold text-primary-foreground tracking-widest">
                           LANGKAH {step.number}
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      <h3 className="text-lg font-bold text-foreground mb-2">
                         {step.title}
                       </h3>
-                      <p className="text-[15px] text-gray-500 leading-relaxed max-w-lg">
+                      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-lg">
                         {step.description}
                       </p>
                     </div>
@@ -118,7 +118,7 @@ export default function TutorialSection() {
               })}
             </div>
 
-            <div className="mt-12 sm:ml-[72px] inline-flex items-center gap-2 bg-[#FEF6E7] text-[#F49D1A] px-5 py-3 rounded-full text-sm font-semibold">
+            <div className="mt-12 sm:ml-[72px] inline-flex items-center gap-2 bg-primary/10 text-primary-foreground px-5 py-3 rounded-full text-sm font-semibold">
               <ClipboardCheck size={16} />
               Sudah siap booking? Pilih paket trip favoritmu sekarang!
             </div>

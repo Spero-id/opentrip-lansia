@@ -21,25 +21,25 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section id="review" className="relative bg-gray-100 py-20">
+    <section id="review" className="relative bg-muted py-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 gap-4">
           <div>
-            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">TESTIMONI</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">
-              Apa Kata Mereka Setelah <span className="text-[#F49D1A]">Traveling</span>
+            <p className="text-primary-foreground font-semibold text-sm tracking-wide mb-3">TESTIMONI</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground leading-snug">
+              Apa Kata Mereka Setelah <span className="text-primary-foreground">Traveling</span>
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} className="text-[#F49D1A] fill-[#F49D1A]" />
+                <Star key={i} size={18} className="text-primary-foreground fill-primary" />
               ))}
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">4.9 / 5.0</p>
-              <p className="text-xs text-gray-500">dari 1.200+ traveler</p>
+              <p className="text-sm font-bold text-foreground">4.9 / 5.0</p>
+              <p className="text-xs text-muted-foreground">dari 1.200+ traveler</p>
             </div>
           </div>
         </div>
@@ -48,11 +48,11 @@ export default function TestimonialsSection() {
           {visibleReviews.map((r, i) => (
             <div
               key={`${page}-${i}`}
-              className="bg-white rounded-xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+              className="bg-card rounded-xl p-6 border border-border hover:border-border hover:shadow-lg transition-all duration-300"
             >
               <div className="flex items-start justify-between gap-3 mb-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-11 h-11 rounded-full bg-gray-900 text-white flex items-center justify-center font-semibold text-sm shrink-0 overflow-hidden">
+                  <div className="w-11 h-11 rounded-full bg-foreground text-background flex items-center justify-center font-semibold text-sm shrink-0 overflow-hidden">
                     {r.avatar ? (
                       <img src={r.avatar} alt={r.name} className="w-full h-full object-cover" />
                     ) : (
@@ -60,19 +60,19 @@ export default function TestimonialsSection() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-gray-900 truncate inline-block">
+                    <p className="text-sm font-bold text-foreground truncate inline-block">
                       {r.name}
                     </p>
-                    <p className="text-xs text-gray-400 truncate">{r.trip}</p>
+                    <p className="text-xs text-muted-foreground truncate">{r.trip}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0">
-                  <Star size={14} className="text-[#F49D1A] fill-[#F49D1A]" />
-                  <span className="text-sm font-bold text-gray-900">{r.rating.toFixed(1)}</span>
+                  <Star size={14} className="text-primary-foreground fill-primary" />
+                  <span className="text-sm font-bold text-foreground">{r.rating.toFixed(1)}</span>
                 </div>
               </div>
-                  <p className="text-gray-600 text-sm leading-relaxed border-t-2 pb-2 border-gray-300">{r.review}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed border-t-2 pb-2 border-border">{r.review}</p>
             </div>
           ))}
         </div>
@@ -82,7 +82,7 @@ export default function TestimonialsSection() {
             <button
               onClick={() => goTo(page - 1)}
               disabled={page === 0}
-              className="w-10 h-10 rounded-full cursor-pointer border border-gray-200 flex items-center justify-center text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              className="w-10 h-10 rounded-full cursor-pointer border border-border flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Halaman sebelumnya"
             >
               <ChevronLeft size={18} />
@@ -94,7 +94,7 @@ export default function TestimonialsSection() {
                   key={i}
                   onClick={() => goTo(i)}
                   aria-label={`Ke halaman ${i + 1}`}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${i === page ? "w-7 bg-[#F49D1A]" : "w-2.5 bg-gray-200 hover:bg-gray-300"
+                  className={`h-2.5 rounded-full transition-all duration-300 ${i === page ? "w-7 bg-primary" : "w-2.5 bg-border hover:bg-border"
                     }`}
                 />
               ))}
@@ -103,7 +103,7 @@ export default function TestimonialsSection() {
             <button
               onClick={() => goTo(page + 1)}
               disabled={page === totalPages - 1}
-              className="w-10 h-10 rounded-full border border-gray-200 cursor-pointer flex items-center justify-center text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              className="w-10 h-10 rounded-full border border-border cursor-pointer flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Halaman berikutnya"
             >
               <ChevronRight size={18} />

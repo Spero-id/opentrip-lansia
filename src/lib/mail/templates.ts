@@ -1,4 +1,4 @@
-const BRAND_COLOR = "#F49D1A";
+const BRAND_COLOR = "#FDC700"; // ≈ --primary light oklch(0.852 0.199 91.936); email perlu hex literal
 const BODY_COLOR = "#555";
 
 export interface ContactEmailData {

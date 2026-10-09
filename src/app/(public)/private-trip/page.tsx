@@ -150,7 +150,7 @@ export default function PrivateTripPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
 
       {showTerms && (
         <TermsModal
@@ -159,25 +159,25 @@ export default function PrivateTripPage() {
         />
       )}
 
-      <main className="min-h-screen bg-[#F9FAFB]">
+      <main className="min-h-screen bg-background">
 
-        <div className="bg-[#F9FAFB]">
+        <div className="bg-muted">
           <PageHeader />
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
             <a
               href="/my-trips"
-              className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-[#FDE6C8] bg-[#FFFBEB] hover:bg-[#FFF6DA] transition-colors group shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-primary/15 bg-primary/10 hover:bg-primary/10 transition-colors group shadow-[0_1px_2px_color-mix(in_srgb,var(--foreground)_4%,transparent)]"
             >
               <div className="flex items-center gap-3.5">
-                <span className="w-8 h-8 rounded-full bg-[#FFF1CC] border border-[#FDE6C8] flex items-center justify-center shrink-0">
-                  <Clock size={16} color="#EAA300" strokeWidth={1.8} />
+                <span className="w-8 h-8 rounded-full bg-primary/15 border border-primary/15 flex items-center justify-center shrink-0">
+                  <Clock size={16} strokeWidth={1.8} className="text-primary-foreground" />
                 </span>
                 <div>
-                  <p className="text-[13px] font-semibold text-[#1F2937] leading-tight">Sudah pernah mengajukan request?</p>
-                  <p className="text-xs text-[#6B7280] leading-none mt-1">Pantau status dan lihat proposal dari admin</p>
+                  <p className="text-[13px] font-semibold text-foreground leading-tight">Sudah pernah mengajukan request?</p>
+                  <p className="text-xs text-muted-foreground leading-none mt-1">Pantau status dan lihat proposal dari admin</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#EAA300] group-hover:translate-x-0.5 transition-transform shrink-0" />
+              <ChevronRight className="w-5 h-5 text-primary-foreground group-hover:translate-x-0.5 transition-transform shrink-0" />
             </a>
           </div>
         </div>
@@ -200,8 +200,8 @@ export default function PrivateTripPage() {
               <FacilitiesSection form={form} set={set} errors={errors} />
 
               {Object.keys(errors).length > 0 && (
-                <div className="flex items-start gap-3 px-4 py-3.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-[13px]">
-                  <AlertCircle className="shrink-0 mt-0.5 text-amber-500" size={16} />
+                <div className="flex items-start gap-3 px-4 py-3.5 rounded-xl border border-warning-200 bg-warning-50 text-warning-800 text-[13px]">
+                  <AlertCircle className="shrink-0 mt-0.5 text-warning-500" size={16} />
                   <span>
                     Ada <strong>{Object.keys(errors).length} isian</strong> yang belum lengkap. Periksa kembali bagian yang ditandai merah di atas.
                   </span>
@@ -209,7 +209,7 @@ export default function PrivateTripPage() {
               )}
 
               {submitError && (
-                <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
+                <div className="flex items-start gap-3 px-4 py-3 rounded-xl border border-destructive-200 bg-destructive-50 text-destructive-700 text-sm">
                   <AlertCircle className="shrink-0 mt-0.5" size={16} />
                   <span>{submitError}</span>
                 </div>

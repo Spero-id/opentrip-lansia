@@ -131,11 +131,11 @@ function PayContent() {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen bg-white">
+      <div className="flex flex-col min-h-screen bg-background">
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-3">
-            <div className="w-8 h-8 border-2 border-[#F49D1A]/30 border-t-[#F49D1A] rounded-full animate-spin mx-auto" />
-            <p className="text-sm text-gray-400">Memuat detail booking...</p>
+            <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+            <p className="text-sm text-muted-foreground">Memuat detail booking...</p>
           </div>
         </main>
       </div>
@@ -144,11 +144,11 @@ function PayContent() {
 
   if (error) {
     return (
-      <div className="flex flex-col min-h-screen bg-white">
+      <div className="flex flex-col min-h-screen bg-background">
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <p className="text-sm text-red-500 font-semibold">{error}</p>
-            <Link href="/my-trips" className="text-sm text-[#F49D1A] font-semibold hover:underline">
+            <p className="text-sm text-destructive-500 font-semibold">{error}</p>
+            <Link href="/my-trips" className="text-sm text-primary-foreground font-semibold hover:underline">
               Kembali ke Perjalanan Saya
             </Link>
           </div>
@@ -216,11 +216,11 @@ function PayContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-sans text-gray-900">
+    <div className="flex flex-col min-h-screen bg-background font-sans text-foreground">
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-20">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Pembayaran</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Pembayaran</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Pilih metode pembayaran dan unggah bukti transfer
           </p>
         </div>
@@ -239,8 +239,8 @@ export default function PayPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex flex-col min-h-screen bg-white items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#F49D1A]/30 border-t-[#F49D1A] rounded-full animate-spin" />
+        <div className="flex flex-col min-h-screen bg-background items-center justify-center">
+          <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
         </div>
       }
     >

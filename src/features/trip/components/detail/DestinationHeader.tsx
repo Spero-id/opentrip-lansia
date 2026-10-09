@@ -7,26 +7,26 @@ export default function DestinationHeader({ dest }: { dest: TripDetail }) {
   return (
     <div className="mb-4 sm:mb-6 mt-4">
       <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
-        <span className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-white bg-[#F49D1A]">
+        <span className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-primary-foreground bg-primary">
           {dest.category}
         </span>
         {dest.rating != null ? (
-          <span className="flex items-center gap-1 text-[#F49D1A] font-bold bg-[#FEF6E7] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
+          <span className="flex items-center gap-1 text-primary-foreground font-bold bg-primary/10 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
             <Star className="w-3.5 h-3.5 fill-current" /> {Number(dest.rating).toFixed(1)}{" "}
-            <span className="text-gray-500 font-normal">
+            <span className="text-muted-foreground font-normal">
               ({formatNumber(dest.reviewCount ?? 0)} ulasan)
             </span>
           </span>
         ) : (
-          <span className="flex items-center gap-1 text-gray-500 font-normal bg-gray-100 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
+          <span className="flex items-center gap-1 text-muted-foreground font-normal bg-muted px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
             Belum ada ulasan
           </span>
         )}
       </div>
-      <h1 className="text-3xl sm:text-5xl font-bold mb-2 tracking-tight text-gray-900">
+      <h1 className="text-3xl sm:text-5xl font-bold mb-2 tracking-tight text-foreground">
         {dest.title}
       </h1>
-      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-500 text-sm sm:text-lg font-medium">
+      <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-sm sm:text-lg font-medium">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="sm:w-5 sm:h-5">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
           <circle cx="12" cy="10" r="3" />

@@ -358,34 +358,34 @@ if (categories.length === 0) await fetchCategories();
 
   const fieldClass = (key: string) =>
     errors[key]
-      ? "mt-1 w-full rounded-lg border border-red-400 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300/30 focus:border-red-400"
-      : "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]";
+      ? "mt-1 w-full rounded-lg border border-destructive-400 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-destructive-300/30 focus:border-destructive-400"
+      : "mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
 
   const fieldError = (key: string) =>
-    errors[key] ? <p className="mt-1 text-xs font-medium text-red-600">{errors[key]}</p> : null;
+    errors[key] ? <p className="mt-1 text-xs font-medium text-destructive-600">{errors[key]}</p> : null;
 
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Paket Trip</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola paket open trip.</p>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Manajemen Paket Trip</h1>
+          <p className="text-sm text-muted-foreground mt-1">Kelola paket open trip.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Trip</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-card rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Tipe</th>
@@ -395,40 +395,40 @@ if (categories.length === 0) await fetchCategories();
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-border text-foreground">
               {loading ? (
-                <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">Memuat data...</td></tr>
               ) : tripRows.length === 0 ? (
-                <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">Belum ada data trip.</td></tr>
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">Belum ada data trip.</td></tr>
               ) : (
                 tripRows.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/60 transition">
-                    <td className="px-6 py-4 font-bold text-slate-900">{t.title}</td>
+                  <tr key={t.id} className="hover:bg-muted/60 transition">
+                    <td className="px-6 py-4 font-bold text-foreground">{t.title}</td>
                     <td className="px-6 py-4">
-                      <span className="rounded-full px-2.5 py-1 text-[10px] font-bold bg-slate-100 text-slate-600">
+                      <span className="rounded-full px-2.5 py-1 text-[10px] font-bold bg-muted text-muted-foreground">
                         Open Trip
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">
+                    <td className="px-6 py-4 text-muted-foreground">
                       {[t.location, t.province].filter(Boolean).join(", ") || "-"}
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-900">
+                    <td className="px-6 py-4 font-semibold text-foreground">
                       {t.priceMin ? formatTripPrice(t.priceMin) : "-"}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${t.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : t.status === "draft" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700"}`}>
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${t.status === "published" ? "bg-secondary/15 text-secondary-foreground" : t.status === "draft" ? "bg-muted text-muted-foreground" : "bg-warning-100 text-warning-700"}`}>
                         {t.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(t)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
+                        <button onClick={() => openEdit(t)} className="p-2 text-muted-foreground hover:text-primary-foreground hover:bg-primary/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition" title="Kelola Grup">
+                        <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-muted-foreground hover:text-secondary-foreground hover:bg-secondary/10 rounded-xl transition" title="Kelola Grup">
                           <Users className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-muted-foreground hover:text-destructive-600 hover:bg-destructive-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -444,43 +444,43 @@ if (categories.length === 0) await fetchCategories();
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Trip" : "Tambah Trip"} size="xl">
         <form onSubmit={handleSubmit} className="space-y-4">
           {hasErrors && (
-            <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3">
-              <p className="text-xs font-bold text-red-700">
+            <div className="rounded-xl bg-destructive-50 border border-destructive-200 px-4 py-3">
+              <p className="text-xs font-bold text-destructive-700">
                 Form belum lengkap. Periksa field yang ditandai merah sebelum menyimpan:
               </p>
               <ul className="list-disc ml-4 mt-1 space-y-0.5">
                 {Object.values(errors).map((msg, i) => (
-                  <li key={i} className="text-xs text-red-600">{msg}</li>
+                  <li key={i} className="text-xs text-destructive-600">{msg}</li>
                 ))}
               </ul>
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700">Judul Trip</label>
+              <label className="block text-sm font-medium text-foreground">Judul Trip</label>
               <input name="title" value={form.title} onChange={handleChange} required
                 className={fieldClass("title")} />
               {fieldError("title")}
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700">Slug</label>
+              <label className="block text-sm font-medium text-foreground">Slug</label>
               <input name="slug" value={form.slug} onChange={handleChange}
-                className={fieldClass("slug") + " text-slate-500 bg-slate-50"} />
+                className={fieldClass("slug") + " text-muted-foreground bg-muted"} />
               {fieldError("slug")}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700">Durasi (Hari)</label>
+              <label className="block text-sm font-medium text-foreground">Durasi (Hari)</label>
               <input name="durationDays" type="number" min={1} value={form.durationDays} onChange={handleChange} required
                 className={fieldClass("durationDays")} />
               {fieldError("durationDays")}
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700">Status</label>
+              <label className="block text-sm font-medium text-foreground">Status</label>
               <select name="status" value={form.status} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
                 <option value="archived">Archived</option>
@@ -489,16 +489,16 @@ if (categories.length === 0) await fetchCategories();
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
+            <label className="block text-sm font-medium text-foreground">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
           </div>
 
-          <div className="border-t border-slate-200 pt-4">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">Informasi Destinasi</h3>
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-bold text-foreground mb-3">Informasi Destinasi</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700">Pilih Provinsi</label>
+                <label className="block text-sm font-medium text-foreground">Pilih Provinsi</label>
                 <select
                   name="province"
                   value={form.province}
@@ -513,7 +513,7 @@ if (categories.length === 0) await fetchCategories();
                 {fieldError("province")}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700">Lokasi Utama</label>
+                <label className="block text-sm font-medium text-foreground">Lokasi Utama</label>
                 <input
                   name="location"
                   value={form.location}
@@ -524,7 +524,7 @@ if (categories.length === 0) await fetchCategories();
                 {fieldError("location")}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Kategori</label>
                 <CreatableSelect
                   isClearable
                   placeholder="Pilih atau ketik kategori baru..."
@@ -542,17 +542,17 @@ if (categories.length === 0) await fetchCategories();
                     control: (base) => ({
                       ...base,
                       borderRadius: "0.5rem",
-                      borderColor: errors.categoryId ? "#f87171" : "#cbd5e1",
+                      borderColor: errors.categoryId ? "var(--destructive)" : "var(--border)",
                       minHeight: "38px",
                       boxShadow: "none",
-                      "&:hover": { borderColor: errors.categoryId ? "#ef4444" : "#F49D1A" },
+                      "&:hover": { borderColor: errors.categoryId ? "var(--destructive)" : "var(--primary)" },
                     }),
                   }}
                 />
                 {fieldError("categoryId")}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700">Harga (Rp)</label>
+                <label className="block text-sm font-medium text-foreground">Harga (Rp)</label>
                 <input
                   type="text"
                   value={formatTripPrice(form.price)}
@@ -572,16 +572,16 @@ if (categories.length === 0) await fetchCategories();
             </div>
           </div>
 
-          <div className="border-t border-slate-200 pt-4 space-y-3">
+          <div className="border-t border-border pt-4 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Itinerary / Rencana Perjalanan</h3>
-                <p className="text-xs text-slate-500">Kelola jadwal kegiatan per hari.</p>
+                <h3 className="text-sm font-bold text-foreground">Itinerary / Rencana Perjalanan</h3>
+                <p className="text-xs text-muted-foreground">Kelola jadwal kegiatan per hari.</p>
               </div>
               <button
                 type="button"
                 onClick={addItineraryItem}
-                className="px-3 py-1.5 text-xs font-semibold text-[#F49D1A] bg-[#F49D1A]/10 hover:bg-[#F49D1A]/20 rounded-xl transition inline-flex items-center gap-1.5"
+                className="px-3 py-1.5 text-xs font-semibold text-primary-foreground bg-primary/10 hover:bg-primary/20 rounded-xl transition inline-flex items-center gap-1.5"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Tambah Hari / Kegiatan</span>
@@ -589,21 +589,21 @@ if (categories.length === 0) await fetchCategories();
             </div>
 
             {itineraryList.length === 0 ? (
-              <p className="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+              <p className="text-xs text-muted-foreground italic bg-muted p-3 rounded-xl border border-border text-center">
                 Belum ada item itinerary. Klik tombol di atas untuk menambah kegiatan.
               </p>
             ) : (
               <div className="space-y-3">
                 {itineraryList.map((item, index) => (
-                  <div key={index} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-3">
+                  <div key={index} className="bg-muted p-3.5 rounded-2xl border border-border/80 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                      <span className="text-xs font-bold text-foreground bg-card px-2.5 py-1 rounded-lg border border-border">
                         Item #{index + 1}
                       </span>
                       <button
                         type="button"
                         onClick={() => removeItineraryItem(index)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-1.5 text-muted-foreground hover:text-destructive-600 hover:bg-destructive-50 rounded-lg transition"
                         title="Hapus Item"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -612,45 +612,45 @@ if (categories.length === 0) await fetchCategories();
 
                     <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                       <div className="sm:col-span-3">
-                        <label className="block text-[11px] font-semibold text-slate-600">Hari ke-</label>
+                        <label className="block text-[11px] font-semibold text-muted-foreground">Hari ke-</label>
                         <input
                           type="number"
                           min={1}
                           value={item.dayNumber}
                           onChange={(e) => handleItineraryChange(index, "dayNumber", Number(e.target.value))}
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                          className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-card focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                         />
                       </div>
                       <div className="sm:col-span-4">
-                        <label className="block text-[11px] font-semibold text-slate-600">Wilayah / Lokasi</label>
+                        <label className="block text-[11px] font-semibold text-muted-foreground">Wilayah / Lokasi</label>
                         <input
                           type="text"
                           value={item.location}
                           onChange={(e) => handleItineraryChange(index, "location", e.target.value)}
                           placeholder="Contoh: Borobudur, Magelang"
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                          className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-card focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                         />
                       </div>
                       <div className="sm:col-span-5">
-                        <label className="block text-[11px] font-semibold text-slate-600">Judul Kegiatan</label>
+                        <label className="block text-[11px] font-semibold text-muted-foreground">Judul Kegiatan</label>
                         <input
                           type="text"
                           value={item.title}
                           onChange={(e) => handleItineraryChange(index, "title", e.target.value)}
                           placeholder="Contoh: Penjelajahan Candi & Foto Bersama"
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                          className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-card focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600">Deskripsi Kegiatan</label>
+                      <label className="block text-[11px] font-semibold text-muted-foreground">Deskripsi Kegiatan</label>
                       <textarea
                         rows={2}
                         value={item.description}
                         onChange={(e) => handleItineraryChange(index, "description", e.target.value)}
                         placeholder="Detail jadwal atau petunjuk singkat kegiatan..."
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                        className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-card focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                       />
                     </div>
                   </div>
@@ -659,16 +659,16 @@ if (categories.length === 0) await fetchCategories();
             )}
           </div>
 
-          <div className="border-t border-slate-200 pt-5 space-y-4">
+          <div className="border-t border-border pt-5 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-slate-900">Fasilitas Trip</h3>
-                  <span className="bg-amber-100 text-[#F49D1A] text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-200">
+                  <h3 className="text-sm font-bold text-foreground">Fasilitas Trip</h3>
+                  <span className="bg-warning-100 text-primary-foreground text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-warning-200">
                     {facilitiesList.length} Fasilitas
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Kelola fasilitas dan pilih ikon visual untuk mempermudah informasi ke lansia.
                 </p>
               </div>
@@ -677,7 +677,7 @@ if (categories.length === 0) await fetchCategories();
                   <button
                     type="button"
                     onClick={() => setFacilitiesList([])}
-                    className="px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                    className="px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-destructive-600 hover:bg-destructive-50 rounded-xl transition"
                   >
                     Hapus Semua
                   </button>
@@ -685,7 +685,7 @@ if (categories.length === 0) await fetchCategories();
                 <button
                   type="button"
                   onClick={addFacilityItem}
-                  className="px-3.5 py-2 text-xs font-semibold text-white bg-[#F49D1A] hover:bg-[#d68512] rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
+                  className="px-3.5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Tambah Fasilitas</span>
@@ -694,12 +694,12 @@ if (categories.length === 0) await fetchCategories();
             </div>
 
             {facilitiesList.length === 0 ? (
-              <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 space-y-2">
-                <div className="w-10 h-10 mx-auto rounded-full bg-amber-100/80 text-[#F49D1A] flex items-center justify-center">
+              <div className="text-center py-8 px-4 bg-muted rounded-2xl border-2 border-dashed border-border space-y-2">
+                <div className="w-10 h-10 mx-auto rounded-full bg-warning-100/80 text-primary-foreground flex items-center justify-center">
                   <Sparkles className="w-5 h-5" />
                 </div>
-                <p className="text-xs font-semibold text-slate-700">Belum ada fasilitas yang ditambahkan</p>
-                <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                <p className="text-xs font-semibold text-foreground">Belum ada fasilitas yang ditambahkan</p>
+                <p className="text-[11px] text-muted-foreground max-w-sm mx-auto">
                   Klik tombol &quot;Tambah Fasilitas&quot; untuk menambahkan item fasilitas baru.
                 </p>
               </div>
@@ -708,9 +708,9 @@ if (categories.length === 0) await fetchCategories();
                 {facilitiesList.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2.5 bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
+                    className="flex items-center gap-2.5 bg-card p-2.5 sm:p-3 rounded-2xl border border-border hover:border-warning-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
                   >
-                    <span className="h-10 w-10 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
+                    <span className="h-10 w-10 rounded-xl bg-muted text-muted-foreground text-xs font-bold flex items-center justify-center shrink-0">
                       {index + 1}
                     </span>
 
@@ -728,14 +728,14 @@ if (categories.length === 0) await fetchCategories();
                         value={item.name}
                         onChange={(e) => handleFacilityChange(index, "name", e.target.value)}
                         placeholder="Nama Fasilitas (cth: Bus AC Executive, Tour Guide, Medis)"
-                        className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-xs text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] font-medium transition flex items-center"
+                        className="w-full h-10 rounded-xl border border-border px-3.5 text-xs text-foreground bg-muted/50 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary font-medium transition flex items-center"
                       />
                     </div>
 
                     <button
                       type="button"
                       onClick={() => removeFacilityItem(index)}
-                      className="h-10 w-10 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0"
+                      className="h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-destructive-600 hover:bg-destructive-50 rounded-xl transition shrink-0"
                       title="Hapus Fasilitas"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -746,55 +746,55 @@ if (categories.length === 0) await fetchCategories();
             )}
           </div>
 
-          <div className="border-t border-slate-200 pt-4">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">Meeting Point</h3>
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-bold text-foreground mb-3">Meeting Point</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700">Jam Kumpul *</label>
+                <label className="block text-sm font-medium text-foreground">Jam Kumpul *</label>
                 <input name="meetingPointTime" type="time" value={form.meetingPointTime} onChange={handleChange}
                   className={fieldClass("meetingPointTime")} />
                 {fieldError("meetingPointTime")}
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-slate-700">Lokasi Kumpul *</label>
+                <label className="block text-sm font-medium text-foreground">Lokasi Kumpul *</label>
                 <input name="meetingPoint" value={form.meetingPoint} onChange={handleChange}
                   placeholder="Contoh: Bandara Soekarno-Hatta Terminal 3"
                   className={fieldClass("meetingPoint")} />
                 {fieldError("meetingPoint")}
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
+            <p className="text-xs text-muted-foreground mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
           </div>
 
-          <div className="border-t border-slate-200 pt-4">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">Aksesibilitas Lansia</h3>
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-bold text-foreground mb-3">Aksesibilitas Lansia</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <input name="isSeniorFriendly" type="checkbox" checked={form.isSeniorFriendly} onChange={handleChange}
-                  className="rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
-                <label className="text-sm font-medium text-slate-700">Ramah Lansia</label>
+                  className="rounded border-border text-primary-foreground focus:ring-primary/30" />
+                <label className="text-sm font-medium text-foreground">Ramah Lansia</label>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700">Info Aksesibilitas</label>
+                <label className="block text-sm font-medium text-foreground">Info Aksesibilitas</label>
                 <textarea name="accessibilityInfo" value={form.accessibilityInfo} onChange={handleChange} rows={2}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 pt-2">
             <input name="isFeatured" type="checkbox" checked={form.isFeatured} onChange={handleChange}
-              className="rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
-            <label className="text-sm font-medium text-slate-700">Featured (Tampilkan di beranda)</label>
+              className="rounded border-border text-primary-foreground focus:ring-primary/30" />
+            <label className="text-sm font-medium text-foreground">Featured (Tampilkan di beranda)</label>
           </div>
 
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}
-              className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+              className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-muted transition">
               Batal
             </button>
           </div>

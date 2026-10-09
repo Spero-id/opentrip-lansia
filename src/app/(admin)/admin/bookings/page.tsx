@@ -46,27 +46,27 @@ interface NotesInfo {
 const statusBadge: Record<string, { label: string; className: string }> = {
   pending_payment: {
     label: "Belum Bayar",
-    className: "bg-slate-100 text-slate-600",
+    className: "bg-muted text-muted-foreground",
   },
   pending: {
     label: "Menunggu Verifikasi",
-    className: "bg-amber-100 text-amber-800",
+    className: "bg-warning-100 text-warning-800",
   },
   awaiting_verification: {
     label: "Menunggu Verifikasi",
-    className: "bg-orange-100 text-orange-800",
+    className: "bg-warning-100 text-warning-800",
   },
   confirmed: {
     label: "Dikonfirmasi",
-    className: "bg-[#1CA6B7]/15 text-[#1CA6B7]",
+    className: "bg-secondary/15 text-secondary-foreground",
   },
   cancelled: {
     label: "Dibatalkan",
-    className: "bg-red-100 text-red-800",
+    className: "bg-destructive-100 text-destructive-800",
   },
   completed: {
     label: "Selesai",
-    className: "bg-blue-100 text-blue-800",
+    className: "bg-info-100 text-info-800",
   },
 };
 
@@ -260,27 +260,27 @@ export default function AdminPesanan() {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+        <div className="bg-destructive-50 border border-destructive-200 text-destructive-700 text-sm rounded-xl px-4 py-3">
           {error}
           <button onClick={() => setError(null)} className="ml-2 font-bold hover:underline">Tutup</button>
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
             Manajemen Pesanan
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Daftar seluruh pemesanan paket trip oleh pengguna.
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-card rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Kode Booking</th>
                 <th className="px-6 py-4">Peserta</th>
@@ -291,16 +291,16 @@ export default function AdminPesanan() {
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-border text-foreground">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
                     Memuat data...
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
                     Belum ada data pesanan.
                   </td>
                 </tr>
@@ -308,23 +308,23 @@ export default function AdminPesanan() {
                 rows.map((b) => {
                   const badge = statusBadge[b.status] ?? {
                     label: b.status,
-                    className: "bg-slate-100 text-slate-600",
+                    className: "bg-muted text-muted-foreground",
                   };
                   const rowPayment = getPendingPayment(b.payments);
                   return (
-                    <tr key={b.id} className="hover:bg-slate-50/60 transition">
-                      <td className="px-6 py-4 font-mono font-bold text-[#F49D1A]">
+                    <tr key={b.id} className="hover:bg-muted/60 transition">
+                      <td className="px-6 py-4 font-mono font-bold text-primary-foreground">
                         {b.bookingCode}
                       </td>
                       <td className="px-6 py-4">
                         {b.totalParticipants} orang
                       </td>
-                      <td className="px-6 py-4 font-bold text-slate-900">
+                      <td className="px-6 py-4 font-bold text-foreground">
                         {b.currency === "IDR"
                           ? `Rp ${Number(b.totalAmount).toLocaleString("id-ID")}`
                           : b.totalAmount}
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-700">
+                      <td className="px-6 py-4 font-semibold text-foreground">
                         {getPaymentMethod(b.payments)}
                       </td>
                       <td className="px-6 py-4">
@@ -332,7 +332,7 @@ export default function AdminPesanan() {
                           {badge.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500">
+                      <td className="px-6 py-4 text-muted-foreground">
                         {formatDate(b.bookingDate)}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -342,7 +342,7 @@ export default function AdminPesanan() {
                               <button
                                 onClick={() => handleReview(rowPayment.id, "approve")}
                                 disabled={approvingRowId === rowPayment.id}
-                                className="p-2 text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition disabled:opacity-50"
+                                className="p-2 text-secondary-foreground hover:bg-secondary/10 rounded-xl transition disabled:opacity-50"
                                 title="Approve"
                               >
                                 {approvingRowId === rowPayment.id ? (
@@ -363,7 +363,7 @@ export default function AdminPesanan() {
                                     .then(d => { if (d) setDetailData(d); })
                                     .finally(() => setDetailLoading(false));
                                 }}
-                                className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition"
+                                className="p-2 text-destructive-500 hover:bg-destructive-500/10 rounded-xl transition"
                                 title="Tolak"
                               >
                                 <XCircle className="w-4 h-4" />
@@ -372,7 +372,7 @@ export default function AdminPesanan() {
                           )}
                           <button
                             onClick={() => openDetail(b)}
-                            className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                            className="p-2 text-muted-foreground hover:text-primary-foreground hover:bg-primary/10 rounded-xl transition"
                             title="Lihat Detail"
                           >
                             <Eye className="w-4 h-4" />
@@ -400,89 +400,89 @@ export default function AdminPesanan() {
           return (
           <div className="space-y-4 text-sm">
             {detailLoading && (
-              <div className="flex items-center gap-2 text-slate-400 text-xs">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs">
                 <Loader2 className="w-3 h-3 animate-spin" />
                 Memuat detail...
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <p className="text-slate-500 font-medium">Kode Booking</p>
-                <p className="font-mono font-bold text-[#F49D1A] text-base">
+                <p className="text-muted-foreground font-medium">Kode Booking</p>
+                <p className="font-mono font-bold text-primary-foreground text-base">
                   {displayData.bookingCode}
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Status</p>
+                <p className="text-muted-foreground font-medium">Status</p>
                 <p>
                   <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                    statusBadge[displayData.status]?.className ?? "bg-slate-100 text-slate-600"
+                    statusBadge[displayData.status]?.className ?? "bg-muted text-muted-foreground"
                   }`}>
                     {statusBadge[displayData.status]?.label ?? displayData.status}
                   </span>
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Metode Pembayaran</p>
-                <p className="font-mono font-bold text-[#F49D1A]">
+                <p className="text-muted-foreground font-medium">Metode Pembayaran</p>
+                <p className="font-mono font-bold text-primary-foreground">
                   {getPaymentMethod(displayData.payments)}
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Destinasi</p>
+                <p className="text-muted-foreground font-medium">Destinasi</p>
                 <p className="font-semibold">{notesInfo?.destinationName ?? "-"}</p>
                 {notesInfo?.travelDate && (
-                  <p className="text-xs text-slate-400 mt-0.5">{notesInfo.travelDate}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{notesInfo.travelDate}</p>
                 )}
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Jumlah Peserta</p>
+                <p className="text-muted-foreground font-medium">Jumlah Peserta</p>
                 <p className="font-semibold">{displayData.totalParticipants} orang</p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Total Pembayaran</p>
-                <p className="font-bold text-slate-900">
+                <p className="text-muted-foreground font-medium">Total Pembayaran</p>
+                <p className="font-bold text-foreground">
                   Rp {Number(displayData.totalAmount).toLocaleString("id-ID")}
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Tanggal Booking</p>
+                <p className="text-muted-foreground font-medium">Tanggal Booking</p>
                 <p>{formatDate(displayData.bookingDate)}</p>
               </div>
               {notesInfo?.customerName && (
                 <div>
-                  <p className="text-slate-500 font-medium">Nama Pelanggan</p>
+                  <p className="text-muted-foreground font-medium">Nama Pelanggan</p>
                   <p className="font-semibold">{notesInfo.customerName}</p>
-                  {notesInfo.customerEmail && <p className="text-xs text-slate-400">{notesInfo.customerEmail}</p>}
-                  {notesInfo.customerPhone && <p className="text-xs text-slate-400">{notesInfo.customerPhone}</p>}
+                  {notesInfo.customerEmail && <p className="text-xs text-muted-foreground">{notesInfo.customerEmail}</p>}
+                  {notesInfo.customerPhone && <p className="text-xs text-muted-foreground">{notesInfo.customerPhone}</p>}
                 </div>
               )}
               <div>
-                <p className="text-slate-500 font-medium">ID Pengguna</p>
+                <p className="text-muted-foreground font-medium">ID Pengguna</p>
                 <p className="font-mono text-xs truncate">{displayData.userId}</p>
               </div>
             </div>
 
             {proofPayments.length > 0 && (
-              <div className="border-t border-slate-100 pt-4">
-                <p className="text-slate-500 font-medium mb-3">Bukti Pembayaran</p>
+              <div className="border-t border-border pt-4">
+                <p className="text-muted-foreground font-medium mb-3">Bukti Pembayaran</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {proofPayments.map((payment) => {
                     const proof = getProofUrl(payment);
                     return (
-                      <div key={payment.id} className="relative group rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                      <div key={payment.id} className="relative group rounded-xl border border-border overflow-hidden bg-muted">
                         <img
                           src={proof!}
                           alt="Bukti pembayaran"
                           className="w-full h-48 object-contain"
                         />
                         <div className="p-2 flex items-center justify-between text-xs">
-                          <span className="text-slate-500">{payment.method ?? "Transfer"}</span>
+                          <span className="text-muted-foreground">{payment.method ?? "Transfer"}</span>
                           <a
                             href={proof!}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#1CA6B7] hover:underline flex items-center gap-1"
+                            className="text-secondary-foreground hover:underline flex items-center gap-1"
                           >
                             <ExternalLink className="w-3 h-3" />
                             Buka
@@ -497,8 +497,8 @@ export default function AdminPesanan() {
 
             {detailPendingPayment?.adminNote && (
               <div>
-                <p className="text-slate-500 font-medium mb-1">Catatan Admin</p>
-                <p className="bg-amber-50 rounded-xl p-3 text-slate-700">
+                <p className="text-muted-foreground font-medium mb-1">Catatan Admin</p>
+                <p className="bg-warning-50 rounded-xl p-3 text-foreground">
                   {detailPendingPayment.adminNote}
                 </p>
               </div>
@@ -506,22 +506,22 @@ export default function AdminPesanan() {
 
             {notesInfo?.specialRequest && (
               <div>
-                <p className="text-slate-500 font-medium mb-1">Catatan / Permintaan Khusus</p>
-                <p className="bg-slate-50 rounded-xl p-3 text-slate-700">
+                <p className="text-muted-foreground font-medium mb-1">Catatan / Permintaan Khusus</p>
+                <p className="bg-muted rounded-xl p-3 text-foreground">
                   {notesInfo.specialRequest}
                 </p>
               </div>
             )}
 
-            <div className="border-t border-slate-100 pt-4">
-              <p className="text-slate-500 font-medium mb-1">
+            <div className="border-t border-border pt-4">
+              <p className="text-muted-foreground font-medium mb-1">
                 Feedback / Pesan ke Pengguna
               </p>
-              <p className="text-xs text-slate-400 mb-2">
+              <p className="text-xs text-muted-foreground mb-2">
                 Pesan ini akan tampil di halaman &quot;Perjalanan Saya&quot; milik pengguna.
               </p>
               {parseAdminMessage(displayData.notes) && (
-                <p className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-slate-700 mb-2">
+                <p className="bg-info-50 border border-info-100 rounded-xl p-3 text-foreground mb-2">
                   {parseAdminMessage(displayData.notes)}
                 </p>
               )}
@@ -531,12 +531,12 @@ export default function AdminPesanan() {
                   onChange={(e) => setFeedbackText(e.target.value)}
                   placeholder="Tulis pesan/feedback untuk pengguna..."
                   rows={3}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/40"
+                  className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                 />
                 <button
                   onClick={handleSendFeedback}
                   disabled={feedbackSending || !feedbackText.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-[#F49D1A] text-white text-sm font-bold rounded-xl hover:bg-[#E08A0E] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {feedbackSending ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   {feedbackSending ? "Mengirim..." : "Kirim Pesan"}
@@ -545,7 +545,7 @@ export default function AdminPesanan() {
             </div>
 
             {(displayData.status === "pending" || displayData.status === "awaiting_verification") && detailPendingPayment && (
-              <div className="border-t border-slate-100 pt-4 space-y-3">
+              <div className="border-t border-border pt-4 space-y-3">
                 {rejectPaymentId === detailPendingPayment.id ? (
                   <div className="space-y-2">
                     <textarea
@@ -553,20 +553,20 @@ export default function AdminPesanan() {
                       onChange={(e) => setRejectNote(e.target.value)}
                       placeholder="Alasan penolakan (wajib)..."
                       rows={3}
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-destructive-400"
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleReview(detailPendingPayment.id, "reject", rejectNote)}
                         disabled={rejecting}
-                        className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-destructive-600 text-white text-sm font-bold rounded-xl hover:bg-destructive-700 transition disabled:opacity-50"
                       >
                         {rejecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
                         {rejecting ? "Memproses..." : "Konfirmasi Tolak"}
                       </button>
                       <button
                         onClick={() => setRejectPaymentId(null)}
-                        className="px-5 py-3 bg-slate-100 text-slate-600 text-sm font-bold rounded-xl hover:bg-slate-200 transition"
+                        className="px-5 py-3 bg-muted text-muted-foreground text-sm font-bold rounded-xl hover:bg-border transition"
                       >
                         Batal
                       </button>
@@ -577,7 +577,7 @@ export default function AdminPesanan() {
                     <button
                       onClick={() => handleReview(detailPendingPayment.id, "approve")}
                       disabled={approving}
-                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-[#1CA6B7] text-white text-sm font-bold rounded-xl hover:bg-[#1CA6B7]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-secondary text-secondary-foreground text-sm font-bold rounded-xl hover:bg-secondary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {approving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                       {approving ? "Memproses..." : "Approve Pembayaran"}
@@ -585,7 +585,7 @@ export default function AdminPesanan() {
                     <button
                       onClick={() => { setRejectPaymentId(detailPendingPayment.id); setRejectNote(""); }}
                       disabled={approving}
-                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl hover:bg-red-100 transition disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-destructive-50 text-destructive-600 text-sm font-bold rounded-xl hover:bg-destructive-100 transition disabled:opacity-50"
                     >
                       <XCircle className="w-4 h-4" />
                       Tolak Pembayaran

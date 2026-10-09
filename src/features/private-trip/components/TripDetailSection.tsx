@@ -44,9 +44,9 @@ export default function TripDetailSection({
   destinationsData?: PrivateTripDestination[];
 }) {
   const baseInput =
-    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
-  const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
-  const errorBorder = "border-red-300 focus:border-red-400 focus:ring-red-100";
+    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors";
+  const normalBorder = "border-border focus:border-primary";
+  const errorBorder = "border-destructive-300 focus:border-destructive-400 focus:ring-destructive-100";
   const todayStr = new Date().toLocaleDateString("en-CA");
 
   const [showDestinationModal, setShowDestinationModal] = useState(false);
@@ -59,19 +59,19 @@ export default function TripDetailSection({
     : destinationsData;
 
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+    <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
       <div className="px-5 sm:px-6 pt-5 pb-4">
-        <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
-          <Calendar size={16} strokeWidth={1.8} color="#6B7280" className="shrink-0" />
+        <h3 className="text-[14px] font-semibold text-foreground flex items-center gap-2">
+          <Calendar size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
           Detail Perjalanan
         </h3>
       </div>
-      <div className="h-px bg-[#E5E7EB]" />
+      <div className="h-px bg-border" />
 
       <div className="px-5 sm:px-6 py-5 space-y-5">
         <div>
-          <p className="text-[13px] font-medium text-[#374151]">
-            Tujuan Trip <span className="text-[#DC2626]">*</span>
+          <p className="text-[13px] font-medium text-foreground">
+            Tujuan Trip <span className="text-destructive-600">*</span>
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1.5">
             {TUJUAN_OPTIONS.map((opt) => {
@@ -81,8 +81,8 @@ export default function TripDetailSection({
                   key={opt.value}
                   className={`flex-1 flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer transition-colors ${
                     active
-                      ? "border-[#F49D1A] bg-[#FFFBEB]/50"
-                      : "border-[#D1D5DB] bg-white hover:bg-gray-50"
+                      ? "border-primary bg-primary/10"
+                      : "border-border bg-card hover:bg-muted"
                   }`}
                 >
                   <input
@@ -95,14 +95,14 @@ export default function TripDetailSection({
                   />
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                      active ? "border-[#F49D1A] bg-white" : "border-[#D1D5DB] bg-white"
+                      active ? "border-primary bg-card" : "border-border bg-card"
                     }`}
                     aria-hidden="true"
                   >
-                    {active && <span className="w-2 h-2 rounded-full bg-[#F49D1A]" />}
+                    {active && <span className="w-2 h-2 rounded-full bg-primary" />}
                   </span>
                   <span
-                    className={`text-[13px] ${active ? "text-[#1F2A37] font-medium" : "text-[#374151] font-normal"}`}
+                    className={`text-[13px] ${active ? "text-foreground font-medium" : "text-foreground font-normal"}`}
                   >
                     {opt.label}
                   </span>
@@ -122,7 +122,7 @@ export default function TripDetailSection({
                 className={`${baseInput} ${errors.customTripName ? errorBorder : normalBorder}`}
               />
               {errors.customTripName && (
-                <p className="text-xs text-red-500 mt-1.5">{errors.customTripName}</p>
+                <p className="text-xs text-destructive-500 mt-1.5">{errors.customTripName}</p>
               )}
             </div>
           )}
@@ -133,18 +133,18 @@ export default function TripDetailSection({
                 <button
                   type="button"
                   onClick={() => setShowDestinationModal(true)}
-                  className={`${baseInput} pr-10 text-left cursor-pointer ${errors.selectedDestinasi ? errorBorder : normalBorder} ${!form.selectedDestinasi ? "text-[#9CA3AF]" : "text-[#1F2A37]"}`}
+                  className={`${baseInput} pr-10 text-left cursor-pointer ${errors.selectedDestinasi ? errorBorder : normalBorder} ${!form.selectedDestinasi ? "text-muted-foreground" : "text-foreground"}`}
                 >
                   <span className="flex-1 truncate">
                     {form.selectedDestinasi
                       ? `${form.selectedDestinasi.title || form.selectedDestinasi.name || ""}`
                       : "Pilih paket referensi..."}
                   </span>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] shrink-0" size={16} />
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground shrink-0" size={16} />
                 </button>
               </div>
               {errors.selectedDestinasi && (
-                <p className="text-xs text-red-500 mt-1.5">{errors.selectedDestinasi}</p>
+                <p className="text-xs text-destructive-500 mt-1.5">{errors.selectedDestinasi}</p>
               )}
               {form.selectedDestinasi && (
                 <div className="mt-1.5">
@@ -178,8 +178,8 @@ export default function TripDetailSection({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label htmlFor="field-jumlahPeserta" className="text-[13px] font-medium text-[#374151]">
-              Jumlah Peserta <span className="text-[#DC2626]">*</span>
+            <label htmlFor="field-jumlahPeserta" className="text-[13px] font-medium text-foreground">
+              Jumlah Peserta <span className="text-destructive-600">*</span>
             </label>
             <div className="relative mt-1.5">
               <input
@@ -216,18 +216,18 @@ export default function TripDetailSection({
                 }}
                 className={`${baseInput} pr-14 ${errors.jumlahPeserta ? errorBorder : normalBorder}`}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-[#6B7280] pointer-events-none">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground pointer-events-none">
                 Orang
               </span>
             </div>
             {errors.jumlahPeserta && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.jumlahPeserta}</p>
+              <p className="text-xs text-destructive-500 mt-1.5">{errors.jumlahPeserta}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="field-durasi" className="text-[13px] font-medium text-[#374151]">
-              Durasi <span className="text-[#DC2626]">*</span>
+            <label htmlFor="field-durasi" className="text-[13px] font-medium text-foreground">
+              Durasi <span className="text-destructive-600">*</span>
             </label>
             <div className="relative mt-1.5">
               <input
@@ -264,20 +264,20 @@ export default function TripDetailSection({
                 }}
                 className={`${baseInput} pr-12 ${errors.durasi ? errorBorder : normalBorder}`}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-[#6B7280] pointer-events-none">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground pointer-events-none">
                 Hari
               </span>
             </div>
             {errors.durasi && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.durasi}</p>
+              <p className="text-xs text-destructive-500 mt-1.5">{errors.durasi}</p>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label htmlFor="field-tanggal" className="text-[13px] font-medium text-[#374151]">
-              Tanggal Keberangkatan <span className="text-[#DC2626]">*</span>
+            <label htmlFor="field-tanggal" className="text-[13px] font-medium text-foreground">
+              Tanggal Keberangkatan <span className="text-destructive-600">*</span>
             </label>
             <div className="relative mt-1.5">
               <input
@@ -287,7 +287,7 @@ export default function TripDetailSection({
                 min={todayStr}
                 onChange={(e) => set("tanggal", e.target.value)}
                 disabled={form.tanggalFleksibel}
-                className={`${baseInput} ${form.tanggalFleksibel ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""} ${errors.tanggal ? errorBorder : normalBorder}`}
+                className={`${baseInput} ${form.tanggalFleksibel ? "bg-muted text-muted-foreground cursor-not-allowed" : ""} ${errors.tanggal ? errorBorder : normalBorder}`}
               />
             </div>
             <label className="inline-flex items-center gap-2 mt-1.5 cursor-pointer group">
@@ -300,29 +300,29 @@ export default function TripDetailSection({
               <span
                 className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-colors ${
                   form.tanggalFleksibel
-                    ? "bg-[#F49D1A] border-[#F49D1A]"
-                    : "bg-white border-[#D1D5DB]"
+                    ? "bg-primary border-primary"
+                    : "bg-card border-border"
                 }`}
                 aria-hidden="true"
               >
                 {form.tanggalFleksibel && (
-                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M2 6l3 3 5-5" />
                   </svg>
                 )}
               </span>
-              <span className="text-[11px] text-[#6B7280] group-hover:text-[#374151]">
+              <span className="text-[11px] text-muted-foreground group-hover:text-foreground">
                 Tanggal belum pasti (Masih fleksibel)
               </span>
             </label>
             {errors.tanggal && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.tanggal}</p>
+              <p className="text-xs text-destructive-500 mt-1.5">{errors.tanggal}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="field-meetingPoint" className="text-[13px] font-medium text-[#374151]">
-              Titik Kumpul (Meeting Point) <span className="text-[#DC2626]">*</span>
+            <label htmlFor="field-meetingPoint" className="text-[13px] font-medium text-foreground">
+              Titik Kumpul (Meeting Point) <span className="text-destructive-600">*</span>
             </label>
             <input
               id="field-meetingPoint"
@@ -333,16 +333,16 @@ export default function TripDetailSection({
               className={`${baseInput} mt-1.5 ${errors.meetingPoint ? errorBorder : normalBorder}`}
             />
             {errors.meetingPoint && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.meetingPoint}</p>
+              <p className="text-xs text-destructive-500 mt-1.5">{errors.meetingPoint}</p>
             )}
           </div>
         </div>
 
-        <div className="h-px bg-[#E5E7EB]" />
+        <div className="h-px bg-border" />
 
         <div id="field-transportNeeds">
-          <p className="text-[13px] font-medium text-[#374151]">
-            Kebutuhan Transportasi <span className="text-[#DC2626]">*</span>
+          <p className="text-[13px] font-medium text-foreground">
+            Kebutuhan Transportasi <span className="text-destructive-600">*</span>
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1.5">
             {TRANSPORT_OPTIONS.map((opt) => {
@@ -352,8 +352,8 @@ export default function TripDetailSection({
                   key={opt.value}
                   className={`flex-1 flex flex-col gap-1.5 px-4 py-3 rounded-lg border cursor-pointer transition-colors text-left ${
                     active
-                      ? "border-[#F49D1A] bg-[#FFFBEB]/50"
-                      : "border-[#D1D5DB] bg-white hover:bg-gray-50"
+                      ? "border-primary bg-primary/10"
+                      : "border-border bg-card hover:bg-muted"
                   }`}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -367,17 +367,17 @@ export default function TripDetailSection({
                     />
                     <span
                       className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                        active ? "border-[#F49D1A] bg-white" : "border-[#D1D5DB] bg-white"
+                        active ? "border-primary bg-card" : "border-border bg-card"
                       }`}
                       aria-hidden="true"
                     >
-                      {active && <span className="w-2 h-2 rounded-full bg-[#F49D1A]" />}
+                      {active && <span className="w-2 h-2 rounded-full bg-primary" />}
                     </span>
-                    <span className="text-[12px] font-semibold text-[#1F2A37] leading-tight">
+                    <span className="text-[12px] font-semibold text-foreground leading-tight">
                       {opt.title}
                     </span>
                   </span>
-                  <span className="text-[11px] leading-4 text-[#6B7280] pl-6">
+                  <span className="text-[11px] leading-4 text-muted-foreground pl-6">
                     {opt.desc}
                   </span>
                 </label>
@@ -385,7 +385,7 @@ export default function TripDetailSection({
             })}
           </div>
           {errors.transportNeeds && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.transportNeeds}</p>
+            <p className="text-xs text-destructive-500 mt-1.5">{errors.transportNeeds}</p>
           )}
         </div>
       </div>

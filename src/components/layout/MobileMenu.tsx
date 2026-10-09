@@ -82,17 +82,17 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
   }
 
   const mobileMenuClasses = cn(
-    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-4/5 max-w-sm transform overflow-hidden bg-white shadow-2xl transition-transform duration-300 ease-in-out",
+    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-4/5 max-w-sm transform overflow-hidden bg-card shadow-2xl transition-transform duration-300 ease-in-out",
     isOpen ? "translate-x-0" : "-translate-x-full"
   );
 
   const overlayClasses = cn(
-    "lg:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300",
+    "lg:hidden fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm transition-opacity duration-300",
     isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
   );
 
-  const sectionLabelClasses = "px-3 text-sm font-medium tracking-wide text-gray-400";
-  const mobileLinkClasses = "block w-full rounded-lg px-3 py-2 text-sm font-medium text-black hover:bg-black/10 transition-colors";
+  const sectionLabelClasses = "px-3 text-sm font-medium tracking-wide text-muted-foreground";
+  const mobileLinkClasses = "block w-full rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-foreground/10 transition-colors";
 
   const activeLinkClasses = mobileLinkClasses;
 
@@ -112,7 +112,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-full text-black hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]"
+              className="p-2 rounded-full text-foreground hover:bg-foreground/5 focus:outline-none focus:ring-2 focus:ring-primary"
               aria-label="Close menu"
             >
               <X size={20} />
@@ -154,7 +154,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
                 </div>
                 <div className="mt-4 pt-4">
                   <div className="px-3">
-                    <div className="border-t border-gray-200" />
+                    <div className="border-t border-border" />
                   </div>
                   <div className="mt-3">
                     <MenuItem
@@ -163,7 +163,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
                         await signOut();
                         router.refresh();
                       }}
-                      className="block w-full cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+                      className="block w-full cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-destructive-600 hover:bg-destructive-50 transition-colors text-left"
                     >
                       Keluar dari Akun
                     </MenuItem>

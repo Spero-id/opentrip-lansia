@@ -148,15 +148,15 @@ export default function TermsModal({
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-foreground/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] max-h-[600px] flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0 bg-white z-10">
-          <h2 className="text-lg font-bold text-gray-900">{content.title}</h2>
+      <div className="relative bg-card rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] max-h-[600px] flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between p-5 border-b border-border shrink-0 bg-card z-10">
+          <h2 className="text-lg font-bold text-foreground">{content.title}</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-muted-foreground transition-colors"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
@@ -172,11 +172,11 @@ export default function TermsModal({
         <div className="relative flex-1 min-h-0 flex flex-col">
           <div
             ref={scrollRef}
-            className="flex-1 overflow-y-auto p-5 space-y-5 text-sm text-gray-600 leading-relaxed overscroll-contain"
+            className="flex-1 overflow-y-auto p-5 space-y-5 text-sm text-muted-foreground leading-relaxed overscroll-contain"
           >
             {content.sections.map((section, i) => (
               <div key={i}>
-                <h3 className="font-bold text-gray-900 mb-2">{section.title}</h3>
+                <h3 className="font-bold text-foreground mb-2">{section.title}</h3>
                 <p>{section.content}</p>
               </div>
             ))}
@@ -184,7 +184,7 @@ export default function TermsModal({
           </div>
           {!hasScrolledToBottom && (
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent pt-6 pb-3 text-center z-10">
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-[#F49D1A] bg-[#FEF6E7] border border-[#F49D1A]/20 px-3 py-1 rounded-full shadow-sm">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-primary-foreground bg-primary/10 border border-primary/20 px-3 py-1 rounded-full shadow-sm">
                 Scroll ke bawah untuk menyetujui
                 <ArrowDown className="w-3 h-3" />
               </span>
@@ -192,11 +192,11 @@ export default function TermsModal({
           )}
         </div>
 
-        <div className="border-t border-gray-100 p-4 shrink-0 bg-white z-10">
+        <div className="border-t border-border p-4 shrink-0 bg-card z-10">
           <button
             onClick={() => onAgree()}
             disabled={!hasScrolledToBottom}
-            className="w-full bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {hasScrolledToBottom
               ? "Saya Setuju"

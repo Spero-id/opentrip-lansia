@@ -25,24 +25,24 @@ export default function BookingInformationSection({
     form.tripFrom === "Perusahaan" ? "Cth: PT Maju Bersama" : "Cth: Universitas Indonesia";
 
   const baseInput =
-    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
-  const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
-  const errorBorder = "border-red-300 focus:border-red-400 focus:ring-red-100";
+    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors";
+  const normalBorder = "border-border focus:border-primary";
+  const errorBorder = "border-destructive-300 focus:border-destructive-400 focus:ring-destructive-100";
 
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+    <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
       <div className="px-5 sm:px-6 pt-5 pb-4">
-        <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
-          <User size={16} strokeWidth={1.8} color="#6B7280" className="shrink-0" />
+        <h3 className="text-[14px] font-semibold text-foreground flex items-center gap-2">
+          <User size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
           Informasi Pemesan
         </h3>
       </div>
-      <div className="h-px bg-[#E5E7EB]" />
+      <div className="h-px bg-border" />
 
       <div className="px-5 sm:px-6 py-5 space-y-5">
         <div>
-          <p className="text-[13px] font-medium text-[#374151]">
-            Tipe Pemesan <span className="text-[#DC2626]">*</span>
+          <p className="text-[13px] font-medium text-foreground">
+            Tipe Pemesan <span className="text-destructive-600">*</span>
           </p>
           <fieldset className="mt-1.5 flex flex-col sm:flex-row gap-3">
             {TIPE_OPTIONS.map((opt) => {
@@ -52,8 +52,8 @@ export default function BookingInformationSection({
                   key={opt.value}
                   className={`flex-1 flex items-center gap-3 px-4 py-3 border rounded-lg transition-all cursor-pointer group ${
                     active
-                      ? "border-[#F49D1A] bg-[#FFFBEB] text-[#1F2A37] font-medium"
-                      : "border-[#D1D5DB] text-[#374151] hover:border-gray-400"
+                      ? "border-primary bg-primary/10 text-foreground font-medium"
+                      : "border-border text-foreground hover:border-border"
                   }`}
                 >
                   <input
@@ -72,11 +72,11 @@ export default function BookingInformationSection({
                   />
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                      active ? "border-[#F49D1A] bg-white" : "border-[#D1D5DB] bg-white"
+                      active ? "border-primary bg-card" : "border-border bg-card"
                     }`}
                     aria-hidden="true"
                   >
-                    {active && <span className="w-2 h-2 rounded-full bg-[#F49D1A]" />}
+                    {active && <span className="w-2 h-2 rounded-full bg-primary" />}
                   </span>
                   <span className="text-[13px] leading-tight break-words">
                     {opt.label}
@@ -86,13 +86,13 @@ export default function BookingInformationSection({
             })}
           </fieldset>
           {errors.tripFrom && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.tripFrom}</p>
+            <p className="text-xs text-destructive-500 mt-1.5">{errors.tripFrom}</p>
           )}
 
           {isInstitusi && (
             <div className="mt-4">
-              <label htmlFor="field-namaInstitusi" className="text-[13px] font-medium text-[#374151]">
-                {institusiLabel} <span className="text-[#DC2626]">*</span>
+              <label htmlFor="field-namaInstitusi" className="text-[13px] font-medium text-foreground">
+                {institusiLabel} <span className="text-destructive-600">*</span>
               </label>
               <input
                 id="field-namaInstitusi"
@@ -103,7 +103,7 @@ export default function BookingInformationSection({
                 className={`${baseInput} mt-1.5 ${errors.namaInstitusi ? errorBorder : normalBorder}`}
               />
               {errors.namaInstitusi && (
-                <p className="text-xs text-red-500 mt-1.5">{errors.namaInstitusi}</p>
+                <p className="text-xs text-destructive-500 mt-1.5">{errors.namaInstitusi}</p>
               )}
             </div>
           )}
@@ -111,8 +111,8 @@ export default function BookingInformationSection({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label htmlFor="field-nama" className="text-[13px] font-medium text-[#374151]">
-              Nama Lengkap <span className="text-[#DC2626]">*</span>
+            <label htmlFor="field-nama" className="text-[13px] font-medium text-foreground">
+              Nama Lengkap <span className="text-destructive-600">*</span>
             </label>
             <input
               id="field-nama"
@@ -123,13 +123,13 @@ export default function BookingInformationSection({
               className={`${baseInput} mt-1.5 ${errors.nama ? errorBorder : normalBorder}`}
             />
             {errors.nama && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.nama}</p>
+              <p className="text-xs text-destructive-500 mt-1.5">{errors.nama}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="field-phone" className="text-[13px] font-medium text-[#374151]">
-              No. WhatsApp <span className="text-[#DC2626]">*</span>
+            <label htmlFor="field-phone" className="text-[13px] font-medium text-foreground">
+              No. WhatsApp <span className="text-destructive-600">*</span>
             </label>
             <input
               id="field-phone"
@@ -156,14 +156,14 @@ export default function BookingInformationSection({
               className={`${baseInput} mt-1.5 ${errors.phone ? errorBorder : normalBorder}`}
             />
             {errors.phone && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.phone}</p>
+              <p className="text-xs text-destructive-500 mt-1.5">{errors.phone}</p>
             )}
           </div>
         </div>
 
         <div>
-          <label htmlFor="field-email" className="text-[13px] font-medium text-[#374151]">
-            Email <span className="text-[#DC2626]">*</span>
+          <label htmlFor="field-email" className="text-[13px] font-medium text-foreground">
+            Email <span className="text-destructive-600">*</span>
           </label>
           <input
             id="field-email"
@@ -174,9 +174,9 @@ export default function BookingInformationSection({
             className={`${baseInput} mt-1.5 ${errors.email ? errorBorder : normalBorder}`}
           />
           {errors.email ? (
-            <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>
+            <p className="text-xs text-destructive-500 mt-1.5">{errors.email}</p>
           ) : (
-            <p className="text-[11px] leading-4 text-[#9CA3AF] mt-1.5">
+            <p className="text-[11px] leading-4 text-muted-foreground mt-1.5">
               Proposal &amp; detail penawaran akan dikirimkan ke email ini.
             </p>
           )}

@@ -21,15 +21,15 @@ export default function VoucherCard({
   vouchersLoading: boolean;
 }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
-      <h2 className="text-base font-bold text-gray-900">Voucher / Kode Promo</h2>
+    <div className="bg-card border border-border rounded-2xl p-5 space-y-3 shadow-sm">
+      <h2 className="text-base font-bold text-foreground">Voucher / Kode Promo</h2>
       {appliedVoucher ? (
-        <div className="flex items-center justify-between p-3 rounded-xl bg-[#1CA6B7]/10 border border-[#1CA6B7]/20">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/10 border border-secondary/20">
           <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-[#1CA6B7]" />
-            <span className="text-sm font-semibold text-[#1CA6B7]">{appliedVoucher.label}</span>
+            <Check className="w-4 h-4 text-secondary-foreground" />
+            <span className="text-sm font-semibold text-secondary-foreground">{appliedVoucher.label}</span>
           </div>
-          <button onClick={onRemove} className="text-[#1CA6B7] hover:text-[#1CA6B7]">
+          <button onClick={onRemove} className="text-secondary-foreground hover:text-secondary-foreground">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -47,18 +47,18 @@ export default function VoucherCard({
               }
             }}
             disabled={vouchersLoading}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 disabled:bg-gray-50 disabled:cursor-not-allowed"
+            className="flex-1 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:bg-muted disabled:cursor-not-allowed"
           />
           <button
             onClick={onApply}
             disabled={vouchersLoading}
-            className="bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="bg-foreground text-background px-5 py-3 rounded-xl text-sm font-semibold hover:bg-foreground transition-colors disabled:bg-muted-foreground disabled:cursor-not-allowed"
           >
             {vouchersLoading ? "..." : "Pakai"}
           </button>
         </div>
       )}
-      {voucherError && <p className="text-xs text-red-500">{voucherError}</p>}
+      {voucherError && <p className="text-xs text-destructive-500">{voucherError}</p>}
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default function LogoutButton() {
       type="button"
       onClick={handleLogout}
       disabled={loading}
-      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-semibold text-slate-600 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-card px-5 py-3.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-destructive-200 hover:bg-destructive-50 hover:text-destructive-600 disabled:opacity-50"
     >
       <LogOut size={16} />
       {loading ? "Keluar..." : "Keluar dari Akun"}

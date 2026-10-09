@@ -43,10 +43,10 @@ export default function BlogCoverUploader({ value, onChange }: BlogCoverUploader
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-slate-700">Gambar Sampul</label>
+      <label className="block text-sm font-medium text-foreground">Gambar Sampul</label>
 
       {value ? (
-        <div className="relative rounded-xl border border-slate-200 overflow-hidden w-full max-w-xs">
+        <div className="relative rounded-xl border border-border overflow-hidden w-full max-w-xs">
           <img src={value} alt="" className="w-full h-40 object-cover" />
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-gradient-to-t from-black/70 to-transparent p-2">
             <button
@@ -60,7 +60,7 @@ export default function BlogCoverUploader({ value, onChange }: BlogCoverUploader
             <button
               type="button"
               onClick={remove}
-              className="text-[10px] font-semibold text-white bg-red-500/80 hover:bg-red-600 rounded-lg px-2 py-1 transition"
+              className="text-[10px] font-semibold text-white bg-destructive-600/80 hover:bg-destructive-600 rounded-lg px-2 py-1 transition"
             >
               Hapus
             </button>
@@ -71,7 +71,7 @@ export default function BlogCoverUploader({ value, onChange }: BlogCoverUploader
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="w-full max-w-xs rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-slate-400 hover:bg-slate-50 transition disabled:opacity-50"
+          className="w-full max-w-xs rounded-xl border-2 border-dashed border-border p-6 text-center text-sm text-muted-foreground hover:bg-muted transition disabled:opacity-50"
         >
           {uploading ? "Mengunggah..." : "+ Unggah Gambar Sampul"}
         </button>
@@ -84,7 +84,7 @@ export default function BlogCoverUploader({ value, onChange }: BlogCoverUploader
         className="hidden"
         onChange={(e) => handleUpload(e.target.files?.[0])}
       />
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-destructive-600">{error}</p>}
     </div>
   );
 }

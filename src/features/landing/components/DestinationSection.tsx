@@ -49,21 +49,21 @@ export default function DestinationSection() {
 
 
   return (
-    <section id="destinasi" className="relative bg-white py-10">
+    <section id="destinasi" className="relative bg-card py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-6 md:mb-10">
           <div>
-            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">
+            <p className="text-primary-foreground font-semibold text-sm tracking-wide mb-3">
               DESTINASI PILIHAN
             </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
-              Destinasi Paling <span className="text-[#F49D1A]">Diminati</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-snug">
+              Destinasi Paling <span className="text-primary-foreground">Diminati</span>
             </h2>
           </div>
 
           <Link
             href="/trips"
-            className="hidden md:flex items-center gap-1 text-md font-semibold text-gray-700 hover:text-[#F49D1A] transition-colors shrink-0"
+            className="hidden md:flex items-center gap-1 text-md font-semibold text-foreground hover:text-primary-foreground transition-colors shrink-0"
           >
             Lihat semua
             <ArrowRight size={24} className="rotate-[-45deg]" />
@@ -94,15 +94,15 @@ export default function DestinationSection() {
 
       {!loading && destinations.length === 0 && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6">
-          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-gray-200 bg-white">
+          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-border bg-card">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-              style={{ backgroundColor: "rgba(223,114,36,0.08)" }}
+              style={{ backgroundColor: "color-mix(in srgb, var(--primary) 8%, transparent)" }}
             >
-              <MapPin size={24} style={{ color: "#F49D1A" }} />
+              <MapPin size={24} style={{ color: "var(--primary-foreground)" }} />
             </div>
-            <p className="text-sm font-semibold text-gray-700 mb-1">Belum ada destinasi</p>
-            <p className="text-xs text-gray-400 max-w-xs">
+            <p className="text-sm font-semibold text-foreground mb-1">Belum ada destinasi</p>
+            <p className="text-xs text-muted-foreground max-w-xs">
               Destinasi menarik akan segera hadir. Pantau terus ya!
             </p>
           </div>
@@ -120,12 +120,12 @@ export default function DestinationSection() {
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 0}
             aria-label="Muat destinasi sebelumnya"
-            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+            className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground transition-colors hover:border-primary hover:text-primary-foreground disabled:opacity-40 disabled:hover:border-border disabled:hover:text-muted-foreground"
           >
             <ChevronUp size={20} />
           </button>
 
-          <span className="text-sm font-medium text-gray-400 tabular-nums">
+          <span className="text-sm font-medium text-muted-foreground tabular-nums">
             {currentPage + 1} / {pageCount}
           </span>
 
@@ -134,7 +134,7 @@ export default function DestinationSection() {
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage >= pageCount - 1}
             aria-label="Lihat destinasi lainnya"
-            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+            className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground transition-colors hover:border-primary hover:text-primary-foreground disabled:opacity-40 disabled:hover:border-border disabled:hover:text-muted-foreground"
           >
             <ChevronDown size={20} />
           </button>
@@ -144,13 +144,13 @@ export default function DestinationSection() {
       <div className="flex md:hidden items-center justify-center gap-2">
         <button
           onClick={() => scroll("left")}
-          className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600"
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground"
         >
           <ChevronLeft size={18} />
         </button>
         <button
           onClick={() => scroll("right")}
-          className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600"
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground"
         >
           <ChevronRight size={18} />
         </button>

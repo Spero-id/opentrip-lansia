@@ -66,11 +66,11 @@ const icons = {
 function Row({ icon, label, value }: { icon: ReactNode; label: ReactNode; value: ReactNode }) {
   return (
     <div className="flex justify-between items-center py-2.5">
-      <span className="text-xs text-gray-500 flex items-center gap-1.5">
-        <span className="text-gray-400">{icon}</span>
+      <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+        <span className="text-muted-foreground">{icon}</span>
         {label}
       </span>
-      <span className="text-xs font-semibold text-gray-800 text-right max-w-[55%] break-words">
+      <span className="text-xs font-semibold text-foreground text-right max-w-[55%] break-words">
         {value}
       </span>
     </div>
@@ -94,13 +94,13 @@ export default function SuccessState({
   return (
     <>
 
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-card border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-5 pt-5 pb-8">
-          <p className="font-semibold text-sm tracking-wide mb-2" style={{ color: A }}>
+          <p className="font-semibold text-sm tracking-wide mb-2" style={{ color: "var(--primary-foreground)" }}>
             PRIVATE TRIP
           </p>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
-            Request <span style={{ color: A }}>Berhasil</span>
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
+            Request <span style={{ color: "var(--primary-foreground)" }}>Berhasil</span>
           </h1>
         </div>
       </div>
@@ -108,7 +108,7 @@ export default function SuccessState({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3">
         <div className="max-w-lg mx-auto flex flex-col gap-5">
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
             <div
               className="p-8 flex flex-col items-center text-center relative overflow-hidden"
               style={{ backgroundColor: A }}
@@ -116,27 +116,27 @@ export default function SuccessState({
               <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 pointer-events-none" />
               <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-white/10 pointer-events-none" />
               <div className="relative w-16 h-16 rounded-full bg-white/20 border-4 border-white/30 flex items-center justify-center mb-4 shadow-lg">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-white mb-1">Request Terkirim!</h2>
-              <p className="text-white/80 text-sm">
-                Tim kami akan menghubungi kamu dalam <strong className="text-white">1x24 jam</strong>
+              <h2 className="text-xl font-bold text-primary-foreground mb-1">Request Terkirim!</h2>
+              <p className="text-primary-foreground/80 text-sm">
+                Tim kami akan menghubungi kamu dalam <strong className="text-primary-foreground">1x24 jam</strong>
               </p>
               {requestCode && (
                 <div className="mt-4 px-4 py-2 rounded-xl bg-white/20 border border-white/30 flex flex-col items-center gap-0.5">
-                  <span className="text-white/70 text-[10px] font-semibold tracking-widest uppercase">Kode Request</span>
-                  <span className="text-white text-lg font-bold tracking-wider">{requestCode}</span>
+                  <span className="text-primary-foreground/70 text-[10px] font-semibold tracking-widest uppercase">Kode Request</span>
+                  <span className="text-primary-foreground text-lg font-bold tracking-wider">{requestCode}</span>
                 </div>
               )}
             </div>
 
-            <div className="px-5 pb-4 divide-y divide-gray-50">
+            <div className="px-5 pb-4 divide-y divide-border">
               {requestCode && (
                 <div className="flex justify-between items-center py-2.5">
-                  <span className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <span className="text-gray-400">
+                  <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                    <span className="text-muted-foreground">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>
                         <path d="M8 14h.01M12 14h.01M16 14h.01"/>
@@ -144,7 +144,7 @@ export default function SuccessState({
                     </span>
                     Kode Request
                   </span>
-                  <span className="text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${A}15`, color: A }}>
+                  <span className="text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg" style={{ backgroundColor: `color-mix(in srgb, var(--primary) 8%, transparent)`, color: "var(--primary-foreground)" }}>
                     {requestCode}
                   </span>
                 </div>
@@ -171,14 +171,14 @@ export default function SuccessState({
                       className="w-14 h-14 rounded-xl object-cover shrink-0"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 font-bold text-xs">
+                    <div className="w-14 h-14 rounded-xl bg-border flex items-center justify-center shrink-0 text-muted-foreground font-bold text-xs">
                       {(form.selectedDestinasi.title || "??").slice(0, 2).toUpperCase()}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-gray-800 truncate">{form.selectedDestinasi.title}</p>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{form.selectedDestinasi.location}</p>
-                    <p className="text-[11px] font-semibold mt-0.5" style={{ color: A }}>
+                    <p className="text-xs font-semibold text-foreground truncate">{form.selectedDestinasi.title}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{form.selectedDestinasi.location}</p>
+                    <p className="text-[11px] font-semibold mt-0.5" style={{ color: "var(--primary-foreground)" }}>
                       {form.selectedDestinasi.rating != null ? `★ ${Number(form.selectedDestinasi.rating).toFixed(1)} · ` : ""}mulai {formatIDR(form.selectedDestinasi.priceMin) ?? "-"}
                     </p>
                   </div>
@@ -188,12 +188,12 @@ export default function SuccessState({
               {(form.budget || form.selectedDestinasi?.priceMin) && (
                 <div
                   className="flex justify-between items-center py-3 mt-2 rounded-xl px-3"
-                  style={{ backgroundColor: `${A}08`, border: `1px solid ${A}20` }}
+                  style={{ backgroundColor: `color-mix(in srgb, var(--primary) 3%, transparent)`, border: `1px solid color-mix(in srgb, var(--primary) 13%, transparent)` }}
                 >
-                  <span className="text-xs font-semibold text-gray-700">Estimasi Budget</span>
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-xs font-semibold text-foreground">Estimasi Budget</span>
+                  <span className="text-sm font-bold text-foreground">
                     {formatIDR(form.tripType === "explorer" ? form.selectedDestinasi?.priceMin : form.budget) ?? "-"}
-                    <span className="text-xs font-normal text-gray-400"> /pax</span>
+                    <span className="text-xs font-normal text-muted-foreground"> /pax</span>
                   </span>
                 </div>
               )}
@@ -201,8 +201,8 @@ export default function SuccessState({
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <h3 className="text-xs font-semibold text-gray-700 mb-3">Langkah Selanjutnya</h3>
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-5">
+            <h3 className="text-xs font-semibold text-foreground mb-3">Langkah Selanjutnya</h3>
             <div className="space-y-3">
               {[
                 requestCode
@@ -214,11 +214,11 @@ export default function SuccessState({
                 <div key={i} className="flex items-start gap-3">
                   <span
                     className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5"
-                    style={{ backgroundColor: `${A}15`, color: A }}
+                    style={{ backgroundColor: `color-mix(in srgb, var(--primary) 8%, transparent)`, color: "var(--primary-foreground)" }}
                   >
                     {i + 1}
                   </span>
-                  <p className="text-xs text-gray-500 leading-relaxed">{text}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
                 </div>
               ))}
             </div>
@@ -228,7 +228,7 @@ export default function SuccessState({
             href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe57] text-white"
+            className="w-full py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 bg-success-500 hover:bg-success-600 text-success-950"
           >
             <img src="/whatsapp-logo.webp" alt="WhatsApp" className="w-5 h-5 object-contain" />
             Konfirmasi via WhatsApp
@@ -236,9 +236,9 @@ export default function SuccessState({
 
           <a
             href="/my-trips"
-            className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-xl text-primary-foreground font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
             style={{ backgroundColor: A }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#c47d12")}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--primary) 90%, var(--foreground))")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = A)}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -249,7 +249,7 @@ export default function SuccessState({
 
           <button
             onClick={onReset}
-            className="w-full py-3 rounded-xl border border-gray-200 text-gray-600 mb-10 font-semibold text-sm transition-all hover:bg-gray-50 active:scale-95 flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-xl border border-border text-muted-foreground mb-10 font-semibold text-sm transition-all hover:bg-muted active:scale-95 flex items-center justify-center gap-2"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <polyline points="15 18 9 12 15 6" />

@@ -105,10 +105,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="bg-slate-100/70 min-w-0">
-        <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white px-4 sm:px-6">
+      <SidebarInset className="bg-muted/70 min-w-0">
+        <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-border/80 bg-card px-4 sm:px-6">
           <div className="flex items-center gap-2 min-w-0">
-            <SidebarTrigger className="-ml-1 text-slate-500" />
+            <SidebarTrigger className="-ml-1 text-muted-foreground" />
             {activeMenu && (
               <>
                 <Separator
@@ -126,7 +126,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                       </>
                     )}
                     <BreadcrumbItem>
-                      <BreadcrumbPage className="truncate text-slate-700">
+                      <BreadcrumbPage className="truncate text-foreground">
                         {activeMenu.activeItem.name}
                       </BreadcrumbPage>
                     </BreadcrumbItem>
@@ -144,11 +144,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 onClick={() => setShowNotifications(!showNotifications)}
                 aria-label="Notifikasi"
                 aria-expanded={showNotifications}
-                className="relative text-slate-500"
+                className="relative text-muted-foreground"
               >
                 <Bell />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-destructive-600 text-white text-[10px] font-bold flex items-center justify-center px-1">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
@@ -161,7 +161,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs text-[#F49D1A] hover:text-[#E08A0E] font-medium"
+                        className="text-xs text-primary-foreground hover:text-primary-foreground/90 font-medium"
                       >
                         Tandai semua dibaca
                       </button>
@@ -225,7 +225,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         <Link
                           href="/admin/notifications"
                           onClick={() => setShowNotifications(false)}
-                          className="block rounded-sm px-2 py-1.5 text-center text-xs font-medium text-[#F49D1A] hover:bg-accent transition-colors"
+                          className="block rounded-sm px-2 py-1.5 text-center text-xs font-medium text-primary-foreground hover:bg-accent transition-colors"
                         >
                           Lihat semua notifikasi →
                         </Link>
@@ -236,7 +236,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               )}
             </div>
 
-            <div className="h-6 w-[1px] bg-slate-200" />
+            <div className="h-6 w-[1px] bg-border" />
 
             <div className="relative" ref={profileRef}>
               <button
@@ -251,22 +251,22 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     alt={adminName}
                     width={40}
                     height={40}
-                    className="h-10 w-10 rounded-full object-cover border border-[#F49D1A]/20"
+                    className="h-10 w-10 rounded-full object-cover border border-primary/20"
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A]/15 border border-[#F49D1A]/20 font-bold text-[#F49D1A] group-hover:bg-[#F49D1A]/25 transition-colors">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 border border-primary/20 font-bold text-primary-foreground group-hover:bg-primary/25 transition-colors">
                     {adminInitials}
                   </div>
                 )}
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
-                  <div className="px-4 py-3 border-b border-slate-200">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-card border border-border/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-border">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {adminName}
                     </p>
-                    <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
+                    <p className="text-xs text-muted-foreground truncate mt-0.5 font-medium">
                       {session?.user?.email}
                     </p>
                   </div>
@@ -275,7 +275,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     <Link
                       href="/profile"
                       onClick={() => setProfileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-border hover:text-foreground transition-colors"
                     >
                       <User className="w-4 h-4 shrink-0" />
                       Profil Saya
@@ -283,7 +283,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     <Link
                       href="/admin"
                       onClick={() => setProfileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-border hover:text-foreground transition-colors"
                     >
                       <Shield className="w-4 h-4 shrink-0" />
                       Halaman Admin
@@ -291,14 +291,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     <Link
                       href="/my-trips"
                       onClick={() => setProfileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-border hover:text-foreground transition-colors"
                     >
                       <ShoppingBag className="w-4 h-4 shrink-0" />
                       Riwayat Trip
                     </Link>
                   </div>
 
-                  <div className="border-t border-slate-200 py-1.5">
+                  <div className="border-t border-border py-1.5">
                     <button
                       type="button"
                       onClick={async () => {
@@ -307,7 +307,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         router.push("/login");
                         router.refresh();
                       }}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-slate-200 cursor-pointer"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-destructive-600 transition-colors hover:bg-border cursor-pointer"
                     >
                       <LogOut className="w-4 h-4 shrink-0" />
                       Keluar dari Akun

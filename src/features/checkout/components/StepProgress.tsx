@@ -12,18 +12,18 @@ export default function StepProgress({ currentStep }: { currentStep: string }) {
     <div className="flex items-center justify-center gap-0">
       {steps.map((s, i) => (
         <div key={s.key} className="flex items-center">
-          <div className={`flex items-center gap-2 ${i <= idx ? "text-[#F49D1A]" : "text-gray-300"}`}>
+          <div className={`flex items-center gap-2 ${i <= idx ? "text-primary-foreground" : "text-muted-foreground"}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-              i <= idx ? "bg-[#F49D1A] text-white" : "bg-gray-100 text-gray-400"
+              i <= idx ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
             }`}>
               {i + 1}
             </div>
-            <span className={`text-xs font-semibold hidden sm:block ${i <= idx ? "text-gray-800" : "text-gray-400"}`}>
+            <span className={`text-xs font-semibold hidden sm:block ${i <= idx ? "text-foreground" : "text-muted-foreground"}`}>
               {s.label}
             </span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`w-8 sm:w-16 h-0.5 mx-2 rounded-full ${i < idx ? "bg-[#F49D1A]" : "bg-gray-200"}`} />
+            <div className={`w-8 sm:w-16 h-0.5 mx-2 rounded-full ${i < idx ? "bg-primary" : "bg-border"}`} />
           )}
         </div>
       ))}

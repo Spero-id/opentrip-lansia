@@ -1,4 +1,3 @@
-import { A } from "./helpers/constants";
 import { Star, Heart } from "lucide-react";
 import { formatIDR } from "@/utils/format";
 import type { PrivateTripDestination } from "@/features/private-trip/types";
@@ -17,7 +16,7 @@ export default function DestinationCard({
     <button
       type="button"
       onClick={onSelect}
-      className="w-full flex items-stretch gap-0 rounded-xl border border-[#E5E7EB] bg-white text-left transition-colors hover:border-[#F49D1A] hover:bg-[#FFFBEB] cursor-pointer overflow-hidden"
+      className="w-full flex items-stretch gap-0 rounded-xl border border-border bg-card text-left transition-colors hover:border-primary hover:bg-primary/10 cursor-pointer overflow-hidden"
     >
       {dest.image ? (
         <img
@@ -26,21 +25,21 @@ export default function DestinationCard({
           className="w-32 self-stretch object-cover shrink-0"
         />
       ) : (
-        <div className="w-32 self-stretch bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 font-bold text-xs">
+        <div className="w-32 self-stretch bg-border flex items-center justify-center shrink-0 text-muted-foreground font-bold text-xs">
           {title.slice(0, 2).toUpperCase()}
         </div>
       )}
 
       <div className="flex-1 min-w-0 flex flex-col gap-2 p-4 pl-3">
-        <p className="text-[13px] font-bold text-[#1F2A37] leading-tight truncate">
+        <p className="text-[13px] font-bold text-foreground leading-tight truncate">
           {title}
         </p>
-        <p className="text-xs text-[#6B7280] leading-none truncate">
+        <p className="text-xs text-muted-foreground leading-none truncate">
           {dest.location || "Indonesia"}
         </p>
         <p
           className="text-xs font-semibold flex items-center gap-1.5"
-          style={{ color: A }}
+          style={{ color: "var(--primary-foreground)" }}
         >
           {rating ? (
             <>
@@ -49,13 +48,13 @@ export default function DestinationCard({
               <span>·</span>
             </>
           ) : (
-            <span className="font-medium text-gray-500">Belum ada ulasan</span>
+            <span className="font-medium text-muted-foreground">Belum ada ulasan</span>
           )}
           <span>{formatIDR(dest.priceMin)}</span>
         </p>
         {dest.isSeniorFriendly && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium text-[#065F46] bg-[#ECFDF5] border border-[#A7F3D0] w-fit">
-            <Heart size={10} className="fill-[#10B981] text-[#10B981] shrink-0" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium text-success-800 bg-success-50 border border-success-200 w-fit">
+            <Heart size={10} className="fill-success-500 text-success-500 shrink-0" />
             Ramah Lansia
           </span>
         )}

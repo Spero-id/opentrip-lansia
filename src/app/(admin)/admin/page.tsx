@@ -8,27 +8,27 @@ import { formatIDRCompact } from "@/utils/format";
 function formatStatus(status: string): { label: string; className: string } {
   switch (status) {
     case "confirmed":
-      return { label: "Terkonfirmasi", className: "bg-[#1CA6B7]/15 text-[#1CA6B7]" };
+      return { label: "Terkonfirmasi", className: "bg-secondary/15 text-secondary-foreground" };
     case "completed":
-      return { label: "Selesai", className: "bg-green-100 text-green-700" };
+      return { label: "Selesai", className: "bg-success-100 text-success-700" };
     case "cancelled":
-      return { label: "Dibatalkan", className: "bg-red-100 text-red-700" };
+      return { label: "Dibatalkan", className: "bg-destructive-100 text-destructive-700" };
     case "pending":
     default:
-      return { label: "Pending", className: "bg-amber-100 text-amber-800" };
+      return { label: "Pending", className: "bg-warning-100 text-warning-800" };
   }
 }
 
 function StatCardSkeleton() {
   return (
-    <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 animate-pulse">
+    <div className="bg-card p-5 rounded-3xl border border-border/80 shadow-xs flex flex-col justify-between space-y-4 animate-pulse">
       <div className="flex items-center justify-between">
-        <div className="h-3 w-32 bg-slate-200 rounded" />
-        <div className="w-10 h-10 rounded-2xl bg-slate-200" />
+        <div className="h-3 w-32 bg-border rounded" />
+        <div className="w-10 h-10 rounded-2xl bg-border" />
       </div>
       <div>
-        <div className="h-7 w-24 bg-slate-200 rounded mb-2" />
-        <div className="h-3 w-20 bg-slate-100 rounded" />
+        <div className="h-7 w-24 bg-border rounded mb-2" />
+        <div className="h-3 w-20 bg-muted rounded" />
       </div>
     </div>
   );
@@ -44,8 +44,8 @@ export default function AdminDashboard() {
           value: String(stats.totalTrips),
           change: "Total aktif",
           icon: Compass,
-          color: "text-[#F49D1A]",
-          bg: "bg-[#FEF6E7]",
+          color: "text-primary-foreground",
+          bg: "bg-primary/10",
         },
         {
           label: "Pemesanan Bulan Ini",
@@ -57,16 +57,16 @@ export default function AdminDashboard() {
               ? `+${stats.bookingChange}% vs bln lalu`
               : `${stats.bookingChange}% vs bln lalu`,
           icon: Calendar,
-          color: "text-[#1CA6B7]",
-          bg: "bg-[#1CA6B7]/10",
+          color: "text-secondary-foreground",
+          bg: "bg-secondary/10",
         },
         {
           label: "Total Pendapatan",
           value: stats.revenue,
           change: "Booking confirmed & selesai",
           icon: DollarSign,
-          color: "text-blue-600",
-          bg: "bg-blue-50",
+          color: "text-info-600",
+          bg: "bg-info-50",
         },
         {
           label: "Promo Aktif",
@@ -81,23 +81,23 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard Overview</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Dashboard Overview</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Selamat datang di panel admin Jelajah Memoria. Pantau performa bisnis dan pengelolaan destinasi secara real-time.
           </p>
         </div>
         <Link
           href="/admin/trips"
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 transition inline-flex items-center gap-2 shrink-0"
         >
           <span>+ Buat Trip Baru</span>
         </Link>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-2xl">
+        <div className="bg-destructive-50 border border-destructive-200 text-destructive-700 text-sm px-4 py-3 rounded-2xl">
           Gagal memuat data dashboard: {error}
         </div>
       )}
@@ -110,17 +110,17 @@ export default function AdminDashboard() {
               return (
                 <div
                   key={idx}
-                  className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4"
+                  className="bg-card p-5 rounded-3xl border border-border/80 shadow-xs flex flex-col justify-between space-y-4"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400">{stat.label}</span>
+                    <span className="text-xs font-semibold text-muted-foreground">{stat.label}</span>
                     <div className={`w-10 h-10 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
                       <Icon className="w-5 h-5" />
                     </div>
                   </div>
                   <div>
-                    <span className="text-2xl font-extrabold text-slate-900">{stat.value}</span>
-                    <span className="block text-[11px] font-semibold text-[#1CA6B7] mt-1">{stat.change}</span>
+                    <span className="text-2xl font-extrabold text-foreground">{stat.value}</span>
+                    <span className="block text-[11px] font-semibold text-secondary-foreground mt-1">{stat.change}</span>
                   </div>
                 </div>
               );
@@ -129,18 +129,18 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <div className="lg:col-span-8 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+        <div className="lg:col-span-8 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">Pemesanan Terbaru</h2>
-            <Link href="/admin/notifications" className="text-xs font-semibold text-[#F49D1A] hover:underline flex items-center gap-1">
+            <h2 className="text-lg font-bold text-foreground">Pemesanan Terbaru</h2>
+            <Link href="/admin/notifications" className="text-xs font-semibold text-primary-foreground hover:underline flex items-center gap-1">
               <span>Lihat Semua Notifikasi</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-100">
+          <div className="overflow-x-auto rounded-2xl border border-border">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+              <thead className="bg-muted text-muted-foreground font-semibold border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Kode Booking</th>
                   <th className="px-4 py-3">Pemesan</th>
@@ -149,20 +149,20 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-border text-foreground">
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
                       {Array.from({ length: 5 }).map((_, j) => (
                         <td key={j} className="px-4 py-3">
-                          <div className="h-3 bg-slate-200 rounded w-full" />
+                          <div className="h-3 bg-border rounded w-full" />
                         </td>
                       ))}
                     </tr>
                   ))
                 ) : recentBookings.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                    <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                       Belum ada pemesanan.
                     </td>
                   </tr>
@@ -170,11 +170,11 @@ export default function AdminDashboard() {
                   recentBookings.map((row) => {
                     const { label, className } = formatStatus(row.status);
                     return (
-                      <tr key={row.id} className="hover:bg-slate-50/60 transition">
-                        <td className="px-4 py-3 font-mono font-bold text-slate-900">{row.bookingCode}</td>
+                      <tr key={row.id} className="hover:bg-muted/60 transition">
+                        <td className="px-4 py-3 font-mono font-bold text-foreground">{row.bookingCode}</td>
                         <td className="px-4 py-3 font-medium">{row.customerName}</td>
-                        <td className="px-4 py-3 text-slate-500">{row.tripName}</td>
-                        <td className="px-4 py-3 font-bold text-[#F49D1A]">{formatIDRCompact(row.totalAmount)}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{row.tripName}</td>
+                        <td className="px-4 py-3 font-bold text-primary-foreground">{formatIDRCompact(row.totalAmount)}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${className}`}>
                             {label}
@@ -189,37 +189,37 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-          <h2 className="text-lg font-bold text-slate-900">Aksi Cepat</h2>
+        <div className="lg:col-span-4 bg-card p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs space-y-4">
+          <h2 className="text-lg font-bold text-foreground">Aksi Cepat</h2>
 
           <div className="space-y-3 text-xs">
             <Link
               href="/admin/trips"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-muted hover:bg-primary/10 hover:border-primary/20 border border-border transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Kelola Paket Trip</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-foreground group-hover:text-primary-foreground">Kelola Paket Trip</span>
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" />
             </Link>
             <Link
               href="/admin/trips"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-muted hover:bg-primary/10 hover:border-primary/20 border border-border transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Tambah Trip Baru</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-foreground group-hover:text-primary-foreground">Tambah Trip Baru</span>
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" />
             </Link>
             <Link
               href="/admin/promotions"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-muted hover:bg-primary/10 hover:border-primary/20 border border-border transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Buat Kode Kupon / Promo</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-foreground group-hover:text-primary-foreground">Buat Kode Kupon / Promo</span>
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" />
             </Link>
             <Link
               href="/admin/bookings"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-muted hover:bg-primary/10 hover:border-primary/20 border border-border transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Lihat Semua Pemesanan</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-foreground group-hover:text-primary-foreground">Lihat Semua Pemesanan</span>
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" />
             </Link>
           </div>
         </div>
