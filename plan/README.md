@@ -1,49 +1,45 @@
 # 📋 Plan — OpenTrip Lansia (OTL)
 
 Folder perencanaan proyek. Semua dokumen berbahasa Indonesia, konsisten dengan
-`docs/` yang ada.
+`docs/`. Status fitur terkini ada di **`feature_list.json`** (source of truth).
 
 ## Isi folder
 
 | Dokumen | Isi |
 |---|---|
-| [`overview.md`](./overview.md) | Ringkasan proyek: visi, status, arsitektur, tech stack |
+| [`overview.md`](./overview.md) | Ringkasan proyek: visi, status, arsitektur, tech stack, testing |
 | [`spec-fitur/`](./spec-fitur/) | Spesifikasi per fitur (satu file per fitur) |
+
+Dokumen plan lama (`roadmap.md`, `lib-cleanup.md`, `restructure-*.md`,
+`feat-*.md`, `tier-pricing-roadmap.md`) sudah dihapus agar tidak menyesatkan.
+Riwayat lengkapnya tetap ada di `progress.md`.
 
 ## Spec fitur
 
-### ✅ Sedang dalam pengerjaan
+| Spec | Feature | Status | Ringkasan |
+|---|---|---|---|
+| [`spec-group-trip.md`](./spec-fitur/spec-group-trip.md) | feat-011b | ✅ completed | Group Trip: satu trip punya banyak grup, set grup aktif, upload foto per grup |
+| [`spec-referral-commission.md`](./spec-fitur/spec-referral-commission.md) | feat-073 | 🔄 in_review | Sistem referral: kode referral di profile, input di checkout, history referral |
 
-| Spec | Feature | Ringkasan |
-|---|---|---|
-| [`spec-referral-commission.md`](./spec-fitur/spec-referral-commission.md) | feat-073 | Sistem referral: kode referral di profile, input di checkout, history referral |
-| [`spec-group-trip.md`](./spec-fitur/spec-group-trip.md) | feat-011b | Group Trip: satu trip punya banyak grup, set grup aktif, upload foto per grup |
-
-### 📋 Belum ada spec formal
-
-| Feature | Ringkasan |
-|---|---|
-| Booking & Payment Flow | Checkout multi-step, payment gateway Midtrans |
-| Trip Departure Management | Kelola jadwal keberangkatan per trip |
-| Private Trip | Request private trip, proposal admin |
-| Admin Dashboard | CRUD trips, destinations, blogs, commissions |
-| Review & Ulasan | Rating 1-5, galeri perjalanan |
+Fitur lain belum punya spec formal; daftar dan statusnya lihat `feature_list.json`
+(mis. payment gateway Midtrans, commission payout, notifikasi WhatsApp,
+shared UI library, FAQ, About, lupa password).
 
 ## Cara pakai
 
-1. Mulai dari **`overview.md`** untuk memahami status proyek saat ini.
-2. Saat mengerjakan fitur, buka spec fitur terkait untuk detail:
-   alur, API, model data, kriteria penerimaan.
+1. Mulai dari **`overview.md`** untuk memahami status dan arsitektur proyek.
+2. Cek **`feature_list.json`** untuk melihat fitur mana yang `to_do` / `in_review` / `completed`.
+3. Saat mengerjakan fitur yang punya spec, buka file di **`spec-fitur/`** untuk
+   detail alur, API, dan kriteria penerimaan.
 
 ## Catatan penting
 
-- Tech stack: **Next.js 16 + Drizzle ORM + Neon PostgreSQL + Better Auth**
-- Database URL: Neon PostgreSQL (lihat `docs/index.md` → Connection Strings)
-- Pattern: **controller → service → repository → schema** (di `src/modules/`)
+- Tech stack: **Next.js 16 + Drizzle ORM + Neon PostgreSQL + Better Auth + Resend**
+- Pattern: **controller → service → repository → schema** di `src/features/<fitur>/`
 - Auth: Better Auth dengan session-based
 - Payment: Midtrans (manual transfer saat ini)
-- Jangan commit: `.env`, `node_modules/`, `.next/`
+- Jangan commit: `.env`, `node_modules/`, `.next/`, `test-results/`, `playwright-report/`
 
 ---
 
-*Last updated: 6 September 2026*
+*Terakhir diperbarui: 9 Oktober 2026*
