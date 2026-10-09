@@ -2598,3 +2598,19 @@ Menutup dua file otorisasi yang tadinya **0% coverage**.
 **Verifikasi:** tsc 0 · lint 0E · vitest **384** hijau (+20, 44 → 46 file) · build compiled · check-structure all rules within baseline · **`lib/auth` coverage 0% → 94.59%**.
 
 **Status audit coverage:** `src/utils` 55.88% → 91.17% (sesi 84) · `lib/auth` 77.3% → 94.59% · `lib/env` 100% statement · `utils/errors` 92.3% · `lib/db` punya test tapi angka per-file tidak terbaca di tabel coverage. Yang masih 0%: `lib/auth/session.ts` **sudah tertutup di sesi ini**;sisanya `db/schema/*` (bersifat deklaratif, wajar) dan repository fitur yang butuh DB nyata.
+
+## Session 86 — 2026-10-09 (audit migrasi email Resend, branch setup-resend)
+
+**Temuan audit dan perbaikannya.**
+
+1. **Bug interpolasi `from` pada email sambutan.** `src/lib/mail/index.ts` memakai kutip tunggal: `from: 'Subscription ${RESEND_EMAIL_FROM}'`, sehingga Resend menerima string literal tersebut, bukan alamat pengirim. Diganti dengan konstanta `FROM = "Jelajah Memoria <${RESEND_EMAIL_FROM}>"` yang dipakai kedua fungsi. Dikunci test `resend.test.ts`.
+2. **Email sambutan tidak memeriksa `error`.** `sendSubscriptionConfirmationEmail` mengabaikan hasil `{ data, error }` dari Resend, jadi kegagalan vendor tidak pernah terlihat pemanggil. Sekarang sama seperti contact: log + `throw new Error(error.message)`; kedua service (contact & newsletter) sudah membungkusnya `try/catch` supaya pengiriman email tidak membatalkan penyimpanan data.
+3. **`BETTER_AUTH_SECRET` di `.env` rusak** — nilainya `SECRET=ZKZF...` (prefix `SECRET=` ikut terbaca sebagai bagian rahasia). Diperbaiki menjadi base64 32-byte yang benar. Ini bug env nyata: boot tidak gagal karena `min(1)` lolos, tapi session ditandatangani dengan secret yang salah.
+4. **`RESEND_EMAIL_FROM` kosong** di `.env`; sebenarnya jatuh ke default `onboarding@resend.dev`, tetapi eksplisit ditulis supaya jelas. Catatan produksi: alamat `onboarding@resend.dev` hanya bisa kirim ke email pemilik akun Resend; untuk produksi wajib verifikasi domain dan ganti nilai ini.
+5. **Sisa nodemailer dihapus:** dependensi `nodemailer` + `@types/nodemailer` di `package.json`, `src/lib/mail/transport.ts` (interface tak terpakai), serta test `nodemailer.test.ts` yang mengimpor modul yang sudah dihapus. `SERVER_ONLY_PACKAGES` di `check-structure.ts` diganti `nodemailer` → `resend`. `package-lock.json` disinkronkan (`npm install` → removed 2 packages).
+6. **Test usang disesuaikan ke skema Resend:** `env/__tests__/server.test.ts` (12 gagal) ditulis ulang (tambah kasus `RESEND_API_KEY` wajib + default `RESEND_EMAIL_FROM`), `real-env.test.ts` mengganti invarian SMTP dengan `RESEND_*`, dan `mail/__tests__/resend.test.ts` baru mengunci `from`/`to`/`replyTo`/`subject`/`html` serta jalur error.
+7. **Dokumen deploy** `docs/DEPLOY.md` masih menyuruh isi `SMTP_*`; diganti `RESEND_API_KEY`/`RESEND_EMAIL_FROM` dan referensi vuln `nodemailer` dibersihkan.
+
+**Temuan yang perlu keputusan pemilik:** file `env` tanpa titik di root berisi kredensial asli (termasuk `SMTP_PASS`) dan tidak dibaca Next.js (hanya `.env*` yang dimuat). Sempat ditambahkan `/env` ke `.gitignore`, lalu **file dihapus** setelah konfirmasi pemilik (entri `.gitignore` dicabut lagi). `.env` sekarang memakai `onboarding@resend.dev` sebagai pengirim.
+
+**Verifikasi:** `tsc --noEmit` 0 error · `npm run lint` 0 error (80 warning, baseline) · `vitest run` **379 hijau** (46 file; dari 372/12 gagal) · `npm run build` sukses 103 route · `check:structure` semua rule dalam baseline (R12 tetap 0).

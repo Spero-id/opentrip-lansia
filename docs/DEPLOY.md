@@ -43,7 +43,7 @@ git pull
 ```bash
 npm install
 npm audit fix        # jangan pakai --force (breaking change)
-npm audit            # sisa 5 moderate (drizzle-kit / nodemailer) itu dev tooling — boleh diabaikan
+npm audit            # sisa vuln moderate (drizzle-kit) itu dev tooling — boleh diabaikan
 ```
 
 ### 3. Buat `.env` — **WAJIB sebelum `npm run build`**
@@ -64,7 +64,8 @@ Isi minimal 4 nilai ini:
 Variabel `NEXT_PUBLIC_*` di-bake saat **build**. Artinya: kalau `.env` baru diisi
 **setelah** `npm run build`, nilainya tidak akan masuk — harus build ulang.
 
-Opsional (isi kalau dipakai): `GOOGLE_CLIENT_ID/SECRET`, `SMTP_*`, `ADMIN_EMAIL`,
+Opsional (isi kalau dipakai): `GOOGLE_CLIENT_ID/SECRET`, `RESEND_API_KEY`,
+`RESEND_EMAIL_FROM`, `ADMIN_EMAIL`,
 `NEXT_PUBLIC_WHATSAPP_*`, `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY`.
 
 ### 4. Database — pilih SATU, tergantung kondisi
@@ -194,4 +195,4 @@ lewat Neon SQL editor.
 | `drizzle-kit push`, bukan `migrate` | journal tidak lengkap; tabel auth tidak ada di file SQL |
 | `npm audit fix` tanpa `--force` | `--force` menurunkan `drizzle-kit` ke versi lama (breaking) |
 | Skrip SQL ulasan dijalankan manual (`docs/database/*.sql`) | `drizzle-kit migrate` tidak dipakai, jadi perubahan data & constraint tidak ikut otomatis |
-| Sisa 5 vuln dibiarkan | semuanya di dependency dev (drizzle-kit, nodemailer transitif) |
+| Sisa vuln moderate dibiarkan | semuanya di dependency dev (drizzle-kit) |
