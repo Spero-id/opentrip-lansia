@@ -8,6 +8,7 @@ Folder perencanaan proyek. Semua dokumen berbahasa Indonesia, konsisten dengan
 | Dokumen | Isi |
 |---|---|
 | [`overview.md`](./overview.md) | Ringkasan proyek: visi, status, arsitektur, tech stack, testing |
+| [`audit-warna-hardcoded.md`](./audit-warna-hardcoded.md) | Audit warna hardcoded → token semantik: checklist per fase yang bisa dicentang (2026-10-11) |
 | [`spec-fitur/`](./spec-fitur/) | Spesifikasi per fitur (satu file per fitur) |
 
 Dokumen plan lama (`roadmap.md`, `lib-cleanup.md`, `restructure-*.md`,
