@@ -12,8 +12,6 @@ const WA_NUMBER = "6285110511403";
 const WA_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
 import Subs from "@/features/newsletter/components/Subs";
 
-const A = "#F49D1A";
-const A_HOVER = "#c47d12";
 const baseInput =
     "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-background placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors";
 const normalBorder = "border-[#D1D5DB] focus:border-primary";
@@ -242,14 +240,7 @@ export default function ContactPage() {
                                             <button
                                                 type="submit"
                                                 disabled={loading}
-                                                style={{ backgroundColor: A }}
-                                                onMouseEnter={(e) => {
-                                                    if (!loading) e.currentTarget.style.backgroundColor = A_HOVER;
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    if (!loading) e.currentTarget.style.backgroundColor = A;
-                                                }}
-                                                className="px-6 py-3 rounded-lg text-white font-semibold text-[13px] tracking-wide transition-all active:scale-[0.98] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer shrink-0 shadow-sm"
+                                                className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold text-[13px] tracking-wide transition-colors hover:bg-primary/85 active:scale-[0.98] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer shrink-0 shadow-sm"
                                             >
                                                 {loading ? "Mengirim..." : "Kirim Pesan"}
                                                 {loading ? (
