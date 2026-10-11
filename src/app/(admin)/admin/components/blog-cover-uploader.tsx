@@ -71,7 +71,7 @@ export default function BlogCoverUploader({ value, onChange }: BlogCoverUploader
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="w-full max-w-xs rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-slate-400 hover:bg-slate-50 transition disabled:opacity-50"
+          className="w-full max-w-xs rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-muted-foreground hover:bg-slate-50 transition disabled:opacity-50"
         >
           {uploading ? "Mengunggah..." : "+ Unggah Gambar Sampul"}
         </button>

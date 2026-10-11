@@ -212,7 +212,7 @@ export default function IconPicker({
                 : "bg-slate-700 text-primary-foreground border-slate-700 ring-2 ring-slate-400/30 scale-105"
               : hasIcon
               ? "bg-amber-50/90 text-primary hover:bg-amber-100/90 border-amber-200 hover:border-amber-300 hover:scale-102"
-              : "bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 border-slate-200 hover:border-slate-300 hover:scale-102"
+              : "bg-slate-50 text-muted-foreground hover:bg-slate-100 hover:text-slate-600 border-slate-200 hover:border-slate-300 hover:scale-102"
           } ${buttonClassName || ""}`}
         >
           {hasIcon ? (
@@ -223,8 +223,8 @@ export default function IconPicker({
           <span
             className={`absolute -bottom-1 -right-1 rounded-full p-0.5 shadow-xs border transition ${
               hasIcon
-                ? "bg-background text-slate-400 border-slate-200 group-hover:text-primary group-hover:border-amber-300"
-                : "bg-background text-slate-400 border-slate-200 group-hover:text-slate-600 group-hover:border-slate-300"
+                ? "bg-background text-muted-foreground border-slate-200 group-hover:text-primary group-hover:border-amber-300"
+                : "bg-background text-muted-foreground border-slate-200 group-hover:text-slate-600 group-hover:border-slate-300"
             }`}
           >
             <ChevronDown className="w-2.5 h-2.5" />
@@ -239,15 +239,15 @@ export default function IconPicker({
         >
           <span
             className={`p-1 rounded-lg shrink-0 border ${
-              hasIcon ? "bg-amber-50 text-primary border-amber-200/50" : "bg-slate-100 text-slate-400 border-slate-200"
+              hasIcon ? "bg-amber-50 text-primary border-amber-200/50" : "bg-slate-100 text-muted-foreground border-slate-200"
             }`}
           >
             {hasIcon ? <DynamicLucideIcon name={selectedIcon} className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           </span>
-          <span className={`font-medium truncate ${hasIcon ? "text-slate-700" : "text-slate-400 italic"}`}>
+          <span className={`font-medium truncate ${hasIcon ? "text-slate-700" : "text-muted-foreground italic"}`}>
             {hasIcon ? selectedIcon : "Pilih Ikon"}
           </span>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-auto shrink-0" />
+          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-auto shrink-0" />
         </button>
       ) : (
         <button
@@ -259,16 +259,16 @@ export default function IconPicker({
           <div className="flex items-center gap-2 truncate">
             <span
               className={`p-1 rounded-lg shrink-0 border ${
-                hasIcon ? "bg-amber-50 text-primary border-amber-200/50" : "bg-slate-100 text-slate-400 border-slate-200"
+                hasIcon ? "bg-amber-50 text-primary border-amber-200/50" : "bg-slate-100 text-muted-foreground border-slate-200"
               }`}
             >
               {hasIcon ? <DynamicLucideIcon name={selectedIcon} className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             </span>
-            <span className={`font-medium truncate ${hasIcon ? "text-slate-700" : "text-slate-400 italic"}`}>
+            <span className={`font-medium truncate ${hasIcon ? "text-slate-700" : "text-muted-foreground italic"}`}>
               {hasIcon ? selectedIcon : "Pilih Ikon"}
             </span>
           </div>
-          <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Pilih</span>
+          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Pilih</span>
         </button>
       )}
 
@@ -295,7 +295,7 @@ export default function IconPicker({
                       onChange("");
                       setIsOpen(false);
                     }}
-                    className="text-[11px] font-medium text-slate-500 hover:text-red-600 transition"
+                    className="text-[11px] font-medium text-muted-foreground hover:text-red-600 transition"
                     title="Kosongkan Ikon"
                   >
                     Kosongkan
@@ -304,7 +304,7 @@ export default function IconPicker({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition"
+                  className="p-1 rounded-lg hover:bg-slate-100 text-muted-foreground hover:text-slate-600 transition"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -312,7 +312,7 @@ export default function IconPicker({
             </div>
 
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Cari ikon (cth: Bus, Wifi, Bed, Shield)..."
@@ -325,7 +325,7 @@ export default function IconPicker({
                 <button
                   type="button"
                   onClick={() => setSearch("")}
-                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600"
+                  className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-slate-600"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -374,7 +374,7 @@ export default function IconPicker({
               </div>
             ) : (
               <div>
-                <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
                   Hasil Pencarian ({filteredIcons.length})
                 </span>
                 <div className="grid grid-cols-6 sm:grid-cols-7 gap-1.5 max-h-44 overflow-y-auto p-1.5 bg-slate-50/70 rounded-xl border border-slate-100">
@@ -397,7 +397,7 @@ export default function IconPicker({
                     </button>
                   ))}
                   {filteredIcons.length === 0 && (
-                    <p className="col-span-full py-4 text-center text-xs text-slate-400">
+                    <p className="col-span-full py-4 text-center text-xs text-muted-foreground">
                       Ikon &quot;{search}&quot; tidak ditemukan.
                     </p>
                   )}
@@ -405,7 +405,7 @@ export default function IconPicker({
               </div>
             )}
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-muted-foreground">
               <span>Ikon terpilih:</span>
               {hasIcon ? (
                 <span className="font-semibold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md inline-flex items-center gap-1.5">
@@ -413,7 +413,7 @@ export default function IconPicker({
                   {selectedIcon}
                 </span>
               ) : (
-                <span className="font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md italic">
+                <span className="font-medium text-muted-foreground bg-slate-100 px-2 py-0.5 rounded-md italic">
                   Tanpa Ikon
                 </span>
               )}

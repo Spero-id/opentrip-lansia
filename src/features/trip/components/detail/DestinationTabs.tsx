@@ -29,12 +29,12 @@ export default function DestinationTabs({ activeTab, onChange }: { activeTab: Tr
             className={`flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
               isActive
                 ? "bg-background text-primary shadow-sm"
-                : "text-gray-500 hover:text-gray-900"
+                : "text-muted-foreground hover:text-gray-900"
             }`}
           >
             <Icon
               size={15}
-              className={isActive ? "text-primary" : "text-gray-400"}
+              className={isActive ? "text-primary" : "text-muted-foreground"}
             />
             {label}
           </button>

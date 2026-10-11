@@ -84,17 +84,17 @@ export default function ReferralHistory() {
   return (
     <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
       <h2 className="text-base font-bold text-slate-900">History Referral</h2>
-      <p className="mt-0.5 text-xs text-slate-400">
+      <p className="mt-0.5 text-xs text-muted-foreground">
         Daftar orang yang menggunakan kode referral kamu.
       </p>
 
       {history.length === 0 ? (
         <div className="mt-6 py-8 text-center">
           <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
-            <Clock size={20} className="text-slate-400" />
+            <Clock size={20} className="text-muted-foreground" />
           </div>
-          <p className="text-sm text-slate-500">Belum ada referral</p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-sm text-muted-foreground">Belum ada referral</p>
+          <p className="text-xs text-muted-foreground mt-1">
             Bagikan kode referral kamu untuk mulai mendapat komisi!
           </p>
         </div>
@@ -114,7 +114,7 @@ export default function ReferralHistory() {
                   className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors"
                 >
                   <div className="h-10 w-10 rounded-full bg-[#FEF6E7] flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-[#c47d12]">
+                    <span className="text-sm font-bold text-primary/85">
                       {(item.referredUserName ?? "U").charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -123,7 +123,7 @@ export default function ReferralHistory() {
                     <p className="text-sm font-semibold text-slate-900 truncate">
                       {item.referredUserName ?? "User"}
                     </p>
-                    <p className="text-xs text-slate-400 truncate">
+                    <p className="text-xs text-muted-foreground truncate">
                       {item.tripName ?? "-"} · {formatDate(item.createdAt)}
                     </p>
                   </div>
@@ -136,9 +136,9 @@ export default function ReferralHistory() {
                   </span>
 
                   {isExpanded ? (
-                    <ChevronUp size={16} className="text-slate-400" />
+                    <ChevronUp size={16} className="text-muted-foreground" />
                   ) : (
-                    <ChevronDown size={16} className="text-slate-400" />
+                    <ChevronDown size={16} className="text-muted-foreground" />
                   )}
                 </button>
 
@@ -146,25 +146,25 @@ export default function ReferralHistory() {
                   <div className="px-3 pb-3 pt-1 border-t border-slate-100 bg-slate-50">
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div>
-                        <p className="text-slate-500">Kode Booking</p>
+                        <p className="text-muted-foreground">Kode Booking</p>
                         <p className="font-semibold text-slate-900">
                           {item.bookingCode ?? "-"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-slate-500">Trip</p>
+                        <p className="text-muted-foreground">Trip</p>
                         <p className="font-semibold text-slate-900">
                           {item.tripName ?? "-"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-slate-500">Komisi</p>
+                        <p className="text-muted-foreground">Komisi</p>
                         <p className="font-semibold text-slate-900">
                           {formatCurrency(item.commissionAmount)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-slate-500">Status Komisi</p>
+                        <p className="text-muted-foreground">Status Komisi</p>
                         <p className="font-semibold text-slate-900">
                           {item.commissionStatus ?? "Belum ada"}
                         </p>
@@ -178,7 +178,7 @@ export default function ReferralHistory() {
 
           {pagination && pagination.totalPages > 1 && (
             <div className="flex items-center justify-between pt-3">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Halaman {pagination.page} dari {pagination.totalPages}
               </p>
               <div className="flex gap-2">

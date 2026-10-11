@@ -107,12 +107,12 @@ export default function TermsModal({
             </span>
             <div>
               <p className="text-sm font-semibold text-gray-900">Syarat &amp; Ketentuan</p>
-              <p className="text-[10px] text-gray-400 font-normal">Private Trip · Jelajah Memoria</p>
+              <p className="text-[10px] text-muted-foreground font-normal">Private Trip · Jelajah Memoria</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-gray-600 hover:bg-gray-100 transition-colors"
             aria-label="Tutup"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -157,7 +157,7 @@ export default function TermsModal({
               <p className="text-xs font-semibold text-gray-700 mb-1.5">
                 {section.title}
               </p>
-              <p className="text-xs text-gray-500 leading-relaxed font-normal">
+              <p className="text-xs text-muted-foreground leading-relaxed font-normal">
                 {section.body}
               </p>
             </div>
@@ -180,7 +180,7 @@ export default function TermsModal({
                 </svg>
               )}
             </div>
-            <p className="text-[11px] text-gray-500 leading-relaxed">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
               {hasScrolledToBottom
                 ? <span>Saya telah membaca dan menyetujui <span className="font-medium text-gray-700">Syarat & Ketentuan</span> Private Trip yang berlaku.</span>
                 : "Baca semua ketentuan di atas terlebih dahulu sebelum melanjutkan."

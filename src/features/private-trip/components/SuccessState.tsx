@@ -66,8 +66,8 @@ const icons = {
 function Row({ icon, label, value }: { icon: ReactNode; label: ReactNode; value: ReactNode }) {
   return (
     <div className="flex justify-between items-center py-2.5">
-      <span className="text-xs text-gray-500 flex items-center gap-1.5">
-        <span className="text-gray-400">{icon}</span>
+      <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+        <span className="text-muted-foreground">{icon}</span>
         {label}
       </span>
       <span className="text-xs font-semibold text-gray-800 text-right max-w-[55%] break-words">
@@ -135,8 +135,8 @@ export default function SuccessState({
             <div className="px-5 pb-4 divide-y divide-gray-50">
               {requestCode && (
                 <div className="flex justify-between items-center py-2.5">
-                  <span className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <span className="text-gray-400">
+                  <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                    <span className="text-muted-foreground">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>
                         <path d="M8 14h.01M12 14h.01M16 14h.01"/>
@@ -171,13 +171,13 @@ export default function SuccessState({
                       className="w-14 h-14 rounded-xl object-cover shrink-0"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 font-bold text-xs">
+                    <div className="w-14 h-14 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-muted-foreground font-bold text-xs">
                       {(form.selectedDestinasi.title || "??").slice(0, 2).toUpperCase()}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-gray-800 truncate">{form.selectedDestinasi.title}</p>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{form.selectedDestinasi.location}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{form.selectedDestinasi.location}</p>
                     <p className="text-[11px] font-semibold mt-0.5" style={{ color: A }}>
                       {form.selectedDestinasi.rating != null ? `★ ${Number(form.selectedDestinasi.rating).toFixed(1)} · ` : ""}mulai {formatIDR(form.selectedDestinasi.priceMin) ?? "-"}
                     </p>
@@ -193,7 +193,7 @@ export default function SuccessState({
                   <span className="text-xs font-semibold text-gray-700">Estimasi Budget</span>
                   <span className="text-sm font-bold text-gray-900">
                     {formatIDR(form.tripType === "explorer" ? form.selectedDestinasi?.priceMin : form.budget) ?? "-"}
-                    <span className="text-xs font-normal text-gray-400"> /pax</span>
+                    <span className="text-xs font-normal text-muted-foreground"> /pax</span>
                   </span>
                 </div>
               )}
@@ -218,7 +218,7 @@ export default function SuccessState({
                   >
                     {i + 1}
                   </span>
-                  <p className="text-xs text-gray-500 leading-relaxed">{text}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
                 </div>
               ))}
             </div>

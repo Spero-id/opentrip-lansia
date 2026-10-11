@@ -107,7 +107,7 @@ export default function AdminReferralHistoryPage() {
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             History Referral
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Lihat siapa yang menggunakan referral siapa.
           </p>
         </div>
@@ -115,12 +115,12 @@ export default function AdminReferralHistoryPage() {
 
       <div className="bg-background rounded-2xl border border-slate-200/80 p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Settings className="w-4 h-4 text-slate-500" />
+          <Settings className="w-4 h-4 text-muted-foreground" />
           <h2 className="text-sm font-bold text-slate-700">Pengaturan Referral</h2>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-end gap-3">
           <div className="flex-1">
-            <label className="block text-xs font-semibold text-slate-500 mb-1">
+            <label className="block text-xs font-semibold text-muted-foreground mb-1">
               Bonus Poin per Referral
             </label>
             <input
@@ -130,7 +130,7 @@ export default function AdminReferralHistoryPage() {
               onChange={(e) => setBonusPointsInput(e.target.value)}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
-            <p className="text-[10px] text-slate-400 mt-1">
+            <p className="text-[10px] text-muted-foreground mt-1">
               Poin yang diberikan ke akun referrer saat referral berhasil (status Berhasil)
             </p>
           </div>
@@ -153,22 +153,22 @@ export default function AdminReferralHistoryPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Total Referral</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase">Total Referral</p>
           <p className="text-2xl font-bold text-slate-900 mt-1">{totalReferrals}</p>
         </div>
         <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Converted</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase">Converted</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{converted}</p>
         </div>
         <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Pending</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase">Pending</p>
           <p className="text-2xl font-bold text-yellow-600 mt-1">{pending}</p>
         </div>
       </div>
 
       <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Cari nama, email, kode booking, atau trip..."
@@ -182,7 +182,7 @@ export default function AdminReferralHistoryPage() {
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="px-6 py-4">Pemberi Referral</th>
                 <th className="px-6 py-4">Pengguna Referral</th>
@@ -197,14 +197,14 @@ export default function AdminReferralHistoryPage() {
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-2" />
-                    <p className="text-slate-400">Memuat data...</p>
+                    <p className="text-muted-foreground">Memuat data...</p>
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                    <p className="text-slate-400">
+                    <p className="text-muted-foreground">
                       {search ? "Tidak ada data yang cocok" : "Belum ada data referral"}
                     </p>
                   </td>
@@ -215,13 +215,13 @@ export default function AdminReferralHistoryPage() {
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-semibold text-slate-900">{r.referrerName}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{r.referrerEmail}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{r.referrerEmail}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-semibold text-slate-900">{r.referredUserName}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{r.referredUserEmail}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{r.referredUserEmail}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -233,7 +233,7 @@ export default function AdminReferralHistoryPage() {
                           {r.bookingCode}
                         </span>
                       ) : (
-                        <span className="text-slate-400">-</span>
+                        <span className="text-muted-foreground">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -256,7 +256,7 @@ export default function AdminReferralHistoryPage() {
                         )}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">{formatDate(r.createdAt)}</td>
+                    <td className="px-6 py-4 text-muted-foreground">{formatDate(r.createdAt)}</td>
                   </tr>
                 ))
               )}

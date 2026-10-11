@@ -14,11 +14,11 @@ export default function StepProgress({ currentStep }: { currentStep: string }) {
         <div key={s.key} className="flex items-center">
           <div className={`flex items-center gap-2 ${i <= idx ? "text-primary" : "text-gray-300"}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-              i <= idx ? "bg-primary text-primary-foreground" : "bg-gray-100 text-gray-400"
+              i <= idx ? "bg-primary text-primary-foreground" : "bg-gray-100 text-muted-foreground"
             }`}>
               {i + 1}
             </div>
-            <span className={`text-xs font-semibold hidden sm:block ${i <= idx ? "text-gray-800" : "text-gray-400"}`}>
+            <span className={`text-xs font-semibold hidden sm:block ${i <= idx ? "text-gray-800" : "text-muted-foreground"}`}>
               {s.label}
             </span>
           </div>

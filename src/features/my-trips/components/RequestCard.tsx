@@ -37,7 +37,7 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
             </span>
             <p className="text-sm font-bold text-gray-900 truncate">{req.title}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-gray-100 rounded px-2 py-0.5">
               {requestCode}
               <button onClick={copyCode} title="Salin Kode Request" className="hover:text-gray-900 transition p-0.5">
@@ -55,7 +55,7 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
           <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${STATUS_COLOR[req.status] || "bg-gray-100 text-gray-600"}`}>
             {STATUS_LABEL[req.status] || req.status}
           </span>
-          <span className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+          <span className={`text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
             {icons.chevron}
           </span>
         </div>
@@ -64,19 +64,19 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
           <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-3">
-            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Detail Pemesanan</p>
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Detail Pemesanan</p>
             <ParsedPreferences text={req.destinationPreferences} />
           </div>
 
           {req.specialRequirements && (
             <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-1.5">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Kebutuhan Khusus</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Kebutuhan Khusus</p>
               <p className="text-xs text-gray-600 leading-relaxed">{req.specialRequirements}</p>
             </div>
           )}
 
           <div className="bg-background rounded-xl border border-gray-100 p-4 flex items-center justify-between">
-            <span className="text-[11px] text-gray-400">
+            <span className="text-[11px] text-muted-foreground">
               Dibuat: {new Date(req.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
             </span>
             <span className="inline-flex items-center gap-1.5 font-mono text-xs font-bold px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${A}15`, color: A }}>

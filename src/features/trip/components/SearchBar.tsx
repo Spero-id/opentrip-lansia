@@ -42,7 +42,7 @@ export default function SearchBar({ searchQuery, onSearchChange, onClear }: Sear
             <button
               type="button"
               onClick={() => { onSearchChange(""); onClear?.(); }}
-              className="p-1.5 rounded-full text-gray-400 hover:text-gray-600 hover:bg-black/5 transition-colors shrink-0"
+              className="p-1.5 rounded-full text-muted-foreground hover:text-gray-600 hover:bg-black/5 transition-colors shrink-0"
             >
               <X size={17} strokeWidth={2} />
             </button>
@@ -61,7 +61,7 @@ export default function SearchBar({ searchQuery, onSearchChange, onClear }: Sear
         </div>
       </div>
 
-      <div className="flex items-center gap-2 py-1 px-1 text-xs text-gray-500 overflow-x-auto">
+      <div className="flex items-center gap-2 py-1 px-1 text-xs text-muted-foreground overflow-x-auto">
         <span className="font-semibold flex items-center gap-1.5 shrink-0">
           <TrendingUp size={12} strokeWidth={2} />
           Populer:

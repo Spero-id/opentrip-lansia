@@ -12,7 +12,7 @@ export default function ResultsBar({ count, hasActiveFilters, onReset }: Results
   return (
     <div className="flex items-center justify-between mb-5">
       <div className="flex items-center gap-2">
-        <SlidersHorizontal size={15} className="text-gray-400" />
+        <SlidersHorizontal size={15} className="text-muted-foreground" />
         <span className="text-sm font-semibold text-gray-700">
           {count} destinasi ditemukan
         </span>

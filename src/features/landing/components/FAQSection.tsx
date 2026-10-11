@@ -130,7 +130,7 @@ export default function FAQSection() {
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">
                             Ada Pertanyaan?
                         </h3>
-                        <p className="text-sm text-gray-500 mb-6 max-w-xs mx-auto">
+                        <p className="text-sm text-muted-foreground mb-6 max-w-xs mx-auto">
                             Kamu bisa tanya apa aja soal trip, pembayaran, atau layanan
                             kami di sini.
                         </p>

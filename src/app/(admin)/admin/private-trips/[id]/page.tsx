@@ -100,14 +100,14 @@ function DestinationTable({ raw }: { raw: string }) {
           </div>
           <div className="divide-y divide-slate-100">
             {sec.rows.length === 0 && (
-              <p className="px-4 py-3 text-xs text-slate-400 italic">Tidak ada data</p>
+              <p className="px-4 py-3 text-xs text-muted-foreground italic">Tidak ada data</p>
             )}
             {sec.rows.map((row, ri) => (
               <div key={ri} className="flex items-start gap-2 px-4 py-2.5">
                 {row.key && (
-                  <span className="text-[11px] font-semibold text-slate-400 w-36 shrink-0 pt-0.5">{row.key}</span>
+                  <span className="text-[11px] font-semibold text-muted-foreground w-36 shrink-0 pt-0.5">{row.key}</span>
                 )}
-                <span className={`text-xs font-medium text-slate-800 ${!row.key ? "italic text-slate-500" : ""}`}>{row.val || "—"}</span>
+                <span className={`text-xs font-medium text-slate-800 ${!row.key ? "italic text-muted-foreground" : ""}`}>{row.val || "—"}</span>
               </div>
             ))}
           </div>
@@ -244,12 +244,12 @@ export default function AdminPrivateTripDetail() {
 
   
 
-  if (loading) return <div className="p-12 text-center text-slate-400">Memuat detail request...</div>;
+  if (loading) return <div className="p-12 text-center text-muted-foreground">Memuat detail request...</div>;
   if (error || !data) return <div className="p-12 text-center text-red-500">{error || "Data tidak ditemukan"}</div>;
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <button onClick={() => router.push("/admin/private-trips")} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-primary transition">
+      <button onClick={() => router.push("/admin/private-trips")} className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-primary transition">
         <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar
       </button>
 
@@ -278,7 +278,7 @@ export default function AdminPrivateTripDetail() {
                 </button>
                 {false && <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary hover:bg-[#c47d12] text-primary-foreground px-4 py-2 text-xs font-bold transition shadow-sm shadow-primary/20"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary hover:bg-primary/85 text-primary-foreground px-4 py-2 text-xs font-bold transition shadow-sm shadow-primary/20"
                 >
                   <FileSignature className="w-3.5 h-3.5" />
                   Buat Proposal
@@ -296,7 +296,7 @@ export default function AdminPrivateTripDetail() {
               <>
                 <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary hover:bg-[#c47d12] text-primary-foreground px-4 py-2 text-xs font-bold transition shadow-sm shadow-primary/20"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary hover:bg-primary/85 text-primary-foreground px-4 py-2 text-xs font-bold transition shadow-sm shadow-primary/20"
                 >
                   <FileSignature className="w-3.5 h-3.5" />
                   Kirim / Perbarui Proposal
@@ -327,37 +327,37 @@ export default function AdminPrivateTripDetail() {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
           <div>
-            <span className="block text-[11px] font-semibold text-slate-400 uppercase">Durasi</span>
+            <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Durasi</span>
             <span className="font-bold text-slate-900">{data?.durationDays} hari</span>
           </div>
           <div>
-            <span className="block text-[11px] font-semibold text-slate-400 uppercase">Peserta</span>
+            <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Peserta</span>
             <span className="font-bold text-slate-900">{data?.participantsCount} orang</span>
           </div>
           <div>
-            <span className="block text-[11px] font-semibold text-slate-400 uppercase">Budget</span>
+            <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Budget</span>
             <span className="font-bold text-slate-900">{formatIDR(data.budgetEstimate) ?? "-"}</span>
           </div>
           <div>
-            <span className="block text-[11px] font-semibold text-slate-400 uppercase">Tgl Submit</span>
+            <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Tgl Submit</span>
             <span className="font-bold text-slate-900">{data.submittedAt ? new Date(data.submittedAt).toLocaleDateString("id-ID") : "-"}</span>
           </div>
         </div>
 
         <div>
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 uppercase mb-3">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase mb-3">
             <MapPin className="w-3.5 h-3.5" /> Detail Permintaan
           </span>
           {data.destinationPreferences ? (
             <DestinationTable raw={data?.destinationPreferences} />
           ) : (
-            <p className="text-sm text-slate-400 italic">Tidak ada preferensi destinasi.</p>
+            <p className="text-sm text-muted-foreground italic">Tidak ada preferensi destinasi.</p>
           )}
         </div>
 
         {data.specialRequirements && (
           <div>
-            <span className="block text-[11px] font-semibold text-slate-400 uppercase mb-2">Kebutuhan Khusus &amp; Catatan Revisi</span>
+            <span className="block text-[11px] font-semibold text-muted-foreground uppercase mb-2">Kebutuhan Khusus &amp; Catatan Revisi</span>
             <SpecialRequirementsBlock raw={data?.specialRequirements} />
           </div>
         )}
@@ -367,27 +367,27 @@ export default function AdminPrivateTripDetail() {
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Riwayat Proposal ({data?.proposals?.length || 0})</h2>
         {(!data?.proposals || data?.proposals.length === 0) ? (
-          <p className="text-sm text-slate-400">Belum ada proposal.</p>
+          <p className="text-sm text-muted-foreground">Belum ada proposal.</p>
         ) : (
           <div className="space-y-4">
             {data?.proposals?.map((prop) => (
               <div key={prop.id} className="border border-slate-200 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${proposalStatusStyles[prop.status] || "bg-slate-100 text-slate-600"}`}>{prop.status}</span>
-                  <span className="text-[11px] text-slate-400">{new Date(prop.createdAt).toLocaleString("id-ID")}</span>
+                  <span className="text-[11px] text-muted-foreground">{new Date(prop.createdAt).toLocaleString("id-ID")}</span>
                 </div>
                 <p className="text-sm text-slate-700 whitespace-pre-wrap">{prop.proposalContent}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div>
-                    <span className="block font-semibold text-slate-500">Estimasi Harga</span>
+                    <span className="block font-semibold text-muted-foreground">Estimasi Harga</span>
                     <span className="font-bold text-primary">{formatIDR(prop.estimatedPrice) ?? "-"}</span>
                   </div>
                   <div>
-                    <span className="block font-semibold text-slate-500">Termasuk</span>
+                    <span className="block font-semibold text-muted-foreground">Termasuk</span>
                     <span className="text-slate-700">{prop.inclusions || "-"}</span>
                   </div>
                   <div>
-                    <span className="block font-semibold text-slate-500">Tidak Termasuk</span>
+                    <span className="block font-semibold text-muted-foreground">Tidak Termasuk</span>
                     <span className="text-slate-700">{prop.exclusions || "-"}</span>
                   </div>
                 </div>
@@ -416,12 +416,12 @@ export default function AdminPrivateTripDetail() {
                 </div>
                 <div>
                   <h3 className="text-base font-extrabold text-slate-900">Buat Proposal</h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5 truncate max-w-[220px] sm:max-w-xs">{data?.title}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate max-w-[220px] sm:max-w-xs">{data?.title}</p>
                 </div>
               </div>
               <button
                 onClick={() => setProposalOpen(false)}
-                className="w-8 h-8 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:border-slate-300 transition"
+                className="w-8 h-8 rounded-xl border border-slate-200 flex items-center justify-center text-muted-foreground hover:text-slate-700 hover:border-slate-300 transition"
               >
                 <XCircle className="w-4 h-4" />
               </button>
@@ -454,7 +454,7 @@ export default function AdminPrivateTripDetail() {
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Estimasi Harga (Rp)</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">Rp</span>
                     <input
                       type="number"
                       value={estimatedPrice}
@@ -465,7 +465,7 @@ export default function AdminPrivateTripDetail() {
                       max={999999999999}
                     />
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1">Maks. Rp 999.999.999.999</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">Maks. Rp 999.999.999.999</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -507,7 +507,7 @@ export default function AdminPrivateTripDetail() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl bg-primary hover:bg-[#c47d12] active:scale-95 text-primary-foreground px-6 py-3 text-sm font-bold shadow-md shadow-primary/25 transition disabled:opacity-50"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl bg-primary hover:bg-primary/85 active:scale-95 text-primary-foreground px-6 py-3 text-sm font-bold shadow-md shadow-primary/25 transition disabled:opacity-50"
                 >
                   {saving
                     ? <><RefreshCw className="w-4 h-4 animate-spin" /> Mengirim...</>

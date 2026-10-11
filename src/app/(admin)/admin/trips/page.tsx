@@ -371,11 +371,11 @@ if (categories.length === 0) await fetchCategories();
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Paket Trip</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola paket open trip.</p>
+          <p className="text-sm text-muted-foreground mt-1">Kelola paket open trip.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Trip</span>
@@ -385,7 +385,7 @@ if (categories.length === 0) await fetchCategories();
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Tipe</th>
@@ -397,9 +397,9 @@ if (categories.length === 0) await fetchCategories();
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">Memuat data...</td></tr>
               ) : tripRows.length === 0 ? (
-                <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">Belum ada data trip.</td></tr>
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">Belum ada data trip.</td></tr>
               ) : (
                 tripRows.map((t) => (
                   <tr key={t.id} className="hover:bg-slate-50/60 transition">
@@ -409,7 +409,7 @@ if (categories.length === 0) await fetchCategories();
                         Open Trip
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">
+                    <td className="px-6 py-4 text-muted-foreground">
                       {[t.location, t.province].filter(Boolean).join(", ") || "-"}
                     </td>
                     <td className="px-6 py-4 font-semibold text-slate-900">
@@ -422,13 +422,13 @@ if (categories.length === 0) await fetchCategories();
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(t)} className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit">
+                        <button onClick={() => openEdit(t)} className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition" title="Kelola Grup">
+                        <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-muted-foreground hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition" title="Kelola Grup">
                           <Users className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -465,7 +465,7 @@ if (categories.length === 0) await fetchCategories();
             <div>
               <label className="block text-sm font-medium text-slate-700">Slug</label>
               <input name="slug" value={form.slug} onChange={handleChange}
-                className={fieldClass("slug") + " text-slate-500 bg-slate-50"} />
+                className={fieldClass("slug") + " text-muted-foreground bg-slate-50"} />
               {fieldError("slug")}
             </div>
           </div>
@@ -576,7 +576,7 @@ if (categories.length === 0) await fetchCategories();
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-slate-900">Itinerary / Rencana Perjalanan</h3>
-                <p className="text-xs text-slate-500">Kelola jadwal kegiatan per hari.</p>
+                <p className="text-xs text-muted-foreground">Kelola jadwal kegiatan per hari.</p>
               </div>
               <button
                 type="button"
@@ -589,7 +589,7 @@ if (categories.length === 0) await fetchCategories();
             </div>
 
             {itineraryList.length === 0 ? (
-              <p className="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+              <p className="text-xs text-muted-foreground italic bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
                 Belum ada item itinerary. Klik tombol di atas untuk menambah kegiatan.
               </p>
             ) : (
@@ -603,7 +603,7 @@ if (categories.length === 0) await fetchCategories();
                       <button
                         type="button"
                         onClick={() => removeItineraryItem(index)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition"
                         title="Hapus Item"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -668,7 +668,7 @@ if (categories.length === 0) await fetchCategories();
                     {facilitiesList.length} Fasilitas
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Kelola fasilitas dan pilih ikon visual untuk mempermudah informasi ke lansia.
                 </p>
               </div>
@@ -677,7 +677,7 @@ if (categories.length === 0) await fetchCategories();
                   <button
                     type="button"
                     onClick={() => setFacilitiesList([])}
-                    className="px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                    className="px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition"
                   >
                     Hapus Semua
                   </button>
@@ -699,7 +699,7 @@ if (categories.length === 0) await fetchCategories();
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <p className="text-xs font-semibold text-slate-700">Belum ada fasilitas yang ditambahkan</p>
-                <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                <p className="text-[11px] text-muted-foreground max-w-sm mx-auto">
                   Klik tombol &quot;Tambah Fasilitas&quot; untuk menambahkan item fasilitas baru.
                 </p>
               </div>
@@ -710,7 +710,7 @@ if (categories.length === 0) await fetchCategories();
                     key={index}
                     className="flex items-center gap-2.5 bg-background p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
                   >
-                    <span className="h-10 w-10 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
+                    <span className="h-10 w-10 rounded-xl bg-slate-100 text-muted-foreground text-xs font-bold flex items-center justify-center shrink-0">
                       {index + 1}
                     </span>
 
@@ -735,7 +735,7 @@ if (categories.length === 0) await fetchCategories();
                     <button
                       type="button"
                       onClick={() => removeFacilityItem(index)}
-                      className="h-10 w-10 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0"
+                      className="h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0"
                       title="Hapus Fasilitas"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -763,7 +763,7 @@ if (categories.length === 0) await fetchCategories();
                 {fieldError("meetingPoint")}
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
+            <p className="text-xs text-muted-foreground mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
           </div>
 
           <div className="border-t border-slate-200 pt-4">
@@ -790,7 +790,7 @@ if (categories.length === 0) await fetchCategories();
 
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50">
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}

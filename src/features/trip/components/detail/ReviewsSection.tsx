@@ -45,7 +45,7 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
 
   if (loading) {
     return (
-      <div className="py-10 text-center text-sm text-gray-400">Memuat ulasan...</div>
+      <div className="py-10 text-center text-sm text-muted-foreground">Memuat ulasan...</div>
     );
   }
 
@@ -56,7 +56,7 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
           <Star size={22} className="text-primary" />
         </div>
         <p className="text-sm font-semibold text-gray-700">Belum ada ulasan</p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Jadilah yang pertama memberikan ulasan setelah perjalanan.
         </p>
       </div>
@@ -71,11 +71,11 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
       <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
         <div className="flex items-baseline gap-1">
           <span className="text-3xl font-bold text-gray-900">{Number(avgRating).toFixed(1)}</span>
-          <span className="text-sm text-gray-400">/ 5</span>
+          <span className="text-sm text-muted-foreground">/ 5</span>
         </div>
         <div>
           <StarDisplay rating={Math.round(avgRating)} />
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             {reviews.length} ulasan{allVerified ? " terverifikasi" : ""}
           </p>
         </div>
@@ -91,7 +91,7 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">{r.userName || "Pengguna"}</p>
-                  <p className="text-xs text-gray-400">{formatDate(r.createdAt)}</p>
+                  <p className="text-xs text-muted-foreground">{formatDate(r.createdAt)}</p>
                 </div>
               </div>
               <StarDisplay rating={r.rating} />

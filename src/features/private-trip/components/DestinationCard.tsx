@@ -26,7 +26,7 @@ export default function DestinationCard({
           className="w-32 self-stretch object-cover shrink-0"
         />
       ) : (
-        <div className="w-32 self-stretch bg-gray-200 flex items-center justify-center shrink-0 text-gray-400 font-bold text-xs">
+        <div className="w-32 self-stretch bg-gray-200 flex items-center justify-center shrink-0 text-muted-foreground font-bold text-xs">
           {title.slice(0, 2).toUpperCase()}
         </div>
       )}
@@ -49,7 +49,7 @@ export default function DestinationCard({
               <span>·</span>
             </>
           ) : (
-            <span className="font-medium text-gray-500">Belum ada ulasan</span>
+            <span className="font-medium text-muted-foreground">Belum ada ulasan</span>
           )}
           <span>{formatIDR(dest.priceMin)}</span>
         </p>

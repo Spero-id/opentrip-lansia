@@ -93,7 +93,7 @@ export default function OpenTripBookingCard({
         ) : (
           <div
             aria-hidden="true"
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl shrink-0 bg-gray-100 flex items-center justify-center text-gray-400 font-bold text-lg"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl shrink-0 bg-gray-100 flex items-center justify-center text-muted-foreground font-bold text-lg"
           >
             {destinationName.slice(0, 2).toUpperCase()}
           </div>
@@ -104,9 +104,9 @@ export default function OpenTripBookingCard({
               Open Trip
             </span>
             <p className="text-sm font-bold text-gray-900 truncate">{destinationName}</p>
-            <p className="text-xs text-gray-500">{booking.totalParticipants} Peserta</p>
+            <p className="text-xs text-muted-foreground">{booking.totalParticipants} Peserta</p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-gray-100 rounded px-2 py-0.5">
               {booking.bookingCode}
               <button onClick={copyCode} title="Salin Kode Booking" className="hover:text-gray-900 transition p-0.5">
@@ -131,7 +131,7 @@ export default function OpenTripBookingCard({
           {booking.status === "pending_payment" && (
             <a
               href={`/checkout/pay/${booking.id}`}
-              className="px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-lg hover:bg-[#c47d12] transition-colors"
+              className="px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-lg hover:bg-primary/85 transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               Bayar
@@ -164,7 +164,7 @@ export default function OpenTripBookingCard({
               Lihat Foto
             </button>
           )}
-          <span className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+          <span className={`text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
             {icons.chevron}
           </span>
         </div>
@@ -192,7 +192,7 @@ export default function OpenTripBookingCard({
           })()}
 
           <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-2">
-            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rincian Pembayaran</p>
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Rincian Pembayaran</p>
             <div className="flex justify-between text-xs text-gray-600">
               <span>Subtotal ({booking.totalParticipants} pax)</span>
               <span>{formatIDR(booking.subtotal) ?? booking.subtotal}</span>
@@ -207,7 +207,7 @@ export default function OpenTripBookingCard({
               <span>Total Pembayaran</span>
               <span style={{ color: A }}>{formatIDR(booking.totalAmount)}</span>
             </div>
-            <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500">
+            <div className="flex items-center justify-between pt-1 text-[11px] text-muted-foreground">
               <span>Metode: <strong className="uppercase">{paymentMethod}</strong></span>
               <span>
                 Status Pembayaran:{" "}
@@ -220,7 +220,7 @@ export default function OpenTripBookingCard({
 
           {paymentProof && (
             <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-2">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Bukti Pembayaran</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Bukti Pembayaran</p>
               <a href={paymentProof} target="_blank" rel="noopener noreferrer" className="block">
                 <img src={paymentProof} alt="Bukti pembayaran" className="w-full max-h-64 object-contain bg-gray-50 rounded-lg border border-gray-200" />
               </a>
@@ -229,42 +229,42 @@ export default function OpenTripBookingCard({
 
           {paymentAdminNote && (
             <div className="bg-background rounded-xl border border-amber-100 p-4">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Admin</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Catatan Admin</p>
               <p className="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2">{paymentAdminNote}</p>
             </div>
           )}
 
           {adminMessage && (
             <div className="bg-background rounded-xl border border-blue-100 p-4">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Pesan dari Admin</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Pesan dari Admin</p>
               <p className="text-xs text-blue-800 bg-blue-50 rounded-lg px-3 py-2">{adminMessage}</p>
             </div>
           )}
 
           {(customerName || customerEmail || customerPhone) && (
             <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-1.5">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Kontak Pemesan</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Kontak Pemesan</p>
               {customerName && (
                 <div className="flex text-xs">
-                  <span className="w-28 text-gray-400 shrink-0">Nama Pemesan</span>
+                  <span className="w-28 text-muted-foreground shrink-0">Nama Pemesan</span>
                   <span className="font-semibold text-gray-800">{customerName}</span>
                 </div>
               )}
               {customerPhone && (
                 <div className="flex text-xs">
-                  <span className="w-28 text-gray-400 shrink-0">No. WhatsApp</span>
+                  <span className="w-28 text-muted-foreground shrink-0">No. WhatsApp</span>
                   <span className="text-gray-700">{customerPhone}</span>
                 </div>
               )}
               {customerEmail && (
                 <div className="flex text-xs">
-                  <span className="w-28 text-gray-400 shrink-0">Email</span>
+                  <span className="w-28 text-muted-foreground shrink-0">Email</span>
                   <span className="text-gray-700">{customerEmail}</span>
                 </div>
               )}
               {specialRequest && (
                 <div className="flex text-xs pt-1">
-                  <span className="w-28 text-gray-400 shrink-0">Catatan</span>
+                  <span className="w-28 text-muted-foreground shrink-0">Catatan</span>
                   <span className="text-amber-800 font-medium bg-amber-50 rounded px-2 py-0.5">{specialRequest}</span>
                 </div>
               )}
@@ -273,7 +273,7 @@ export default function OpenTripBookingCard({
 
           {booking.participants && booking.participants.length > 0 && (
             <div className="bg-background rounded-xl border border-gray-100 p-4">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
                 Daftar Peserta ({booking.participants.length} Orang)
               </p>
               <div className="space-y-2">
@@ -290,7 +290,7 @@ export default function OpenTripBookingCard({
                         </span>
                       )}
                     </div>
-                    <span className="text-gray-500">{p.phone || "-"}</span>
+                    <span className="text-muted-foreground">{p.phone || "-"}</span>
                   </div>
                 ))}
               </div>

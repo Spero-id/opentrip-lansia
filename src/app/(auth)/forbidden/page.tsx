@@ -9,7 +9,7 @@ export default function ForbiddenPage() {
           <Lock className="w-10 h-10 text-red-600" />
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 mb-2">403 Forbidden</h1>
-        <p className="text-slate-500 mb-8">
+        <p className="text-muted-foreground mb-8">
           Upss, Halaman Tidak Di Temukan?.
         </p>
         <div className="space-y-3">

@@ -15,7 +15,7 @@ export default function DestinationGallery({ images, title, onOpenLightbox }: De
 
   if (validImages.length === 0) {
     return (
-      <div className="h-[30vh] min-h-[200px] md:h-[420px] lg:h-[500px] rounded-3xl bg-gray-100 flex items-center justify-center text-gray-400 text-sm font-medium px-4 text-center">
+      <div className="h-[30vh] min-h-[200px] md:h-[420px] lg:h-[500px] rounded-3xl bg-gray-100 flex items-center justify-center text-muted-foreground text-sm font-medium px-4 text-center">
         Gambar tidak tersedia
       </div>
     );

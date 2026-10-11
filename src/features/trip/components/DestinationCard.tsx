@@ -28,7 +28,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-xs font-medium px-4 text-center">
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-muted-foreground text-xs font-medium px-4 text-center">
             Gambar tidak tersedia
           </div>
         )}
@@ -39,7 +39,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
               <span className="text-xs font-semibold text-gray-900">{ratingVal}</span>
             </>
           ) : (
-            <span className="text-xs font-medium text-gray-500">Belum ada ulasan</span>
+            <span className="text-xs font-medium text-muted-foreground">Belum ada ulasan</span>
           )}
         </div>
 
@@ -51,7 +51,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
       </div>
 
       <div className="p-5">
-        <p className="flex items-center gap-1 text-xs text-gray-400 mb-1">
+        <p className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
           <MapPin size={12} />
           {dest.location}
         </p>
@@ -68,7 +68,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
         </div>
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           <div>
-            <p className="text-[11px] text-gray-400">mulai dari</p>
+            <p className="text-[11px] text-muted-foreground">mulai dari</p>
             <p className="text-sm font-bold text-gray-900">
               {formatIDR(dest.priceMin)}
             </p>
@@ -76,7 +76,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
           <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-primary flex items-center justify-center transition-colors flex-shrink-0">
             <ArrowRight
               size={16}
-              className="text-gray-500 group-hover:text-white transition-colors"
+              className="text-muted-foreground group-hover:text-white transition-colors"
             />
           </div>
         </div>

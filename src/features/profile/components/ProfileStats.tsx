@@ -40,10 +40,10 @@ export default function ProfileStats({ user }: { user?: ProfileUser | null }) {
           className="rounded-2xl border border-slate-200 bg-background p-4 sm:p-5"
         >
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FEF6E7] text-[#c47d12]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FEF6E7] text-primary/85">
               <stat.icon size={17} />
             </div>
-            <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+            <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
           </div>
 
           <p className="mt-3 truncate text-lg font-bold text-slate-900">

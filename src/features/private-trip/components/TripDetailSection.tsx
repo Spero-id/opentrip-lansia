@@ -287,7 +287,7 @@ export default function TripDetailSection({
                 min={todayStr}
                 onChange={(e) => set("tanggal", e.target.value)}
                 disabled={form.tanggalFleksibel}
-                className={`${baseInput} ${form.tanggalFleksibel ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""} ${errors.tanggal ? errorBorder : normalBorder}`}
+                className={`${baseInput} ${form.tanggalFleksibel ? "bg-gray-100 text-muted-foreground cursor-not-allowed" : ""} ${errors.tanggal ? errorBorder : normalBorder}`}
               />
             </div>
             <label className="inline-flex items-center gap-2 mt-1.5 cursor-pointer group">

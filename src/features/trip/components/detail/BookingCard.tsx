@@ -57,11 +57,11 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
   return (
     <div className="sticky top-28 bg-background p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col gap-6">
       <div className="pb-6 border-b border-gray-100">
-        <div className="text-sm text-gray-400 font-semibold mb-1 uppercase tracking-wider">Mulai dari</div>
+        <div className="text-sm text-muted-foreground font-semibold mb-1 uppercase tracking-wider">Mulai dari</div>
         <div className="text-3xl font-bold" style={{ color: A }}>
           {formatIDR(dest.priceMin)}
         </div>
-        <div className="text-sm text-gray-400 mt-1">per orang / pax</div>
+        <div className="text-sm text-muted-foreground mt-1">per orang / pax</div>
         {boundedTiers.length > 0 && (
           <p className="text-[11px] font-semibold text-primary mt-1.5">
             {boundedTiers.map((t) => `${t.name} s/d ${formatDate(t.validUntil)}`).join(" · ")}
@@ -78,7 +78,7 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
           <div className="text-sm font-semibold text-gray-900">
             {formatDate(activeGroup.startDate)}
             {activeGroup.endDate && activeGroup.endDate !== activeGroup.startDate && (
-              <span className="text-gray-500"> s/d {formatDate(activeGroup.endDate)}</span>
+              <span className="text-muted-foreground"> s/d {formatDate(activeGroup.endDate)}</span>
             )}
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
       {bookedCount !== null && (
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-gray-500">Kuota Tersedia</span>
+            <span className="text-xs font-semibold text-muted-foreground">Kuota Tersedia</span>
             <QuotaStatus booked={bookedCount} />
           </div>
           <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
@@ -103,7 +103,7 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
             <span>Sudah booking {bookedCount} orang</span>
             <span>Tinggal {remaining} slot</span>
           </div>
-          <p className="text-[11px] text-gray-400 mt-1.5">
+          <p className="text-[11px] text-muted-foreground mt-1.5">
             Minimal {MIN_TO_GO} peserta agar trip berangkat.
           </p>
         </div>
@@ -122,12 +122,12 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
         ) : (
           <button
             disabled
-            className="w-full py-3.5 rounded-xl text-gray-400 bg-gray-100 font-semibold text-base cursor-not-allowed"
+            className="w-full py-3.5 rounded-xl text-muted-foreground bg-gray-100 font-semibold text-base cursor-not-allowed"
           >
             Belum Ada Jadwal
           </button>
         )}
-        <p className="text-center text-xs text-gray-400 mt-4">Belum dipungut biaya saat ini.</p>
+        <p className="text-center text-xs text-muted-foreground mt-4">Belum dipungut biaya saat ini.</p>
       </div>
 
       <div className="mt-2 pt-4 border-t border-gray-100 grid grid-cols-2 gap-3 text-xs font-semibold text-gray-600">

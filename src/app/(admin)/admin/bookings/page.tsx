@@ -271,7 +271,7 @@ export default function AdminPesanan() {
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             Manajemen Pesanan
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Daftar seluruh pemesanan paket trip oleh pengguna.
           </p>
         </div>
@@ -280,7 +280,7 @@ export default function AdminPesanan() {
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="px-6 py-4">Kode Booking</th>
                 <th className="px-6 py-4">Peserta</th>
@@ -294,13 +294,13 @@ export default function AdminPesanan() {
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
                     Memuat data...
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
                     Belum ada data pesanan.
                   </td>
                 </tr>
@@ -332,7 +332,7 @@ export default function AdminPesanan() {
                           {badge.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500">
+                      <td className="px-6 py-4 text-muted-foreground">
                         {formatDate(b.bookingDate)}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -372,7 +372,7 @@ export default function AdminPesanan() {
                           )}
                           <button
                             onClick={() => openDetail(b)}
-                            className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition"
+                            className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition"
                             title="Lihat Detail"
                           >
                             <Eye className="w-4 h-4" />
@@ -400,20 +400,20 @@ export default function AdminPesanan() {
           return (
           <div className="space-y-4 text-sm">
             {detailLoading && (
-              <div className="flex items-center gap-2 text-slate-400 text-xs">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs">
                 <Loader2 className="w-3 h-3 animate-spin" />
                 Memuat detail...
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <p className="text-slate-500 font-medium">Kode Booking</p>
+                <p className="text-muted-foreground font-medium">Kode Booking</p>
                 <p className="font-mono font-bold text-primary text-base">
                   {displayData.bookingCode}
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Status</p>
+                <p className="text-muted-foreground font-medium">Status</p>
                 <p>
                   <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
                     statusBadge[displayData.status]?.className ?? "bg-slate-100 text-slate-600"
@@ -423,49 +423,49 @@ export default function AdminPesanan() {
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Metode Pembayaran</p>
+                <p className="text-muted-foreground font-medium">Metode Pembayaran</p>
                 <p className="font-mono font-bold text-primary">
                   {getPaymentMethod(displayData.payments)}
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Destinasi</p>
+                <p className="text-muted-foreground font-medium">Destinasi</p>
                 <p className="font-semibold">{notesInfo?.destinationName ?? "-"}</p>
                 {notesInfo?.travelDate && (
-                  <p className="text-xs text-slate-400 mt-0.5">{notesInfo.travelDate}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{notesInfo.travelDate}</p>
                 )}
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Jumlah Peserta</p>
+                <p className="text-muted-foreground font-medium">Jumlah Peserta</p>
                 <p className="font-semibold">{displayData.totalParticipants} orang</p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Total Pembayaran</p>
+                <p className="text-muted-foreground font-medium">Total Pembayaran</p>
                 <p className="font-bold text-slate-900">
                   Rp {Number(displayData.totalAmount).toLocaleString("id-ID")}
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 font-medium">Tanggal Booking</p>
+                <p className="text-muted-foreground font-medium">Tanggal Booking</p>
                 <p>{formatDate(displayData.bookingDate)}</p>
               </div>
               {notesInfo?.customerName && (
                 <div>
-                  <p className="text-slate-500 font-medium">Nama Pelanggan</p>
+                  <p className="text-muted-foreground font-medium">Nama Pelanggan</p>
                   <p className="font-semibold">{notesInfo.customerName}</p>
-                  {notesInfo.customerEmail && <p className="text-xs text-slate-400">{notesInfo.customerEmail}</p>}
-                  {notesInfo.customerPhone && <p className="text-xs text-slate-400">{notesInfo.customerPhone}</p>}
+                  {notesInfo.customerEmail && <p className="text-xs text-muted-foreground">{notesInfo.customerEmail}</p>}
+                  {notesInfo.customerPhone && <p className="text-xs text-muted-foreground">{notesInfo.customerPhone}</p>}
                 </div>
               )}
               <div>
-                <p className="text-slate-500 font-medium">ID Pengguna</p>
+                <p className="text-muted-foreground font-medium">ID Pengguna</p>
                 <p className="font-mono text-xs truncate">{displayData.userId}</p>
               </div>
             </div>
 
             {proofPayments.length > 0 && (
               <div className="border-t border-slate-100 pt-4">
-                <p className="text-slate-500 font-medium mb-3">Bukti Pembayaran</p>
+                <p className="text-muted-foreground font-medium mb-3">Bukti Pembayaran</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {proofPayments.map((payment) => {
                     const proof = getProofUrl(payment);
@@ -477,7 +477,7 @@ export default function AdminPesanan() {
                           className="w-full h-48 object-contain"
                         />
                         <div className="p-2 flex items-center justify-between text-xs">
-                          <span className="text-slate-500">{payment.method ?? "Transfer"}</span>
+                          <span className="text-muted-foreground">{payment.method ?? "Transfer"}</span>
                           <a
                             href={proof!}
                             target="_blank"
@@ -497,7 +497,7 @@ export default function AdminPesanan() {
 
             {detailPendingPayment?.adminNote && (
               <div>
-                <p className="text-slate-500 font-medium mb-1">Catatan Admin</p>
+                <p className="text-muted-foreground font-medium mb-1">Catatan Admin</p>
                 <p className="bg-amber-50 rounded-xl p-3 text-slate-700">
                   {detailPendingPayment.adminNote}
                 </p>
@@ -506,7 +506,7 @@ export default function AdminPesanan() {
 
             {notesInfo?.specialRequest && (
               <div>
-                <p className="text-slate-500 font-medium mb-1">Catatan / Permintaan Khusus</p>
+                <p className="text-muted-foreground font-medium mb-1">Catatan / Permintaan Khusus</p>
                 <p className="bg-slate-50 rounded-xl p-3 text-slate-700">
                   {notesInfo.specialRequest}
                 </p>
@@ -514,10 +514,10 @@ export default function AdminPesanan() {
             )}
 
             <div className="border-t border-slate-100 pt-4">
-              <p className="text-slate-500 font-medium mb-1">
+              <p className="text-muted-foreground font-medium mb-1">
                 Feedback / Pesan ke Pengguna
               </p>
-              <p className="text-xs text-slate-400 mb-2">
+              <p className="text-xs text-muted-foreground mb-2">
                 Pesan ini akan tampil di halaman &quot;Perjalanan Saya&quot; milik pengguna.
               </p>
               {parseAdminMessage(displayData.notes) && (

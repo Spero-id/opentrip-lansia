@@ -36,7 +36,7 @@ export default function TripOptionSection({
               >
                 <div>
                   <p className="text-xs font-semibold text-gray-700">{opt.label}</p>
-                  <p className="text-xs text-gray-400 font-normal mt-0.5">{opt.desc}</p>
+                  <p className="text-xs text-muted-foreground font-normal mt-0.5">{opt.desc}</p>
                 </div>
                 <Radio active={active} onClick={() => set("tripType", opt.id)} />
               </div>
@@ -60,7 +60,7 @@ export default function TripOptionSection({
                     />
                   ) : (
                     <div>
-                      <p className="text-xs font-semibold text-gray-500 mb-2.5">Pilih salah satu destinasi:</p>
+                      <p className="text-xs font-semibold text-muted-foreground mb-2.5">Pilih salah satu destinasi:</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-80 overflow-y-auto pr-1 rounded-xl">
                         {(destinationsData ?? []).map((dest) => (
                           <DestinationCard

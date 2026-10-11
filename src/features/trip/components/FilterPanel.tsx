@@ -108,9 +108,9 @@ export default function FilterPanel({
             )}
           </div>
           {isMobileOpen ? (
-            <ChevronUp size={18} className="text-gray-400" />
+            <ChevronUp size={18} className="text-muted-foreground" />
           ) : (
-            <ChevronDown size={18} className="text-gray-400" />
+            <ChevronDown size={18} className="text-muted-foreground" />
           )}
         </button>
       </div>
@@ -177,7 +177,7 @@ export default function FilterPanel({
           </div>
 
           <div className="space-y-2.5">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Tag size={12} style={{ color: A }} />
               Kategori
             </label>
@@ -221,7 +221,7 @@ export default function FilterPanel({
           <hr className="border-gray-100" />
 
           <div className="space-y-2.5">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
               <MapPin size={12} style={{ color: A }} />
               Lokasi
             </label>
@@ -231,12 +231,12 @@ export default function FilterPanel({
                 onClick={() => setIsLocationOpen(!isLocationOpen)}
                 className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-800 text-left focus:outline-none focus:border-primary transition-colors"
               >
-                <span className={selectedLocation ? "text-gray-800" : "text-gray-400"}>
+                <span className={selectedLocation ? "text-gray-800" : "text-muted-foreground"}>
                   {selectedLocation || "Semua Lokasi"}
                 </span>
                 <ChevronDown
                   size={15}
-                  className={`text-gray-400 transition-transform duration-200 ${isLocationOpen ? "rotate-180" : ""}`}
+                  className={`text-muted-foreground transition-transform duration-200 ${isLocationOpen ? "rotate-180" : ""}`}
                 />
               </button>
 
@@ -304,13 +304,13 @@ export default function FilterPanel({
           <hr className="border-gray-100" />
 
           <div className="space-y-2.5">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
               <DollarSign size={12} style={{ color: A }} />
               Range Harga (Rp)
             </label>
             <div className="space-y-3">
               <div className="space-y-1">
-                <span className="text-[11px] font-medium text-gray-400">Harga Minimal</span>
+                <span className="text-[11px] font-medium text-muted-foreground">Harga Minimal</span>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -337,14 +337,14 @@ export default function FilterPanel({
                       else if (text === "") setPriceMin("");
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMin !== "" ? formatFilterPrice(priceMin) : "Tanpa batas minimal"}
                 </p>
               </div>
               <div className="space-y-1">
-                <span className="text-[11px] font-medium text-gray-400">Harga Maksimal</span>
+                <span className="text-[11px] font-medium text-muted-foreground">Harga Maksimal</span>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -371,7 +371,7 @@ export default function FilterPanel({
                       else if (text === "") setPriceMax("");
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMax !== "" ? formatFilterPrice(priceMax) : "Tanpa batas maksimal"}

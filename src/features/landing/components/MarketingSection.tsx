@@ -25,7 +25,7 @@ export default function MarketingSection() {
               Kenapa Harus Pilih{" "}
               <span className="text-primary">Jelajah Memoria Ini</span>?
             </h2>
-            <p className="text-gray-500 mb-8 max-w-md leading-relaxed">
+            <p className="text-muted-foreground mb-8 max-w-md leading-relaxed">
               Kami siap membantu setiap perjalanan Anda menjadi lebih mudah, aman, dan terjangkau, mulai dari proses pemesanan hingga tiba di destinasi impian.
             </p>
 
@@ -59,7 +59,7 @@ export default function MarketingSection() {
                         <p className="font-semibold text-gray-900 text-sm sm:text-base">
                           {feature.title}
                         </p>
-                        <p className="text-sm text-gray-500 mt-0.5">
+                        <p className="text-sm text-muted-foreground mt-0.5">
                           {feature.desc}
                         </p>
                       </div>

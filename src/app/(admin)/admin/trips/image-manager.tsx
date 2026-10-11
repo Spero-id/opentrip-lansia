@@ -80,7 +80,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
+        <div className="rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-muted-foreground">
           Belum ada gambar. Unggah gambar trip di bawah.
         </div>
       )}

@@ -10,7 +10,7 @@ export default function MeetingPointInfo({ destination }: { destination?: Destin
     return (
       <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
         <h2 className="text-base font-bold text-gray-900">Meeting Point</h2>
-        <p className="text-sm text-gray-400">Meeting point akan diinformasikan oleh admin setelah booking dikonfirmasi.</p>
+        <p className="text-sm text-muted-foreground">Meeting point akan diinformasikan oleh admin setelah booking dikonfirmasi.</p>
       </div>
     );
   }
@@ -29,7 +29,7 @@ export default function MeetingPointInfo({ destination }: { destination?: Destin
                     <Clock size={13} />
                     Kumpul Pukul
                   </span>
-                  <span className="rounded-full bg-background px-2.5 py-0.5 text-[11px] font-semibold text-gray-500">
+                  <span className="rounded-full bg-background px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
                     {point.time}
                   </span>
                 </div>
@@ -38,7 +38,7 @@ export default function MeetingPointInfo({ destination }: { destination?: Destin
                   {point.location}
                 </h4>
                 {point.description && (
-                  <p className="mt-1.5 text-xs leading-relaxed text-gray-500">
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
                     {point.description}
                   </p>
                 )}

@@ -39,7 +39,7 @@ export default function TestimonialsSection() {
             </div>
             <div>
               <p className="text-sm font-bold text-gray-900">4.9 / 5.0</p>
-              <p className="text-xs text-gray-500">dari 1.200+ traveler</p>
+              <p className="text-xs text-muted-foreground">dari 1.200+ traveler</p>
             </div>
           </div>
         </div>
@@ -63,7 +63,7 @@ export default function TestimonialsSection() {
                     <p className="text-sm font-bold text-gray-900 truncate inline-block">
                       {r.name}
                     </p>
-                    <p className="text-xs text-gray-400 truncate">{r.trip}</p>
+                    <p className="text-xs text-muted-foreground truncate">{r.trip}</p>
                   </div>
                 </div>
 

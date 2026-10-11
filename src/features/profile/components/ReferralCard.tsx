@@ -53,7 +53,7 @@ export default function ReferralCard({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-slate-900">Kode Referral</h2>
-          <p className="mt-0.5 text-xs text-slate-400">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Bagikan kode ini ke temanmu. Mereka akan tercatat sebagai referral
             kamu.
           </p>
@@ -78,7 +78,7 @@ export default function ReferralCard({
 
       <div className="mt-4 flex items-center gap-3 p-4 rounded-xl bg-[#FEF6E7] border border-[#F3E2C0]">
         <div className="flex-1">
-          <p className="text-2xl font-mono font-bold text-[#c47d12] tracking-wider">
+          <p className="text-2xl font-mono font-bold text-primary/85 tracking-wider">
             {referralCode}
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function ReferralCard({
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
             copied
               ? "bg-green-500 text-primary-foreground"
-              : "bg-primary text-primary-foreground hover:bg-[#c47d12]"
+              : "bg-primary text-primary-foreground hover:bg-primary/85"
           }`}
         >
           {copied ? (
@@ -107,13 +107,13 @@ export default function ReferralCard({
       {stats && (
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-            <p className="text-xs text-slate-500">Total Referral</p>
+            <p className="text-xs text-muted-foreground">Total Referral</p>
             <p className="text-lg font-bold text-slate-900">
               {stats.totalReferred ?? 0}
             </p>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-            <p className="text-xs text-slate-500">Total Komisi</p>
+            <p className="text-xs text-muted-foreground">Total Komisi</p>
             <p className="text-lg font-bold text-slate-900">
               Rp {(stats.totalCommission ?? 0).toLocaleString("id-ID")}
             </p>
