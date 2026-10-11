@@ -25,12 +25,12 @@ export default function BookingInformationSection({
     form.tripFrom === "Perusahaan" ? "Cth: PT Maju Bersama" : "Cth: Universitas Indonesia";
 
   const baseInput =
-    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
-  const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
+    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-background placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors";
+  const normalBorder = "border-[#D1D5DB] focus:border-primary";
   const errorBorder = "border-red-300 focus:border-red-400 focus:ring-red-100";
 
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+    <div className="bg-background rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
       <div className="px-5 sm:px-6 pt-5 pb-4">
         <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
           <User size={16} strokeWidth={1.8} color="#6B7280" className="shrink-0" />
@@ -52,7 +52,7 @@ export default function BookingInformationSection({
                   key={opt.value}
                   className={`flex-1 flex items-center gap-3 px-4 py-3 border rounded-lg transition-all cursor-pointer group ${
                     active
-                      ? "border-[#F49D1A] bg-[#FFFBEB] text-[#1F2A37] font-medium"
+                      ? "border-primary bg-[#FFFBEB] text-[#1F2A37] font-medium"
                       : "border-[#D1D5DB] text-[#374151] hover:border-gray-400"
                   }`}
                 >
@@ -72,11 +72,11 @@ export default function BookingInformationSection({
                   />
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                      active ? "border-[#F49D1A] bg-white" : "border-[#D1D5DB] bg-white"
+                      active ? "border-primary bg-background" : "border-[#D1D5DB] bg-background"
                     }`}
                     aria-hidden="true"
                   >
-                    {active && <span className="w-2 h-2 rounded-full bg-[#F49D1A]" />}
+                    {active && <span className="w-2 h-2 rounded-full bg-primary" />}
                   </span>
                   <span className="text-[13px] leading-tight break-words">
                     {opt.label}

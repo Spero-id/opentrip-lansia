@@ -53,7 +53,7 @@ export default function BlogCoverUploader({ value, onChange }: BlogCoverUploader
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={uploading}
-              className="text-[10px] font-semibold text-white bg-white/20 hover:bg-white/30 rounded-lg px-2 py-1 transition disabled:opacity-50"
+              className="text-[10px] font-semibold text-white bg-background/20 hover:bg-background/30 rounded-lg px-2 py-1 transition disabled:opacity-50"
             >
               Ganti
             </button>

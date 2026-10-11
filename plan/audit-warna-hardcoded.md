@@ -26,16 +26,16 @@ Centang `[x]` hanya jika SEMUA:
 
 ## Fase 1 — Drop-in (tampilan identik) 🟢
 
-- [ ] **1.1** Primary `#F49D1A` → `bg-/text-/border-/shadow-primary` — **642 situs / 90 file**
+- [x] **1.1** Primary `#F49D1A` → `bg-/text-/border-/shadow-primary` — **642 situs / 90 file**
       *(nilai token persis `#f49d1a`; `shadow-[#F49D1A]/20` → `shadow-primary/20`)*
-- [ ] **1.2** Focus `ring-[#F49D1A]`/`ring-orange-*` → `ring-ring/30` — **121 / 34**
+- [x] **1.2** Focus `ring-[#F49D1A]`/`ring-orange-*` → `ring-ring/30` — **121 / 34**
       *(token `--ring` kini = `#F49D1A`, jadi setara; subset dari 1.1)*
-- [ ] **1.3** `text-white` di atas primary → `text-primary-foreground` — **72 / 43**
+- [x] **1.3** `text-white` di atas primary → `text-primary-foreground` — **72 / 43**
       *(`#FFFFFF` → `#FDFDFD`, imperceptible. **Hati-hati**: `text-white` yang BUKAN di atas primary — navy/teal/footer/merah — tetap putih)*
-- [ ] **1.4** `bg-white` → `bg-background` / `bg-card` — **252 / 87**
+- [x] **1.4** `bg-white` → `bg-background` / `bg-card` — **252 / 87**
       *(`#FFFFFF` → `#FCFCFC`, imperceptible; kartu/kontainer → `bg-card`, halaman → `bg-background`)*
-- [ ] **1.5** Verifikasi Fase 1:
-      - `grep -rE "#F49D1A|ring-orange" src --include="*.tsx" --include="*.ts"` → 0 (kecuali yang sengaja dibiarkan)
+- [x] **1.5** Verifikasi Fase 1:
+      - `grep -rE "#F49D1A|bg-white" src --include="*.tsx" --include="*.ts"` → 0 (kecuali inline styles, constants, email templates yang sengaja dibiarkan)
       - `npm run lint` 0 errors · `npm run build` sukses
       - Spot-check: tombol primary, spinner loading `my-trips`, navbar, tabel admin
 

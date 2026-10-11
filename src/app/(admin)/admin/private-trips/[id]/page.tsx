@@ -95,7 +95,7 @@ function DestinationTable({ raw }: { raw: string }) {
       {sections.map((sec, si) => (
         <div key={si} className="rounded-2xl border border-slate-200 overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-            <span className="text-[#F49D1A]">{sectionIcons[sec.heading] ?? <MapPin className="w-4 h-4" />}</span>
+            <span className="text-primary">{sectionIcons[sec.heading] ?? <MapPin className="w-4 h-4" />}</span>
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">{sec.heading}</span>
           </div>
           <div className="divide-y divide-slate-100">
@@ -249,7 +249,7 @@ export default function AdminPrivateTripDetail() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <button onClick={() => router.push("/admin/private-trips")} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#F49D1A] transition">
+      <button onClick={() => router.push("/admin/private-trips")} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-primary transition">
         <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar
       </button>
 
@@ -260,7 +260,7 @@ export default function AdminPrivateTripDetail() {
         </div>
       )}
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-5">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <h1 className="text-xl font-extrabold text-slate-900 leading-tight">{data?.title}</h1>
@@ -271,14 +271,14 @@ export default function AdminPrivateTripDetail() {
               <>
                 <button
                   onClick={() => updateStatus("review")}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-xs font-bold transition shadow-sm"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-primary-foreground px-4 py-2 text-xs font-bold transition shadow-sm"
                 >
                   <ClipboardCheck className="w-3.5 h-3.5" />
                   Tandai Sudah Ditinjau
                 </button>
                 {false && <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#F49D1A] hover:bg-[#c47d12] text-white px-4 py-2 text-xs font-bold transition shadow-sm shadow-[#F49D1A]/20"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary hover:bg-[#c47d12] text-primary-foreground px-4 py-2 text-xs font-bold transition shadow-sm shadow-primary/20"
                 >
                   <FileSignature className="w-3.5 h-3.5" />
                   Buat Proposal
@@ -296,7 +296,7 @@ export default function AdminPrivateTripDetail() {
               <>
                 <button
                   onClick={() => { setActionMsg(""); setProposalOpen(true); }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#F49D1A] hover:bg-[#c47d12] text-white px-4 py-2 text-xs font-bold transition shadow-sm shadow-[#F49D1A]/20"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary hover:bg-[#c47d12] text-primary-foreground px-4 py-2 text-xs font-bold transition shadow-sm shadow-primary/20"
                 >
                   <FileSignature className="w-3.5 h-3.5" />
                   Kirim / Perbarui Proposal
@@ -364,7 +364,7 @@ export default function AdminPrivateTripDetail() {
       </div>
 
       {false && (
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
         <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Riwayat Proposal ({data?.proposals?.length || 0})</h2>
         {(!data?.proposals || data?.proposals.length === 0) ? (
           <p className="text-sm text-slate-400">Belum ada proposal.</p>
@@ -380,7 +380,7 @@ export default function AdminPrivateTripDetail() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div>
                     <span className="block font-semibold text-slate-500">Estimasi Harga</span>
-                    <span className="font-bold text-[#F49D1A]">{formatIDR(prop.estimatedPrice) ?? "-"}</span>
+                    <span className="font-bold text-primary">{formatIDR(prop.estimatedPrice) ?? "-"}</span>
                   </div>
                   <div>
                     <span className="block font-semibold text-slate-500">Termasuk</span>
@@ -406,13 +406,13 @@ export default function AdminPrivateTripDetail() {
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
           <div
-            className="relative bg-white w-full sm:max-w-2xl sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[92dvh] flex flex-col"
+            className="relative bg-background w-full sm:max-w-2xl sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[92dvh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#F49D1A]/10 flex items-center justify-center">
-                  <FileSignature className="w-4 h-4 text-[#F49D1A]" />
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <FileSignature className="w-4 h-4 text-primary" />
                 </div>
                 <div>
                   <h3 className="text-base font-extrabold text-slate-900">Buat Proposal</h3>
@@ -445,7 +445,7 @@ export default function AdminPrivateTripDetail() {
                     value={proposalContent}
                     onChange={(e) => setProposalContent(e.target.value)}
                     rows={5}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] focus:bg-white resize-none transition"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background resize-none transition"
                     placeholder="Deskripsikan rencana perjalanan, akomodasi, transportasi, dan layanan yang ditawarkan..."
                     required
                   />
@@ -459,7 +459,7 @@ export default function AdminPrivateTripDetail() {
                       type="number"
                       value={estimatedPrice}
                       onChange={(e) => setEstimatedPrice(e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] focus:bg-white transition"
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background transition"
                       placeholder="0"
                       min={0}
                       max={999999999999}
@@ -480,7 +480,7 @@ export default function AdminPrivateTripDetail() {
                       value={inclusions}
                       onChange={(e) => setInclusions(e.target.value)}
                       rows={4}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 focus:bg-white resize-none transition"
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 focus:bg-background resize-none transition"
                       placeholder={"Hotel bintang 3\nMakan 3x sehari\nTransportasi AC\nGuide lokal"}
                     />
                   </div>
@@ -495,7 +495,7 @@ export default function AdminPrivateTripDetail() {
                       value={exclusions}
                       onChange={(e) => setExclusions(e.target.value)}
                       rows={4}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 focus:bg-white resize-none transition"
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 focus:bg-background resize-none transition"
                       placeholder={"Tiket pesawat\nBelanja pribadi\nObat-obatan"}
                     />
                   </div>
@@ -507,7 +507,7 @@ export default function AdminPrivateTripDetail() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl bg-[#F49D1A] hover:bg-[#c47d12] active:scale-95 text-white px-6 py-3 text-sm font-bold shadow-md shadow-[#F49D1A]/25 transition disabled:opacity-50"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl bg-primary hover:bg-[#c47d12] active:scale-95 text-primary-foreground px-6 py-3 text-sm font-bold shadow-md shadow-primary/25 transition disabled:opacity-50"
                 >
                   {saving
                     ? <><RefreshCw className="w-4 h-4 animate-spin" /> Mengirim...</>

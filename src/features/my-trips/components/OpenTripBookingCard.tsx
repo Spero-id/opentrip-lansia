@@ -73,7 +73,7 @@ export default function OpenTripBookingCard({
   const showImage = imageUrl && !imgError;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
+    <div className="bg-background rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
       <div
         id={`open-trip-card-${booking.id}`}
         role="button"
@@ -100,7 +100,7 @@ export default function OpenTripBookingCard({
         )}
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="space-y-1">
-            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-[#F49D1A] border border-[#F49D1A]/30">
+            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-primary border border-primary/30">
               Open Trip
             </span>
             <p className="text-sm font-bold text-gray-900 truncate">{destinationName}</p>
@@ -131,7 +131,7 @@ export default function OpenTripBookingCard({
           {booking.status === "pending_payment" && (
             <a
               href={`/checkout/pay/${booking.id}`}
-              className="px-4 py-2 bg-[#F49D1A] text-white text-xs font-bold rounded-lg hover:bg-[#c47d12] transition-colors"
+              className="px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-lg hover:bg-[#c47d12] transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               Bayar
@@ -143,7 +143,7 @@ export default function OpenTripBookingCard({
                 e.stopPropagation();
                 setFeedbackOpen(true);
               }}
-              className="px-4 py-2 bg-[#1CA6B7] text-white text-xs font-bold rounded-lg hover:bg-[#159ba9] transition-colors"
+              className="px-4 py-2 bg-[#1CA6B7] text-primary-foreground text-xs font-bold rounded-lg hover:bg-[#159ba9] transition-colors"
             >
               Beri Ulasan
             </button>
@@ -159,7 +159,7 @@ export default function OpenTripBookingCard({
                 e.stopPropagation();
                 setGalleryOpen(true);
               }}
-              className="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors"
+              className="px-4 py-2 bg-purple-600 text-primary-foreground text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors"
             >
               Lihat Foto
             </button>
@@ -191,7 +191,7 @@ export default function OpenTripBookingCard({
             );
           })()}
 
-          <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+          <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-2">
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rincian Pembayaran</p>
             <div className="flex justify-between text-xs text-gray-600">
               <span>Subtotal ({booking.totalParticipants} pax)</span>
@@ -219,7 +219,7 @@ export default function OpenTripBookingCard({
           </div>
 
           {paymentProof && (
-            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+            <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-2">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Bukti Pembayaran</p>
               <a href={paymentProof} target="_blank" rel="noopener noreferrer" className="block">
                 <img src={paymentProof} alt="Bukti pembayaran" className="w-full max-h-64 object-contain bg-gray-50 rounded-lg border border-gray-200" />
@@ -228,21 +228,21 @@ export default function OpenTripBookingCard({
           )}
 
           {paymentAdminNote && (
-            <div className="bg-white rounded-xl border border-amber-100 p-4">
+            <div className="bg-background rounded-xl border border-amber-100 p-4">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Admin</p>
               <p className="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2">{paymentAdminNote}</p>
             </div>
           )}
 
           {adminMessage && (
-            <div className="bg-white rounded-xl border border-blue-100 p-4">
+            <div className="bg-background rounded-xl border border-blue-100 p-4">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Pesan dari Admin</p>
               <p className="text-xs text-blue-800 bg-blue-50 rounded-lg px-3 py-2">{adminMessage}</p>
             </div>
           )}
 
           {(customerName || customerEmail || customerPhone) && (
-            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-1.5">
+            <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-1.5">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Kontak Pemesan</p>
               {customerName && (
                 <div className="flex text-xs">
@@ -272,7 +272,7 @@ export default function OpenTripBookingCard({
           )}
 
           {booking.participants && booking.participants.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="bg-background rounded-xl border border-gray-100 p-4">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">
                 Daftar Peserta ({booking.participants.length} Orang)
               </p>
@@ -280,7 +280,7 @@ export default function OpenTripBookingCard({
                 {booking.participants.map((p, idx) => (
                   <div key={p.id || idx} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg p-2.5">
                     <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-orange-100 text-[#F49D1A] font-bold text-[10px] flex items-center justify-center">
+                      <span className="w-5 h-5 rounded-full bg-orange-100 text-primary font-bold text-[10px] flex items-center justify-center">
                         {idx + 1}
                       </span>
                       <span className="font-semibold text-gray-800">{p.fullName}</span>

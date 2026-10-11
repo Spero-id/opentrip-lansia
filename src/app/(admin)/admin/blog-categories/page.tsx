@@ -72,24 +72,24 @@ export default function AdminBlogCategories() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Kategori Blog</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola daftar kategori artikel publik.</p>
         </div>
       </div>
 
-      <form onSubmit={handleAdd} className="flex items-center gap-3 bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs">
+      <form onSubmit={handleAdd} className="flex items-center gap-3 bg-background p-4 rounded-3xl border border-slate-200/80 shadow-xs">
         <input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Nama kategori baru..."
-          className="flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+          className="flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
         />
         <button
           type="submit"
           disabled={saving || !newName.trim()}
-          className="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2 shrink-0"
+          className="rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah</span>
@@ -100,7 +100,7 @@ export default function AdminBlogCategories() {
         <p className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</p>
       )}
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <p className="px-6 py-12 text-center text-sm text-slate-400">Memuat kategori...</p>
         ) : categories.length === 0 ? (

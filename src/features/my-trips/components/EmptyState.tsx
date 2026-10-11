@@ -19,7 +19,7 @@ export default function EmptyState({ type }: { type: string }) {
       </p>
       <Link
         href={type === "open" ? "/trips" : "/private-trip"}
-        className="px-4 py-2 bg-[#F49D1A] text-white text-xs font-bold rounded-lg hover:bg-[#c47d12] transition"
+        className="px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-lg hover:bg-[#c47d12] transition"
       >
         {type === "open" ? "Lihat Destinasi" : "Buat Request"}
       </Link>

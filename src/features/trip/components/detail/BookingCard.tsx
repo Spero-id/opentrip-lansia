@@ -55,7 +55,7 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
   const remaining = bookedCount === null ? null : Math.max(maxQuota - bookedCount, 0);
 
   return (
-    <div className="sticky top-28 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col gap-6">
+    <div className="sticky top-28 bg-background p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col gap-6">
       <div className="pb-6 border-b border-gray-100">
         <div className="text-sm text-gray-400 font-semibold mb-1 uppercase tracking-wider">Mulai dari</div>
         <div className="text-3xl font-bold" style={{ color: A }}>
@@ -63,7 +63,7 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
         </div>
         <div className="text-sm text-gray-400 mt-1">per orang / pax</div>
         {boundedTiers.length > 0 && (
-          <p className="text-[11px] font-semibold text-[#F49D1A] mt-1.5">
+          <p className="text-[11px] font-semibold text-primary mt-1.5">
             {boundedTiers.map((t) => `${t.name} s/d ${formatDate(t.validUntil)}`).join(" · ")}
           </p>
         )}
@@ -132,11 +132,11 @@ export default function BookingCard({ dest }: { dest: TripDetail }) {
 
       <div className="mt-2 pt-4 border-t border-gray-100 grid grid-cols-2 gap-3 text-xs font-semibold text-gray-600">
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F49D1A]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Bebas Reschedule
         </div>
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F49D1A]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-primary"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Pemandu Lokal
         </div>
       </div>

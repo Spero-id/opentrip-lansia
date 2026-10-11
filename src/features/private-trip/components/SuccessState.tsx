@@ -94,7 +94,7 @@ export default function SuccessState({
   return (
     <>
 
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-background border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-5 pt-5 pb-8">
           <p className="font-semibold text-sm tracking-wide mb-2" style={{ color: A }}>
             PRIVATE TRIP
@@ -108,14 +108,14 @@ export default function SuccessState({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3">
         <div className="max-w-lg mx-auto flex flex-col gap-5">
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-background rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div
               className="p-8 flex flex-col items-center text-center relative overflow-hidden"
               style={{ backgroundColor: A }}
             >
-              <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 pointer-events-none" />
-              <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-white/10 pointer-events-none" />
-              <div className="relative w-16 h-16 rounded-full bg-white/20 border-4 border-white/30 flex items-center justify-center mb-4 shadow-lg">
+              <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-background/10 pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-background/10 pointer-events-none" />
+              <div className="relative w-16 h-16 rounded-full bg-background/20 border-4 border-white/30 flex items-center justify-center mb-4 shadow-lg">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
@@ -125,7 +125,7 @@ export default function SuccessState({
                 Tim kami akan menghubungi kamu dalam <strong className="text-white">1x24 jam</strong>
               </p>
               {requestCode && (
-                <div className="mt-4 px-4 py-2 rounded-xl bg-white/20 border border-white/30 flex flex-col items-center gap-0.5">
+                <div className="mt-4 px-4 py-2 rounded-xl bg-background/20 border border-white/30 flex flex-col items-center gap-0.5">
                   <span className="text-white/70 text-[10px] font-semibold tracking-widest uppercase">Kode Request</span>
                   <span className="text-white text-lg font-bold tracking-wider">{requestCode}</span>
                 </div>
@@ -201,7 +201,7 @@ export default function SuccessState({
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-background rounded-2xl border border-gray-100 shadow-sm p-5">
             <h3 className="text-xs font-semibold text-gray-700 mb-3">Langkah Selanjutnya</h3>
             <div className="space-y-3">
               {[

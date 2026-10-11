@@ -266,7 +266,7 @@ export default function AdminPesanan() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             Manajemen Pesanan
@@ -277,7 +277,7 @@ export default function AdminPesanan() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
@@ -313,7 +313,7 @@ export default function AdminPesanan() {
                   const rowPayment = getPendingPayment(b.payments);
                   return (
                     <tr key={b.id} className="hover:bg-slate-50/60 transition">
-                      <td className="px-6 py-4 font-mono font-bold text-[#F49D1A]">
+                      <td className="px-6 py-4 font-mono font-bold text-primary">
                         {b.bookingCode}
                       </td>
                       <td className="px-6 py-4">
@@ -372,7 +372,7 @@ export default function AdminPesanan() {
                           )}
                           <button
                             onClick={() => openDetail(b)}
-                            className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                            className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition"
                             title="Lihat Detail"
                           >
                             <Eye className="w-4 h-4" />
@@ -408,7 +408,7 @@ export default function AdminPesanan() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-slate-500 font-medium">Kode Booking</p>
-                <p className="font-mono font-bold text-[#F49D1A] text-base">
+                <p className="font-mono font-bold text-primary text-base">
                   {displayData.bookingCode}
                 </p>
               </div>
@@ -424,7 +424,7 @@ export default function AdminPesanan() {
               </div>
               <div>
                 <p className="text-slate-500 font-medium">Metode Pembayaran</p>
-                <p className="font-mono font-bold text-[#F49D1A]">
+                <p className="font-mono font-bold text-primary">
                   {getPaymentMethod(displayData.payments)}
                 </p>
               </div>
@@ -531,12 +531,12 @@ export default function AdminPesanan() {
                   onChange={(e) => setFeedbackText(e.target.value)}
                   placeholder="Tulis pesan/feedback untuk pengguna..."
                   rows={3}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/40"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/40"
                 />
                 <button
                   onClick={handleSendFeedback}
                   disabled={feedbackSending || !feedbackText.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-[#F49D1A] text-white text-sm font-bold rounded-xl hover:bg-[#E08A0E] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:bg-[#E08A0E] transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {feedbackSending ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   {feedbackSending ? "Mengirim..." : "Kirim Pesan"}

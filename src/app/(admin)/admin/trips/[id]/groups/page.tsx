@@ -489,7 +489,7 @@ export default function AdminTripGroupsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#F49D1A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -511,7 +511,7 @@ export default function AdminTripGroupsPage() {
           <p className="text-red-700 font-medium">{error}</p>
           <button
             onClick={fetchData}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition"
+            className="mt-4 px-4 py-2 bg-red-600 text-primary-foreground rounded-xl text-sm font-semibold hover:bg-red-700 transition"
           >
             Coba Lagi
           </button>
@@ -522,7 +522,7 @@ export default function AdminTripGroupsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div className="flex items-start gap-3">
           <button
             onClick={() => router.back()}
@@ -541,7 +541,7 @@ export default function AdminTripGroupsPage() {
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Grup Baru</span>
@@ -549,7 +549,7 @@ export default function AdminTripGroupsPage() {
       </div>
 
       {groups.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
+        <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
           <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
             <Users className="w-8 h-8 text-slate-400" />
           </div>
@@ -559,7 +559,7 @@ export default function AdminTripGroupsPage() {
           </p>
           <button
             onClick={openCreate}
-            className="mt-6 px-6 py-3 bg-[#F49D1A] text-white rounded-2xl text-sm font-semibold hover:bg-[#c47d12] transition inline-flex items-center gap-2"
+            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-[#c47d12] transition inline-flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Buat Grup Pertama
@@ -570,7 +570,7 @@ export default function AdminTripGroupsPage() {
           {groups.map((group) => (
             <div
               key={group.id}
-              className={`bg-white rounded-3xl border shadow-xs overflow-hidden transition ${
+              className={`bg-background rounded-3xl border shadow-xs overflow-hidden transition ${
                 group.isActive
                   ? "border-slate-200/80 shadow-md"
                   : "border-slate-200/80"
@@ -665,7 +665,7 @@ export default function AdminTripGroupsPage() {
                     <div className="mt-4 bg-slate-50 rounded-2xl p-4">
                       {participantsLoading ? (
                         <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-[#F49D1A]" />
+                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
                           <span className="ml-2 text-sm text-slate-500">Memuat data peserta...</span>
                         </div>
                       ) : participants.length === 0 ? (
@@ -678,12 +678,12 @@ export default function AdminTripGroupsPage() {
                           {participants.map((booking) => (
                             <div
                               key={booking.bookingId}
-                              className="bg-white rounded-xl border border-slate-200 p-4"
+                              className="bg-background rounded-xl border border-slate-200 p-4"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-2">
-                                    <span className="font-mono font-bold text-[#F49D1A] text-sm">
+                                    <span className="font-mono font-bold text-primary text-sm">
                                       {booking.bookingCode}
                                     </span>
                                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -775,13 +775,13 @@ export default function AdminTripGroupsPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => toggleHistory(group.id)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-slate-600 bg-background border border-slate-200 hover:bg-slate-50 rounded-xl transition"
                           >
                             Riwayat
                           </button>
                           <button
                             onClick={() => openPriceCreate(group.id)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-primary-foreground bg-primary hover:bg-[#c47d12] rounded-xl transition"
                           >
                             <Plus className="w-3 h-3" />
                             Tambah Tier
@@ -790,7 +790,7 @@ export default function AdminTripGroupsPage() {
                       </div>
                       {pricesLoading ? (
                         <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-[#F49D1A]" />
+                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
                           <span className="ml-2 text-sm text-slate-500">Memuat tier harga...</span>
                         </div>
                       ) : prices.length === 0 ? (
@@ -803,12 +803,12 @@ export default function AdminTripGroupsPage() {
                           {prices.map((tier) => (
                             <div
                               key={tier.id}
-                              className="bg-white rounded-xl border border-slate-200 p-3.5"
+                              className="bg-background rounded-xl border border-slate-200 p-3.5"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F49D1A]/10 text-[#F49D1A]">
+                                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary">
                                       {tier.name}
                                     </span>
                                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${tier.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>
@@ -821,7 +821,7 @@ export default function AdminTripGroupsPage() {
                                   </p>
                                   <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-2">
                                     <div
-                                      className="h-full rounded-full bg-[#F49D1A] transition-all"
+                                      className="h-full rounded-full bg-primary transition-all"
                                       style={{ width: `${Math.min(((tier.quotaBooked ?? 0) / Math.max(tier.quota, 1)) * 100, 100)}%` }}
                                     />
                                   </div>
@@ -837,7 +837,7 @@ export default function AdminTripGroupsPage() {
                                   <button
                                     onClick={() => openPriceEdit(group.id, tier)}
                                     title="Edit tier"
-                                    className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                                    className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition"
                                   >
                                     <Edit className="w-4 h-4" />
                                   </button>
@@ -855,7 +855,7 @@ export default function AdminTripGroupsPage() {
                         </div>
                       )}
                       {showHistory && expandedPrices === group.id && (
-                        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
+                        <div className="mt-3 rounded-xl border border-slate-200 bg-background p-3">
                           <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Riwayat perubahan</p>
                           {historyLoading ? (
                             <p className="text-xs text-slate-400">Memuat riwayat...</p>
@@ -911,7 +911,7 @@ export default function AdminTripGroupsPage() {
                   {group.status !== "completed" && (
                     <button
                       onClick={() => handleComplete(group.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#F49D1A] hover:bg-[#c47d12] rounded-xl transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-[#c47d12] rounded-xl transition"
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
                       Tandai Selesai
@@ -938,7 +938,7 @@ export default function AdminTripGroupsPage() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setModalOpen(false)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-background rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-slate-900 mb-4">
               {editingGroup ? "Edit Grup" : "Tambah Grup Baru"}
             </h2>
@@ -954,7 +954,7 @@ export default function AdminTripGroupsPage() {
                     name="startDate"
                     value={form.startDate}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${
                       formErrors.startDate ? "border-red-400" : "border-slate-300"
                     }`}
                   />
@@ -971,7 +971,7 @@ export default function AdminTripGroupsPage() {
                     name="endDate"
                     value={form.endDate}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${
                       formErrors.endDate ? "border-red-400" : "border-slate-300"
                     }`}
                   />
@@ -992,7 +992,7 @@ export default function AdminTripGroupsPage() {
                     min={1}
                     value={form.maxParticipants}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${
                       formErrors.maxParticipants ? "border-red-400" : "border-slate-300"
                     }`}
                   />
@@ -1010,7 +1010,7 @@ export default function AdminTripGroupsPage() {
                     min={1}
                     value={form.minParticipants}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                   />
                 </div>
               </div>
@@ -1023,7 +1023,7 @@ export default function AdminTripGroupsPage() {
                   onChange={handleChange}
                   rows={2}
                   placeholder="Opsional: catatan untuk grup ini..."
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                 />
               </div>
 
@@ -1031,7 +1031,7 @@ export default function AdminTripGroupsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50"
                 >
                   {saving ? "Menyimpan..." : "Simpan"}
                 </button>
@@ -1051,7 +1051,7 @@ export default function AdminTripGroupsPage() {
       {priceModalGroup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setPriceModalGroup(null)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-background rounded-3xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-slate-900 mb-4">
               {editingPrice ? "Edit Tier Harga" : "Tambah Tier Harga"}
             </h2>
@@ -1064,7 +1064,7 @@ export default function AdminTripGroupsPage() {
                   onChange={handlePriceChange}
                   list="tier-suggestions"
                   placeholder="cth: Dewasa, Anak, Early Bird"
-                  className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.name ? "border-red-400" : "border-slate-300"}`}
+                  className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.name ? "border-red-400" : "border-slate-300"}`}
                 />
                 <datalist id="tier-suggestions">
                   {PRICE_TIER_SUGGESTIONS.map((s) => (
@@ -1090,7 +1090,7 @@ export default function AdminTripGroupsPage() {
                     }}
                     inputMode="numeric"
                     placeholder="cth: 1500000"
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.price ? "border-red-400" : "border-slate-300"}`}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.price ? "border-red-400" : "border-slate-300"}`}
                   />
                   {priceErrors.price && <p className="mt-1 text-xs text-red-600">{priceErrors.price}</p>}
                 </div>
@@ -1102,7 +1102,7 @@ export default function AdminTripGroupsPage() {
                     min={1}
                     value={priceForm.quota}
                     onChange={handlePriceChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.quota ? "border-red-400" : "border-slate-300"}`}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.quota ? "border-red-400" : "border-slate-300"}`}
                   />
                   {priceErrors.quota && <p className="mt-1 text-xs text-red-600">{priceErrors.quota}</p>}
                 </div>
@@ -1115,7 +1115,7 @@ export default function AdminTripGroupsPage() {
                     name="validFrom"
                     value={priceForm.validFrom}
                     onChange={handlePriceChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                   />
                 </div>
                 <div>
@@ -1125,7 +1125,7 @@ export default function AdminTripGroupsPage() {
                     name="validUntil"
                     value={priceForm.validUntil}
                     onChange={handlePriceChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] ${priceErrors.validUntil ? "border-red-400" : "border-slate-300"}`}
+                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.validUntil ? "border-red-400" : "border-slate-300"}`}
                   />
                   {priceErrors.validUntil && <p className="mt-1 text-xs text-red-600">{priceErrors.validUntil}</p>}
                 </div>
@@ -1136,7 +1136,7 @@ export default function AdminTripGroupsPage() {
                   type="checkbox"
                   checked={priceForm.isActive}
                   onChange={handlePriceChange}
-                  className="w-4 h-4 rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30"
+                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-ring/30"
                 />
                 <span className="font-medium text-slate-700">Tier aktif</span>
               </label>
@@ -1144,7 +1144,7 @@ export default function AdminTripGroupsPage() {
                 <button
                   type="submit"
                   disabled={priceSaving}
-                  className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50"
                 >
                   {priceSaving ? "Menyimpan..." : "Simpan"}
                 </button>
@@ -1164,7 +1164,7 @@ export default function AdminTripGroupsPage() {
       {deleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteOpen(false)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-sm p-6">
+          <div className="relative bg-background rounded-3xl shadow-xl w-full max-w-sm p-6">
             <div className="text-center">
               <div className="w-12 h-12 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <Trash2 className="w-6 h-6 text-red-600" />
@@ -1186,7 +1186,7 @@ export default function AdminTripGroupsPage() {
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition"
+                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-red-700 transition"
               >
                 Hapus
               </button>
@@ -1201,7 +1201,7 @@ export default function AdminTripGroupsPage() {
         title="Tandai Grup Selesai"
         message="Tandai grup ini sebagai selesai? Semua booking akan diselesaikan dan peserta dapat memberikan ulasan."
         confirmLabel="Ya, Tandai Selesai"
-        confirmClassName="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
       />
 
       <ConfirmAction
@@ -1211,7 +1211,7 @@ export default function AdminTripGroupsPage() {
         title={alertModal.title}
         message={alertModal.message}
         confirmLabel="OK"
-        confirmClassName="rounded-xl bg-[#F49D1A] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
       />
       <ConfirmAction
         open={deletingPrice !== null}

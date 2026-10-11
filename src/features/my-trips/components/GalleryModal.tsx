@@ -23,7 +23,7 @@ export default function GalleryModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col">
+      <div className="relative bg-background rounded-3xl shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Foto Trip</h2>
@@ -42,7 +42,7 @@ export default function GalleryModal({
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
             <div className="flex items-center justify-center py-16">
-              <Loader2 className="w-8 h-8 animate-spin text-[#F49D1A]" />
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : media.length === 0 ? (
             <div className="text-center py-16">
@@ -76,10 +76,10 @@ export default function GalleryModal({
                       <button
                         onClick={() => download(item.url ?? "", `foto-trip-${item.id}.jpg`)}
                         disabled={downloading === item.url}
-                        className="p-3 bg-white/90 rounded-xl shadow-lg hover:bg-white transition disabled:opacity-50"
+                        className="p-3 bg-background/90 rounded-xl shadow-lg hover:bg-background transition disabled:opacity-50"
                       >
                         {downloading === item.url ? (
-                          <Loader2 className="w-5 h-5 animate-spin text-[#F49D1A]" />
+                          <Loader2 className="w-5 h-5 animate-spin text-primary" />
                         ) : (
                           <Download className="w-5 h-5 text-gray-700" />
                         )}

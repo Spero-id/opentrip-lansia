@@ -125,21 +125,21 @@ export default function AdminBlogs() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Blog</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola artikel blog dan konten publikasi.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Blog</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
@@ -171,7 +171,7 @@ export default function AdminBlogs() {
                     <td className="px-6 py-4 font-bold text-slate-900">{b.title}</td>
                     <td className="px-6 py-4">
                       {categoryNameOf(b.categoryId) ? (
-                        <span className="rounded-full px-2.5 py-1 text-[10px] font-bold bg-[#F49D1A]/10 text-[#F49D1A]">{categoryNameOf(b.categoryId)}</span>
+                        <span className="rounded-full px-2.5 py-1 text-[10px] font-bold bg-primary/10 text-primary">{categoryNameOf(b.categoryId)}</span>
                       ) : (
                         <span className="text-slate-300">-</span>
                       )}
@@ -182,7 +182,7 @@ export default function AdminBlogs() {
                     <td className="px-6 py-4 text-slate-500">{b.createdAt ? new Date(b.createdAt).toLocaleDateString("id-ID") : "-"}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(b)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit Blog">
+                        <button onClick={() => openEdit(b)} className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Blog">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => confirmDelete(b.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
@@ -203,17 +203,17 @@ export default function AdminBlogs() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Judul</label>
             <input name="title" value={form.title} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Slug</label>
             <input name="slug" value={form.slug} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Ringkasan (Excerpt)</label>
             <textarea name="excerpt" value={form.excerpt} onChange={handleChange} rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
@@ -246,7 +246,7 @@ export default function AdminBlogs() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>
             <select name="status" value={form.status} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
@@ -256,7 +256,7 @@ export default function AdminBlogs() {
           )}
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={closeModal}

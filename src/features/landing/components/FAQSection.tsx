@@ -28,14 +28,14 @@ export default function FAQSection() {
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
     return (
-        <section id="faq" className="relative bg-white py-16">
+        <section id="faq" className="relative bg-background py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-start mb-10">
-                    <span className="text-[#F49D1A] font-semibold text-xs uppercase tracking-wider block mb-2">
+                    <span className="text-primary font-semibold text-xs uppercase tracking-wider block mb-2">
                         PERTANYAAN UMUM
                     </span>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
-                        Pertanyaan Yang Sering <span className="text-[#F49D1A]">Diajukan</span>
+                        Pertanyaan Yang Sering <span className="text-primary">Diajukan</span>
                     </h2>
                 </div>
 
@@ -48,8 +48,8 @@ export default function FAQSection() {
                                     <div
                                         key={i}
                                         className={`rounded-xl border transition-colors ${isOpen
-                                            ? "border-[#F49D1A]/30 bg-[#F49D1A]/10 shadow-xs"
-                                            : "border-gray-200 bg-white hover:border-gray-300"
+                                            ? "border-primary/30 bg-primary/10 shadow-xs"
+                                            : "border-gray-200 bg-background hover:border-gray-300"
                                             }`}
                                     >
                                         <button
@@ -61,7 +61,7 @@ export default function FAQSection() {
                                             </span>
                                             <span
                                                 className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen
-                                                    ? "bg-[#F49D1A] text-white rotate-45"
+                                                    ? "bg-primary text-primary-foreground rotate-45"
                                                     : "bg-gray-100 text-gray-600"
                                                     }`}
                                             >
@@ -99,7 +99,7 @@ export default function FAQSection() {
                                         key={i}
                                         onClick={() => goTo(i)}
                                         aria-label={`Page ${i + 1}`}
-                                        className={`h-2 rounded-full transition-all duration-200 ${i === page ? "w-6 bg-[#F49D1A]" : "w-2 bg-gray-200"
+                                        className={`h-2 rounded-full transition-all duration-200 ${i === page ? "w-6 bg-primary" : "w-2 bg-gray-200"
                                             }`}
                                     />
                                 ))}
@@ -139,7 +139,7 @@ export default function FAQSection() {
                             href={whatsappUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full flex items-center p-1 justify-center gap-2 bg-[#F49D1A] text-white py-2 rounded-xl font-semibold hover:bg-[#F49D1A]/80 transition-colors"
+                            className="w-full flex items-center p-1 justify-center gap-2 bg-primary text-primary-foreground py-2 rounded-xl font-semibold hover:bg-primary/80 transition-colors"
                         >
                             <Send size={16} />
                             Silahkan Hubungi Kami

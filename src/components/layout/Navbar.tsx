@@ -70,7 +70,7 @@ export default function Navbar() {
     isScrolled
       ? "bg-black/50 backdrop-blur-sm shadow-lg border-b border-white/10"
       : "bg-transparent border-b border-transparent",
-    isOpen && "bg-white/10 backdrop-blur-xl"
+    isOpen && "bg-background/10 backdrop-blur-xl"
   );
 
   const logoClasses = cn(
@@ -79,12 +79,12 @@ export default function Navbar() {
   );
 
   const desktopLinkClasses = isScrolled
-    ? "hidden lg:flex font-medium text-sm text-white hover:text-[#F49D1A]"
-    : "hidden lg:flex font-medium text-sm text-black hover:text-[#F49D1A]";
+    ? "hidden lg:flex font-medium text-sm text-white hover:text-primary"
+    : "hidden lg:flex font-medium text-sm text-black hover:text-primary";
 
   const loginButtonClasses = isScrolled
-    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-white/0 border border-white/20 text-white hover:text-[#F49D1A] hover:border-[#F49D1A] hover:bg-white/10"
-    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-white/10 border border-[#F49D1A] text-[#F49D1A] backdrop-blur-sm hover:bg-[#F49D1A]/20 hover:border-[#F49D1A]/20 hover:text-[#F49D1A]";
+    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-background/0 border border-white/20 text-white hover:text-primary hover:border-primary hover:bg-background/10"
+    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-background/10 border border-primary text-primary backdrop-blur-sm hover:bg-primary/20 hover:border-primary/20 hover:text-primary";
 
   const toggleButtonClasses = cn(
     "p-2 transition-colors",
@@ -148,7 +148,7 @@ export default function Navbar() {
                       </span>
                     </span>
 
-                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F49D1A] text-white shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
+                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
                       <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
                         {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "U"}
                       </span>
@@ -169,7 +169,7 @@ export default function Navbar() {
                   </button>
 
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-background border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
                       <div className="px-4 py-3 border-b border-slate-200">
                         <p className="text-sm font-medium text-slate-900 truncate">
                           {sessionUser.name || "Pengguna"}
@@ -233,7 +233,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/login"
-                    className="bg-[#F49D1A] border border-[#F49D1A] text-white px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-[#c47d12] hover:border-[#c47d12] hover:shadow-xl"
+                    className="bg-primary border border-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-[#c47d12] hover:border-[#c47d12] hover:shadow-xl"
                   >
                     Masuk
                   </Link>

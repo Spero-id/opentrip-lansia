@@ -18,7 +18,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
     <Link
       href={`/trips/${dest.id}`}
       onClick={onClick}
-      className={`group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200 ${className}`}
+      className={`group bg-background rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200 ${className}`}
     >
       <div className="relative h-44 overflow-hidden">
         {dest.image ? (
@@ -32,10 +32,10 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
             Gambar tidak tersedia
           </div>
         )}
-        <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-xs">
+        <div className="absolute top-3 left-3 flex items-center gap-1 bg-background/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-xs">
           {ratingVal ? (
             <>
-              <Star size={12} className="text-[#F49D1A] fill-[#F49D1A]" />
+              <Star size={12} className="text-primary fill-primary" />
               <span className="text-xs font-semibold text-gray-900">{ratingVal}</span>
             </>
           ) : (
@@ -44,7 +44,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
         </div>
 
         <div className="absolute top-3 right-3 flex items-center gap-1.5 flex-wrap justify-end">
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-[#F49D1A] shadow-xs">
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-primary-foreground bg-primary shadow-xs">
             {dest.category || "Destinasi"}
           </span>
         </div>
@@ -73,7 +73,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
               {formatIDR(dest.priceMin)}
             </p>
           </div>
-          <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-[#F49D1A] flex items-center justify-center transition-colors flex-shrink-0">
+          <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-primary flex items-center justify-center transition-colors flex-shrink-0">
             <ArrowRight
               size={16}
               className="text-gray-500 group-hover:text-white transition-colors"

@@ -7,11 +7,11 @@ export default function DestinationHeader({ dest }: { dest: TripDetail }) {
   return (
     <div className="mb-4 sm:mb-6 mt-4">
       <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
-        <span className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-white bg-[#F49D1A]">
+        <span className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-primary-foreground bg-primary">
           {dest.category}
         </span>
         {dest.rating != null ? (
-          <span className="flex items-center gap-1 text-[#F49D1A] font-bold bg-[#FEF6E7] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
+          <span className="flex items-center gap-1 text-primary font-bold bg-[#FEF6E7] px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
             <Star className="w-3.5 h-3.5 fill-current" /> {Number(dest.rating).toFixed(1)}{" "}
             <span className="text-gray-500 font-normal">
               ({formatNumber(dest.reviewCount ?? 0)} ulasan)

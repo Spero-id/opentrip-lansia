@@ -151,8 +151,8 @@ export default function TermsModal({
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] max-h-[600px] flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0 bg-white z-10">
+      <div className="relative bg-background rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] max-h-[600px] flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0 bg-background z-10">
           <h2 className="text-lg font-bold text-gray-900">{content.title}</h2>
           <button
             onClick={onClose}
@@ -184,7 +184,7 @@ export default function TermsModal({
           </div>
           {!hasScrolledToBottom && (
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent pt-6 pb-3 text-center z-10">
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-[#F49D1A] bg-[#FEF6E7] border border-[#F49D1A]/20 px-3 py-1 rounded-full shadow-sm">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-primary bg-[#FEF6E7] border border-primary/20 px-3 py-1 rounded-full shadow-sm">
                 Scroll ke bawah untuk menyetujui
                 <ArrowDown className="w-3 h-3" />
               </span>
@@ -192,11 +192,11 @@ export default function TermsModal({
           )}
         </div>
 
-        <div className="border-t border-gray-100 p-4 shrink-0 bg-white z-10">
+        <div className="border-t border-gray-100 p-4 shrink-0 bg-background z-10">
           <button
             onClick={() => onAgree()}
             disabled={!hasScrolledToBottom}
-            className="w-full bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {hasScrolledToBottom
               ? "Saya Setuju"

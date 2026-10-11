@@ -65,7 +65,7 @@ export default function CoverImageUploader({ value, onChange }: CoverImageUpload
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="max-w-sm w-full rounded-xl border-2 border-dashed border-slate-200 p-8 flex flex-col items-center gap-2 text-sm text-slate-400 hover:border-[#F49D1A]/40 hover:text-[#F49D1A] transition disabled:opacity-50"
+          className="max-w-sm w-full rounded-xl border-2 border-dashed border-slate-200 p-8 flex flex-col items-center gap-2 text-sm text-slate-400 hover:border-primary/40 hover:text-primary transition disabled:opacity-50"
         >
           {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImagePlus className="w-5 h-5" />}
           <span>{uploading ? "Mengunggah..." : "Unggah gambar sampul"}</span>

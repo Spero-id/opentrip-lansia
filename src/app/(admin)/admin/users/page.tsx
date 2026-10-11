@@ -89,7 +89,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen User Terdaftar</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola data pengguna terdaftar, peran (role), dan poin loyalitas.</p>
@@ -97,7 +97,7 @@ export default function AdminUsersPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0D238E] flex items-center justify-center font-bold">
             <Users className="w-6 h-6" />
           </div>
@@ -107,7 +107,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
             <UserCheck className="w-6 h-6" />
           </div>
@@ -117,7 +117,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
             <Award className="w-6 h-6" />
           </div>
@@ -127,7 +127,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
             <ShieldCheck className="w-6 h-6" />
           </div>
@@ -138,7 +138,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <div className="bg-background p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-4 justify-between items-center">
         <div className="relative w-full sm:w-72">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -146,7 +146,7 @@ export default function AdminUsersPage() {
             placeholder="Cari nama, email, telepon..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
           />
         </div>
 
@@ -155,7 +155,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="w-full sm:w-40 px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] bg-white font-medium text-slate-700"
+            className="w-full sm:w-40 px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background font-medium text-slate-700"
           >
             <option value="all">Semua Role</option>
             <option value="user">User Biasa</option>
@@ -165,7 +165,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
@@ -254,7 +254,7 @@ export default function AdminUsersPage() {
                             Ref: {u.referralCode || "-"}
                           </p>
                           <p className="text-[11px] text-slate-500">
-                            Poin: <span className="font-bold text-[#F49D1A]">{u.loyaltyPoints ?? 0}</span> pts
+                            Poin: <span className="font-bold text-primary">{u.loyaltyPoints ?? 0}</span> pts
                           </p>
                         </div>
                       </td>
@@ -268,7 +268,7 @@ export default function AdminUsersPage() {
                         <div className="inline-flex items-center gap-2">
                           <button
                             onClick={() => openEdit(u)}
-                            className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition"
+                            className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition"
                             title="Edit User"
                           >
                             <Edit className="w-4 h-4" />
@@ -300,7 +300,7 @@ export default function AdminUsersPage() {
               value={form.name}
               onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
               required
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
           </div>
 
@@ -321,7 +321,7 @@ export default function AdminUsersPage() {
               value={form.phone}
               onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
               placeholder="e.g. 08123456789"
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
           </div>
 
@@ -330,7 +330,7 @@ export default function AdminUsersPage() {
             <select
               value={form.role}
               onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             >
               <option value="user">User Biasa</option>
               <option value="agent">Agent Partner</option>
@@ -345,7 +345,7 @@ export default function AdminUsersPage() {
               value={form.loyaltyPoints}
               onChange={(e) => setForm((prev) => ({ ...prev, loyaltyPoints: parseInt(e.target.value) || 0 }))}
               min={0}
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
           </div>
 
@@ -353,7 +353,7 @@ export default function AdminUsersPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50"
             >
               {saving ? "Menyimpan..." : "Simpan Perubahan"}
             </button>

@@ -49,21 +49,21 @@ export default function DestinationSection() {
 
 
   return (
-    <section id="destinasi" className="relative bg-white py-10">
+    <section id="destinasi" className="relative bg-background py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-6 md:mb-10">
           <div>
-            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">
+            <p className="text-primary font-semibold text-sm tracking-wide mb-3">
               DESTINASI PILIHAN
             </p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
-              Destinasi Paling <span className="text-[#F49D1A]">Diminati</span>
+              Destinasi Paling <span className="text-primary">Diminati</span>
             </h2>
           </div>
 
           <Link
             href="/trips"
-            className="hidden md:flex items-center gap-1 text-md font-semibold text-gray-700 hover:text-[#F49D1A] transition-colors shrink-0"
+            className="hidden md:flex items-center gap-1 text-md font-semibold text-gray-700 hover:text-primary transition-colors shrink-0"
           >
             Lihat semua
             <ArrowRight size={24} className="rotate-[-45deg]" />
@@ -94,7 +94,7 @@ export default function DestinationSection() {
 
       {!loading && destinations.length === 0 && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6">
-          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-gray-200 bg-white">
+          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-gray-200 bg-background">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
               style={{ backgroundColor: "rgba(223,114,36,0.08)" }}
@@ -120,7 +120,7 @@ export default function DestinationSection() {
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 0}
             aria-label="Muat destinasi sebelumnya"
-            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
           >
             <ChevronUp size={20} />
           </button>
@@ -134,7 +134,7 @@ export default function DestinationSection() {
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage >= pageCount - 1}
             aria-label="Lihat destinasi lainnya"
-            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
           >
             <ChevronDown size={20} />
           </button>

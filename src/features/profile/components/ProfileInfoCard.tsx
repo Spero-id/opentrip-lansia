@@ -16,7 +16,7 @@ export default function ProfileInfoCard({ user }: { user?: ProfileUser | null })
   ];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+    <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
       <h2 className="text-base font-bold text-slate-900">Informasi Akun</h2>
       <p className="mt-0.5 mb-4 text-xs text-slate-400">
         Data pribadi yang terhubung dengan akun kamu.

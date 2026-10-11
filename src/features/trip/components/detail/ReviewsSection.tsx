@@ -52,8 +52,8 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
   if (reviews.length === 0) {
     return (
       <div className="py-12 text-center rounded-2xl border border-dashed border-gray-200 bg-gray-50">
-        <div className="w-12 h-12 mx-auto rounded-full bg-[#F49D1A]/10 flex items-center justify-center mb-3">
-          <Star size={22} className="text-[#F49D1A]" />
+        <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-3">
+          <Star size={22} className="text-primary" />
         </div>
         <p className="text-sm font-semibold text-gray-700">Belum ada ulasan</p>
         <p className="text-xs text-gray-400 mt-1">
@@ -83,10 +83,10 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
 
       <div className="space-y-4">
         {reviews.map((r) => (
-          <div key={r.id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs">
+          <div key={r.id} className="bg-background rounded-2xl border border-gray-100 p-5 shadow-xs">
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#F49D1A]/15 text-[#F49D1A] flex items-center justify-center text-sm font-bold shrink-0">
+                <div className="w-9 h-9 rounded-full bg-primary/15 text-primary flex items-center justify-center text-sm font-bold shrink-0">
                   {getInitial(r.userName)}
                 </div>
                 <div>

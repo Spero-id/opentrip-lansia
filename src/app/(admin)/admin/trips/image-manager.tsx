@@ -56,7 +56,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
             <div key={url} className="relative rounded-xl border border-slate-200 overflow-hidden group">
               <img src={url} alt="" className="w-full h-28 object-cover" />
               {cover === url && (
-                <span className="absolute top-2 left-2 bg-[#F49D1A] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
                   Sampul
                 </span>
               )}
@@ -64,7 +64,7 @@ export default function ImageManager({ cover, images, onChange }: ImageManagerPr
                 <button
                   type="button"
                   onClick={() => setCover(url)}
-                  className="text-[10px] font-semibold text-white bg-white/20 hover:bg-white/30 rounded-lg px-2 py-1 transition"
+                  className="text-[10px] font-semibold text-white bg-background/20 hover:bg-background/30 rounded-lg px-2 py-1 transition"
                 >
                   Jadikan Sampul
                 </button>

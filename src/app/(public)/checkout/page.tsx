@@ -66,7 +66,7 @@ function CheckoutContent() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-sans text-gray-900">
+    <div className="flex flex-col min-h-screen bg-background font-sans text-gray-900">
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-20">
         {status !== "found" && (
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
@@ -83,7 +83,7 @@ function CheckoutContent() {
                 </p>
                 <Link
                   href="/trips"
-                  className="text-sm font-semibold text-[#F49D1A] hover:underline"
+                  className="text-sm font-semibold text-primary hover:underline"
                 >
                   Lihat destinasi
                 </Link>
@@ -99,7 +99,7 @@ function CheckoutContent() {
                 </p>
                 <Link
                   href="/trips"
-                  className="text-sm font-semibold text-[#F49D1A] hover:underline"
+                  className="text-sm font-semibold text-primary hover:underline"
                 >
                   Lihat destinasi lain
                 </Link>
@@ -124,7 +124,7 @@ function CheckoutContent() {
             </div>
 
             {checkout.step !== "confirmation" && (
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 shadow-sm">
+              <div className="bg-background border border-gray-100 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 shadow-sm">
                 <StepProgress currentStep={checkout.step} />
               </div>
             )}
@@ -160,7 +160,7 @@ function CheckoutContent() {
                       <img
                         src={checkout.proofUrl}
                         alt="Bukti transfer"
-                        className="w-full max-h-48 object-contain bg-white rounded-lg border border-gray-200 mx-auto"
+                        className="w-full max-h-48 object-contain bg-background rounded-lg border border-gray-200 mx-auto"
                       />
                     </a>
                     <p className="text-[10px] text-gray-400 mt-1">Klik untuk perbesar</p>
@@ -169,14 +169,14 @@ function CheckoutContent() {
 
                 {checkout.orderId && (
                   <p className="text-xs text-gray-400 mb-6">
-                    Kode Booking: <span className="font-mono font-bold text-[#F49D1A]">{checkout.orderId}</span>
+                    Kode Booking: <span className="font-mono font-bold text-primary">{checkout.orderId}</span>
                   </p>
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Link
                     href="/my-trips"
-                    className="bg-[#F49D1A] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
+                    className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
                   >
                     Lihat di Perjalanan Saya
                   </Link>
@@ -203,7 +203,7 @@ export default function CheckoutPage() {
       fallback={
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 rounded-full border-4 border-[#F49D1A]/20 border-t-[#F49D1A] animate-spin" />
+            <div className="w-10 h-10 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
             <p className="text-sm font-semibold text-gray-500">Memuat halaman checkout...</p>
           </div>
         </div>

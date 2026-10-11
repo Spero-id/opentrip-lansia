@@ -22,7 +22,7 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
+    <div className="bg-background rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
       <div
         role="button"
         tabIndex={0}
@@ -63,19 +63,19 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
 
       {open && (
         <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
-          <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+          <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-3">
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Detail Pemesanan</p>
             <ParsedPreferences text={req.destinationPreferences} />
           </div>
 
           {req.specialRequirements && (
-            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-1.5">
+            <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-1.5">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Kebutuhan Khusus</p>
               <p className="text-xs text-gray-600 leading-relaxed">{req.specialRequirements}</p>
             </div>
           )}
 
-          <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between">
+          <div className="bg-background rounded-xl border border-gray-100 p-4 flex items-center justify-between">
             <span className="text-[11px] text-gray-400">
               Dibuat: {new Date(req.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
             </span>

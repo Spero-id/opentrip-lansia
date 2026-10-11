@@ -359,7 +359,7 @@ if (categories.length === 0) await fetchCategories();
   const fieldClass = (key: string) =>
     errors[key]
       ? "mt-1 w-full rounded-lg border border-red-400 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300/30 focus:border-red-400"
-      : "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]";
+      : "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary";
 
   const fieldError = (key: string) =>
     errors[key] ? <p className="mt-1 text-xs font-medium text-red-600">{errors[key]}</p> : null;
@@ -368,21 +368,21 @@ if (categories.length === 0) await fetchCategories();
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Paket Trip</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola paket open trip.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Trip</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
@@ -422,7 +422,7 @@ if (categories.length === 0) await fetchCategories();
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(t)} className="p-2 text-slate-500 hover:text-[#F49D1A] hover:bg-[#F49D1A]/10 rounded-xl transition" title="Edit">
+                        <button onClick={() => openEdit(t)} className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition" title="Kelola Grup">
@@ -480,7 +480,7 @@ if (categories.length === 0) await fetchCategories();
             <div>
               <label className="block text-sm font-medium text-slate-700">Status</label>
               <select name="status" value={form.status} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]">
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
                 <option value="archived">Archived</option>
@@ -491,7 +491,7 @@ if (categories.length === 0) await fetchCategories();
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
 
           <div className="border-t border-slate-200 pt-4">
@@ -581,7 +581,7 @@ if (categories.length === 0) await fetchCategories();
               <button
                 type="button"
                 onClick={addItineraryItem}
-                className="px-3 py-1.5 text-xs font-semibold text-[#F49D1A] bg-[#F49D1A]/10 hover:bg-[#F49D1A]/20 rounded-xl transition inline-flex items-center gap-1.5"
+                className="px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-xl transition inline-flex items-center gap-1.5"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Tambah Hari / Kegiatan</span>
@@ -597,7 +597,7 @@ if (categories.length === 0) await fetchCategories();
                 {itineraryList.map((item, index) => (
                   <div key={index} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                      <span className="text-xs font-bold text-slate-700 bg-background px-2.5 py-1 rounded-lg border border-slate-200">
                         Item #{index + 1}
                       </span>
                       <button
@@ -618,7 +618,7 @@ if (categories.length === 0) await fetchCategories();
                           min={1}
                           value={item.dayNumber}
                           onChange={(e) => handleItineraryChange(index, "dayNumber", Number(e.target.value))}
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                         />
                       </div>
                       <div className="sm:col-span-4">
@@ -628,7 +628,7 @@ if (categories.length === 0) await fetchCategories();
                           value={item.location}
                           onChange={(e) => handleItineraryChange(index, "location", e.target.value)}
                           placeholder="Contoh: Borobudur, Magelang"
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                         />
                       </div>
                       <div className="sm:col-span-5">
@@ -638,7 +638,7 @@ if (categories.length === 0) await fetchCategories();
                           value={item.title}
                           onChange={(e) => handleItineraryChange(index, "title", e.target.value)}
                           placeholder="Contoh: Penjelajahan Candi & Foto Bersama"
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                         />
                       </div>
                     </div>
@@ -650,7 +650,7 @@ if (categories.length === 0) await fetchCategories();
                         value={item.description}
                         onChange={(e) => handleItineraryChange(index, "description", e.target.value)}
                         placeholder="Detail jadwal atau petunjuk singkat kegiatan..."
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                       />
                     </div>
                   </div>
@@ -664,7 +664,7 @@ if (categories.length === 0) await fetchCategories();
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-bold text-slate-900">Fasilitas Trip</h3>
-                  <span className="bg-amber-100 text-[#F49D1A] text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-200">
+                  <span className="bg-amber-100 text-primary text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-200">
                     {facilitiesList.length} Fasilitas
                   </span>
                 </div>
@@ -685,7 +685,7 @@ if (categories.length === 0) await fetchCategories();
                 <button
                   type="button"
                   onClick={addFacilityItem}
-                  className="px-3.5 py-2 text-xs font-semibold text-white bg-[#F49D1A] hover:bg-[#d68512] rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
+                  className="px-3.5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-[#d68512] rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Tambah Fasilitas</span>
@@ -695,7 +695,7 @@ if (categories.length === 0) await fetchCategories();
 
             {facilitiesList.length === 0 ? (
               <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 space-y-2">
-                <div className="w-10 h-10 mx-auto rounded-full bg-amber-100/80 text-[#F49D1A] flex items-center justify-center">
+                <div className="w-10 h-10 mx-auto rounded-full bg-amber-100/80 text-primary flex items-center justify-center">
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <p className="text-xs font-semibold text-slate-700">Belum ada fasilitas yang ditambahkan</p>
@@ -708,7 +708,7 @@ if (categories.length === 0) await fetchCategories();
                 {facilitiesList.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2.5 bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
+                    className="flex items-center gap-2.5 bg-background p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
                   >
                     <span className="h-10 w-10 rounded-xl bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
                       {index + 1}
@@ -728,7 +728,7 @@ if (categories.length === 0) await fetchCategories();
                         value={item.name}
                         onChange={(e) => handleFacilityChange(index, "name", e.target.value)}
                         placeholder="Nama Fasilitas (cth: Bus AC Executive, Tour Guide, Medis)"
-                        className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-xs text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] font-medium transition flex items-center"
+                        className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-xs text-slate-800 bg-slate-50/50 focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary font-medium transition flex items-center"
                       />
                     </div>
 
@@ -771,26 +771,26 @@ if (categories.length === 0) await fetchCategories();
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <input name="isSeniorFriendly" type="checkbox" checked={form.isSeniorFriendly} onChange={handleChange}
-                  className="rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
+                  className="rounded border-slate-300 text-primary focus:ring-ring/30" />
                 <label className="text-sm font-medium text-slate-700">Ramah Lansia</label>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Info Aksesibilitas</label>
                 <textarea name="accessibilityInfo" value={form.accessibilityInfo} onChange={handleChange} rows={2}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]" />
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 pt-2">
             <input name="isFeatured" type="checkbox" checked={form.isFeatured} onChange={handleChange}
-              className="rounded border-slate-300 text-[#F49D1A] focus:ring-[#F49D1A]/30" />
+              className="rounded border-slate-300 text-primary focus:ring-ring/30" />
             <label className="text-sm font-medium text-slate-700">Featured (Tampilkan di beranda)</label>
           </div>
 
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50">
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}
