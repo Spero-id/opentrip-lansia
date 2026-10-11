@@ -4,6 +4,9 @@ import { useState, useRef } from "react";
 import { NEXT_PUBLIC_WHATSAPP_MESSAGE } from "@/lib/env/client";
 import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import Subs from "@/features/newsletter/components/Subs";
 
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     "Jl. Ratu Bidadari 3 No. 2, Ciputat, Tangerang Selatan"
@@ -11,11 +14,6 @@ const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURICom
 
 const WA_NUMBER = "6285110511403";
 const WA_MESSAGE = NEXT_PUBLIC_WHATSAPP_MESSAGE;
-import Subs from "@/features/newsletter/components/Subs";
-
-const baseInput =
-    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-background placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors";
-const normalBorder = "border-[#D1D5DB] focus:border-primary";
 
 export default function ContactPage() {
     const [submitted, setSubmitted] = useState(false);
@@ -82,7 +80,7 @@ export default function ContactPage() {
 
             <section className="relative z-20 -mt-24 sm:-mt-32 pb-16 sm:pb-20">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="bg-background rounded-2xl border border-[#E5E7EB] shadow-2xl overflow-hidden">
+                    <div className="bg-background rounded-2xl border border-border shadow-2xl overflow-hidden">
                         <div className="grid lg:grid-cols-5">
                             <div
                                 className="lg:col-span-2 relative bg-cover bg-center p-8 sm:p-10 flex flex-col justify-between overflow-hidden"
@@ -149,21 +147,21 @@ export default function ContactPage() {
                             </div>
 
                             <div className="lg:col-span-3 p-8 sm:p-10">
-                                <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2A37] mb-3">
+                                <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
                                     Get In Touch
                                 </h2>
-                                <p className="text-[#6B7280] text-sm leading-relaxed mb-8 max-w-md">
+                                <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-md">
                                     Isi form di bawah dan tim kami akan segera menghubungi kamu kembali,
                                     biasanya dalam 1x24 jam kerja.
                                 </p>
 
                                 {submitted ? (
-                                    <div className="flex flex-col items-center justify-center text-center py-16 border border-dashed border-[#E5E7EB] rounded-xl">
+                                    <div className="flex flex-col items-center justify-center text-center py-16 border border-dashed border-border rounded-xl">
                                         <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                                             <Send className="w-5 h-5 text-primary" />
                                         </div>
-                                        <h3 className="font-bold text-[#1F2A37] mb-1">Pesan terkirim!</h3>
-                                        <p className="text-sm text-[#6B7280] max-w-xs">
+                                        <h3 className="font-bold text-foreground mb-1">Pesan terkirim!</h3>
+                                        <p className="text-sm text-muted-foreground max-w-xs">
                                             Terima kasih, tim kami akan segera menghubungi kamu kembali.
                                         </p>
                                     </div>
@@ -171,77 +169,77 @@ export default function ContactPage() {
                                     <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
                                         <div className="grid sm:grid-cols-2 gap-5">
                                             <div>
-                                                <label className="block text-[13px] font-medium text-[#374151] mb-2">
+                                                <label className="block text-sm font-medium text-foreground mb-2">
                                                     Email <span className="text-destructive">*</span>
                                                 </label>
                                                 <div className="relative">
-                                                    <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-                                                    <input
+                                                    <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                                    <Input
                                                         type="email"
                                                         name="email"
                                                         placeholder="Cth: budi@email.com"
                                                         required
-                                                        className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
+                                                        className="pl-11 pr-4"
                                                     />
                                                 </div>
                                             </div>
                                             <div>
-                                                <label className="block text-[13px] font-medium text-[#374151] mb-2">
+                                                <label className="block text-sm font-medium text-foreground mb-2">
                                                     Telepon <span className="text-destructive">*</span>
-                                                </label>
-                                                <div className="relative">
-                                                    <Phone className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-                                                    <input
-                                                        type="tel"
-                                                        name="phone"
-                                                        placeholder="081234567890"
-                                                        required
-                                                        className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
-                                                    />
-                                                </div>
+                                                    </label>
+                                                    <div className="relative">
+                                                        <Phone className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                                        <Input
+                                                            type="tel"
+                                                            name="phone"
+                                                            placeholder="081234567890"
+                                                            required
+                                                            className="pl-11 pr-4"
+                                                        />
+                                                    </div>
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-[13px] font-medium text-[#374151] mb-2">
+                                            <label className="block text-sm font-medium text-foreground mb-2">
                                                 Nama Lengkap <span className="text-destructive">*</span>
                                             </label>
                                             <div className="relative">
-                                                <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-                                                <input
+                                                <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                                <Input
                                                     type="text"
                                                     name="name"
                                                     placeholder="Cth: Budi Santoso"
                                                     required
-                                                    className={`${baseInput} pl-11 pr-4 text-[#1F2A37] ${normalBorder}`}
+                                                    className="pl-11 pr-4"
                                                 />
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-[13px] font-medium text-[#374151] mb-2">
+                                            <label className="block text-sm font-medium text-foreground mb-2">
                                                 Pesan <span className="text-destructive">*</span>
                                             </label>
-                                            <textarea
+                                            <Textarea
                                                 rows={5}
                                                 name="message"
                                                 placeholder="Tulis pesan kamu di sini..."
                                                 required
-                                                className={`${baseInput} text-[#1F2A37] resize-none ${normalBorder}`}
+                                                className="w-full"
                                             />
                                         </div>
 
                                         {error && (
-                                            <p className="text-sm text-destructive bg-red-50 border border-red-300 rounded-lg px-4 py-3">
+                                            <div className="p-3 rounded-lg bg-red-50 border border-red-300 text-red-700 text-sm">
                                                 {error}
-                                            </p>
+                                            </div>
                                         )}
 
                                         <div className="flex justify-end">
                                             <Button
                                                 type="submit"
                                                 disabled={loading}
-                                                className="px-6 py-3 text-[13px] tracking-wide gap-2 active:scale-[0.98] shadow-sm h-auto"
+                                                className="px-6 py-3 rounded-lg font-semibold text-sm tracking-wide transition-colors active:scale-[0.98] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer shrink-0 shadow-sm"
                                             >
                                                 {loading ? "Mengirim..." : "Kirim Pesan"}
                                                 {loading ? (

@@ -2661,3 +2661,21 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Fix:** `color: var(--sidebar-foreground);` ditambahkan di dalam blok `.admin-sidebar-dark, [data-mobile=...]` — merestabilisasi inheritansi warna di dalam scope (desktop + Sheet mobile).
 
 **Verifikasi:** halaman preview sementara (dihapus setelahnya) — teks tab terang `lab(91.7)` saat diam, hover bekerja; Sheet mobile juga benar. `npm run lint` 0E/80W.
+## Session 88 Final — Button Rounded Audit Complete
+
+**Button Native Audit Result:**
+- Total native `<button>`: 255 across 79 files
+- Already had rounded: 96
+- Added `rounded-md` safely: 18 (buttons with no className)
+- Complex cases needing manual review: 146 (template literals `className={\`...\`}` or expressions `className={...}`)
+- 3 expression buttons in common components already have rounded in their variable definitions (confirm-action, MobileMenu, sidebar)
+
+**Automated Fix Limitation:** Regex/state-machine parser cannot safely handle:
+- Template literal classNames: `className={\`px-4 py-2 \${condition}...\`}`
+- JSX expression classNames: `className={variable}` or `className={condition ? 'a' : 'b'}`
+- Mixed static + dynamic classNames
+
+**Recommendation for Next Session:** Manual review of 146 complex buttons → add `rounded-md` to className template literals, or convert to ShadCN `<Button>` component.
+
+**Branch:** `refactor/tokenisasi-fase1` (PR #135)
+**Verified:** `npm run lint` 0E/80W · `npm run build` success · `tsc --noEmit` 0 errors

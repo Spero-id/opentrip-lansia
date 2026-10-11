@@ -42,7 +42,7 @@ export default function PrivateTripPage() {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<PrivateTripForm>;
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration from sessionStorage
+         
         dispatch({ type: "HYDRATE_DRAFT", draft: parsed });
       }
     } catch {}
