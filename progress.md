@@ -2639,6 +2639,28 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 - Verifikasi sejauh ini: lint **0E/80W** (baseline) · CSS dev: `.bg-primary → #f49d1a`, `.font-sans` valid, `.rounded-lg → var(--radius)` 8px, `body letter-spacing` aktif, `.bg-secondary` tetap netral `#fdfdfd`.
 - **Hasil akhir setelah merge (`8aee1cb`)**: `npm install` sinkron dengan lock baru (`resend ^6.32.1` masuk, nodemailer keluar) · `npm run build` **sukses** (daftar route normal) · lint pasca-merge **0E/80W** · CSS prod: `.bg-primary → var(--primary)` = `#f49d1a`, `.font-sans` valid, `body{letter-spacing:var(--tracking-normal)}` aktif · konflik pull diselesaikan: `globals.css` = ours (TweakCN, keputusan A), `progress.md` = gabungan (86 Resend + 87 ini) · tree bersih, siap untuk `./init.sh` sesi berikutnya.
 
+## Session 90 — Admin Sidebar: Token Native TweakCN (Opsi B)
+
+**Perubahan:** Blok `.admin-sidebar-dark` di `src/app/globals.css` tidak lagi hardcode warna navy (`oklch(0.24 0.02 262)` dsb) — nilainya kini salinan 1:1 dari blok `.dark` (theme TweakCN): sidebar `#121212`, foreground `#E2E8F0`, primary/ring `#F49D1A`, accent `#313131`, border `#292929`. Selector `[data-mobile="true"][data-sidebar="sidebar"]` dipertahankan (sidebar mobile di-portal Radix ke body, di luar wrapper `.admin-sidebar-dark`).
+- Hack `.admin-sidebar-dark :where(span,p,a,button){color:#fff}` **dihapus** — semua teks sidebar memakai `text-sidebar-foreground*` yang kini terang, tidak ada `text-white`/`text-slate-*` hardcoded di `app-sidebar.tsx` & `admin-sidebar.tsx` (dicek grep).
+- **Dampak visual disadari:** item menu aktif & ring fokus kini oranye (brand), bukan biru navy — sesuai pilihan user. Komentar di CSS menandai aturan sinkronisasi: kalau TweakCN di-re-export, ambil dari blok `.dark`, jangan hardcode baru.
+
+**Verifikasi:** CSS hasil compile dev server menampilkan nilai baru; harness statis (CSS compile yang sama) memvisualkan sidebar gelap dengan teks terbaca; `npm run lint` 0E/80W (baseline).
+
+**Branch:** `refactor/admin-sidebar-tokens` (dari `a27854d`, titik sebelum form-migration).
+
+### Session 90 (lanjutan) — Fix: teks tab sidebar gelap setelah hapus hack :where
+
+**Laporan:** setelah blok `.admin-sidebar-dark` memakai token TweakCN dan hack `:where(span,p,a,button){color:#fff}` dihapus, semua teks tab sidebar admin jadi gelap nyaris tak terlihat; hover dianggap "tanpa animasi".
+
+**Diagnosis (render asli AppSidebar via halaman sementara + ukur computed style):**
+- `text-sidebar-foreground` ada di div **induk** `Sidebar` (`className="group peer hidden text-sidebar-foreground md:block"`, di luar `.admin-sidebar-dark`) → utility resolve `var(--sidebar-foreground)` di `:root` = `#171717` (gelap), lalu **di-inherit** ke seluruh anak.
+- Tombol tab (`sidebarMenuButtonVariants`) tidak punya warna teks state diam → mewarisi gelap. Hover sebenarnya **berfungsi** (terukur: bg → `#313131`, teks → `#FAFAFA`) — hanya instan, karena `transition-[width,height,padding]` (memang kode shadcn asli, shadcn juga tidak me-transition warna). Kombinasi state diam gelap + hover terang membuatnya terbaca sebagai "tanpa animasi".
+- Hack `:where` lama sebenarnya **menutupi** bug pewarisan ini.
+
+**Fix:** `color: var(--sidebar-foreground);` ditambahkan di dalam blok `.admin-sidebar-dark, [data-mobile=...]` — merestabilisasi inheritansi warna di dalam scope (desktop + Sheet mobile).
+
+**Verifikasi:** halaman preview sementara (dihapus setelahnya) — teks tab terang `lab(91.7)` saat diam, hover bekerja; Sheet mobile juga benar. `npm run lint` 0E/80W.
 ## Session 88 Final — Button Rounded Audit Complete
 
 **Button Native Audit Result:**

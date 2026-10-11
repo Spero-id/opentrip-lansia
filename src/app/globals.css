@@ -174,20 +174,23 @@
 
 
 
+/* Dark sidebar untuk area admin — nilai token diambil 1:1 dari blok `.dark`
+   (theme TweakCN) supaya tetap single-source: kalau theme di-re-export,
+   sinkronkan dari blok `.dark`, jangan hardcode warna baru. */
 .admin-sidebar-dark,
 [data-mobile="true"][data-sidebar="sidebar"] {
-  --sidebar: oklch(0.24 0.02 262);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.3 0.025 262);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
-.admin-sidebar-dark :where(span, p, a, button) {
-  color: #fff;
+  /* `text-sidebar-foreground` ada di div induk (di luar blok ini), jadi warnanya
+     resolve di :root (gelap) lalu di-inherit ke dalam. Restabilisasi di sini
+     agar semua keturunan tanpa warna eksplisit mewarisi warna sidebar yang benar. */
+  color: var(--sidebar-foreground);
+  --sidebar: oklch(0.1822 0 0);
+  --sidebar-foreground: oklch(0.9288 0.0126 255.5078);
+  --sidebar-primary: oklch(0.7660 0.1615 69.0313);
+  --sidebar-primary-foreground: oklch(0.9213 0.0135 167.1556);
+  --sidebar-accent: oklch(0.3132 0 0);
+  --sidebar-accent-foreground: oklch(0.9851 0 0);
+  --sidebar-border: oklch(0.2809 0 0);
+  --sidebar-ring: oklch(0.7660 0.1615 69.0313);
 }
 
 @layer base {
