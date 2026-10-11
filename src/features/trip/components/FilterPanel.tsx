@@ -136,7 +136,7 @@ export default function FilterPanel({
           {hasActiveFilters && (
             <button
               onClick={onResetAll}
-              className="text-xs font-semibold flex items-center gap-1 transition-colors hover:opacity-75"
+              className="text-xs font-semibold flex items-center gap-1 transition-colors hover:opacity-75 rounded-md"
               style={{ color: A }}
             >
               <X size={12} /> Reset

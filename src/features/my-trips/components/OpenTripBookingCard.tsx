@@ -109,7 +109,7 @@ export default function OpenTripBookingCard({
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-muted rounded px-2 py-0.5">
               {booking.bookingCode}
-              <button onClick={copyCode} title="Salin Kode Booking" className="hover:text-foreground transition p-0.5">
+              <button onClick={copyCode} title="Salin Kode Booking" className="hover:text-foreground transition p-0.5 rounded-md">
                 {copied ? icons.copied : icons.copy}
               </button>
             </span>
