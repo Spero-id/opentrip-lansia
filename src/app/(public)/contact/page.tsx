@@ -173,7 +173,7 @@ export default function ContactPage() {
                                         <div className="grid sm:grid-cols-2 gap-5">
                                             <div>
                                                 <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                    Email <span className="text-red-500">*</span>
+                                                    Email <span className="text-destructive">*</span>
                                                 </label>
                                                 <div className="relative">
                                                     <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -188,7 +188,7 @@ export default function ContactPage() {
                                             </div>
                                             <div>
                                                 <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                    Telepon <span className="text-red-500">*</span>
+                                                    Telepon <span className="text-destructive">*</span>
                                                 </label>
                                                 <div className="relative">
                                                     <Phone className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -205,7 +205,7 @@ export default function ContactPage() {
 
                                         <div>
                                             <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Nama Lengkap <span className="text-red-500">*</span>
+                                                Nama Lengkap <span className="text-destructive">*</span>
                                             </label>
                                             <div className="relative">
                                                 <User className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
@@ -221,7 +221,7 @@ export default function ContactPage() {
 
                                         <div>
                                             <label className="block text-[13px] font-medium text-[#374151] mb-2">
-                                                Pesan <span className="text-red-500">*</span>
+                                                Pesan <span className="text-destructive">*</span>
                                             </label>
                                             <textarea
                                                 rows={5}
@@ -233,7 +233,7 @@ export default function ContactPage() {
                                         </div>
 
                                         {error && (
-                                            <p className="text-sm text-red-500 bg-red-50 border border-red-300 rounded-lg px-4 py-3">
+                                            <p className="text-sm text-destructive bg-red-50 border border-red-300 rounded-lg px-4 py-3">
                                                 {error}
                                             </p>
                                         )}

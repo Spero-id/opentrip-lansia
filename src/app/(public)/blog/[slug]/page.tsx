@@ -92,7 +92,7 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
               )}
             </div>
 
-            <div className="mt-8 border-t border-slate-200 pt-8">
+            <div className="mt-8 border-t border-border pt-8">
               <Suspense fallback={<div className="py-8 text-center text-sm text-[#6B7280]">Memuat konten...</div>}>
                 <ErrorBoundary>
                   <div

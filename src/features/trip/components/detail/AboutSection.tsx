@@ -20,7 +20,7 @@ export default function AboutSection({ dest }: AboutSectionProps) {
       </section>
 
       <section>
-        <h3 className="mb-4 text-lg font-bold text-gray-900 sm:text-xl">
+        <h3 className="mb-4 text-lg font-bold text-foreground sm:text-xl">
           Fasilitas
         </h3>
         <ul className="flex flex-wrap gap-2.5">
@@ -32,7 +32,7 @@ export default function AboutSection({ dest }: AboutSectionProps) {
             return (
               <li
                 key={index}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-background px-3.5 py-2 text-sm font-medium text-gray-700"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3.5 py-2 text-sm font-medium text-gray-700"
               >
                 <span className="text-primary">
                   <DynamicLucideIcon name={iconName} className="w-4 h-4" />

@@ -14,7 +14,7 @@ export default function StepProgress({ currentStep }: { currentStep: string }) {
         <div key={s.key} className="flex items-center">
           <div className={`flex items-center gap-2 ${i <= idx ? "text-primary" : "text-gray-300"}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-              i <= idx ? "bg-primary text-primary-foreground" : "bg-gray-100 text-muted-foreground"
+              i <= idx ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
             }`}>
               {i + 1}
             </div>

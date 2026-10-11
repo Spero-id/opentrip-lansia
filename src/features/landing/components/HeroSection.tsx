@@ -69,7 +69,7 @@ export default function HeroSection() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Cari destinasi impianmu..."
-                  className="bg-transparent text-sm text-black placeholder:text-muted-foreground w-full focus:outline-none"
+                  className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground w-full focus:outline-none"
                 />
               </div>
               <button
@@ -84,15 +84,15 @@ export default function HeroSection() {
             <div className="flex flex-wrap gap-3">
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-background border border-white/10 backdrop-blur-sm">
                 <MapPin size={14} className="text-primary" />
-                <span className="text-xs text-black">Semua Destinasi</span>
+                <span className="text-xs text-foreground">Semua Destinasi</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-background border border-white/10 backdrop-blur-sm">
                 <Calendar size={14} className="text-primary" />
-                <span className="text-xs text-black">Fleksibel Jadwal</span>
+                <span className="text-xs text-foreground">Fleksibel Jadwal</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-background border border-white/10 backdrop-blur-sm">
                 <Users size={14} className="text-primary" />
-                <span className="text-xs text-black">Ramah Lansia</span>
+                <span className="text-xs text-foreground">Ramah Lansia</span>
               </div>
             </div>
 
@@ -149,8 +149,8 @@ export default function HeroSection() {
                   <Users size={18} className="text-primary" />
                 </div>
                 <div>
-                  <p className="text-black text-sm font-semibold">10rb+ Traveler</p>
-                  <p className="text-black/70 text-xs">Sudah percaya kami</p>
+                  <p className="text-foreground text-sm font-semibold">10rb+ Traveler</p>
+                  <p className="text-foreground/70 text-xs">Sudah percaya kami</p>
                 </div>
               </div>
             </div>

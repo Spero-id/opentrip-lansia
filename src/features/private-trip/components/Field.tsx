@@ -40,7 +40,7 @@ export default function Field({
         <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">{hint}</p>
       )}
       {error && (
-        <p className="text-xs text-red-500">{error}</p>
+        <p className="text-xs text-destructive">{error}</p>
       )}
     </div>
   );

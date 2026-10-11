@@ -102,13 +102,13 @@ export default function LoginPage() {
         <div className="relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-[2.5rem] lg:rounded-none p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
-            className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-gray-900 transition-colors mb-8 self-end"
+            className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-end"
           >
             <ArrowLeft size={14} />
             Kembali ke Website
           </Link>
 
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 pt-15 sm:pt-0 mb-2">
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground pt-15 sm:pt-0 mb-2">
             Selamat Datang Kembali!
           </h1>
           <p className="text-muted-foreground text-sm mb-8">
@@ -132,7 +132,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Masukkan email kamu"
                 required
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+                className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
               />
             </div>
 
@@ -147,7 +147,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan password kamu"
                   required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+                  className="w-full border border-border rounded-xl px-4 py-3 pr-11 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
                 />
                 <button
                   type="button"
@@ -163,7 +163,7 @@ export default function LoginPage() {
               <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-ring/30"
+                  className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30"
                 />
                 Ingat saya
               </label>
@@ -185,18 +185,18 @@ export default function LoginPage() {
           </form>
 
           <div className="flex items-center gap-3 my-3 sm:my-7">
-            <div className="flex-1 h-px bg-gray-100" />
+            <div className="flex-1 h-px bg-muted" />
             <span className="text-[13px] text-muted-foreground">
               Atau lanjutkan dengan
             </span>
-            <div className="flex-1 h-px bg-gray-100" />
+            <div className="flex-1 h-px bg-muted" />
           </div>
 
           <button
             type="button"
             onClick={handleGoogleLogin}
             disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 border border-border rounded-xl py-3.5 text-sm font-medium text-gray-700 hover:bg-muted transition-colors disabled:opacity-50"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path
@@ -229,7 +229,7 @@ export default function LoginPage() {
                   ? "/register"
                   : `/register?redirect=${encodeURIComponent(redirectPath)}`
               }
-              className="italic text-gray-900 font-semibold hover:text-primary"
+              className="italic text-foreground font-semibold hover:text-primary"
             >
               Daftar di sini
             </a>

@@ -92,7 +92,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
   );
 
   const sectionLabelClasses = "px-3 text-sm font-medium tracking-wide text-muted-foreground";
-  const mobileLinkClasses = "block w-full rounded-lg px-3 py-2 text-sm font-medium text-black hover:bg-black/10 transition-colors";
+  const mobileLinkClasses = "block w-full rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-black/10 transition-colors";
 
   const activeLinkClasses = mobileLinkClasses;
 
@@ -112,7 +112,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-full text-black hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-ring"
+              className="p-2 rounded-full text-foreground hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Close menu"
             >
               <X size={20} />
@@ -154,7 +154,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
                 </div>
                 <div className="mt-4 pt-4">
                   <div className="px-3">
-                    <div className="border-t border-gray-200" />
+                    <div className="border-t border-border" />
                   </div>
                   <div className="mt-3">
                     <MenuItem
@@ -163,7 +163,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
                         await signOut();
                         router.refresh();
                       }}
-                      className="block w-full cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+                      className="block w-full cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-destructive hover:bg-red-50 transition-colors text-left"
                     >
                       Keluar dari Akun
                     </MenuItem>

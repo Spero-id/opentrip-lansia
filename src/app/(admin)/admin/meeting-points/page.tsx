@@ -66,9 +66,9 @@ export default function AdminMeetingPoints() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Meeting Point</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Manajemen Meeting Point</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola titik kumpul penjemputan peserta sebelum keberangkatan trip.</p>
         </div>
         <button
@@ -80,10 +80,10 @@ export default function AdminMeetingPoints() {
         </button>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Nama</th>
                 <th className="px-6 py-4">Alamat</th>
@@ -99,13 +99,13 @@ export default function AdminMeetingPoints() {
                 <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">Belum ada data meeting point.</td></tr>
               ) : (
                 rows.map((mp) => (
-                  <tr key={mp.id} className="hover:bg-slate-50/60 transition">
+                  <tr key={mp.id} className="hover:bg-muted/60 transition">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center">
                           <MapPin className="w-4 h-4 text-primary" />
                         </div>
-                        <span className="font-bold text-slate-900">{mp.name}</span>
+                        <span className="font-bold text-foreground">{mp.name}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-muted-foreground max-w-[200px] truncate">{mp.address || "-"}</td>
@@ -116,7 +116,7 @@ export default function AdminMeetingPoints() {
                           <CheckCircle2 className="w-3 h-3" /> Aktif
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-1 bg-muted text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold">
                           <XCircle className="w-3 h-3" /> Non-Aktif
                         </span>
                       )}
@@ -126,7 +126,7 @@ export default function AdminMeetingPoints() {
                         <button onClick={() => openEdit(mp)} className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => confirmDelete(mp.id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(mp.id)} className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -145,23 +145,23 @@ export default function AdminMeetingPoints() {
             <label className="block text-sm font-medium text-slate-700">Nama Meeting Point *</label>
             <input name="name" value={form.name} onChange={handleChange} required
               placeholder="Contoh: Bandara Soekarno-Hatta, Stasiun Bandung"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Alamat / Lokasi</label>
             <input name="address" value={form.address} onChange={handleChange}
               placeholder="Contoh: Terminal 3, Soekarno-Hatta, Tangerang"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
               placeholder="Contoh: Titik kumpul di depan pintu kedatangan. Silakan hadir 15 menit sebelum waktu kumpul."
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary resize-none" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary resize-none" />
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isActive" type="checkbox" checked={form.isActive} onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-ring/30" />
+              className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30" />
             <span className="font-medium text-slate-700">Aktif</span>
           </label>
           <div className="flex items-center gap-3 pt-2">
@@ -170,7 +170,7 @@ export default function AdminMeetingPoints() {
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={closeModal}
-              className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+              className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition">
               Batal
             </button>
           </div>

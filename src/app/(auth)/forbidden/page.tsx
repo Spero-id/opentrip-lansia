@@ -3,12 +3,12 @@ import { Home, Lock, ArrowLeft } from "lucide-react";
 
 export default function ForbiddenPage() {
   return (
-    <div className="min-h-screen bg-slate-50/50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-muted/50 flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
         <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-red-100 flex items-center justify-center">
-          <Lock className="w-10 h-10 text-red-600" />
+          <Lock className="w-10 h-10 text-destructive" />
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-2">403 Forbidden</h1>
+        <h1 className="text-3xl font-extrabold text-foreground mb-2">403 Forbidden</h1>
         <p className="text-muted-foreground mb-8">
           Upss, Halaman Tidak Di Temukan?.
         </p>

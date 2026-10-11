@@ -48,8 +48,8 @@ export default function PriceBreakdown({
   const perPax = pax > 0 ? Math.round(total / pax) : 0;
 
   return (
-    <div className="bg-background border border-gray-100 rounded-2xl p-5 shadow-sm space-y-3 sticky top-24">
-      <h2 className="text-base font-bold text-gray-900">Ringkasan Harga</h2>
+    <div className="bg-background border border-border rounded-2xl p-5 shadow-sm space-y-3 sticky top-24">
+      <h2 className="text-base font-bold text-foreground">Ringkasan Harga</h2>
 
       <div className="space-y-3">
         <div className="flex justify-between items-start text-sm">
@@ -102,23 +102,23 @@ export default function PriceBreakdown({
           </div>
         )}
 
-        <div className="border-t border-gray-100 pt-3 flex justify-between items-end">
+        <div className="border-t border-border pt-3 flex justify-between items-end">
           <div>
             <p className="text-sm font-bold text-gray-700">Total Pembayaran</p>
             <p className="text-xs text-muted-foreground mt-0.5">
               {formatIDR(perPax)} / peserta
             </p>
           </div>
-          <span className="text-xl font-bold text-gray-900">
+          <span className="text-xl font-bold text-foreground">
             {formatIDR(total)}
           </span>
         </div>
       </div>
 
       {!hideTerms && (
-        <div className="border-t border-gray-100 pt-4 space-y-4">
+        <div className="border-t border-border pt-4 space-y-4">
           {error && (
-            <div className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+            <div className="text-xs font-semibold text-destructive bg-red-50 border border-red-100 rounded-xl px-3 py-2">
               {error}
             </div>
           )}
@@ -130,7 +130,7 @@ export default function PriceBreakdown({
               type="checkbox"
               checked={agreeToTerms}
               readOnly
-              className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-ring/30 pointer-events-none"
+              className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-ring/30 pointer-events-none"
             />
             <span className="text-xs text-muted-foreground">
               Saya setuju dengan{" "}

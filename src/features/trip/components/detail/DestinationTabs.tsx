@@ -14,7 +14,7 @@ export default function DestinationTabs({ activeTab, onChange }: { activeTab: Tr
     <div
       role="tablist"
       aria-label="Navigasi detail destinasi"
-      className="mb-6 flex max-w-full gap-1 overflow-x-auto rounded-xl border border-gray-200 bg-gray-50 p-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      className="mb-6 flex max-w-full gap-1 overflow-x-auto rounded-xl border border-border bg-muted p-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
     >
       {TABS.map(({ id, label, icon: Icon }) => {
         const isActive = activeTab === id;
@@ -29,7 +29,7 @@ export default function DestinationTabs({ activeTab, onChange }: { activeTab: Tr
             className={`flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
               isActive
                 ? "bg-background text-primary shadow-sm"
-                : "text-muted-foreground hover:text-gray-900"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <Icon

@@ -24,16 +24,16 @@ export default function GalleryModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-background rounded-3xl shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Foto Trip</h2>
+            <h2 className="text-lg font-bold text-foreground">Foto Trip</h2>
             {groupLabel && (
               <p className="text-xs text-muted-foreground mt-0.5">{groupLabel}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-muted-foreground hover:text-gray-600 hover:bg-gray-100 rounded-xl transition"
+            className="p-2 text-muted-foreground hover:text-gray-600 hover:bg-muted rounded-xl transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -46,7 +46,7 @@ export default function GalleryModal({
             </div>
           ) : media.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-4">
+              <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
                 <ImageIcon className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-bold text-gray-700">Belum ada foto</h3>
@@ -57,7 +57,7 @@ export default function GalleryModal({
               {media.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-100 border border-gray-200"
+                  className="group relative aspect-square rounded-2xl overflow-hidden bg-muted border border-border"
                 >
                   {item.url ? (
                     <img
@@ -93,7 +93,7 @@ export default function GalleryModal({
         </div>
 
         {media.length > 0 && (
-          <div className="px-6 py-3 border-t border-gray-100 text-center">
+          <div className="px-6 py-3 border-t border-border text-center">
             <p className="text-xs text-muted-foreground">
               {media.length} foto • Klik ikon download untuk menyimpan foto
             </p>

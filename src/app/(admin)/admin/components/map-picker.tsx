@@ -78,7 +78,7 @@ export default function MapPicker({ latitude, longitude, onChange }: MapPickerPr
 
   return (
     <div className="space-y-2">
-      <div ref={mapRef} className="w-full h-[300px] rounded-lg border border-slate-300 z-0" />
+      <div ref={mapRef} className="w-full h-[300px] rounded-lg border border-border z-0" />
       <p className="text-xs text-muted-foreground">
         Klik peta atau seret marker untuk menentukan lokasi.
       </p>

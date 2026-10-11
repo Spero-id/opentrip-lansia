@@ -213,18 +213,18 @@ export default function AdminGroupGalleryPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 text-muted-foreground hover:text-slate-700 hover:bg-slate-100 rounded-xl transition"
+            className="p-2 text-muted-foreground hover:text-slate-700 hover:bg-muted rounded-xl transition"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-extrabold text-slate-900">Error</h1>
+          <h1 className="text-2xl font-extrabold text-foreground">Error</h1>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
-          <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
+          <AlertCircle className="w-10 h-10 text-destructive mx-auto mb-3" />
           <p className="text-red-700 font-medium">{error}</p>
           <button
             onClick={fetchData}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition"
+            className="mt-4 px-4 py-2 bg-destructive text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition"
           >
             Coba Lagi
           </button>
@@ -235,16 +235,16 @@ export default function AdminGroupGalleryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div className="flex items-start gap-3">
           <button
             onClick={() => router.push(`/admin/trips/${tripId}/groups`)}
-            className="p-2 text-muted-foreground hover:text-slate-700 hover:bg-slate-100 rounded-xl transition mt-1"
+            className="p-2 text-muted-foreground hover:text-slate-700 hover:bg-muted rounded-xl transition mt-1"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
               Galeri Foto Grup
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -262,8 +262,8 @@ export default function AdminGroupGalleryPage() {
       </div>
 
       {media.length === 0 ? (
-        <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
+        <div className="bg-background rounded-3xl border border-border/80 shadow-xs p-12 text-center">
+          <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center mb-4">
             <ImageIcon className="w-8 h-8 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-bold text-slate-700">Belum ada foto</h3>
@@ -283,7 +283,7 @@ export default function AdminGroupGalleryPage() {
           {media.map((item) => (
             <div
               key={item.id}
-              className="group relative bg-background rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden aspect-square"
+              className="group relative bg-background rounded-2xl border border-border/80 shadow-xs overflow-hidden aspect-square"
             >
               {item.url ? (
                 <img
@@ -292,7 +292,7 @@ export default function AdminGroupGalleryPage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                <div className="w-full h-full bg-muted flex items-center justify-center">
                   <ImageIcon className="w-8 h-8 text-slate-300" />
                 </div>
               )}
@@ -301,7 +301,7 @@ export default function AdminGroupGalleryPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDeleteMedia(item.id)}
-                    className="p-2 bg-red-600 text-primary-foreground rounded-xl hover:bg-red-700 transition"
+                    className="p-2 bg-destructive text-primary-foreground rounded-xl hover:bg-red-700 transition"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -317,7 +317,7 @@ export default function AdminGroupGalleryPage() {
           <div className="absolute inset-0 bg-black/40" onClick={() => !uploading && setUploadOpen(false)} />
           <div className="relative bg-background rounded-3xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-slate-900">Upload Foto</h2>
+              <h2 className="text-lg font-bold text-foreground">Upload Foto</h2>
               {!uploading && (
                 <button
                   onClick={() => {
@@ -325,7 +325,7 @@ export default function AdminGroupGalleryPage() {
                     setSelectedFiles([]);
                     setPreviewUrls([]);
                   }}
-                  className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                  className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-muted rounded-xl transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -353,7 +353,7 @@ export default function AdminGroupGalleryPage() {
                   </p>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto">
                     {previewUrls.map((url, idx) => (
-                      <div key={idx} className="aspect-square rounded-xl overflow-hidden bg-slate-100">
+                      <div key={idx} className="aspect-square rounded-xl overflow-hidden bg-muted">
                         <img src={url} alt="" className="w-full h-full object-cover" />
                       </div>
                     ))}
@@ -383,7 +383,7 @@ export default function AdminGroupGalleryPage() {
                       setSelectedFiles([]);
                       setPreviewUrls([]);
                     }}
-                    className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                    className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition"
                   >
                     Batal
                   </button>
@@ -400,7 +400,7 @@ export default function AdminGroupGalleryPage() {
         title="Hapus Foto"
         message="Foto ini akan dihapus permanen dan tidak bisa dikembalikan."
         confirmLabel="Ya, Hapus"
-        confirmClassName="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-destructive px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
     </div>
   );

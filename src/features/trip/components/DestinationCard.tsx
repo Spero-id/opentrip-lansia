@@ -18,7 +18,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
     <Link
       href={`/trips/${dest.id}`}
       onClick={onClick}
-      className={`group bg-background rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200 ${className}`}
+      className={`group bg-background rounded-2xl border border-border overflow-hidden hover:shadow-lg hover:border-border transition-all duration-200 ${className}`}
     >
       <div className="relative h-44 overflow-hidden">
         {dest.image ? (
@@ -28,7 +28,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-muted-foreground text-xs font-medium px-4 text-center">
+          <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground text-xs font-medium px-4 text-center">
             Gambar tidak tersedia
           </div>
         )}
@@ -36,7 +36,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
           {ratingVal ? (
             <>
               <Star size={12} className="text-primary fill-primary" />
-              <span className="text-xs font-semibold text-gray-900">{ratingVal}</span>
+              <span className="text-xs font-semibold text-foreground">{ratingVal}</span>
             </>
           ) : (
             <span className="text-xs font-medium text-muted-foreground">Belum ada ulasan</span>
@@ -55,7 +55,7 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
           <MapPin size={12} />
           {dest.location}
         </p>
-        <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-1">
+        <h3 className="text-base font-bold text-foreground mb-2 line-clamp-1">
           {dest.title}
         </h3>
         <div className="h-6 mb-3 flex items-center">
@@ -66,14 +66,14 @@ export default function DestinationCard({ dest, onClick, className = "" }: Desti
             </span>
           )}
         </div>
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
           <div>
             <p className="text-[11px] text-muted-foreground">mulai dari</p>
-            <p className="text-sm font-bold text-gray-900">
+            <p className="text-sm font-bold text-foreground">
               {formatIDR(dest.priceMin)}
             </p>
           </div>
-          <div className="w-9 h-9 rounded-full bg-gray-50 group-hover:bg-primary flex items-center justify-center transition-colors flex-shrink-0">
+          <div className="w-9 h-9 rounded-full bg-muted group-hover:bg-primary flex items-center justify-center transition-colors flex-shrink-0">
             <ArrowRight
               size={16}
               className="text-muted-foreground group-hover:text-white transition-colors"

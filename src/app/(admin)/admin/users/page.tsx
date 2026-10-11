@@ -89,56 +89,56 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen User Terdaftar</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Manajemen User Terdaftar</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola data pengguna terdaftar, peran (role), dan poin loyalitas.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-border/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0D238E] flex items-center justify-center font-bold">
             <Users className="w-6 h-6" />
           </div>
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total User</p>
-            <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.total}</p>
+            <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.total}</p>
           </div>
         </div>
 
-        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-border/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
             <UserCheck className="w-6 h-6" />
           </div>
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">User Biasa</p>
-            <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.userCount}</p>
+            <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.userCount}</p>
           </div>
         </div>
 
-        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-border/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
             <Award className="w-6 h-6" />
           </div>
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Agent Partner</p>
-            <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.agentCount}</p>
+            <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.agentCount}</p>
           </div>
         </div>
 
-        <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+        <div className="bg-background p-5 rounded-3xl border border-border/80 shadow-xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Administrator</p>
-            <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.adminCount}</p>
+            <p className="text-2xl font-extrabold text-foreground mt-0.5">{stats.adminCount}</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-background p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <div className="bg-background p-4 sm:p-5 rounded-3xl border border-border/80 shadow-xs flex flex-col sm:flex-row gap-4 justify-between items-center">
         <div className="relative w-full sm:w-72">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -146,7 +146,7 @@ export default function AdminUsersPage() {
             placeholder="Cari nama, email, telepon..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
           />
         </div>
 
@@ -155,7 +155,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="w-full sm:w-40 px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background font-medium text-slate-700"
+            className="w-full sm:w-40 px-3 py-2 text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background font-medium text-slate-700"
           >
             <option value="all">Semua Role</option>
             <option value="user">User Biasa</option>
@@ -165,10 +165,10 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Kontak</th>
@@ -197,7 +197,7 @@ export default function AdminUsersPage() {
                 filteredUsers.map((u) => {
                   const initial = u.name ? u.name.charAt(0).toUpperCase() : "?";
                   return (
-                    <tr key={u.id} className="hover:bg-slate-50/60 transition">
+                    <tr key={u.id} className="hover:bg-muted/60 transition">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="relative w-9 h-9 shrink-0 rounded-full border border-[#0D238E]/20 bg-[#0D238E]/10">
@@ -217,7 +217,7 @@ export default function AdminUsersPage() {
                             )}
                           </div>
                           <div>
-                            <div className="font-bold text-slate-900">
+                            <div className="font-bold text-foreground">
                               <span>{u.name}</span>
                             </div>
                             <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
@@ -243,7 +243,7 @@ export default function AdminUsersPage() {
                             <Award className="w-3 h-3" /> Agent
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-muted text-slate-600 border border-border">
                             <UserCheck className="w-3 h-3" /> User
                           </span>
                         )}
@@ -275,7 +275,7 @@ export default function AdminUsersPage() {
                           </button>
                           <button
                             onClick={() => confirmDelete(u.id)}
-                            className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                            className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition"
                             title="Hapus User"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -300,7 +300,7 @@ export default function AdminUsersPage() {
               value={form.name}
               onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
               required
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
           </div>
 
@@ -310,7 +310,7 @@ export default function AdminUsersPage() {
               type="email"
               value={editingUser?.email || ""}
               disabled
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
+              className="mt-1 w-full rounded-xl border border-border bg-muted px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
             />
           </div>
 
@@ -321,7 +321,7 @@ export default function AdminUsersPage() {
               value={form.phone}
               onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
               placeholder="e.g. 08123456789"
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
           </div>
 
@@ -330,7 +330,7 @@ export default function AdminUsersPage() {
             <select
               value={form.role}
               onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             >
               <option value="user">User Biasa</option>
               <option value="agent">Agent Partner</option>
@@ -345,11 +345,11 @@ export default function AdminUsersPage() {
               value={form.loyaltyPoints}
               onChange={(e) => setForm((prev) => ({ ...prev, loyaltyPoints: parseInt(e.target.value) || 0 }))}
               min={0}
-              className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
           </div>
 
-          <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
             <button
               type="submit"
               disabled={saving}
@@ -360,7 +360,7 @@ export default function AdminUsersPage() {
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+              className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition"
             >
               Batal
             </button>

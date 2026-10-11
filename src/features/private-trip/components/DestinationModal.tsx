@@ -64,7 +64,7 @@ export default function DestinationModal({
             </h3>
             <button
               onClick={onClose}
-              className="w-6 h-6 rounded-lg flex items-center justify-center text-[#6B7280] hover:text-[#374151] hover:bg-gray-100 transition-colors"
+              className="w-6 h-6 rounded-lg flex items-center justify-center text-[#6B7280] hover:text-[#374151] hover:bg-muted transition-colors"
               aria-label="Tutup"
             >
               <X size={14} />

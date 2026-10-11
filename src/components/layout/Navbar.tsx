@@ -75,12 +75,12 @@ export default function Navbar() {
 
   const logoClasses = cn(
     "flex items-center gap-2 text-xl font-bold transition-colors",
-    isScrolled ? "text-gray-900" : "text-black"
+    isScrolled ? "text-foreground" : "text-foreground"
   );
 
   const desktopLinkClasses = isScrolled
     ? "hidden lg:flex font-medium text-sm text-white hover:text-primary"
-    : "hidden lg:flex font-medium text-sm text-black hover:text-primary";
+    : "hidden lg:flex font-medium text-sm text-foreground hover:text-primary";
 
   const loginButtonClasses = isScrolled
     ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-background/0 border border-white/20 text-white hover:text-primary hover:border-primary hover:bg-background/10"
@@ -129,7 +129,7 @@ export default function Navbar() {
                       <span
                         className={cn(
                           "max-w-[140px] truncate text-sm font-semibold",
-                          isScrolled ? "text-white" : "text-black"
+                          isScrolled ? "text-white" : "text-foreground"
                         )}
                       >
                         {sessionUser.name || "Pengguna"}
@@ -169,9 +169,9 @@ export default function Navbar() {
                   </button>
 
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-background border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
-                      <div className="px-4 py-3 border-b border-slate-200">
-                        <p className="text-sm font-medium text-slate-900 truncate">
+                    <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-background border border-border/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                      <div className="px-4 py-3 border-b border-border">
+                        <p className="text-sm font-medium text-foreground truncate">
                           {sessionUser.name || "Pengguna"}
                         </p>
                         <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
@@ -183,7 +183,7 @@ export default function Navbar() {
                         <Link
                           href="/profile"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-slate-200 hover:text-foreground transition-colors"
                         >
                           <User className="w-4 h-4 shrink-0" />
                           Profil Saya
@@ -192,7 +192,7 @@ export default function Navbar() {
                           <Link
                             href="/admin"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-slate-200 hover:text-foreground transition-colors"
                           >
                             <Shield className="w-4 h-4 shrink-0" />
                             Halaman Admin
@@ -201,14 +201,14 @@ export default function Navbar() {
                         <Link
                           href="/my-trips"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-slate-200 hover:text-foreground transition-colors"
                         >
                           <ShoppingBag className="w-4 h-4 shrink-0" />
                           Riwayat Trip
                         </Link>
                       </div>
 
-                      <div className="border-t border-slate-200 py-1.5">
+                      <div className="border-t border-border py-1.5">
                         <button
                           type="button"
                           onClick={async () => {
@@ -217,7 +217,7 @@ export default function Navbar() {
                             router.push("/login");
                             router.refresh();
                           }}
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-slate-200 cursor-pointer"
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-slate-200 cursor-pointer"
                         >
                           <LogOut className="w-4 h-4 shrink-0" />
                           Keluar dari Akun

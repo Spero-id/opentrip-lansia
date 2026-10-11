@@ -49,10 +49,10 @@ export default function ReferralCard({
   if (!referralCode) return null;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
+    <div className="rounded-2xl border border-border bg-background p-5 sm:p-7">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-slate-900">Kode Referral</h2>
+          <h2 className="text-base font-bold text-foreground">Kode Referral</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             Bagikan kode ini ke temanmu. Mereka akan tercatat sebagai referral
             kamu.
@@ -68,7 +68,7 @@ export default function ReferralCard({
           </button>
           <button
             onClick={shareLink}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted text-slate-600 text-xs font-semibold hover:bg-slate-200 transition-colors"
           >
             <ExternalLink size={12} />
             Link
@@ -106,15 +106,15 @@ export default function ReferralCard({
 
       {stats && (
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-muted border border-border">
             <p className="text-xs text-muted-foreground">Total Referral</p>
-            <p className="text-lg font-bold text-slate-900">
+            <p className="text-lg font-bold text-foreground">
               {stats.totalReferred ?? 0}
             </p>
           </div>
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-muted border border-border">
             <p className="text-xs text-muted-foreground">Total Komisi</p>
-            <p className="text-lg font-bold text-slate-900">
+            <p className="text-lg font-bold text-foreground">
               Rp {(stats.totalCommission ?? 0).toLocaleString("id-ID")}
             </p>
           </div>

@@ -34,7 +34,7 @@ export default function FAQSection() {
                     <span className="text-primary font-semibold text-xs uppercase tracking-wider block mb-2">
                         PERTANYAAN UMUM
                     </span>
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-snug">
                         Pertanyaan Yang Sering <span className="text-primary">Diajukan</span>
                     </h2>
                 </div>
@@ -49,20 +49,20 @@ export default function FAQSection() {
                                         key={i}
                                         className={`rounded-xl border transition-colors ${isOpen
                                             ? "border-primary/30 bg-primary/10 shadow-xs"
-                                            : "border-gray-200 bg-background hover:border-gray-300"
+                                            : "border-border bg-background hover:border-border"
                                             }`}
                                     >
                                         <button
                                             onClick={() => setOpenIndex(isOpen ? -1 : i)}
                                             className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
                                         >
-                                            <span className="font-semibold text-gray-900 text-sm sm:text-base">
+                                            <span className="font-semibold text-foreground text-sm sm:text-base">
                                                 {faq.question}
                                             </span>
                                             <span
                                                 className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen
                                                     ? "bg-primary text-primary-foreground rotate-45"
-                                                    : "bg-gray-100 text-gray-600"
+                                                    : "bg-muted text-gray-600"
                                                     }`}
                                             >
                                                 <Plus size={16} />
@@ -74,7 +74,7 @@ export default function FAQSection() {
                                                 }`}
                                         >
                                             <div className="overflow-hidden">
-                                                <p className="text-sm text-gray-600 leading-relaxed px-5 pb-4 pt-1 border-t border-gray-300">
+                                                <p className="text-sm text-gray-600 leading-relaxed px-5 pb-4 pt-1 border-t border-border">
                                                     {faq.answer}
                                                 </p>
                                             </div>
@@ -89,7 +89,7 @@ export default function FAQSection() {
                                 <button
                                     onClick={() => goTo(page - 1)}
                                     disabled={page === 0}
-                                    className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:border-gray-900 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                                    className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-gray-600 hover:border-gray-900 transition-colors disabled:opacity-30 disabled:pointer-events-none"
                                     aria-label="Previous page"
                                 >
                                     <ChevronLeft size={16} />
@@ -106,7 +106,7 @@ export default function FAQSection() {
                                 <button
                                     onClick={() => goTo(page + 1)}
                                     disabled={page === totalPages - 1}
-                                    className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:border-gray-900 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                                    className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-gray-600 hover:border-gray-900 transition-colors disabled:opacity-30 disabled:pointer-events-none"
                                     aria-label="Next page"
                                 >
                                     <ChevronRight size={16} />
@@ -115,7 +115,7 @@ export default function FAQSection() {
                         )}
                     </div>
 
-                    <div className="w-full lg:col-span-5 bg-gray-50 rounded-3xl p-8 sm:p-10 text-center">
+                    <div className="w-full lg:col-span-5 bg-muted rounded-3xl p-8 sm:p-10 text-center">
                         <div className="relative w-full max-w-[220px] h-48 mx-auto mb-6">
                             <img
                                 src="/FAQ-Assets-2.png"
@@ -127,7 +127,7 @@ export default function FAQSection() {
                             />
                         </div>
 
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        <h3 className="text-2xl font-bold text-foreground mb-2">
                             Ada Pertanyaan?
                         </h3>
                         <p className="text-sm text-muted-foreground mb-6 max-w-xs mx-auto">

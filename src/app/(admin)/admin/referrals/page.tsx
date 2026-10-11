@@ -102,9 +102,9 @@ export default function AdminReferralHistoryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
             History Referral
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -113,7 +113,7 @@ export default function AdminReferralHistoryPage() {
         </div>
       </div>
 
-      <div className="bg-background rounded-2xl border border-slate-200/80 p-5">
+      <div className="bg-background rounded-2xl border border-border/80 p-5">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="w-4 h-4 text-muted-foreground" />
           <h2 className="text-sm font-bold text-slate-700">Pengaturan Referral</h2>
@@ -128,7 +128,7 @@ export default function AdminReferralHistoryPage() {
               min={0}
               value={bonusPointsInput}
               onChange={(e) => setBonusPointsInput(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
             <p className="text-[10px] text-muted-foreground mt-1">
               Poin yang diberikan ke akun referrer saat referral berhasil (status Berhasil)
@@ -152,21 +152,21 @@ export default function AdminReferralHistoryPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
+        <div className="bg-background rounded-2xl border border-border/80 p-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase">Total Referral</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{totalReferrals}</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{totalReferrals}</p>
         </div>
-        <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
+        <div className="bg-background rounded-2xl border border-border/80 p-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase">Converted</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{converted}</p>
         </div>
-        <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
+        <div className="bg-background rounded-2xl border border-border/80 p-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase">Pending</p>
           <p className="text-2xl font-bold text-yellow-600 mt-1">{pending}</p>
         </div>
       </div>
 
-      <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
+      <div className="bg-background rounded-2xl border border-border/80 p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -174,15 +174,15 @@ export default function AdminReferralHistoryPage() {
             placeholder="Cari nama, email, kode booking, atau trip..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
           />
         </div>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Pemberi Referral</th>
                 <th className="px-6 py-4">Pengguna Referral</th>
@@ -211,16 +211,16 @@ export default function AdminReferralHistoryPage() {
                 </tr>
               ) : (
                 filtered.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/60 transition">
+                  <tr key={r.id} className="hover:bg-muted/60 transition">
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-semibold text-slate-900">{r.referrerName}</p>
+                        <p className="font-semibold text-foreground">{r.referrerName}</p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">{r.referrerEmail}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-semibold text-slate-900">{r.referredUserName}</p>
+                        <p className="font-semibold text-foreground">{r.referredUserName}</p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">{r.referredUserEmail}</p>
                       </div>
                     </td>
@@ -239,7 +239,7 @@ export default function AdminReferralHistoryPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
-                          STATUS_STYLES[r.status] || "bg-slate-100 text-slate-600"
+                          STATUS_STYLES[r.status] || "bg-muted text-slate-600"
                         }`}
                       >
                         {r.status === "converted"

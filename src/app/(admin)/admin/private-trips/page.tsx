@@ -16,7 +16,7 @@ interface PrivateRequest {
 }
 
 const statusStyles: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-700",
+  draft: "bg-muted text-slate-700",
   submitted: "bg-amber-100 text-amber-800",
   reviewed: "bg-blue-100 text-blue-700",
   revision: "bg-purple-100 text-purple-700",
@@ -40,7 +40,7 @@ function CopyCodeButton({ code }: { code: string }) {
     <button
       onClick={handleCopy}
       title="Salin Kode"
-      className="ml-1 p-0.5 hover:text-slate-900 transition"
+      className="ml-1 p-0.5 hover:text-foreground transition"
     >
       {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
     </button>
@@ -121,9 +121,9 @@ export default function AdminPrivateTripsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Private Trip Request</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Private Trip Request</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola permintaan Private Trip dari pengguna.</p>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default function AdminPrivateTripsList() {
         </div>
       )}
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
         <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
           <Filter className="w-4 h-4" />
           <span>Filter:</span>
@@ -143,7 +143,7 @@ export default function AdminPrivateTripsList() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-300 bg-background px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+            className="appearance-none rounded-xl border border-border bg-background px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
           >
             <option value="">Semua Status</option>
             <option value="submitted">Submitted</option>
@@ -158,17 +158,17 @@ export default function AdminPrivateTripsList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari judul atau kode PTR-..."
-          className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary w-full sm:w-56"
+          className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary w-full sm:w-56"
         />
         <span className="text-xs text-muted-foreground ml-auto">
           {isCodeSearch ? `${visibleRows.length} hasil` : `${total} request`}
         </span>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Kode</th>
                 <th className="px-6 py-4">Judul Perjalanan</th>
@@ -190,19 +190,19 @@ export default function AdminPrivateTripsList() {
                   const canAct = r.status === "submitted" || r.status === "reviewed" || r.status === "revision";
                   const code = toRequestCode(r.id);
                   return (
-                    <tr key={r.id} className="hover:bg-slate-50/60 transition">
+                    <tr key={r.id} className="hover:bg-muted/60 transition">
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-0.5 font-mono text-slate-700 bg-slate-100 rounded px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap">
+                        <span className="inline-flex items-center gap-0.5 font-mono text-slate-700 bg-muted rounded px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap">
                           {code}
                           <CopyCodeButton code={code} />
                         </span>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-900 max-w-xs truncate">{r.title}</td>
+                      <td className="px-6 py-4 font-semibold text-foreground max-w-xs truncate">{r.title}</td>
                       <td className="px-6 py-4 text-muted-foreground">{r.participantsCount} org</td>
                       <td className="px-6 py-4 text-muted-foreground">{r.durationDays} hari</td>
                       <td className="px-6 py-4 text-muted-foreground">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString("id-ID") : "-"}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[r.status] || "bg-slate-100 text-slate-600"}`}>
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[r.status] || "bg-muted text-slate-600"}`}>
                           {r.status}
                         </span>
                       </td>
@@ -234,7 +234,7 @@ export default function AdminPrivateTripsList() {
                               disabled={busy}
                               onClick={() => quickAction(r.id, "reject")}
                               title="Tolak Request"
-                              className="inline-flex items-center gap-1 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-primary-foreground px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
+                              className="inline-flex items-center gap-1 rounded-xl bg-red-50 text-destructive hover:bg-destructive hover:text-primary-foreground px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
                             >
                               <Ban className="w-3.5 h-3.5" />
                               <span className="hidden lg:inline">Tolak</span>
@@ -243,7 +243,7 @@ export default function AdminPrivateTripsList() {
                           <Link
                             href={`/admin/private-trips/${r.id}`}
                             title="Lihat Detail"
-                            className="inline-flex items-center gap-1 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-700 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition"
+                            className="inline-flex items-center gap-1 rounded-xl bg-muted text-slate-600 hover:bg-slate-700 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition"
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span className="hidden lg:inline">Detail</span>

@@ -58,7 +58,7 @@ export default function CustomerForm({
           placeholder="Nama sesuai identitas"
           value={customer.fullName || ""}
           onChange={handleChange("fullName")}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
+          className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
       </div>
 
@@ -75,7 +75,7 @@ export default function CustomerForm({
             if (val && val.split("-")[0] && val.split("-")[0].length > 4) return;
             setCustomer("birthDate", val);
           }}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-ring/20"
+          className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
       </div>
 
@@ -88,7 +88,7 @@ export default function CustomerForm({
           placeholder="08xx-xxxx-xxxx"
           value={customer.phone || ""}
           onChange={handleChange("phone")}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
+          className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
       </div>
 
@@ -101,7 +101,7 @@ export default function CustomerForm({
           value={customer.address || ""}
           onChange={handleChange("address")}
           rows={2}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 resize-none"
+          className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 resize-none"
         />
       </div>
 
@@ -115,7 +115,7 @@ export default function CustomerForm({
             placeholder="Nama kontak darurat"
             value={customer.emergencyContactName || ""}
             onChange={handleChange("emergencyContactName")}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
+            className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
           />
         </div>
         <div>
@@ -127,12 +127,12 @@ export default function CustomerForm({
             placeholder="08xx-xxxx-xxxx"
             value={customer.emergencyContactPhone || ""}
             onChange={handleChange("emergencyContactPhone")}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
+            className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
           />
         </div>
       </div>
 
-      <div className="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+      <div className="border border-border rounded-2xl p-4 bg-muted/50">
         <label className="block text-xs font-semibold text-muted-foreground mb-3">
           Riwayat Penyakit Bawaan <span className="text-red-400">*</span>
         </label>
@@ -148,9 +148,9 @@ export default function CustomerForm({
                   type="checkbox"
                   checked={checked}
                   onChange={() => handleHealthToggle(condition.key)}
-                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-ring/20 cursor-pointer"
+                  className="w-4 h-4 text-primary border-border rounded focus:ring-ring/20 cursor-pointer"
                 />
-                <span className="text-sm text-gray-700 group-hover:text-gray-900">
+                <span className="text-sm text-gray-700 group-hover:text-foreground">
                   {condition.label}
                 </span>
               </label>
@@ -161,9 +161,9 @@ export default function CustomerForm({
               type="checkbox"
               checked={customer.healthConditions?.none || false}
               onChange={() => handleHealthToggle("none")}
-              className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-ring/20 cursor-pointer"
+              className="w-4 h-4 text-primary border-border rounded focus:ring-ring/20 cursor-pointer"
             />
-            <span className="text-sm text-gray-700 group-hover:text-gray-900">
+            <span className="text-sm text-gray-700 group-hover:text-foreground">
               Tidak ada riwayat penyakit di atas
             </span>
           </label>
@@ -182,7 +182,7 @@ export default function CustomerForm({
           value={customer.medications || ""}
           onChange={handleChange("medications")}
           rows={2}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 resize-none"
+          className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 resize-none"
         />
       </div>
 
@@ -201,9 +201,9 @@ export default function CustomerForm({
                 name="mobility"
                 checked={(customer.mobilityOption || "independent") === option.value}
                 onChange={() => handleMobilityChange(option.value)}
-                className="w-4 h-4 text-primary border-gray-300 focus:ring-ring/20 cursor-pointer"
+                className="w-4 h-4 text-primary border-border focus:ring-ring/20 cursor-pointer"
               />
-              <span className="text-sm text-gray-700 group-hover:text-gray-900">
+              <span className="text-sm text-gray-700 group-hover:text-foreground">
                 {option.label}
               </span>
             </label>

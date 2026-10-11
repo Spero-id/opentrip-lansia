@@ -85,7 +85,7 @@ export default function FacilitiesSection({
             </span>
           </div>
           {errors.standarPenginapan && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.standarPenginapan}</p>
+            <p className="text-xs text-destructive mt-1.5">{errors.standarPenginapan}</p>
           )}
         </div>
 
@@ -100,7 +100,7 @@ export default function FacilitiesSection({
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg border text-[13px] cursor-pointer transition-colors ${
                     checked
                       ? "border-primary bg-[#FFFBEB]/60"
-                      : "border-[#D1D5DB] bg-background hover:bg-gray-50"
+                      : "border-[#D1D5DB] bg-background hover:bg-muted"
                   }`}
                 >
                   <input
@@ -138,7 +138,7 @@ export default function FacilitiesSection({
             className={`${baseInput} mt-1.5 resize-none min-h-[84px] ${errors.catatan ? errorBorder : normalBorder}`}
           />
           {errors.catatan && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.catatan}</p>
+            <p className="text-xs text-destructive mt-1.5">{errors.catatan}</p>
           )}
         </div>
 
@@ -176,7 +176,7 @@ export default function FacilitiesSection({
             />
           </div>
           {errors.budget && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.budget}</p>
+            <p className="text-xs text-destructive mt-1.5">{errors.budget}</p>
           )}
         </div>
 
@@ -223,7 +223,7 @@ export default function FacilitiesSection({
             })}
           </div>
           {errors.metodeKontak && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.metodeKontak}</p>
+            <p className="text-xs text-destructive mt-1.5">{errors.metodeKontak}</p>
           )}
         </div>
       </div>

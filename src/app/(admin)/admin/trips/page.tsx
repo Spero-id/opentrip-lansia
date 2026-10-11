@@ -359,18 +359,18 @@ if (categories.length === 0) await fetchCategories();
   const fieldClass = (key: string) =>
     errors[key]
       ? "mt-1 w-full rounded-lg border border-red-400 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300/30 focus:border-red-400"
-      : "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary";
+      : "mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary";
 
   const fieldError = (key: string) =>
-    errors[key] ? <p className="mt-1 text-xs font-medium text-red-600">{errors[key]}</p> : null;
+    errors[key] ? <p className="mt-1 text-xs font-medium text-destructive">{errors[key]}</p> : null;
 
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Paket Trip</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Manajemen Paket Trip</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola paket open trip.</p>
         </div>
         <button
@@ -382,10 +382,10 @@ if (categories.length === 0) await fetchCategories();
         </button>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Tipe</th>
@@ -402,21 +402,21 @@ if (categories.length === 0) await fetchCategories();
                 <tr><td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">Belum ada data trip.</td></tr>
               ) : (
                 tripRows.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/60 transition">
-                    <td className="px-6 py-4 font-bold text-slate-900">{t.title}</td>
+                  <tr key={t.id} className="hover:bg-muted/60 transition">
+                    <td className="px-6 py-4 font-bold text-foreground">{t.title}</td>
                     <td className="px-6 py-4">
-                      <span className="rounded-full px-2.5 py-1 text-[10px] font-bold bg-slate-100 text-slate-600">
+                      <span className="rounded-full px-2.5 py-1 text-[10px] font-bold bg-muted text-slate-600">
                         Open Trip
                       </span>
                     </td>
                     <td className="px-6 py-4 text-muted-foreground">
                       {[t.location, t.province].filter(Boolean).join(", ") || "-"}
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-900">
+                    <td className="px-6 py-4 font-semibold text-foreground">
                       {t.priceMin ? formatTripPrice(t.priceMin) : "-"}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${t.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : t.status === "draft" ? "bg-slate-100 text-slate-600" : "bg-amber-100 text-amber-700"}`}>
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${t.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : t.status === "draft" ? "bg-muted text-slate-600" : "bg-amber-100 text-amber-700"}`}>
                         {t.status}
                       </span>
                     </td>
@@ -428,7 +428,7 @@ if (categories.length === 0) await fetchCategories();
                         <button onClick={() => window.location.href = `/admin/trips/${t.id}/groups`} className="p-2 text-muted-foreground hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition" title="Kelola Grup">
                           <Users className="w-4 h-4" />
                         </button>
-                        <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => { setDeleting(t.id); setDeleteOpen(true); }} className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -450,7 +450,7 @@ if (categories.length === 0) await fetchCategories();
               </p>
               <ul className="list-disc ml-4 mt-1 space-y-0.5">
                 {Object.values(errors).map((msg, i) => (
-                  <li key={i} className="text-xs text-red-600">{msg}</li>
+                  <li key={i} className="text-xs text-destructive">{msg}</li>
                 ))}
               </ul>
             </div>
@@ -465,7 +465,7 @@ if (categories.length === 0) await fetchCategories();
             <div>
               <label className="block text-sm font-medium text-slate-700">Slug</label>
               <input name="slug" value={form.slug} onChange={handleChange}
-                className={fieldClass("slug") + " text-muted-foreground bg-slate-50"} />
+                className={fieldClass("slug") + " text-muted-foreground bg-muted"} />
               {fieldError("slug")}
             </div>
           </div>
@@ -480,7 +480,7 @@ if (categories.length === 0) await fetchCategories();
             <div>
               <label className="block text-sm font-medium text-slate-700">Status</label>
               <select name="status" value={form.status} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
                 <option value="archived">Archived</option>
@@ -491,11 +491,11 @@ if (categories.length === 0) await fetchCategories();
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
 
-          <div className="border-t border-slate-200 pt-4">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">Informasi Destinasi</h3>
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-bold text-foreground mb-3">Informasi Destinasi</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700">Pilih Provinsi</label>
@@ -572,10 +572,10 @@ if (categories.length === 0) await fetchCategories();
             </div>
           </div>
 
-          <div className="border-t border-slate-200 pt-4 space-y-3">
+          <div className="border-t border-border pt-4 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Itinerary / Rencana Perjalanan</h3>
+                <h3 className="text-sm font-bold text-foreground">Itinerary / Rencana Perjalanan</h3>
                 <p className="text-xs text-muted-foreground">Kelola jadwal kegiatan per hari.</p>
               </div>
               <button
@@ -589,21 +589,21 @@ if (categories.length === 0) await fetchCategories();
             </div>
 
             {itineraryList.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+              <p className="text-xs text-muted-foreground italic bg-muted p-3 rounded-xl border border-border text-center">
                 Belum ada item itinerary. Klik tombol di atas untuk menambah kegiatan.
               </p>
             ) : (
               <div className="space-y-3">
                 {itineraryList.map((item, index) => (
-                  <div key={index} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-3">
+                  <div key={index} className="bg-muted p-3.5 rounded-2xl border border-border/80 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-slate-700 bg-background px-2.5 py-1 rounded-lg border border-slate-200">
+                      <span className="text-xs font-bold text-slate-700 bg-background px-2.5 py-1 rounded-lg border border-border">
                         Item #{index + 1}
                       </span>
                       <button
                         type="button"
                         onClick={() => removeItineraryItem(index)}
-                        className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-lg transition"
                         title="Hapus Item"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -618,7 +618,7 @@ if (categories.length === 0) await fetchCategories();
                           min={1}
                           value={item.dayNumber}
                           onChange={(e) => handleItineraryChange(index, "dayNumber", Number(e.target.value))}
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                          className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                         />
                       </div>
                       <div className="sm:col-span-4">
@@ -628,7 +628,7 @@ if (categories.length === 0) await fetchCategories();
                           value={item.location}
                           onChange={(e) => handleItineraryChange(index, "location", e.target.value)}
                           placeholder="Contoh: Borobudur, Magelang"
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                          className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                         />
                       </div>
                       <div className="sm:col-span-5">
@@ -638,7 +638,7 @@ if (categories.length === 0) await fetchCategories();
                           value={item.title}
                           onChange={(e) => handleItineraryChange(index, "title", e.target.value)}
                           placeholder="Contoh: Penjelajahan Candi & Foto Bersama"
-                          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                          className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                         />
                       </div>
                     </div>
@@ -650,7 +650,7 @@ if (categories.length === 0) await fetchCategories();
                         value={item.description}
                         onChange={(e) => handleItineraryChange(index, "description", e.target.value)}
                         placeholder="Detail jadwal atau petunjuk singkat kegiatan..."
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                        className="mt-1 w-full rounded-lg border border-border px-3 py-1.5 text-xs bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                       />
                     </div>
                   </div>
@@ -659,11 +659,11 @@ if (categories.length === 0) await fetchCategories();
             )}
           </div>
 
-          <div className="border-t border-slate-200 pt-5 space-y-4">
+          <div className="border-t border-border pt-5 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-slate-900">Fasilitas Trip</h3>
+                  <h3 className="text-sm font-bold text-foreground">Fasilitas Trip</h3>
                   <span className="bg-amber-100 text-primary text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-200">
                     {facilitiesList.length} Fasilitas
                   </span>
@@ -677,7 +677,7 @@ if (categories.length === 0) await fetchCategories();
                   <button
                     type="button"
                     onClick={() => setFacilitiesList([])}
-                    className="px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                    className="px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition"
                   >
                     Hapus Semua
                   </button>
@@ -694,7 +694,7 @@ if (categories.length === 0) await fetchCategories();
             </div>
 
             {facilitiesList.length === 0 ? (
-              <div className="text-center py-8 px-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 space-y-2">
+              <div className="text-center py-8 px-4 bg-muted rounded-2xl border-2 border-dashed border-border space-y-2">
                 <div className="w-10 h-10 mx-auto rounded-full bg-amber-100/80 text-primary flex items-center justify-center">
                   <Sparkles className="w-5 h-5" />
                 </div>
@@ -708,9 +708,9 @@ if (categories.length === 0) await fetchCategories();
                 {facilitiesList.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2.5 bg-background p-2.5 sm:p-3 rounded-2xl border border-slate-200 hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
+                    className="flex items-center gap-2.5 bg-background p-2.5 sm:p-3 rounded-2xl border border-border hover:border-amber-300 shadow-2xs transition group relative hover:z-30 focus-within:z-30"
                   >
-                    <span className="h-10 w-10 rounded-xl bg-slate-100 text-muted-foreground text-xs font-bold flex items-center justify-center shrink-0">
+                    <span className="h-10 w-10 rounded-xl bg-muted text-muted-foreground text-xs font-bold flex items-center justify-center shrink-0">
                       {index + 1}
                     </span>
 
@@ -728,14 +728,14 @@ if (categories.length === 0) await fetchCategories();
                         value={item.name}
                         onChange={(e) => handleFacilityChange(index, "name", e.target.value)}
                         placeholder="Nama Fasilitas (cth: Bus AC Executive, Tour Guide, Medis)"
-                        className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-xs text-slate-800 bg-slate-50/50 focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary font-medium transition flex items-center"
+                        className="w-full h-10 rounded-xl border border-border px-3.5 text-xs text-slate-800 bg-muted/50 focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary font-medium transition flex items-center"
                       />
                     </div>
 
                     <button
                       type="button"
                       onClick={() => removeFacilityItem(index)}
-                      className="h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0"
+                      className="h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition shrink-0"
                       title="Hapus Fasilitas"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -746,8 +746,8 @@ if (categories.length === 0) await fetchCategories();
             )}
           </div>
 
-          <div className="border-t border-slate-200 pt-4">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">Meeting Point</h3>
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-bold text-foreground mb-3">Meeting Point</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700">Jam Kumpul *</label>
@@ -766,25 +766,25 @@ if (categories.length === 0) await fetchCategories();
             <p className="text-xs text-muted-foreground mt-2">Titik kumpul peserta sebelum keberangkatan. Akan muncul di halaman checkout.</p>
           </div>
 
-          <div className="border-t border-slate-200 pt-4">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">Aksesibilitas Lansia</h3>
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-bold text-foreground mb-3">Aksesibilitas Lansia</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <input name="isSeniorFriendly" type="checkbox" checked={form.isSeniorFriendly} onChange={handleChange}
-                  className="rounded border-slate-300 text-primary focus:ring-ring/30" />
+                  className="rounded border-border text-primary focus:ring-ring/30" />
                 <label className="text-sm font-medium text-slate-700">Ramah Lansia</label>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Info Aksesibilitas</label>
                 <textarea name="accessibilityInfo" value={form.accessibilityInfo} onChange={handleChange} rows={2}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                  className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 pt-2">
             <input name="isFeatured" type="checkbox" checked={form.isFeatured} onChange={handleChange}
-              className="rounded border-slate-300 text-primary focus:ring-ring/30" />
+              className="rounded border-border text-primary focus:ring-ring/30" />
             <label className="text-sm font-medium text-slate-700">Featured (Tampilkan di beranda)</label>
           </div>
 
@@ -794,7 +794,7 @@ if (categories.length === 0) await fetchCategories();
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={() => setModalOpen(false)}
-              className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+              className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition">
               Batal
             </button>
           </div>

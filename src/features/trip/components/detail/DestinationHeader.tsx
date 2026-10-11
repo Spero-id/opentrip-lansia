@@ -18,12 +18,12 @@ export default function DestinationHeader({ dest }: { dest: TripDetail }) {
             </span>
           </span>
         ) : (
-          <span className="flex items-center gap-1 text-muted-foreground font-normal bg-gray-100 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
+          <span className="flex items-center gap-1 text-muted-foreground font-normal bg-muted px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs">
             Belum ada ulasan
           </span>
         )}
       </div>
-      <h1 className="text-3xl sm:text-5xl font-bold mb-2 tracking-tight text-gray-900">
+      <h1 className="text-3xl sm:text-5xl font-bold mb-2 tracking-tight text-foreground">
         {dest.title}
       </h1>
       <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground text-sm sm:text-lg font-medium">
