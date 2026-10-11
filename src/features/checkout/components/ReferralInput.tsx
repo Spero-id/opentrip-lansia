@@ -46,7 +46,7 @@ export default function ReferralInput({
           </div>
           <button
             onClick={onRemove}
-            className="text-green-600 hover:text-green-700 p-1"
+            className="text-green-600 hover:text-green-700 p-1 rounded-md"
           >
             <X className="w-4 h-4" />
           </button>

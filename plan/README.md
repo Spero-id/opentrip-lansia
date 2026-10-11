@@ -9,6 +9,8 @@ Folder perencanaan proyek. Semua dokumen berbahasa Indonesia, konsisten dengan
 |---|---|
 | [`overview.md`](./overview.md) | Ringkasan proyek: visi, status, arsitektur, tech stack, testing |
 | [`audit-warna-hardcoded.md`](./audit-warna-hardcoded.md) | Audit warna hardcoded → token semantik: checklist per fase yang bisa dicentang (2026-10-11) |
+| [`form-design-system.md`](./form-design-system.md) | Design system form: button, input, textarea, select, checkbox, radio, switch, label, form field wrapper, form section |
+| [`form-migration-todo.md`](./form-migration-todo.md) | Todo migrasi native form elements → ShadCN components (6 phase, ~400 elements)
 | [`spec-fitur/`](./spec-fitur/) | Spesifikasi per fitur (satu file per fitur) |
 
 Dokumen plan lama (`roadmap.md`, `lib-cleanup.md`, `restructure-*.md`,

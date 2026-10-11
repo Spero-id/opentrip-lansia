@@ -40,7 +40,7 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-muted rounded px-2 py-0.5">
               {requestCode}
-              <button onClick={copyCode} title="Salin Kode Request" className="hover:text-foreground transition p-0.5">
+              <button onClick={copyCode} title="Salin Kode Request" className="hover:text-foreground transition p-0.5 rounded-md">
                 {copied ? icons.copied : icons.copy}
               </button>
             </span>
@@ -81,7 +81,7 @@ export default function RequestCard({ req, onRefresh }: { req: PrivateTripReques
             </span>
             <span className="inline-flex items-center gap-1.5 font-mono text-xs font-bold px-2.5 py-1 rounded-lg" style={{ backgroundColor: `${A}15`, color: A }}>
               {requestCode}
-              <button onClick={copyCode} title="Salin Kode Request" className="hover:opacity-70 transition p-0.5">
+              <button onClick={copyCode} title="Salin Kode Request" className="hover:opacity-70 transition p-0.5 rounded-md">
                 {copied ? icons.copied : icons.copy}
               </button>
             </span>

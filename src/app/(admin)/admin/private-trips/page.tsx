@@ -40,7 +40,7 @@ function CopyCodeButton({ code }: { code: string }) {
     <button
       onClick={handleCopy}
       title="Salin Kode"
-      className="ml-1 p-0.5 hover:text-foreground transition"
+      className="ml-1 p-0.5 hover:text-foreground transition rounded-md"
     >
       {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
     </button>

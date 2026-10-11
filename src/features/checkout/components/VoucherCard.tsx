@@ -29,7 +29,7 @@ export default function VoucherCard({
             <Check className="w-4 h-4 text-[#1CA6B7]" />
             <span className="text-sm font-semibold text-[#1CA6B7]">{appliedVoucher.label}</span>
           </div>
-          <button onClick={onRemove} className="text-[#1CA6B7] hover:text-[#1CA6B7]">
+          <button onClick={onRemove} className="text-[#1CA6B7] hover:text-[#1CA6B7] rounded-md">
             <X className="w-4 h-4" />
           </button>
         </div>

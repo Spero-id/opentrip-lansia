@@ -5,6 +5,8 @@ import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signIn } from "@/lib/auth/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function getServerSnapshot() {
   return "/";
@@ -123,36 +125,36 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Email
               </label>
-              <input
+              <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Masukkan email kamu"
                 required
-                className="w-full border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+                className="w-full rounded-xl"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Password
               </label>
               <div className="relative">
-                <input
+                <Input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan password kamu"
                   required
-                  className="w-full border border-border rounded-xl px-4 py-3 pr-11 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+                  className="w-full rounded-xl pr-11"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gray-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -160,7 +162,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
+              <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
                 <input
                   type="checkbox"
                   className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30"
@@ -175,13 +177,15 @@ export default function LoginPage() {
               </a>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold hover:bg-primary/80 transition-colors disabled:opacity-50"
+              size="lg"
+              variant="default"
+              className="w-full"
             >
               {loading ? "Memproses..." : "Login"}
-            </button>
+            </Button>
           </form>
 
           <div className="flex items-center gap-3 my-3 sm:my-7">
@@ -192,11 +196,12 @@ export default function LoginPage() {
             <div className="flex-1 h-px bg-muted" />
           </div>
 
-          <button
+          <Button
             type="button"
             onClick={handleGoogleLogin}
             disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-3 border border-border rounded-xl py-3.5 text-sm font-medium text-gray-700 hover:bg-muted transition-colors disabled:opacity-50"
+            variant="outline"
+            className="w-full"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path
@@ -216,10 +221,8 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {googleLoading
-              ? "Menghubungkan ke Google..."
-              : "Masuk dengan Google"}
-          </button>
+            {googleLoading ? "Menghubungkan ke Google..." : "Masuk dengan Google"}
+          </Button>
 
           <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-8">
             Belum punya akun?{" "}
