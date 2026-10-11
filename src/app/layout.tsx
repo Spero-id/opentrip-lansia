@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -29,8 +24,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable}`}>
-      <body className="min-h-dvh bg-white text-slate-900 antialiased">
+    <html lang="id" className={`${plusJakartaSans.variable}`}>
+      <body className="antialiased">
         {children}
       </body>
     </html>

@@ -14,35 +14,50 @@ Dokumen ini merupakan panduan lengkap sistem desain (*Design System*) dan spesif
 
 ## 2. Palet Warna (*Color Palette*)
 
-### Warna Utama (*Primary Accent*)
-- **Primary Mustard Orange**: `#F49D1A` (Hex) | Variasi: `#FFA500`, `#F7931A`
-  - Digunakan untuk: Tombol utama (CTA), ikon, aksen penting, header/navbar — disesuaikan dengan warna logo Jelajah Memoria.
-- **Primary Hover**: `#c47d12`
-- **Primary Light Tint**: `#FEF6E7`
+Nilai pada bagian ini adalah nilai aktual yang terdapat di `src/app/globals.css` (diverifikasi dari CSS hasil build).
 
-### Warna Sekunder (*Secondary / Shadow*)
-- **Secondary Dark Blue**: `#0D238E` (Hex) | Variasi: `#12239E`
-  - Digunakan untuk: Warna teks utama, latar belakang kontras tinggi (footer, sidebar admin), elemen gelap.
-
-### Warna Aksen (*Accent / Tosca Cyan*)
-- **Accent Teal**: `#1CA6B7` (Hex) | Variasi: `#20B2AA`
-  - Digunakan untuk: Badge status, highlight, tag, latar belakang bagian sekunder (card).
+### Warna Brand (Token Semantik)
+- **Primary Mustard Orange**: `#F49D1A` — token `--primary` (terpetakan ke `--color-primary` di `@theme inline`)
+  - Digunakan untuk: tombol utama (CTA), ikon, aksen penting, header/navbar — sesuai warna logo Jelajah Memoria.
+  - Utility `bg-primary`, `text-primary`, `ring`, `bg-sidebar-primary` semuanya resolve ke `var(--primary)` → selalu oranye ini, **di mode terang maupun gelap** (nilai `--primary` di blok `.dark` juga `#F49D1A`).
+  - *Catatan*: variasi `#FFA500` / `#F7931A` tidak dipakai di mana pun.
+- **Primary Hover**: `#c47d12` — tidak ada token-nya; dipakai sebagai kelas hex langsung (`hover:bg-[#c47d12]`); varian terang `#E08A0E` untuk teks/hover sekunder.
+- **Primary Light Tint**: `#FEF6E7` — bukan token; kelas hex langsung (`bg-[#FEF6E7]`).
+- **Secondary Dark Blue (Navy)**: `#0D238E` — **tidak ada token di `globals.css`** (keputusan: biarkan). Dipakai langsung sebagai hex: `text-[#0D238E]`, `bg-[#0D238E]/10`.
+- **Accent Teal**: `#1CA6B7` — **tidak ada token di `globals.css`** (keputusan: biarkan). Dipakai langsung: `text-[#1CA6B7]`, `bg-[#1CA6B7]/15`, `hover:bg-[#1CA6B7]`.
 
 ### Warna Netral & Latar Belakang (*Backgrounds*)
-- **Base Background**: `#FAF8F5` (Krem bersih)
-- **White Content BG**: `#FFFFFF` (Putih untuk kartu/konten)
-- **Border**: `#E2E8F0` (Slate-200)
+- **Base Background**: `#FCFCFC` — token `--background`; kini benar-benar berlaku karena `<body>` tidak lagi memakai kelas `bg-white` (lihat `src/app/layout.tsx`).
+- **Card / Popover**: `#FCFCFC` (foreground kartu `#171717`, popover `#525252`).
+- **Secondary (shadcn)**: `#FDFDFD` — nyaris putih; `bg-secondary` = surface/tombol terang, **bukan** navy.
+- **Muted / Accent**: `#EDEDED`; `--muted-foreground` = `#202020` (kontras tinggi — teks meta tetap gelap).
+- **Border**: `#DFDFDF` · **Input**: `#F6F6F6` · **Ring (focus)**: `#F49D1A` (oranye — konsisten brand).
+- **Dark Theme (Footer & Banner CTA)**: `#0B0F19` (Obsidian Deep Navy) — kelas hex eksplisit di komponen (mis. `src/components/layout/Footer.tsx`), bukan token CSS.
 
-### Warna Netral & Latar Belakang (*Backgrounds*)
-- **Base Background**: `#FFFFFF` (Putih bersih)
-- **Secondary Section BG**: `#F8FAFC` / `#FAF9F6` (Warm Off-White / Soft Gray)
-- **Dark Theme (Footer & Banner CTA)**: `#0B0F19` (Obsidian Deep Navy)
-- **Border**: `#E2E8F0` (Slate-200)
+### Token Semantik Lengkap (mode terang)
+Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
+- `--primary` `#F49D1A` (fg `#FDFDFD`) · `--secondary` `#FDFDFD` · `--muted` / `--accent` `#EDEDED`
+- `--background` `#FCFCFC` · `--foreground` `#171717` · `--muted-foreground` `#202020`
+- `--border` `#DFDFDF` · `--input` `#F6F6F6` · `--ring` `#F49D1A`
+- `--destructive` (error): `#CA3214` (fg `#FFFCFC`)
+- **Chart**: `--chart-1..5` = `#72E3AD`, `#3B82F6`, `#8B5CF6`, `#F59E0B`, `#10B981` (berwarna, bukan grayscale)
+- **Radius**: `--radius: 0.5rem` → `rounded-sm` 4px, `rounded-md` 6px, `rounded-lg` 8px, `rounded-xl` 12px; `rounded-2xl`/`rounded-3xl` memakai default Tailwind (16px/24px) — **tidak** lagi kelipatan `--radius` seperti tema lama.
+- **Shadow**: skala TweakCN (`shadow-sm` = `0 1px 3px -1px` 17% + `0 1px 2px -1px` 17%, dst.).
+- **Letter-spacing**: `--tracking-normal: 0.025em` diterapkan ke seluruh `body`; akibatnya `tracking-tight` = `0em` dan `tracking-tighter` = `-0.025em` (skala digeser).
+
+### Mode Gelap (blok `.dark`)
+- `--background #121212`, `--card #171717`, `--popover #242424` (fg `#A9A9A9`), `--foreground #E2E8F0`
+- `--secondary #242424`, `--muted #1F1F1F`, `--accent #313131`, `--muted-foreground #A2A2A2`
+- `--border #292929`, `--input #242424`, `--destructive #541C15`
+- `--primary` & `--ring`: **tetap `#F49D1A`** (perbaikan manual — sebelumnya sempat ter-export hijau `#006239`)
+- Warna hex langsung (`#0D238E`, `#1CA6B7`, `#0B0F19`, kelas `bg-white`/`text-slate-*` di halaman) **tidak ikut berubah** di mode gelap.
+> Catatan: saat ini tidak ada pemicu toggle tema (tanpa `next-themes` atau script), sehingga mode gelap belum aktif; utility `dark:` baru berfungsi jika kelas `.dark` diaktifkan.
 
 ### Tipografi & Teks
-- **Headings / Judul**: `#0F172A` (Slate-900) - Tebal (*bold / extrawith*), elegan
-- **Body Text**: `#475569` (Slate-600) - Nyaman dibaca
-- **Muted Text / Meta**: `#94A3B8` (Slate-400)
+- **Headings / Judul**: `#0F172A` (Slate-900) via kelas `text-slate-900` di halaman — tebal (*bold / extrabold*), elegan
+- **Body Text**: `#475569` (Slate-600) via kelas `text-slate-600` — nyaman dibaca
+- **Muted Text / Meta**: `#94A3B8` (Slate-400) via kelas `text-slate-400` / `text-slate-500`
+- Token semantik (`--foreground #171717`, `--muted-foreground #202020`) dipakai komponen shadcn (`text-foreground`, `text-muted-foreground`); `<body>` kini memakai `text-foreground` (kelas `bg-white text-slate-900` dihapus dari `layout.tsx`).
 
 ### Status & Indicator Colors
 - **Rating / Star**: `#F59E0B` (Amber-500 ⭐)
@@ -53,7 +68,9 @@ Dokumen ini merupakan panduan lengkap sistem desain (*Design System*) dan spesif
 
 ## 3. Tipografi (*Typography*)
 
-- **Font Family**: `Plus Jakarta Sans` / `Inter` / `Sans-serif`
+- **Font Family**: `Plus Jakarta Sans` → `ui-sans-serif` → `sans-serif` → `system-ui` (token `--font-sans` di `:root` & `.dark`). Font dimuat `next/font` di `src/app/layout.tsx` (`--font-plus-jakarta-sans`); **Inter sudah dihapus** dari layout dan token.
+  - Catatan: self-reference `--font-sans: var(--font-sans)` kini **valid** karena `:root` men-definisikan stack-nya — utility `font-sans` / `font-heading` berfungsi (dulu tidak).
+  - `body` juga mewarisi `letter-spacing: var(--tracking-normal)` = `0.025em`.
 - **Skala Ukuran Teks**:
   - **Hero Title**: `text-4xl` hingga `text-6xl`, `font-extrabold`, `tracking-tight`
   - **Section Heading**: `text-2xl` hingga `text-4xl`, `font-bold`, `text-slate-900`
@@ -143,7 +160,7 @@ Sesuai dengan acuan desain gambar 2:
 ## 6. Penyesuaian Panel Admin (*Admin Panel Alignment*)
 
 Panel Admin disesuaikan agar konsisten dengan identitas merek baru:
-- **Sidebar Navigation**: Latar belakang `bg-slate-900` dengan aksen Oranye pada item aktif (`bg-orange-600 text-white shadow-md shadow-orange-600/30`).
+- **Sidebar Navigation**: Latar belakang biru tua dari selector `.admin-sidebar-dark` di `globals.css` (`--sidebar: oklch(0.24 0.02 262)`, teks putih `#fff`) — bukan `bg-slate-900`. Item aktif memakai aksen oranye `text-[#F49D1A] bg-[#F49D1A]/15` (`src/app/(admin)/admin/components/admin-sidebar.tsx`), bukan `bg-orange-600`.
 - **Header Topbar**: Status Admin, bilah pencarian cepat, profil avatar admin.
 - **Dashboard Summary Cards**: Kartu KPI (Total Trip, Pemesanan Bulan Ini, Total Pendapatan, Promo Aktif) dengan ikon dan persentase perubahan.
 - **Tabel Data**: Header tabel yang bersih (`bg-slate-100/80 text-slate-700`), badge status berwarna (Green = Published, Yellow = Draft, Gray = Archived), dan tombol aksi edit/delete yang mudah diakses.
