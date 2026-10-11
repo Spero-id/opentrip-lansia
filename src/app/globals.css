@@ -179,6 +179,10 @@
    sinkronkan dari blok `.dark`, jangan hardcode warna baru. */
 .admin-sidebar-dark,
 [data-mobile="true"][data-sidebar="sidebar"] {
+  /* `text-sidebar-foreground` ada di div induk (di luar blok ini), jadi warnanya
+     resolve di :root (gelap) lalu di-inherit ke dalam. Restabilisasi di sini
+     agar semua keturunan tanpa warna eksplisit mewarisi warna sidebar yang benar. */
+  color: var(--sidebar-foreground);
   --sidebar: oklch(0.1822 0 0);
   --sidebar-foreground: oklch(0.9288 0.0126 255.5078);
   --sidebar-primary: oklch(0.7660 0.1615 69.0313);

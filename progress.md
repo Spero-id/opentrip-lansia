@@ -2648,3 +2648,16 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Verifikasi:** CSS hasil compile dev server menampilkan nilai baru; harness statis (CSS compile yang sama) memvisualkan sidebar gelap dengan teks terbaca; `npm run lint` 0E/80W (baseline).
 
 **Branch:** `refactor/admin-sidebar-tokens` (dari `a27854d`, titik sebelum form-migration).
+
+### Session 90 (lanjutan) — Fix: teks tab sidebar gelap setelah hapus hack :where
+
+**Laporan:** setelah blok `.admin-sidebar-dark` memakai token TweakCN dan hack `:where(span,p,a,button){color:#fff}` dihapus, semua teks tab sidebar admin jadi gelap nyaris tak terlihat; hover dianggap "tanpa animasi".
+
+**Diagnosis (render asli AppSidebar via halaman sementara + ukur computed style):**
+- `text-sidebar-foreground` ada di div **induk** `Sidebar` (`className="group peer hidden text-sidebar-foreground md:block"`, di luar `.admin-sidebar-dark`) → utility resolve `var(--sidebar-foreground)` di `:root` = `#171717` (gelap), lalu **di-inherit** ke seluruh anak.
+- Tombol tab (`sidebarMenuButtonVariants`) tidak punya warna teks state diam → mewarisi gelap. Hover sebenarnya **berfungsi** (terukur: bg → `#313131`, teks → `#FAFAFA`) — hanya instan, karena `transition-[width,height,padding]` (memang kode shadcn asli, shadcn juga tidak me-transition warna). Kombinasi state diam gelap + hover terang membuatnya terbaca sebagai "tanpa animasi".
+- Hack `:where` lama sebenarnya **menutupi** bug pewarisan ini.
+
+**Fix:** `color: var(--sidebar-foreground);` ditambahkan di dalam blok `.admin-sidebar-dark, [data-mobile=...]` — merestabilisasi inheritansi warna di dalam scope (desktop + Sheet mobile).
+
+**Verifikasi:** halaman preview sementara (dihapus setelahnya) — teks tab terang `lab(91.7)` saat diam, hover bekerja; Sheet mobile juga benar. `npm run lint` 0E/80W.
