@@ -28,12 +28,12 @@ export default function GalleryModal({
           <div>
             <h2 className="text-lg font-bold text-gray-900">Foto Trip</h2>
             {groupLabel && (
-              <p className="text-xs text-gray-500 mt-0.5">{groupLabel}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{groupLabel}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition"
+            className="p-2 text-muted-foreground hover:text-gray-600 hover:bg-gray-100 rounded-xl transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -47,10 +47,10 @@ export default function GalleryModal({
           ) : media.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <ImageIcon className="w-8 h-8 text-gray-400" />
+                <ImageIcon className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-bold text-gray-700">Belum ada foto</h3>
-              <p className="text-sm text-gray-500 mt-2">Admin belum mengupload foto untuk grup ini.</p>
+              <p className="text-sm text-muted-foreground mt-2">Admin belum mengupload foto untuk grup ini.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -94,7 +94,7 @@ export default function GalleryModal({
 
         {media.length > 0 && (
           <div className="px-6 py-3 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               {media.length} foto • Klik ikon download untuk menyimpan foto
             </p>
           </div>

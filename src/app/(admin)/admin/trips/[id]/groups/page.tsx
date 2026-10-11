@@ -500,7 +500,7 @@ export default function AdminTripGroupsPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition"
+            className="p-2 text-muted-foreground hover:text-slate-700 hover:bg-slate-100 rounded-xl transition"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -526,7 +526,7 @@ export default function AdminTripGroupsPage() {
         <div className="flex items-start gap-3">
           <button
             onClick={() => router.back()}
-            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition mt-1"
+            className="p-2 text-muted-foreground hover:text-slate-700 hover:bg-slate-100 rounded-xl transition mt-1"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -534,14 +534,14 @@ export default function AdminTripGroupsPage() {
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
               Kelola Grup Trip
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {trip?.title || "Memuat..."} — Atur jadwal keberangkatan dan grup perjalanan
             </p>
           </div>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Grup Baru</span>
@@ -551,15 +551,15 @@ export default function AdminTripGroupsPage() {
       {groups.length === 0 ? (
         <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
           <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
-            <Users className="w-8 h-8 text-slate-400" />
+            <Users className="w-8 h-8 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-bold text-slate-700">Belum ada grup</h3>
-          <p className="text-sm text-slate-500 mt-2 max-w-sm mx-auto">
+          <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
             Buat grup keberangkatan pertama untuk trip ini. Setiap grup punya tanggal dan kuota sendiri.
           </p>
           <button
             onClick={openCreate}
-            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-[#c47d12] transition inline-flex items-center gap-2"
+            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-primary/85 transition inline-flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Buat Grup Pertama
@@ -581,7 +581,7 @@ export default function AdminTripGroupsPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
                       <div className={`p-2 rounded-xl ${group.isActive ? "bg-[#1CA6B7]/10" : "bg-slate-100"}`}>
-                        <Calendar className={`w-5 h-5 ${group.isActive ? "text-[#1CA6B7]" : "text-slate-500"}`} />
+                        <Calendar className={`w-5 h-5 ${group.isActive ? "text-[#1CA6B7]" : "text-muted-foreground"}`} />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -595,7 +595,7 @@ export default function AdminTripGroupsPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-muted-foreground">
                           Sampai {formatDate(group.endDate)}
                         </p>
                       </div>
@@ -603,24 +603,24 @@ export default function AdminTripGroupsPage() {
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
                       <div className="bg-slate-50 rounded-xl p-3">
-                        <p className="text-[10px] font-semibold text-slate-500 uppercase">Kuota</p>
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase">Kuota</p>
                         <p className="text-lg font-bold text-slate-900">
                           {group.quotaBooked}/{group.maxParticipants}
                         </p>
                       </div>
                       <div className="bg-slate-50 rounded-xl p-3">
-                        <p className="text-[10px] font-semibold text-slate-500 uppercase">Booking</p>
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase">Booking</p>
                         <p className="text-lg font-bold text-slate-900">{group.bookingCount}</p>
                       </div>
                       <div className="bg-slate-50 rounded-xl p-3">
-                        <p className="text-[10px] font-semibold text-slate-500 uppercase">Galeri</p>
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase">Galeri</p>
                         <p className="text-lg font-bold text-slate-900">{group.galleryCount} foto</p>
                       </div>
 
                     </div>
 
                     {group.notes && (
-                      <p className="mt-3 text-xs text-slate-500 bg-slate-50 rounded-xl px-3 py-2">
+                      <p className="mt-3 text-xs text-muted-foreground bg-slate-50 rounded-xl px-3 py-2">
                         {group.notes}
                       </p>
                     )}
@@ -666,12 +666,12 @@ export default function AdminTripGroupsPage() {
                       {participantsLoading ? (
                         <div className="flex items-center justify-center py-8">
                           <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                          <span className="ml-2 text-sm text-slate-500">Memuat data peserta...</span>
+                          <span className="ml-2 text-sm text-muted-foreground">Memuat data peserta...</span>
                         </div>
                       ) : participants.length === 0 ? (
                         <div className="text-center py-8">
                           <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                          <p className="text-sm text-slate-500">Belum ada peserta terdaftar</p>
+                          <p className="text-sm text-muted-foreground">Belum ada peserta terdaftar</p>
                         </div>
                       ) : (
                         <div className="space-y-3">
@@ -710,7 +710,7 @@ export default function AdminTripGroupsPage() {
                                           {p.fullName}
                                         </span>
                                         {p.phone && (
-                                          <span className="text-xs text-slate-400 shrink-0">
+                                          <span className="text-xs text-muted-foreground shrink-0">
                                             {p.phone}
                                           </span>
                                         )}
@@ -719,7 +719,7 @@ export default function AdminTripGroupsPage() {
                                   </div>
                                 </div>
                                 <div className="text-right shrink-0">
-                                  <p className="text-xs text-slate-500">{booking.totalParticipants} org</p>
+                                  <p className="text-xs text-muted-foreground">{booking.totalParticipants} org</p>
                                   <p className="text-xs font-bold text-slate-700">
                                     Rp {Number(booking.totalAmount).toLocaleString("id-ID")}
                                   </p>
@@ -745,7 +745,7 @@ export default function AdminTripGroupsPage() {
                                       </span>
                                     </>
                                   ) : (
-                                    <span className="text-xs text-slate-400 italic">
+                                    <span className="text-xs text-muted-foreground italic">
                                       Belum ada pembayaran
                                     </span>
                                   )}
@@ -781,7 +781,7 @@ export default function AdminTripGroupsPage() {
                           </button>
                           <button
                             onClick={() => openPriceCreate(group.id)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-primary-foreground bg-primary hover:bg-[#c47d12] rounded-xl transition"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold text-primary-foreground bg-primary hover:bg-primary/85 rounded-xl transition"
                           >
                             <Plus className="w-3 h-3" />
                             Tambah Tier
@@ -791,12 +791,12 @@ export default function AdminTripGroupsPage() {
                       {pricesLoading ? (
                         <div className="flex items-center justify-center py-8">
                           <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                          <span className="ml-2 text-sm text-slate-500">Memuat tier harga...</span>
+                          <span className="ml-2 text-sm text-muted-foreground">Memuat tier harga...</span>
                         </div>
                       ) : prices.length === 0 ? (
                         <div className="text-center py-8">
                           <Tag className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                          <p className="text-sm text-slate-500">Belum ada tier harga</p>
+                          <p className="text-sm text-muted-foreground">Belum ada tier harga</p>
                         </div>
                       ) : (
                         <div className="space-y-2.5">
@@ -811,12 +811,12 @@ export default function AdminTripGroupsPage() {
                                     <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary">
                                       {tier.name}
                                     </span>
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${tier.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${tier.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-muted-foreground"}`}>
                                       {tier.isActive ? "Aktif" : "Nonaktif"}
                                     </span>
                                   </div>
                                   <p className="text-base font-bold text-slate-900">{formatTripPrice(tier.price)}</p>
-                                  <p className="text-[11px] text-slate-500 mt-1">
+                                  <p className="text-[11px] text-muted-foreground mt-1">
                                     Terisi {tier.quotaBooked ?? 0}/{tier.quota} · {tier.bookings ? `${tier.bookings} booking` : "Belum ada booking"}{tier.revenue ? ` · Rp ${Number(tier.revenue).toLocaleString("id-ID")}` : ""} · {tier.validFrom || tier.validUntil ? `${tier.validFrom?.slice(0, 10) || "…"} s/d ${tier.validUntil?.slice(0, 10) || "…"}` : "Selalu berlaku"}
                                   </p>
                                   <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-2">
@@ -830,21 +830,21 @@ export default function AdminTripGroupsPage() {
                                   <button
                                     onClick={() => handlePriceToggleActive(group.id, tier)}
                                     title={tier.isActive ? "Nonaktifkan" : "Aktifkan"}
-                                    className="p-2 text-slate-500 hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition"
+                                    className="p-2 text-muted-foreground hover:text-[#1CA6B7] hover:bg-[#1CA6B7]/10 rounded-xl transition"
                                   >
                                     <Check className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => openPriceEdit(group.id, tier)}
                                     title="Edit tier"
-                                    className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition"
+                                    className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition"
                                   >
                                     <Edit className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => setDeletingPrice({ groupId: group.id, tier })}
                                     title="Hapus tier"
-                                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                                    className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
@@ -856,18 +856,18 @@ export default function AdminTripGroupsPage() {
                       )}
                       {showHistory && expandedPrices === group.id && (
                         <div className="mt-3 rounded-xl border border-slate-200 bg-background p-3">
-                          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Riwayat perubahan</p>
+                          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide mb-2">Riwayat perubahan</p>
                           {historyLoading ? (
-                            <p className="text-xs text-slate-400">Memuat riwayat...</p>
+                            <p className="text-xs text-muted-foreground">Memuat riwayat...</p>
                           ) : history.length === 0 ? (
-                            <p className="text-xs text-slate-400">Belum ada perubahan tercatat.</p>
+                            <p className="text-xs text-muted-foreground">Belum ada perubahan tercatat.</p>
                           ) : (
                             <ul className="space-y-1.5 max-h-40 overflow-y-auto">
                               {history.map((h) => (
                                 <li key={h.id} className="text-xs text-slate-600">
                                   <span className="font-semibold text-slate-800">{h.action}</span>
                                   {h.description ? ` — ${h.description}` : ""}
-                                  <span className="text-slate-400">
+                                  <span className="text-muted-foreground">
                                     {h.adminName ? ` · ${h.adminName}` : ""}
                                     {h.createdAt ? ` · ${h.createdAt.slice(0, 10)}` : ""}
                                   </span>
@@ -911,7 +911,7 @@ export default function AdminTripGroupsPage() {
                   {group.status !== "completed" && (
                     <button
                       onClick={() => handleComplete(group.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-[#c47d12] rounded-xl transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/85 rounded-xl transition"
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
                       Tandai Selesai
@@ -1031,7 +1031,7 @@ export default function AdminTripGroupsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50"
                 >
                   {saving ? "Menyimpan..." : "Simpan"}
                 </button>
@@ -1144,7 +1144,7 @@ export default function AdminTripGroupsPage() {
                 <button
                   type="submit"
                   disabled={priceSaving}
-                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50"
                 >
                   {priceSaving ? "Menyimpan..." : "Simpan"}
                 </button>
@@ -1170,7 +1170,7 @@ export default function AdminTripGroupsPage() {
                 <Trash2 className="w-6 h-6 text-red-600" />
               </div>
               <h3 className="text-lg font-bold text-slate-900">Hapus Grup?</h3>
-              <p className="text-sm text-slate-500 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Grup yang sudah memiliki booking tidak bisa dihapus.
               </p>
             </div>
@@ -1201,7 +1201,7 @@ export default function AdminTripGroupsPage() {
         title="Tandai Grup Selesai"
         message="Tandai grup ini sebagai selesai? Semua booking akan diselesaikan dan peserta dapat memberikan ulasan."
         confirmLabel="Ya, Tandai Selesai"
-        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/85 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
 
       <ConfirmAction
@@ -1211,7 +1211,7 @@ export default function AdminTripGroupsPage() {
         title={alertModal.title}
         message={alertModal.message}
         confirmLabel="OK"
-        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-[#c47d12] transition disabled:opacity-50 inline-flex items-center gap-2"
+        confirmClassName="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/85 transition disabled:opacity-50 inline-flex items-center gap-2"
       />
       <ConfirmAction
         open={deletingPrice !== null}

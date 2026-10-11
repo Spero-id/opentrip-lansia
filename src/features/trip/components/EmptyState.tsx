@@ -14,7 +14,7 @@ export default function EmptyState({ onReset }: { onReset: () => void }) {
       <p className="text-sm font-semibold text-gray-700 mb-1">
         Destinasi kamu akan segera hadir
       </p>
-      <p className="text-xs text-gray-400 mb-5 max-w-xs">
+      <p className="text-xs text-muted-foreground mb-5 max-w-xs">
         Coba sesuaikan kata kunci pencarian atau reset filter yang lain.
       </p>
       <button

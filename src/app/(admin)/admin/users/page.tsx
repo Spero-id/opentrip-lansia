@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen User Terdaftar</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola data pengguna terdaftar, peran (role), dan poin loyalitas.</p>
+          <p className="text-sm text-muted-foreground mt-1">Kelola data pengguna terdaftar, peran (role), dan poin loyalitas.</p>
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export default function AdminUsersPage() {
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total User</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total User</p>
             <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.total}</p>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function AdminUsersPage() {
             <UserCheck className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">User Biasa</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">User Biasa</p>
             <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.userCount}</p>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function AdminUsersPage() {
             <Award className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Agent Partner</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Agent Partner</p>
             <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.agentCount}</p>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function AdminUsersPage() {
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Administrator</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Administrator</p>
             <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{stats.adminCount}</p>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function AdminUsersPage() {
 
       <div className="bg-background p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-4 justify-between items-center">
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Cari nama, email, telepon..."
@@ -151,7 +151,7 @@ export default function AdminUsersPage() {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs font-medium text-slate-500 shrink-0">Filter Role:</span>
+          <span className="text-xs font-medium text-muted-foreground shrink-0">Filter Role:</span>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Kontak</th>
@@ -181,13 +181,13 @@ export default function AdminUsersPage() {
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                     Memuat data pengguna...
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                     {search || roleFilter !== "all"
                       ? "Tidak ditemukan pengguna yang sesuai dengan filter."
                       : "Belum ada user yang terdaftar."}
@@ -220,8 +220,8 @@ export default function AdminUsersPage() {
                             <div className="font-bold text-slate-900">
                               <span>{u.name}</span>
                             </div>
-                            <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                              <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                            <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                              <Mail className="w-3 h-3 text-muted-foreground shrink-0" />
                               <span>{u.email}</span>
                             </div>
                           </div>
@@ -229,7 +229,7 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1 text-slate-600">
-                          <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <Phone className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                           <span>{u.phone || "-"}</span>
                         </div>
                       </td>
@@ -253,14 +253,14 @@ export default function AdminUsersPage() {
                           <p className="font-mono text-[11px] font-semibold text-slate-700">
                             Ref: {u.referralCode || "-"}
                           </p>
-                          <p className="text-[11px] text-slate-500">
+                          <p className="text-[11px] text-muted-foreground">
                             Poin: <span className="font-bold text-primary">{u.loyaltyPoints ?? 0}</span> pts
                           </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-500">
-                        <div className="flex items-center gap-1.5 text-slate-500">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <td className="px-6 py-4 text-muted-foreground">
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                           <span>{new Date(u.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
                         </div>
                       </td>
@@ -268,14 +268,14 @@ export default function AdminUsersPage() {
                         <div className="inline-flex items-center gap-2">
                           <button
                             onClick={() => openEdit(u)}
-                            className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition"
+                            className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition"
                             title="Edit User"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => confirmDelete(u.id)}
-                            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                            className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition"
                             title="Hapus User"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -310,7 +310,7 @@ export default function AdminUsersPage() {
               type="email"
               value={editingUser?.email || ""}
               disabled
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
             />
           </div>
 
@@ -353,7 +353,7 @@ export default function AdminUsersPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50"
             >
               {saving ? "Menyimpan..." : "Simpan Perubahan"}
             </button>

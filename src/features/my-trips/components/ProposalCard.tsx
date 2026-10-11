@@ -39,7 +39,7 @@ export default function ProposalCard({
     <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-3">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Proposal</p>
+          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Proposal</p>
           <p className="text-xs font-bold text-gray-800 mt-1">
             Estimasi Harga: {formatIDR(proposal.estimatedPrice)}
           </p>
@@ -55,13 +55,13 @@ export default function ProposalCard({
       {proposal.inclusions && (
         <div className="text-xs">
           <span className="font-semibold text-gray-700">Termasuk:</span>{" "}
-          <span className="text-gray-500">{proposal.inclusions}</span>
+          <span className="text-muted-foreground">{proposal.inclusions}</span>
         </div>
       )}
       {proposal.exclusions && (
         <div className="text-xs">
           <span className="font-semibold text-gray-700">Tidak Termasuk:</span>{" "}
-          <span className="text-gray-500">{proposal.exclusions}</span>
+          <span className="text-muted-foreground">{proposal.exclusions}</span>
         </div>
       )}
 

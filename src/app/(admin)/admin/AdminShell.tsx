@@ -108,7 +108,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <SidebarInset className="bg-slate-100/70 min-w-0">
         <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-background px-4 sm:px-6">
           <div className="flex items-center gap-2 min-w-0">
-            <SidebarTrigger className="-ml-1 text-slate-500" />
+            <SidebarTrigger className="-ml-1 text-muted-foreground" />
             {activeMenu && (
               <>
                 <Separator
@@ -144,7 +144,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 onClick={() => setShowNotifications(!showNotifications)}
                 aria-label="Notifikasi"
                 aria-expanded={showNotifications}
-                className="relative text-slate-500"
+                className="relative text-muted-foreground"
               >
                 <Bell />
                 {unreadCount > 0 && (

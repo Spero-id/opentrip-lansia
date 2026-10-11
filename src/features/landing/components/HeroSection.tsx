@@ -69,12 +69,12 @@ export default function HeroSection() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Cari destinasi impianmu..."
-                  className="bg-transparent text-sm text-black placeholder:text-gray-400 w-full focus:outline-none"
+                  className="bg-transparent text-sm text-black placeholder:text-muted-foreground w-full focus:outline-none"
                 />
               </div>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-[#c47d12] text-primary-foreground px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-primary/25 whitespace-nowrap cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/85 text-primary-foreground px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-primary/25 whitespace-nowrap cursor-pointer"
               >
                 Jelajahi
                 <ArrowRight size={16} />

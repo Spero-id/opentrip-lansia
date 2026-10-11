@@ -16,7 +16,7 @@ export default function TierSelector({ tiers, tierQty, loading, onChange }: Tier
     return (
       <div className="bg-background border border-gray-100 rounded-2xl p-5 shadow-sm">
         <h2 className="text-base font-bold text-gray-900 mb-1">Jumlah Peserta</h2>
-        <p className="text-xs text-gray-400">Memuat tier harga...</p>
+        <p className="text-xs text-muted-foreground">Memuat tier harga...</p>
       </div>
     );
   }
@@ -25,7 +25,7 @@ export default function TierSelector({ tiers, tierQty, loading, onChange }: Tier
     <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Jumlah Peserta</h2>
-        <p className="text-xs text-gray-400">Atur jumlah peserta per tier harga.</p>
+        <p className="text-xs text-muted-foreground">Atur jumlah peserta per tier harga.</p>
       </div>
       <div className="space-y-3">
         {tiers.map((tier) => {
@@ -35,7 +35,7 @@ export default function TierSelector({ tiers, tierQty, loading, onChange }: Tier
             <div key={tier.id} className="flex items-center justify-between gap-3 rounded-xl border border-gray-100 px-4 py-3">
               <div className="min-w-0">
                 <p className="text-sm font-bold text-gray-900 truncate">{tier.name}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {formatIDR(tier.price)} · sisa {tier.remaining}
                   {tier.validUntil ? ` · s/d ${tier.validUntil}` : ""}
                 </p>

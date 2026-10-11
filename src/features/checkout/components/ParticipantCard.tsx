@@ -17,7 +17,7 @@ export default function ParticipantCard({
   return (
     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-gray-500">Peserta {index + 1}</span>
+        <span className="text-xs font-bold text-muted-foreground">Peserta {index + 1}</span>
         {onRemove && (
           <button onClick={() => onRemove(participant.id)} className="text-red-400 hover:text-red-600 transition-colors">
             <Trash2 className="w-4 h-4" />

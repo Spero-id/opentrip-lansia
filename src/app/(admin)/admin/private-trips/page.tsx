@@ -124,7 +124,7 @@ export default function AdminPrivateTripsList() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Private Trip Request</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola permintaan Private Trip dari pengguna.</p>
+          <p className="text-sm text-muted-foreground mt-1">Kelola permintaan Private Trip dari pengguna.</p>
         </div>
       </div>
 
@@ -135,7 +135,7 @@ export default function AdminPrivateTripsList() {
       )}
 
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+        <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
           <Filter className="w-4 h-4" />
           <span>Filter:</span>
         </div>
@@ -151,7 +151,7 @@ export default function AdminPrivateTripsList() {
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
           </select>
-          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
         <input
           type="text"
@@ -160,7 +160,7 @@ export default function AdminPrivateTripsList() {
           placeholder="Cari judul atau kode PTR-..."
           className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary w-full sm:w-56"
         />
-        <span className="text-xs text-slate-400 ml-auto">
+        <span className="text-xs text-muted-foreground ml-auto">
           {isCodeSearch ? `${visibleRows.length} hasil` : `${total} request`}
         </span>
       </div>
@@ -168,7 +168,7 @@ export default function AdminPrivateTripsList() {
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="px-6 py-4">Kode</th>
                 <th className="px-6 py-4">Judul Perjalanan</th>
@@ -181,9 +181,9 @@ export default function AdminPrivateTripsList() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">Memuat data...</td></tr>
               ) : visibleRows.length === 0 ? (
-                <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">Belum ada request Private Trip.</td></tr>
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">Belum ada request Private Trip.</td></tr>
               ) : (
                 visibleRows.map((r) => {
                   const busy = actioningId === r.id;
@@ -198,9 +198,9 @@ export default function AdminPrivateTripsList() {
                         </span>
                       </td>
                       <td className="px-6 py-4 font-semibold text-slate-900 max-w-xs truncate">{r.title}</td>
-                      <td className="px-6 py-4 text-slate-500">{r.participantsCount} org</td>
-                      <td className="px-6 py-4 text-slate-500">{r.durationDays} hari</td>
-                      <td className="px-6 py-4 text-slate-500">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString("id-ID") : "-"}</td>
+                      <td className="px-6 py-4 text-muted-foreground">{r.participantsCount} org</td>
+                      <td className="px-6 py-4 text-muted-foreground">{r.durationDays} hari</td>
+                      <td className="px-6 py-4 text-muted-foreground">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString("id-ID") : "-"}</td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${statusStyles[r.status] || "bg-slate-100 text-slate-600"}`}>
                           {r.status}

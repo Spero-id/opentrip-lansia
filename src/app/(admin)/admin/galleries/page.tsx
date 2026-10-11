@@ -62,11 +62,11 @@ export default function AdminGalleries() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Galeri</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola galeri foto dan video per paket trip.</p>
+          <p className="text-sm text-muted-foreground mt-1">Kelola galeri foto dan video per paket trip.</p>
         </div>
         <button
           onClick={openCreate}
-          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Galeri</span>
@@ -76,7 +76,7 @@ export default function AdminGalleries() {
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="px-6 py-4">Judul</th>
                 <th className="px-6 py-4">Trip ID</th>
@@ -87,26 +87,26 @@ export default function AdminGalleries() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">Memuat data...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-400">Belum ada data galeri.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">Belum ada data galeri.</td></tr>
               ) : (
                 rows.map((g) => (
                   <tr key={g.id} className="hover:bg-slate-50/60 transition">
                     <td className="px-6 py-4 font-bold text-slate-900">{g.title || "(tanpa judul)"}</td>
-                    <td className="px-6 py-4 font-mono text-xs text-slate-500">{g.tripId.slice(0, 8)}...</td>
+                    <td className="px-6 py-4 font-mono text-xs text-muted-foreground">{g.tripId.slice(0, 8)}...</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${g.isPrivate ? "bg-yellow-100 text-yellow-700" : "bg-[#1CA6B7]/15 text-[#1CA6B7]"}`}>
                         {g.isPrivate ? "Private" : "Public"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">{g.createdAt ? new Date(g.createdAt).toLocaleDateString("id-ID") : "-"}</td>
+                    <td className="px-6 py-4 text-muted-foreground">{g.createdAt ? new Date(g.createdAt).toLocaleDateString("id-ID") : "-"}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(g)} className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Galeri">
+                        <button onClick={() => openEdit(g)} className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Galeri">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => confirmDelete(g.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(g.id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -143,7 +143,7 @@ export default function AdminGalleries() {
           </label>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50">
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={closeModal}

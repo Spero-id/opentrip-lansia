@@ -50,11 +50,11 @@ export default function FeedbackModal({
             </svg>
           </div>
           <h2 className="text-xl font-bold text-slate-900">Beri Ulasan</h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {tripTitle}
           </p>
           {bookingCode && (
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Kode Booking: {bookingCode}
             </p>
           )}
@@ -112,7 +112,7 @@ export default function FeedbackModal({
               className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary resize-none"
               maxLength={2000}
             />
-            <p className="text-xs text-slate-400 mt-1 text-right">
+            <p className="text-xs text-muted-foreground mt-1 text-right">
               {content.length}/2000
             </p>
           </div>
@@ -128,7 +128,7 @@ export default function FeedbackModal({
             <button
               type="submit"
               disabled={loading || !content.trim()}
-              className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Mengirim..." : "Kirim Ulasan"}
             </button>

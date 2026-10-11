@@ -135,7 +135,7 @@ function PayContent() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-3">
             <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
-            <p className="text-sm text-gray-400">Memuat detail booking...</p>
+            <p className="text-sm text-muted-foreground">Memuat detail booking...</p>
           </div>
         </main>
       </div>
@@ -220,7 +220,7 @@ function PayContent() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-20">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Pembayaran</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Pilih metode pembayaran dan unggah bukti transfer
           </p>
         </div>

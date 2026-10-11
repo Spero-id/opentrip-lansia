@@ -74,14 +74,14 @@ export default function AdminReviews() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Ulasan</h1>
-          <p className="text-sm text-slate-500 mt-1">Moderasi ulasan dan rating dari pengguna.</p>
+          <p className="text-sm text-muted-foreground mt-1">Moderasi ulasan dan rating dari pengguna.</p>
         </div>
       </div>
 
       <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="px-4 py-4">Pengguna</th>
                 <th className="px-4 py-4">Trip & Grup</th>
@@ -93,9 +93,9 @@ export default function AdminReviews() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-400">Memuat data...</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">Memuat data...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-400">Belum ada data ulasan.</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">Belum ada data ulasan.</td></tr>
               ) : (
                 rows.map((r) => (
                   <tr key={r.id} className="hover:bg-slate-50/60 transition">
@@ -106,7 +106,7 @@ export default function AdminReviews() {
                         </div>
                         <div>
                           <p className="text-xs font-semibold text-slate-900">{r.userName || "-"}</p>
-                          <p className="text-[10px] text-slate-500 truncate max-w-[120px]">{r.userEmail || "-"}</p>
+                          <p className="text-[10px] text-muted-foreground truncate max-w-[120px]">{r.userEmail || "-"}</p>
                         </div>
                       </div>
                     </td>
@@ -114,14 +114,14 @@ export default function AdminReviews() {
                       <div className="space-y-1">
                         <p className="text-xs font-semibold text-slate-900 truncate max-w-[150px]">{r.tripTitle || "-"}</p>
                         {r.groupStartDate && (
-                          <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                             <Calendar className="w-3 h-3" />
                             {r.groupStartDate}
                             {r.groupEndDate ? ` - ${r.groupEndDate}` : ""}
                           </div>
                         )}
                         {r.bookingCode && (
-                          <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                             <Hash className="w-3 h-3" />
                             {r.bookingCode}
                           </div>
@@ -141,10 +141,10 @@ export default function AdminReviews() {
                     </td>
                     <td className="px-4 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
-                        <button onClick={() => openEdit(r)} className="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Ulasan">
+                        <button onClick={() => openEdit(r)} className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Ulasan">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => confirmDelete(r.id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(r.id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -175,7 +175,7 @@ export default function AdminReviews() {
           </label>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
-              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50">
+              className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50">
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={closeModal}

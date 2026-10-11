@@ -84,13 +84,13 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard Overview</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Selamat datang di panel admin Jelajah Memoria. Pantau performa bisnis dan pengelolaan destinasi secara real-time.
           </p>
         </div>
         <Link
           href="/admin/trips"
-          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition inline-flex items-center gap-2 shrink-0"
         >
           <span>+ Buat Trip Baru</span>
         </Link>
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
                   className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400">{stat.label}</span>
+                    <span className="text-xs font-semibold text-muted-foreground">{stat.label}</span>
                     <div className={`w-10 h-10 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
                       <Icon className="w-5 h-5" />
                     </div>
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
 
           <div className="overflow-x-auto rounded-2xl border border-slate-100">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+              <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-100">
                 <tr>
                   <th className="px-4 py-3">Kode Booking</th>
                   <th className="px-4 py-3">Pemesan</th>
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
                   ))
                 ) : recentBookings.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                    <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                       Belum ada pemesanan.
                     </td>
                   </tr>
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
                       <tr key={row.id} className="hover:bg-slate-50/60 transition">
                         <td className="px-4 py-3 font-mono font-bold text-slate-900">{row.bookingCode}</td>
                         <td className="px-4 py-3 font-medium">{row.customerName}</td>
-                        <td className="px-4 py-3 text-slate-500">{row.tripName}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{row.tripName}</td>
                         <td className="px-4 py-3 font-bold text-primary">{formatIDRCompact(row.totalAmount)}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${className}`}>
@@ -198,28 +198,28 @@ export default function AdminDashboard() {
               className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
               <span className="font-semibold text-slate-800 group-hover:text-primary">Kelola Paket Trip</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
             </Link>
             <Link
               href="/admin/trips"
               className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
               <span className="font-semibold text-slate-800 group-hover:text-primary">Tambah Trip Baru</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
             </Link>
             <Link
               href="/admin/promotions"
               className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
               <span className="font-semibold text-slate-800 group-hover:text-primary">Buat Kode Kupon / Promo</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
             </Link>
             <Link
               href="/admin/bookings"
               className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
               <span className="font-semibold text-slate-800 group-hover:text-primary">Lihat Semua Pemesanan</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+              <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
             </Link>
           </div>
         </div>

@@ -41,14 +41,13 @@ Centang `[x]` hanya jika SEMUA:
 
 ## Fase 2 — Gerbang keputusan 🔴 (kerjakan setelah keputusan)
 
-- [ ] **2.0 KEPUTUSAN-A**: token hover primary — **59 situs / 35 file** `hover:bg-[#c47d12]`
-      Opsi: (a) tambah `--primary-hover: #c47d12` + utility baru · (b) `hover:bg-primary/85` (beda tipis) · (c) biarkan hex
-- [ ] **2.0b KEPUTUSAN-B**: kategori meta — **487 situs / 89 file** `text-slate/gray-500|400`
-      Konflik: `--muted-foreground` = **`#202020`** (kontras tinggi) vs teks meta yang selama ini `#64748B`-an
-      Opsi: (a) jangan migrasi kategori ini · (b) ubah token ke `~#64748B` · (c) terima teks meta gelap
-- [ ] **2.1** `#c47d12` → hasil KEPUTUSAN-A — **59 / 35**
-- [ ] **2.2** `text-slate/gray-500|400` → `text-muted-foreground` (atau tetap) sesuai KEPUTUSAN-B — **487 / 89**
-- [ ] **2.3** Verifikasi Fase 2 (lint + build + review visual kontras teks meta & hover tombol)
+- [x] **2.0 KEPUTUSAN-A**: token hover primary — **59 situs / 35 file** `hover:bg-[#c47d12]`
+      **Dipilih: (b) `hover:bg-primary/85`** — pakai opacity, tanpa token baru (UX: hover jadi agak pudar)
+- [x] **2.0b KEPUTUSAN-B**: kategori meta — **487 situs / 89 file** `text-slate/gray-500|400`
+      **Dipilih: (c) Terima gelap** — migrasi ke `text-muted-foreground` (`#202020`), kontras tinggi sengaja
+- [x] **2.1** `#c47d12` di className arbitrary → `*-primary/85` — **54 / 35** (3 sisa: konstanta JS & inline style handler, dibiarkan)
+- [x] **2.2** `text-slate/gray-500|400` → `text-muted-foreground` — **487 / 89** ✓
+- [x] **2.3** Verifikasi Fase 2: lint 0E/80W · build sukses · grep 0 sisa di className
 
 ## Fase 3 — Perubahan halus-menengah 🟡🔴
 

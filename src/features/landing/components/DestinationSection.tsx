@@ -102,7 +102,7 @@ export default function DestinationSection() {
               <MapPin size={24} style={{ color: "#F49D1A" }} />
             </div>
             <p className="text-sm font-semibold text-gray-700 mb-1">Belum ada destinasi</p>
-            <p className="text-xs text-gray-400 max-w-xs">
+            <p className="text-xs text-muted-foreground max-w-xs">
               Destinasi menarik akan segera hadir. Pantau terus ya!
             </p>
           </div>
@@ -125,7 +125,7 @@ export default function DestinationSection() {
             <ChevronUp size={20} />
           </button>
 
-          <span className="text-sm font-medium text-gray-400 tabular-nums">
+          <span className="text-sm font-medium text-muted-foreground tabular-nums">
             {currentPage + 1} / {pageCount}
           </span>
 

@@ -55,14 +55,14 @@ export default function PriceBreakdown({
         <div className="flex justify-between items-start text-sm">
           <div>
             <p className="text-gray-600">Tiket wisata</p>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {destination?.title} · {formatIDR(pricePerPax)} ×{" "}
               {pax} peserta
             </p>
             {tierLines && tierLines.length > 0 && (
               <div className="mt-1.5 space-y-0.5">
                 {tierLines.map((line) => (
-                  <p key={line.name} className="text-[11px] text-gray-400">
+                  <p key={line.name} className="text-[11px] text-muted-foreground">
                     {line.name} × {line.qty} = {formatIDR(line.amount)}
                   </p>
                 ))}
@@ -91,7 +91,7 @@ export default function PriceBreakdown({
                 <span className="font-bold text-primary">
                   {appliedVoucher.code}
                 </span>
-                <p className="text-[10px] text-gray-400">
+                <p className="text-[10px] text-muted-foreground">
                   {appliedVoucher.label}
                 </p>
               </div>
@@ -105,7 +105,7 @@ export default function PriceBreakdown({
         <div className="border-t border-gray-100 pt-3 flex justify-between items-end">
           <div>
             <p className="text-sm font-bold text-gray-700">Total Pembayaran</p>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {formatIDR(perPax)} / peserta
             </p>
           </div>
@@ -132,7 +132,7 @@ export default function PriceBreakdown({
               readOnly
               className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-ring/30 pointer-events-none"
             />
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground">
               Saya setuju dengan{" "}
               <button
                 type="button"
@@ -162,7 +162,7 @@ export default function PriceBreakdown({
           <button
             onClick={onNext}
             disabled={!canProceed || !agreeToTerms || isLoading}
-            className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold hover:bg-primary/85 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>

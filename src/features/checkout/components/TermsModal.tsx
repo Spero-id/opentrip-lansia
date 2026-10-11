@@ -156,7 +156,7 @@ export default function TermsModal({
           <h2 className="text-lg font-bold text-gray-900">{content.title}</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-muted-foreground hover:text-gray-600 transition-colors"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
@@ -196,7 +196,7 @@ export default function TermsModal({
           <button
             onClick={() => onAgree()}
             disabled={!hasScrolledToBottom}
-            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-primary/85 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {hasScrolledToBottom
               ? "Saya Setuju"

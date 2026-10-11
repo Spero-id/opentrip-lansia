@@ -57,7 +57,7 @@ export default function TutorialSection() {
               Booking Trip Impian mu Cuma{" "}
               <span className="text-primary">5 Langkah</span>
             </h2>
-            <p className="text-gray-500 mb-8 max-w-sm leading-relaxed">
+            <p className="text-muted-foreground mb-8 max-w-sm leading-relaxed">
               Gak perlu ribet, dari cari destinasi sampe siap berangkat, semua
               bisa kamu lakuin langsung dari HP.
             </p>
@@ -80,7 +80,7 @@ export default function TutorialSection() {
                   <p className="text-sm font-semibold text-gray-900">
                     E-voucher terkirim
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Langsung ke email & WhatsApp
                   </p>
                 </div>
@@ -109,7 +109,7 @@ export default function TutorialSection() {
                       <h3 className="text-lg font-bold text-gray-900 mb-2">
                         {step.title}
                       </h3>
-                      <p className="text-[15px] text-gray-500 leading-relaxed max-w-lg">
+                      <p className="text-[15px] text-muted-foreground leading-relaxed max-w-lg">
                         {step.description}
                       </p>
                     </div>

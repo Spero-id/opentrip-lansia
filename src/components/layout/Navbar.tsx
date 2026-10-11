@@ -137,7 +137,7 @@ export default function Navbar() {
                       <span
                         className={cn(
                           "text-[11px] font-medium",
-                          isScrolled ? "text-white/70" : "text-slate-500"
+                          isScrolled ? "text-white/70" : "text-muted-foreground"
                         )}
                       >
                         {sessionRole === "admin"
@@ -148,7 +148,7 @@ export default function Navbar() {
                       </span>
                     </span>
 
-                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors group-hover:bg-[#c47d12] overflow-hidden">
+                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors group-hover:bg-primary/85 overflow-hidden">
                       <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
                         {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "U"}
                       </span>
@@ -233,7 +233,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/login"
-                    className="bg-primary border border-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-[#c47d12] hover:border-[#c47d12] hover:shadow-xl"
+                    className="bg-primary border border-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-primary/85 hover:border-primary/85 hover:shadow-xl"
                   >
                     Masuk
                   </Link>

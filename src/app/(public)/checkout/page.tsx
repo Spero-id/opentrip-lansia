@@ -71,14 +71,14 @@ function CheckoutContent() {
         {status !== "found" && (
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
             {status === "loading" && (
-              <p className="text-sm text-gray-400">Memuat destinasi...</p>
+              <p className="text-sm text-muted-foreground">Memuat destinasi...</p>
             )}
             {status === "empty" && (
               <>
-                <p className="text-sm text-gray-500 font-semibold mb-1">
+                <p className="text-sm text-muted-foreground font-semibold mb-1">
                   Belum ada destinasi dipilih.
                 </p>
-                <p className="text-xs text-gray-400 mb-4">
+                <p className="text-xs text-muted-foreground mb-4">
                   Silakan pilih destinasi terlebih dahulu.
                 </p>
                 <Link
@@ -91,10 +91,10 @@ function CheckoutContent() {
             )}
             {status === "notfound" && (
               <>
-                <p className="text-sm text-gray-500 font-semibold mb-1">
+                <p className="text-sm text-muted-foreground font-semibold mb-1">
                   Destinasi tidak ditemukan.
                 </p>
-                <p className="text-xs text-gray-400 mb-4">
+                <p className="text-xs text-muted-foreground mb-4">
                   Data destinasi sudah tidak tersedia atau dihapus.
                 </p>
                 <Link
@@ -116,7 +116,7 @@ function CheckoutContent() {
                 {checkout.step === "payment" && "Pembayaran"}
                 {checkout.step === "confirmation" && "Menunggu Verifikasi"}
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 {checkout.step === "details" && "Lengkapi detail perjalanan dan data peserta"}
                 {checkout.step === "payment" && "Pilih metode pembayaran dan unggah bukti transfer"}
                 {checkout.step === "confirmation" && "Bukti transfer Anda sedang diverifikasi admin"}
@@ -143,14 +143,14 @@ function CheckoutContent() {
                   </svg>
                 </div>
                 <p className="text-lg font-semibold text-gray-900 mb-2">Bukti Pembayaran Terkirim!</p>
-                <p className="text-sm text-gray-500 mb-6">
+                <p className="text-sm text-muted-foreground mb-6">
                   Bukti transfer Anda telah <strong className="text-gray-900">tersimpan di akun</strong> dan sedang menunggu verifikasi admin.
                   Seperti aplikasi KAI/tiket lain, bukti booking Anda bisa dilihat kapan saja di halaman <strong className="text-gray-900">Perjalanan Saya</strong>.
                 </p>
 
                 {checkout.proofUrl && (
                   <div className="mb-6 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                    <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Pratinjau Bukti Transfer</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Pratinjau Bukti Transfer</p>
                     <a
                       href={checkout.proofUrl}
                       target="_blank"
@@ -163,12 +163,12 @@ function CheckoutContent() {
                         className="w-full max-h-48 object-contain bg-background rounded-lg border border-gray-200 mx-auto"
                       />
                     </a>
-                    <p className="text-[10px] text-gray-400 mt-1">Klik untuk perbesar</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Klik untuk perbesar</p>
                   </div>
                 )}
 
                 {checkout.orderId && (
-                  <p className="text-xs text-gray-400 mb-6">
+                  <p className="text-xs text-muted-foreground mb-6">
                     Kode Booking: <span className="font-mono font-bold text-primary">{checkout.orderId}</span>
                   </p>
                 )}
@@ -176,7 +176,7 @@ function CheckoutContent() {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Link
                     href="/my-trips"
-                    className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors"
+                    className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold hover:bg-primary/85 transition-colors"
                   >
                     Lihat di Perjalanan Saya
                   </Link>
@@ -204,7 +204,7 @@ export default function CheckoutPage() {
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
           <div className="flex flex-col items-center gap-3">
             <div className="w-10 h-10 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-            <p className="text-sm font-semibold text-gray-500">Memuat halaman checkout...</p>
+            <p className="text-sm font-semibold text-muted-foreground">Memuat halaman checkout...</p>
           </div>
         </div>
       }

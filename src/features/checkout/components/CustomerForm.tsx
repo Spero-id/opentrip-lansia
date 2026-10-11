@@ -50,7 +50,7 @@ export default function CustomerForm({
   return (
     <div className="space-y-5">
       <div>
-        <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
           Nama Lengkap Peserta <span className="text-red-400">*</span>
         </label>
         <input
@@ -63,7 +63,7 @@ export default function CustomerForm({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
           Tanggal Lahir <span className="text-red-400">*</span>
         </label>
         <input
@@ -80,7 +80,7 @@ export default function CustomerForm({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
           Nomor WhatsApp / HP Aktif Peserta <span className="text-red-400">*</span>
         </label>
         <input
@@ -93,7 +93,7 @@ export default function CustomerForm({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
           Alamat Rumah Sekarang <span className="text-red-400">*</span>
         </label>
         <textarea
@@ -107,7 +107,7 @@ export default function CustomerForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+          <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
             Nama Kontak Darurat (Anak/Keluarga Terdekat) <span className="text-red-400">*</span>
           </label>
           <input
@@ -119,7 +119,7 @@ export default function CustomerForm({
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+          <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
             Nomor HP Kontak Darurat <span className="text-red-400">*</span>
           </label>
           <input
@@ -133,7 +133,7 @@ export default function CustomerForm({
       </div>
 
       <div className="border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
-        <label className="block text-xs font-semibold text-gray-500 mb-3">
+        <label className="block text-xs font-semibold text-muted-foreground mb-3">
           Riwayat Penyakit Bawaan <span className="text-red-400">*</span>
         </label>
         <div className="space-y-2.5">
@@ -171,10 +171,10 @@ export default function CustomerForm({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
           Daftar Obat-obatan Pribadi yang Wajib Dikonsumsi
         </label>
-        <p className="text-xs text-gray-400 mb-2">
+        <p className="text-xs text-muted-foreground mb-2">
           Tuliskan jenis obat bawaan jika ada. Tulis &quot;Tidak ada&quot; jika tidak membawa obat khusus.
         </p>
         <textarea
@@ -187,7 +187,7 @@ export default function CustomerForm({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-gray-500 mb-3">
+        <label className="block text-xs font-semibold text-muted-foreground mb-3">
           Alat Bantu Mobilitas yang Digunakan (Jika Ada)
         </label>
         <div className="space-y-2.5">

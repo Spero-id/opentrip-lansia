@@ -102,7 +102,7 @@ export default function LoginPage() {
         <div className="relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-[2.5rem] lg:rounded-none p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
-            className="hidden lg:inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-900 transition-colors mb-8 self-end"
+            className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-gray-900 transition-colors mb-8 self-end"
           >
             <ArrowLeft size={14} />
             Kembali ke Website
@@ -111,7 +111,7 @@ export default function LoginPage() {
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 pt-15 sm:pt-0 mb-2">
             Selamat Datang Kembali!
           </h1>
-          <p className="text-gray-500 text-sm mb-8">
+          <p className="text-muted-foreground text-sm mb-8">
             Masuk untuk mulai merencanakan trip berikutnya.
           </p>
 
@@ -132,7 +132,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Masukkan email kamu"
                 required
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
               />
             </div>
 
@@ -147,12 +147,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan password kamu"
                   required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -186,7 +186,7 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-3 my-3 sm:my-7">
             <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-[13px] text-gray-400">
+            <span className="text-[13px] text-muted-foreground">
               Atau lanjutkan dengan
             </span>
             <div className="flex-1 h-px bg-gray-100" />
@@ -221,7 +221,7 @@ export default function LoginPage() {
               : "Masuk dengan Google"}
           </button>
 
-          <p className="text-center text-sm text-gray-500 mt-4 sm:mt-8">
+          <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-8">
             Belum punya akun?{" "}
             <a
               href={

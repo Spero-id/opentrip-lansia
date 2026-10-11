@@ -59,7 +59,7 @@ export default function PaymentStep({
               checkout.isLoading ||
               accountsStatus === "loading"
             }
-            className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-primary/85 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {checkout.isLoading ? (
               <>
@@ -120,7 +120,7 @@ function PaymentSelector({
     <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Metode Pembayaran</h2>
-        <p className="text-xs text-gray-400 mt-0.5">
+        <p className="text-xs text-muted-foreground mt-0.5">
           Pilih salah satu metode pembayaran di bawah ini.
         </p>
       </div>
@@ -153,7 +153,7 @@ function PaymentSelector({
               </div>
               <div>
                 <p className="text-sm font-bold text-gray-900">BCA</p>
-                <p className="text-[11px] text-gray-500">Transfer Bank BCA</p>
+                <p className="text-[11px] text-muted-foreground">Transfer Bank BCA</p>
               </div>
             </div>
             <span className="w-5 h-5 rounded-full flex items-center justify-center"
@@ -188,7 +188,7 @@ function PaymentSelector({
             </div>
             <div>
               <p className="text-sm font-bold text-gray-900">QRIS</p>
-              <p className="text-[11px] text-gray-500">Scan QRIS untuk pembayaran</p>
+              <p className="text-[11px] text-muted-foreground">Scan QRIS untuk pembayaran</p>
             </div>
           </div>
           <span className="w-5 h-5 rounded-full flex items-center justify-center"
@@ -212,7 +212,7 @@ function PaymentSelector({
               height={200}
               className="mx-auto object-contain rounded-lg bg-background p-2"
             />
-            <p className="text-[11px] text-gray-400 mt-2">Scan kode QR di atas menggunakan aplikasi e-wallet/banking</p>
+            <p className="text-[11px] text-muted-foreground mt-2">Scan kode QR di atas menggunakan aplikasi e-wallet/banking</p>
           </div>
         )}
       </div>
@@ -244,19 +244,19 @@ function AccountCard({ account }: { account: PaymentAccountLike }) {
       <p className="text-xs font-bold text-gray-900">Transfer ke:</p>
       {bankName && (
         <div className="flex justify-between text-xs">
-          <span className="text-gray-500">Bank</span>
+          <span className="text-muted-foreground">Bank</span>
           <span className="font-semibold text-gray-800">{bankName}</span>
         </div>
       )}
       {accountHolder && (
         <div className="flex justify-between text-xs">
-          <span className="text-gray-500">Atas Nama</span>
+          <span className="text-muted-foreground">Atas Nama</span>
           <span className="font-semibold text-gray-800">{accountHolder}</span>
         </div>
       )}
       {accountNumber && (
         <div className="flex justify-between gap-2 text-xs bg-background rounded-lg px-3 py-2">
-          <span className="text-gray-500">Nomor</span>
+          <span className="text-muted-foreground">Nomor</span>
           <div className="flex items-center gap-2">
             <span className="font-mono font-bold text-primary tracking-wide">{accountNumber}</span>
             <button
@@ -311,7 +311,7 @@ function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> 
     <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Bukti Transfer</h2>
-        <p className="text-xs text-gray-400 mt-0.5">
+        <p className="text-xs text-muted-foreground mt-0.5">
           Upload bukti transfer senilai total pembayaran di atas.
         </p>
       </div>
@@ -336,12 +336,12 @@ function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> 
           {uploading ? (
             <div className="w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
           ) : (
-            <Upload className="w-6 h-6 text-gray-400" />
+            <Upload className="w-6 h-6 text-muted-foreground" />
           )}
           <span className="text-xs font-semibold text-gray-600">
             {uploading ? "Mengupload..." : "Klik untuk upload bukti transfer"}
           </span>
-          <span className="text-[11px] text-gray-400">JPG, PNG, WEBP — maksimal 5MB</span>
+          <span className="text-[11px] text-muted-foreground">JPG, PNG, WEBP — maksimal 5MB</span>
         </label>
       )}
 
