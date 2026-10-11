@@ -71,7 +71,8 @@ function FormField({
     onChange?.(val)
   }
 
-  const InputComponent = () => {
+  // Extract InputComponent logic to avoid creating component during render
+  const renderInput = () => {
     switch (type) {
       case "textarea":
         return (
@@ -178,7 +179,7 @@ function FormField({
         {label}
         {required && <span className="text-destructive ml-1" aria-hidden="true">*</span>}
       </Label>
-      <InputComponent />
+      {renderInput()}
       {description && (
         <p id={descriptionId} className="text-xs text-muted-foreground">
           {description}
