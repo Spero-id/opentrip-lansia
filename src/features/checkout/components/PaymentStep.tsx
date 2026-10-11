@@ -261,7 +261,7 @@ function AccountCard({ account }: { account: PaymentAccountLike }) {
             <span className="font-mono font-bold text-primary tracking-wide">{accountNumber}</span>
             <button
               onClick={copy}
-              className="text-[11px] font-semibold text-[#1CA6B7] hover:underline"
+              className="text-[11px] font-semibold text-[#1CA6B7] hover:underline rounded-md"
             >
               {copied ? "Tersalin" : "Salin"}
             </button>
@@ -325,7 +325,7 @@ function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> 
           />
           <button
             onClick={removeProof}
-            className="text-xs font-semibold text-destructive hover:underline"
+            className="text-xs font-semibold text-destructive hover:underline rounded-md"
           >
             Hapus Bukti
           </button>

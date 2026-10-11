@@ -161,7 +161,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs text-primary hover:text-[#E08A0E] font-medium"
+                        className="text-xs text-primary hover:text-[#E08A0E] font-medium rounded-md"
                       >
                         Tandai semua dibaca
                       </button>

@@ -214,7 +214,7 @@ export default function CustomerForm({
       <button
         type="button"
         onClick={onAutofill}
-        className="text-xs text-primary font-semibold hover:underline"
+        className="text-xs text-primary font-semibold hover:underline rounded-md"
       >
         Isi data contoh (Autofill)
       </button>

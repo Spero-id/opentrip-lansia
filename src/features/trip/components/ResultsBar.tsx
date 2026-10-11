@@ -20,7 +20,7 @@ export default function ResultsBar({ count, hasActiveFilters, onReset }: Results
       {hasActiveFilters && (
         <button
           onClick={onReset}
-          className="text-xs font-semibold text-primary underline"
+          className="text-xs font-semibold text-primary underline rounded-md"
         >
           Reset filter
         </button>
