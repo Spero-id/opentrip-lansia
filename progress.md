@@ -2638,3 +2638,22 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 - **Keputusan pull (A)**: `globals.css` lokal (TweakCN, 11 Okt) menang atas eksperimen main; `progress.md` digabung — Session 86 main (Resend, 10-09) dipertahankan, entri ini menjadi **Session 87** (sebelumnya tertulis 86, bentrok penomoran).
 - Verifikasi sejauh ini: lint **0E/80W** (baseline) · CSS dev: `.bg-primary → #f49d1a`, `.font-sans` valid, `.rounded-lg → var(--radius)` 8px, `body letter-spacing` aktif, `.bg-secondary` tetap netral `#fdfdfd`.
 - **Hasil akhir setelah merge (`8aee1cb`)**: `npm install` sinkron dengan lock baru (`resend ^6.32.1` masuk, nodemailer keluar) · `npm run build` **sukses** (daftar route normal) · lint pasca-merge **0E/80W** · CSS prod: `.bg-primary → var(--primary)` = `#f49d1a`, `.font-sans` valid, `body{letter-spacing:var(--tracking-normal)}` aktif · konflik pull diselesaikan: `globals.css` = ours (TweakCN, keputusan A), `progress.md` = gabungan (86 Resend + 87 ini) · tree bersih, siap untuk `./init.sh` sesi berikutnya.
+
+## Session 88 Final — Button Rounded Audit Complete
+
+**Button Native Audit Result:**
+- Total native `<button>`: 255 across 79 files
+- Already had rounded: 96
+- Added `rounded-md` safely: 18 (buttons with no className)
+- Complex cases needing manual review: 146 (template literals `className={\`...\`}` or expressions `className={...}`)
+- 3 expression buttons in common components already have rounded in their variable definitions (confirm-action, MobileMenu, sidebar)
+
+**Automated Fix Limitation:** Regex/state-machine parser cannot safely handle:
+- Template literal classNames: `className={\`px-4 py-2 \${condition}...\`}`
+- JSX expression classNames: `className={variable}` or `className={condition ? 'a' : 'b'}`
+- Mixed static + dynamic classNames
+
+**Recommendation for Next Session:** Manual review of 146 complex buttons → add `rounded-md` to className template literals, or convert to ShadCN `<Button>` component.
+
+**Branch:** `refactor/tokenisasi-fase1` (PR #135)
+**Verified:** `npm run lint` 0E/80W · `npm run build` success · `tsc --noEmit` 0 errors
