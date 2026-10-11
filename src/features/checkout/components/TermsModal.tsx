@@ -152,11 +152,11 @@ export default function TermsModal({
         onClick={onClose}
       />
       <div className="relative bg-background rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] max-h-[600px] flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0 bg-background z-10">
-          <h2 className="text-lg font-bold text-gray-900">{content.title}</h2>
+        <div className="flex items-center justify-between p-5 border-b border-border shrink-0 bg-background z-10">
+          <h2 className="text-lg font-bold text-foreground">{content.title}</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-muted-foreground hover:text-gray-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-gray-600 transition-colors"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
@@ -176,7 +176,7 @@ export default function TermsModal({
           >
             {content.sections.map((section, i) => (
               <div key={i}>
-                <h3 className="font-bold text-gray-900 mb-2">{section.title}</h3>
+                <h3 className="font-bold text-foreground mb-2">{section.title}</h3>
                 <p>{section.content}</p>
               </div>
             ))}
@@ -192,7 +192,7 @@ export default function TermsModal({
           )}
         </div>
 
-        <div className="border-t border-gray-100 p-4 shrink-0 bg-background z-10">
+        <div className="border-t border-border p-4 shrink-0 bg-background z-10">
           <button
             onClick={() => onAgree()}
             disabled={!hasScrolledToBottom}

@@ -58,7 +58,7 @@ function getNotificationIcon(type: string) {
     case "booking_confirmed":
       return <CheckCircle className="w-5 h-5 text-emerald-600" />;
     case "booking_cancelled":
-      return <X className="w-5 h-5 text-red-500" />;
+      return <X className="w-5 h-5 text-destructive" />;
     default:
       return <AlertCircle className="w-5 h-5 text-muted-foreground" />;
   }
@@ -79,7 +79,7 @@ function getNotificationBadge(type: string) {
     case "booking_cancelled":
       return { label: "Dibatalkan", className: "bg-red-50 text-red-700 border-red-200" };
     default:
-      return { label: "Update", className: "bg-slate-50 text-slate-600 border-slate-200" };
+      return { label: "Update", className: "bg-muted text-slate-600 border-border" };
   }
 }
 
@@ -166,9 +166,9 @@ export default function AdminNotifications() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Notifikasi</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Notifikasi</h1>
           <p className="text-sm text-muted-foreground mt-1">Pantau bukti pembayaran, request private trip, dan peserta baru.</p>
         </div>
         {unreadCount > 0 && (
@@ -189,25 +189,25 @@ export default function AdminNotifications() {
         </div>
       )}
 
-      <div className="flex items-center gap-2 bg-background p-2 rounded-2xl border border-slate-200/80 shadow-xs w-fit">
+      <div className="flex items-center gap-2 bg-background p-2 rounded-2xl border border-border/80 shadow-xs w-fit">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${filter === "all" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-slate-100"}`}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${filter === "all" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted"}`}
         >
           Semua
         </button>
         <button
           onClick={() => setFilter("unread")}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition inline-flex items-center gap-1.5 ${filter === "unread" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-slate-100"}`}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition inline-flex items-center gap-1.5 ${filter === "unread" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted"}`}
         >
           Belum Dibaca
           {unreadCount > 0 && (
-            <span className={`min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1 ${filter === "unread" ? "bg-background/20 text-white" : "bg-red-500 text-white"}`}>{unreadCount}</span>
+            <span className={`min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1 ${filter === "unread" ? "bg-background/20 text-white" : "bg-destructive text-white"}`}>{unreadCount}</span>
           )}
         </button>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="px-6 py-16 text-center">
             <Loader2 className="w-8 h-8 text-slate-300 mx-auto mb-3 animate-spin" />
@@ -227,17 +227,17 @@ export default function AdminNotifications() {
                 <div
                   key={notification.id}
                   onClick={() => handleClick(notification)}
-                  className={`px-4 sm:px-6 py-4 hover:bg-slate-50/60 cursor-pointer transition ${!notification.isRead ? "bg-primary/[0.03]" : ""}`}
+                  className={`px-4 sm:px-6 py-4 hover:bg-muted/60 cursor-pointer transition ${!notification.isRead ? "bg-primary/[0.03]" : ""}`}
                 >
                   <div className="flex items-start gap-4">
                     <div className="mt-0.5 shrink-0">
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${!notification.isRead ? "bg-primary/10" : "bg-slate-100"}`}>{getNotificationIcon(notification.type)}</div>
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${!notification.isRead ? "bg-primary/10" : "bg-muted"}`}>{getNotificationIcon(notification.type)}</div>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className={`text-sm truncate ${!notification.isRead ? "font-bold text-slate-900" : "font-semibold text-slate-700"}`}>{notification.title}</p>
+                            <p className={`text-sm truncate ${!notification.isRead ? "font-bold text-foreground" : "font-semibold text-slate-700"}`}>{notification.title}</p>
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${badge.className}`}>{badge.label}</span>
                             {!notification.isRead && <span className="w-2 h-2 rounded-full bg-primary shrink-0" />}
                           </div>
@@ -252,7 +252,7 @@ export default function AdminNotifications() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3 mt-2 flex-wrap">
-                        {notification.bookingCode ? <span className="text-[11px] font-mono font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">{notification.bookingCode}</span> : null}
+                        {notification.bookingCode ? <span className="text-[11px] font-mono font-semibold text-slate-600 bg-muted px-2 py-0.5 rounded-md">{notification.bookingCode}</span> : null}
                         <span className="text-[10px] text-slate-300 hidden sm:inline">{formatDate(notification.createdAt)}</span>
                       </div>
                     </div>

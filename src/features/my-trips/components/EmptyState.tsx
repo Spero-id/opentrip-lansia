@@ -6,7 +6,7 @@ import { Luggage } from "lucide-react";
 export default function EmptyState({ type }: { type: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
         <Luggage className="w-8 h-8 text-gray-300" />
       </div>
       <p className="text-sm font-semibold text-muted-foreground mb-1">

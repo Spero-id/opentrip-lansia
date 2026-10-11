@@ -68,7 +68,7 @@ export default function DestinationDetailPage({ params }: { params: Promise<{ id
   const shortLocation = getShortLocation(dest.location);
 
   return (
-    <div className="min-h-screen bg-background text-gray-900 selection:bg-primary/30">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
       {lightboxIndex !== null && (
         <Lightbox
           images={images}
@@ -91,7 +91,7 @@ export default function DestinationDetailPage({ params }: { params: Promise<{ id
 
       <div className="pt-4 pb-4 px-4 sm:px-8 max-w-7xl mx-auto">
         <DestinationHeader dest={dest} />
-        <Suspense fallback={<div className="h-[30vh] min-h-[200px] rounded-3xl bg-gray-100" />}>
+        <Suspense fallback={<div className="h-[30vh] min-h-[200px] rounded-3xl bg-muted" />}>
           <DestinationGallery
             images={images}
             title={dest.title}

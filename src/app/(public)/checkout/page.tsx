@@ -66,7 +66,7 @@ function CheckoutContent() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background font-sans text-gray-900">
+    <div className="flex flex-col min-h-screen bg-background font-sans text-foreground">
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-20">
         {status !== "found" && (
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
@@ -111,7 +111,7 @@ function CheckoutContent() {
         {status === "found" && (
           <>
             <div className="mb-6 sm:mb-8">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                 {checkout.step === "details" && "Konfirmasi Pemesanan"}
                 {checkout.step === "payment" && "Pembayaran"}
                 {checkout.step === "confirmation" && "Menunggu Verifikasi"}
@@ -124,7 +124,7 @@ function CheckoutContent() {
             </div>
 
             {checkout.step !== "confirmation" && (
-              <div className="bg-background border border-gray-100 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 shadow-sm">
+              <div className="bg-background border border-border rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 shadow-sm">
                 <StepProgress currentStep={checkout.step} />
               </div>
             )}
@@ -142,14 +142,14 @@ function CheckoutContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <p className="text-lg font-semibold text-gray-900 mb-2">Bukti Pembayaran Terkirim!</p>
+                <p className="text-lg font-semibold text-foreground mb-2">Bukti Pembayaran Terkirim!</p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Bukti transfer Anda telah <strong className="text-gray-900">tersimpan di akun</strong> dan sedang menunggu verifikasi admin.
-                  Seperti aplikasi KAI/tiket lain, bukti booking Anda bisa dilihat kapan saja di halaman <strong className="text-gray-900">Perjalanan Saya</strong>.
+                  Bukti transfer Anda telah <strong className="text-foreground">tersimpan di akun</strong> dan sedang menunggu verifikasi admin.
+                  Seperti aplikasi KAI/tiket lain, bukti booking Anda bisa dilihat kapan saja di halaman <strong className="text-foreground">Perjalanan Saya</strong>.
                 </p>
 
                 {checkout.proofUrl && (
-                  <div className="mb-6 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <div className="mb-6 p-3 bg-muted rounded-xl border border-border">
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Pratinjau Bukti Transfer</p>
                     <a
                       href={checkout.proofUrl}
@@ -160,7 +160,7 @@ function CheckoutContent() {
                       <img
                         src={checkout.proofUrl}
                         alt="Bukti transfer"
-                        className="w-full max-h-48 object-contain bg-background rounded-lg border border-gray-200 mx-auto"
+                        className="w-full max-h-48 object-contain bg-background rounded-lg border border-border mx-auto"
                       />
                     </a>
                     <p className="text-[10px] text-muted-foreground mt-1">Klik untuk perbesar</p>
@@ -182,7 +182,7 @@ function CheckoutContent() {
                   </Link>
                   <button
                     onClick={() => router.push("/")}
-                    className="px-6 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-6 py-3 border border-border rounded-xl text-sm font-semibold text-gray-700 hover:bg-muted transition-colors"
                   >
                     Kembali ke Beranda
                   </button>
@@ -201,7 +201,7 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex items-center justify-center min-h-screen bg-muted">
           <div className="flex flex-col items-center gap-3">
             <div className="w-10 h-10 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
             <p className="text-sm font-semibold text-muted-foreground">Memuat halaman checkout...</p>

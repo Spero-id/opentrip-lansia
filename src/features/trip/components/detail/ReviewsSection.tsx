@@ -51,7 +51,7 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
 
   if (reviews.length === 0) {
     return (
-      <div className="py-12 text-center rounded-2xl border border-dashed border-gray-200 bg-gray-50">
+      <div className="py-12 text-center rounded-2xl border border-dashed border-border bg-muted">
         <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-3">
           <Star size={22} className="text-primary" />
         </div>
@@ -68,9 +68,9 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+      <div className="flex items-center gap-3 pb-4 border-b border-border">
         <div className="flex items-baseline gap-1">
-          <span className="text-3xl font-bold text-gray-900">{Number(avgRating).toFixed(1)}</span>
+          <span className="text-3xl font-bold text-foreground">{Number(avgRating).toFixed(1)}</span>
           <span className="text-sm text-muted-foreground">/ 5</span>
         </div>
         <div>
@@ -83,14 +83,14 @@ export default function ReviewsSection({ tripId }: { tripId: string }) {
 
       <div className="space-y-4">
         {reviews.map((r) => (
-          <div key={r.id} className="bg-background rounded-2xl border border-gray-100 p-5 shadow-xs">
+          <div key={r.id} className="bg-background rounded-2xl border border-border p-5 shadow-xs">
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-primary/15 text-primary flex items-center justify-center text-sm font-bold shrink-0">
                   {getInitial(r.userName)}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{r.userName || "Pengguna"}</p>
+                  <p className="text-sm font-semibold text-foreground">{r.userName || "Pengguna"}</p>
                   <p className="text-xs text-muted-foreground">{formatDate(r.createdAt)}</p>
                 </div>
               </div>

@@ -13,7 +13,7 @@ export default function DestinationListHeader({ search, setSearch }: Destination
       <p className="text-primary font-semibold text-sm tracking-wide mb-2">
         JELAJAHI INDONESIA
       </p>
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+      <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
         Semua <span className="text-primary">Destinasi</span>
       </h1>
       <SearchBar

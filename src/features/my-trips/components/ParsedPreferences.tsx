@@ -18,13 +18,13 @@ export default function ParsedPreferences({ text }: { text?: string | null }) {
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
             {sec.title}
           </p>
-          <div className="rounded-xl border border-gray-100 overflow-hidden">
+          <div className="rounded-xl border border-border overflow-hidden">
             {sec.rows.map((row, ri) => (
               <div
                 key={ri}
-                className={`flex text-xs ${ri % 2 === 0 ? "bg-gray-50" : "bg-background"}`}
+                className={`flex text-xs ${ri % 2 === 0 ? "bg-muted" : "bg-background"}`}
               >
-                <span className="w-40 shrink-0 px-3 py-2 text-muted-foreground font-medium border-r border-gray-100">
+                <span className="w-40 shrink-0 px-3 py-2 text-muted-foreground font-medium border-r border-border">
                   {row.key}
                 </span>
                 <span className="px-3 py-2 text-gray-800 font-semibold flex-1 min-w-0 break-words">

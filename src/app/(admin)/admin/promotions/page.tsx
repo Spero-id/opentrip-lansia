@@ -100,9 +100,9 @@ export default function AdminPromotions() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Kode Promo</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Manajemen Kode Promo</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola kupon diskon dan potongan harga untuk pengguna Jelajah Memoria.</p>
         </div>
         <button
@@ -114,10 +114,10 @@ export default function AdminPromotions() {
         </button>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Kode Kupon</th>
                 <th className="px-6 py-4">Tipe Diskon</th>
@@ -134,10 +134,10 @@ export default function AdminPromotions() {
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">Belum ada data promo.</td></tr>
               ) : (
                 rows.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/60 transition">
+                  <tr key={p.id} className="hover:bg-muted/60 transition">
                     <td className="px-6 py-4 font-mono font-bold text-primary">{p.code}</td>
                     <td className="px-6 py-4 text-muted-foreground font-medium capitalize">{p.type}</td>
-                    <td className="px-6 py-4 font-bold text-slate-900">{p.value}</td>
+                    <td className="px-6 py-4 font-bold text-foreground">{p.value}</td>
                     <td className="px-6 py-4 text-muted-foreground">{p.usageCount} / {p.usageLimit || "∞"}</td>
                     <td className="px-6 py-4">
                       {p.isActive ? (
@@ -145,7 +145,7 @@ export default function AdminPromotions() {
                           <CheckCircle2 className="w-3 h-3" /> Aktif
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-1 bg-muted text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold">
                           <XCircle className="w-3 h-3" /> Non-Aktif
                         </span>
                       )}
@@ -155,7 +155,7 @@ export default function AdminPromotions() {
                         <button onClick={() => openEdit(p)} className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Promo">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => confirmDelete(p.id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(p.id)} className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -174,12 +174,12 @@ export default function AdminPromotions() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Kode Kupon</label>
               <input name="code" value={form.code} onChange={handleChange} required
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Tipe Diskon</label>
               <select name="type" value={form.type} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
                 <option value="percentage">Persentase</option>
                 <option value="nominal">Nominal</option>
               </select>
@@ -189,41 +189,41 @@ export default function AdminPromotions() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Nilai Diskon</label>
               <input name="value" value={form.value} onChange={handleChange} required
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                 placeholder={form.type === "percentage" ? "20 atau 20%" : "100000"} />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Judul Promo</label>
               <input name="title" value={form.title} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Min. Pembelian</label>
               <input name="minPurchase" value={form.minPurchase} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Maks. Diskon</label>
               <input name="maxDiscount" value={form.maxDiscount} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Batas Pemakaian</label>
               <input name="usageLimit" type="number" value={form.usageLimit ?? ""} onChange={e => setForm(prev => ({ ...prev, usageLimit: e.target.value ? Number(e.target.value) : null }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" min={0} />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" min={0} />
             </div>
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isActive" type="checkbox" checked={form.isActive} onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-ring/30" />
+              className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30" />
             <span className="font-medium text-slate-700">Aktif</span>
           </label>
           {saveError && (
-            <p className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{saveError}</p>
+            <p className="text-xs font-semibold text-destructive bg-red-50 border border-red-100 rounded-xl px-3 py-2">{saveError}</p>
           )}
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
@@ -231,7 +231,7 @@ export default function AdminPromotions() {
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={closeModal}
-              className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+              className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition">
               Batal
             </button>
           </div>

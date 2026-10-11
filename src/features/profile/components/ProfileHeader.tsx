@@ -7,7 +7,7 @@ export default function ProfileHeader({ user }: { user?: ProfileUser | null }) {
   const isAdmin = user?.role === "admin";
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-background shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
       <div className="h-24 bg-[#FEF6E7] sm:h-28">
         <div className="absolute -right-6 -top-8 h-32 w-32 rounded-full bg-primary/10" />
         <div className="absolute -bottom-10 right-16 h-24 w-24 rounded-full bg-primary/10" />
@@ -34,7 +34,7 @@ export default function ProfileHeader({ user }: { user?: ProfileUser | null }) {
       <div className="px-5 pb-6 pt-4 sm:px-7">
         <div className="flex items-end justify-between gap-3 pl-20 sm:pl-24">
           <div className="min-w-0">
-            <h1 className="truncate text-xl font-bold text-slate-900 sm:text-2xl">
+            <h1 className="truncate text-xl font-bold text-foreground sm:text-2xl">
               {user?.name}
             </h1>
             <p className="mt-0.5 truncate text-sm text-muted-foreground">
@@ -45,7 +45,7 @@ export default function ProfileHeader({ user }: { user?: ProfileUser | null }) {
             className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
               isAdmin
                 ? "bg-[#FEF6E7] text-primary/85"
-                : "bg-slate-100 text-muted-foreground"
+                : "bg-muted text-muted-foreground"
             }`}
           >
             {isAdmin ? "Admin" : "Member"}

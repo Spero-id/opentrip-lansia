@@ -36,7 +36,7 @@ export default function ProposalCard({
   if (requestStatus !== "revision" && proposal.status !== "pending") return null;
 
   return (
-    <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-3">
+    <div className="bg-background rounded-xl border border-border p-4 space-y-3">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Proposal</p>
@@ -44,7 +44,7 @@ export default function ProposalCard({
             Estimasi Harga: {formatIDR(proposal.estimatedPrice)}
           </p>
         </div>
-        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${PROPOSAL_COLOR[proposal.status] || "bg-gray-100 text-gray-600"}`}>
+        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${PROPOSAL_COLOR[proposal.status] || "bg-muted text-gray-600"}`}>
           {PROPOSAL_LABEL[proposal.status] || proposal.status}
         </span>
       </div>
@@ -68,7 +68,7 @@ export default function ProposalCard({
       {proposal.status === "pending" && (
         <div className="flex gap-2 pt-1">
           <button onClick={() => handleAction("accept")} disabled={loading} className="flex-1 bg-emerald-500 text-white text-xs font-bold py-2 rounded-lg hover:bg-emerald-600 disabled:opacity-40 transition">Terima</button>
-          <button onClick={() => handleAction("reject")} disabled={loading} className="flex-1 bg-red-500 text-white text-xs font-bold py-2 rounded-lg hover:bg-red-600 disabled:opacity-40 transition">Tolak</button>
+          <button onClick={() => handleAction("reject")} disabled={loading} className="flex-1 bg-destructive text-white text-xs font-bold py-2 rounded-lg hover:bg-destructive disabled:opacity-40 transition">Tolak</button>
           <button onClick={() => handleAction("revise")} disabled={loading} className="flex-1 bg-amber-500 text-white text-xs font-bold py-2 rounded-lg hover:bg-amber-600 disabled:opacity-40 transition">Revisi</button>
         </div>
       )}
@@ -80,7 +80,7 @@ export default function ProposalCard({
             onChange={(e) => setNote(e.target.value)}
             placeholder="Catatan revisi..."
             rows={2}
-            className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-ring/30 resize-none"
+            className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-ring/30 resize-none"
           />
           <button
             onClick={() => handleAction("propose")}

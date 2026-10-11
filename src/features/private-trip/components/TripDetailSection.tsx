@@ -82,7 +82,7 @@ export default function TripDetailSection({
                   className={`flex-1 flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer transition-colors ${
                     active
                       ? "border-primary bg-[#FFFBEB]/50"
-                      : "border-[#D1D5DB] bg-background hover:bg-gray-50"
+                      : "border-[#D1D5DB] bg-background hover:bg-muted"
                   }`}
                 >
                   <input
@@ -122,7 +122,7 @@ export default function TripDetailSection({
                 className={`${baseInput} ${errors.customTripName ? errorBorder : normalBorder}`}
               />
               {errors.customTripName && (
-                <p className="text-xs text-red-500 mt-1.5">{errors.customTripName}</p>
+                <p className="text-xs text-destructive mt-1.5">{errors.customTripName}</p>
               )}
             </div>
           )}
@@ -144,7 +144,7 @@ export default function TripDetailSection({
                 </button>
               </div>
               {errors.selectedDestinasi && (
-                <p className="text-xs text-red-500 mt-1.5">{errors.selectedDestinasi}</p>
+                <p className="text-xs text-destructive mt-1.5">{errors.selectedDestinasi}</p>
               )}
               {form.selectedDestinasi && (
                 <div className="mt-1.5">
@@ -221,7 +221,7 @@ export default function TripDetailSection({
               </span>
             </div>
             {errors.jumlahPeserta && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.jumlahPeserta}</p>
+              <p className="text-xs text-destructive mt-1.5">{errors.jumlahPeserta}</p>
             )}
           </div>
 
@@ -269,7 +269,7 @@ export default function TripDetailSection({
               </span>
             </div>
             {errors.durasi && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.durasi}</p>
+              <p className="text-xs text-destructive mt-1.5">{errors.durasi}</p>
             )}
           </div>
         </div>
@@ -287,7 +287,7 @@ export default function TripDetailSection({
                 min={todayStr}
                 onChange={(e) => set("tanggal", e.target.value)}
                 disabled={form.tanggalFleksibel}
-                className={`${baseInput} ${form.tanggalFleksibel ? "bg-gray-100 text-muted-foreground cursor-not-allowed" : ""} ${errors.tanggal ? errorBorder : normalBorder}`}
+                className={`${baseInput} ${form.tanggalFleksibel ? "bg-muted text-muted-foreground cursor-not-allowed" : ""} ${errors.tanggal ? errorBorder : normalBorder}`}
               />
             </div>
             <label className="inline-flex items-center gap-2 mt-1.5 cursor-pointer group">
@@ -316,7 +316,7 @@ export default function TripDetailSection({
               </span>
             </label>
             {errors.tanggal && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.tanggal}</p>
+              <p className="text-xs text-destructive mt-1.5">{errors.tanggal}</p>
             )}
           </div>
 
@@ -333,7 +333,7 @@ export default function TripDetailSection({
               className={`${baseInput} mt-1.5 ${errors.meetingPoint ? errorBorder : normalBorder}`}
             />
             {errors.meetingPoint && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.meetingPoint}</p>
+              <p className="text-xs text-destructive mt-1.5">{errors.meetingPoint}</p>
             )}
           </div>
         </div>
@@ -353,7 +353,7 @@ export default function TripDetailSection({
                   className={`flex-1 flex flex-col gap-1.5 px-4 py-3 rounded-lg border cursor-pointer transition-colors text-left ${
                     active
                       ? "border-primary bg-[#FFFBEB]/50"
-                      : "border-[#D1D5DB] bg-background hover:bg-gray-50"
+                      : "border-[#D1D5DB] bg-background hover:bg-muted"
                   }`}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -385,7 +385,7 @@ export default function TripDetailSection({
             })}
           </div>
           {errors.transportNeeds && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.transportNeeds}</p>
+            <p className="text-xs text-destructive mt-1.5">{errors.transportNeeds}</p>
           )}
         </div>
       </div>

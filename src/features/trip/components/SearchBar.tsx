@@ -35,7 +35,7 @@ export default function SearchBar({ searchQuery, onSearchChange, onClear }: Sear
             placeholder="Cari destinasi atau lokasi wisata..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full bg-transparent text-gray-900 placeholder-gray-400 text-sm font-medium focus:outline-none py-2"
+            className="w-full bg-transparent text-foreground placeholder-gray-400 text-sm font-medium focus:outline-none py-2"
           />
 
           {searchQuery && (

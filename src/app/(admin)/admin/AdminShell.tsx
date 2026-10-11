@@ -105,8 +105,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="bg-slate-100/70 min-w-0">
-        <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-background px-4 sm:px-6">
+      <SidebarInset className="bg-muted/70 min-w-0">
+        <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-border/80 bg-background px-4 sm:px-6">
           <div className="flex items-center gap-2 min-w-0">
             <SidebarTrigger className="-ml-1 text-muted-foreground" />
             {activeMenu && (
@@ -148,7 +148,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               >
                 <Bell />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center px-1">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
@@ -261,9 +261,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-background border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
-                  <div className="px-4 py-3 border-b border-slate-200">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-background border border-border/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-border">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {adminName}
                     </p>
                     <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
@@ -275,7 +275,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     <Link
                       href="/profile"
                       onClick={() => setProfileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-slate-200 hover:text-foreground transition-colors"
                     >
                       <User className="w-4 h-4 shrink-0" />
                       Profil Saya
@@ -283,7 +283,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     <Link
                       href="/admin"
                       onClick={() => setProfileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-slate-200 hover:text-foreground transition-colors"
                     >
                       <Shield className="w-4 h-4 shrink-0" />
                       Halaman Admin
@@ -291,14 +291,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     <Link
                       href="/my-trips"
                       onClick={() => setProfileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-900 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-slate-200 hover:text-foreground transition-colors"
                     >
                       <ShoppingBag className="w-4 h-4 shrink-0" />
                       Riwayat Trip
                     </Link>
                   </div>
 
-                  <div className="border-t border-slate-200 py-1.5">
+                  <div className="border-t border-border py-1.5">
                     <button
                       type="button"
                       onClick={async () => {
@@ -307,7 +307,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         router.push("/login");
                         router.refresh();
                       }}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-slate-200 cursor-pointer"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-slate-200 cursor-pointer"
                     >
                       <LogOut className="w-4 h-4 shrink-0" />
                       Keluar dari Akun

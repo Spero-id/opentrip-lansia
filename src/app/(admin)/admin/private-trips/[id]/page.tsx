@@ -32,7 +32,7 @@ interface RequestDetail {
 }
 
 const statusStyles: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-700",
+  draft: "bg-muted text-slate-700",
   submitted: "bg-amber-100 text-amber-800",
   reviewed: "bg-blue-100 text-blue-700",
   revision: "bg-purple-100 text-purple-700",
@@ -84,7 +84,7 @@ function DestinationTable({ raw }: { raw: string }) {
 
   if (sections.length === 0) {
     return (
-      <div className="bg-slate-50 rounded-2xl px-4 py-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+      <div className="bg-muted rounded-2xl px-4 py-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
         {raw}
       </div>
     );
@@ -93,8 +93,8 @@ function DestinationTable({ raw }: { raw: string }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {sections.map((sec, si) => (
-        <div key={si} className="rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200">
+        <div key={si} className="rounded-2xl border border-border overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-muted border-b border-border">
             <span className="text-primary">{sectionIcons[sec.heading] ?? <MapPin className="w-4 h-4" />}</span>
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">{sec.heading}</span>
           </div>
@@ -245,7 +245,7 @@ export default function AdminPrivateTripDetail() {
   
 
   if (loading) return <div className="p-12 text-center text-muted-foreground">Memuat detail request...</div>;
-  if (error || !data) return <div className="p-12 text-center text-red-500">{error || "Data tidak ditemukan"}</div>;
+  if (error || !data) return <div className="p-12 text-center text-destructive">{error || "Data tidak ditemukan"}</div>;
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -260,11 +260,11 @@ export default function AdminPrivateTripDetail() {
         </div>
       )}
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-5">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs p-4 sm:p-6 space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-extrabold text-slate-900 leading-tight">{data?.title}</h1>
-            <span className={`inline-block mt-2 px-3 py-1 rounded-full text-[11px] font-bold ${statusStyles[data?.status] || "bg-slate-100 text-slate-600"}`}>{data?.status}</span>
+            <h1 className="text-xl font-extrabold text-foreground leading-tight">{data?.title}</h1>
+            <span className={`inline-block mt-2 px-3 py-1 rounded-full text-[11px] font-bold ${statusStyles[data?.status] || "bg-muted text-slate-600"}`}>{data?.status}</span>
           </div>
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             {data?.status === "submitted" && (
@@ -285,7 +285,7 @@ export default function AdminPrivateTripDetail() {
                 </button>}
                 <button
                   onClick={() => updateStatus("reject")}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 text-xs font-bold transition"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-red-300 text-destructive hover:bg-red-50 px-4 py-2 text-xs font-bold transition"
                 >
                   <Ban className="w-3.5 h-3.5" />
                   Tolak
@@ -303,7 +303,7 @@ export default function AdminPrivateTripDetail() {
                 </button>
                 <button
                   onClick={() => updateStatus("reject")}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 text-xs font-bold transition"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-red-300 text-destructive hover:bg-red-50 px-4 py-2 text-xs font-bold transition"
                 >
                   <Ban className="w-3.5 h-3.5" />
                   Tolak
@@ -316,31 +316,31 @@ export default function AdminPrivateTripDetail() {
               </span>
             )}
             {data?.status === "rejected" && (
-              <span className="inline-flex items-center gap-2 text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl">
+              <span className="inline-flex items-center gap-2 text-xs font-bold text-destructive bg-red-50 px-3 py-2 rounded-xl">
                 <XCircle className="w-4 h-4" /> Request ditolak
               </span>
             )}
           </div>
         </div>
 
-        <hr className="border-slate-100" />
+        <hr className="border-border" />
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
           <div>
             <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Durasi</span>
-            <span className="font-bold text-slate-900">{data?.durationDays} hari</span>
+            <span className="font-bold text-foreground">{data?.durationDays} hari</span>
           </div>
           <div>
             <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Peserta</span>
-            <span className="font-bold text-slate-900">{data?.participantsCount} orang</span>
+            <span className="font-bold text-foreground">{data?.participantsCount} orang</span>
           </div>
           <div>
             <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Budget</span>
-            <span className="font-bold text-slate-900">{formatIDR(data.budgetEstimate) ?? "-"}</span>
+            <span className="font-bold text-foreground">{formatIDR(data.budgetEstimate) ?? "-"}</span>
           </div>
           <div>
             <span className="block text-[11px] font-semibold text-muted-foreground uppercase">Tgl Submit</span>
-            <span className="font-bold text-slate-900">{data.submittedAt ? new Date(data.submittedAt).toLocaleDateString("id-ID") : "-"}</span>
+            <span className="font-bold text-foreground">{data.submittedAt ? new Date(data.submittedAt).toLocaleDateString("id-ID") : "-"}</span>
           </div>
         </div>
 
@@ -364,16 +364,16 @@ export default function AdminPrivateTripDetail() {
       </div>
 
       {false && (
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
-        <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Riwayat Proposal ({data?.proposals?.length || 0})</h2>
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs p-4 sm:p-6 space-y-4">
+        <h2 className="text-sm font-extrabold text-foreground uppercase tracking-wider">Riwayat Proposal ({data?.proposals?.length || 0})</h2>
         {(!data?.proposals || data?.proposals.length === 0) ? (
           <p className="text-sm text-muted-foreground">Belum ada proposal.</p>
         ) : (
           <div className="space-y-4">
             {data?.proposals?.map((prop) => (
-              <div key={prop.id} className="border border-slate-200 rounded-2xl p-4 space-y-3">
+              <div key={prop.id} className="border border-border rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${proposalStatusStyles[prop.status] || "bg-slate-100 text-slate-600"}`}>{prop.status}</span>
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${proposalStatusStyles[prop.status] || "bg-muted text-slate-600"}`}>{prop.status}</span>
                   <span className="text-[11px] text-muted-foreground">{new Date(prop.createdAt).toLocaleString("id-ID")}</span>
                 </div>
                 <p className="text-sm text-slate-700 whitespace-pre-wrap">{prop.proposalContent}</p>
@@ -409,19 +409,19 @@ export default function AdminPrivateTripDetail() {
             className="relative bg-background w-full sm:max-w-2xl sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[92dvh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100 shrink-0">
+            <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
                   <FileSignature className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-900">Buat Proposal</h3>
+                  <h3 className="text-base font-extrabold text-foreground">Buat Proposal</h3>
                   <p className="text-[11px] text-muted-foreground mt-0.5 truncate max-w-[220px] sm:max-w-xs">{data?.title}</p>
                 </div>
               </div>
               <button
                 onClick={() => setProposalOpen(false)}
-                className="w-8 h-8 rounded-xl border border-slate-200 flex items-center justify-center text-muted-foreground hover:text-slate-700 hover:border-slate-300 transition"
+                className="w-8 h-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-slate-700 hover:border-border transition"
               >
                 <XCircle className="w-4 h-4" />
               </button>
@@ -439,13 +439,13 @@ export default function AdminPrivateTripDetail() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                    Deskripsi Proposal <span className="text-red-500">*</span>
+                    Deskripsi Proposal <span className="text-destructive">*</span>
                   </label>
                   <textarea
                     value={proposalContent}
                     onChange={(e) => setProposalContent(e.target.value)}
                     rows={5}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background resize-none transition"
+                    className="w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background resize-none transition"
                     placeholder="Deskripsikan rencana perjalanan, akomodasi, transportasi, dan layanan yang ditawarkan..."
                     required
                   />
@@ -459,7 +459,7 @@ export default function AdminPrivateTripDetail() {
                       type="number"
                       value={estimatedPrice}
                       onChange={(e) => setEstimatedPrice(e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background transition"
+                      className="w-full rounded-2xl border border-border bg-muted pl-10 pr-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background transition"
                       placeholder="0"
                       min={0}
                       max={999999999999}
@@ -480,7 +480,7 @@ export default function AdminPrivateTripDetail() {
                       value={inclusions}
                       onChange={(e) => setInclusions(e.target.value)}
                       rows={4}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 focus:bg-background resize-none transition"
+                      className="w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 focus:bg-background resize-none transition"
                       placeholder={"Hotel bintang 3\nMakan 3x sehari\nTransportasi AC\nGuide lokal"}
                     />
                   </div>
@@ -495,7 +495,7 @@ export default function AdminPrivateTripDetail() {
                       value={exclusions}
                       onChange={(e) => setExclusions(e.target.value)}
                       rows={4}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 focus:bg-background resize-none transition"
+                      className="w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 focus:bg-background resize-none transition"
                       placeholder={"Tiket pesawat\nBelanja pribadi\nObat-obatan"}
                     />
                   </div>
@@ -503,7 +503,7 @@ export default function AdminPrivateTripDetail() {
 
               </div>
 
-              <div className="px-5 py-4 border-t border-slate-100 flex items-center gap-3 shrink-0">
+              <div className="px-5 py-4 border-t border-border flex items-center gap-3 shrink-0">
                 <button
                   type="submit"
                   disabled={saving}
@@ -517,7 +517,7 @@ export default function AdminPrivateTripDetail() {
                 <button
                   type="button"
                   onClick={() => setProposalOpen(false)}
-                  className="flex-1 sm:flex-none rounded-2xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 active:scale-95 transition"
+                  className="flex-1 sm:flex-none rounded-2xl border border-border px-6 py-3 text-sm font-semibold text-slate-600 hover:bg-muted active:scale-95 transition"
                 >
                   Batal
                 </button>

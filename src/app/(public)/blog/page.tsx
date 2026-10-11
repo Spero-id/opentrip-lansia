@@ -58,7 +58,7 @@ function BlogListContent() {
                 <button
                   type="button"
                   onClick={() => setActiveSlug(null)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${activeSlug === null ? "bg-primary border-primary text-primary-foreground" : "bg-background border-slate-200 text-slate-600 hover:border-primary"}`}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${activeSlug === null ? "bg-primary border-primary text-primary-foreground" : "bg-background border-border text-slate-600 hover:border-primary"}`}
                 >
                   Semua
                 </button>
@@ -67,7 +67,7 @@ function BlogListContent() {
                     key={c.id}
                     type="button"
                     onClick={() => setActiveSlug(activeSlug === c.slug ? null : c.slug)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${activeSlug === c.slug ? "bg-primary border-primary text-primary-foreground" : "bg-background border-slate-200 text-slate-600 hover:border-primary"}`}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${activeSlug === c.slug ? "bg-primary border-primary text-primary-foreground" : "bg-background border-border text-slate-600 hover:border-primary"}`}
                   >
                     {c.name}
                   </button>
@@ -81,7 +81,7 @@ function BlogListContent() {
               Memuat artikel...
             </div>
           ) : visible.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-200 py-16 px-4 text-center bg-background">
+            <div className="rounded-xl border border-dashed border-border py-16 px-4 text-center bg-background">
               <p className="text-sm font-bold text-[#1F2937]">Belum ada artikel</p>
               <p className="text-xs text-[#6B7280] mt-1">
                 Nantikan berita dan artikel terbaru dari kami.
@@ -95,7 +95,7 @@ function BlogListContent() {
                   <Link
                     key={post.id}
                     href={`/blog/${post.slug}`}
-                    className="group rounded-xl border border-slate-200 bg-background shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
+                    className="group rounded-xl border border-border bg-background shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
                   >
                     <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#F9FAFB]">
                       {post.coverImage ? (

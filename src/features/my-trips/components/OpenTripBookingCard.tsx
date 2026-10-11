@@ -73,12 +73,12 @@ export default function OpenTripBookingCard({
   const showImage = imageUrl && !imgError;
 
   return (
-    <div className="bg-background rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
+    <div className="bg-background rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md transition">
       <div
         id={`open-trip-card-${booking.id}`}
         role="button"
         tabIndex={0}
-        className="w-full text-left px-5 py-4 flex items-start gap-4 hover:bg-gray-50/70 transition cursor-pointer"
+        className="w-full text-left px-5 py-4 flex items-start gap-4 hover:bg-muted/70 transition cursor-pointer"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen((v) => !v); } }}
       >
@@ -88,12 +88,12 @@ export default function OpenTripBookingCard({
             alt={destinationName}
             loading="lazy"
             onError={() => setImgError(true)}
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover shrink-0 bg-gray-100"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover shrink-0 bg-muted"
           />
         ) : (
           <div
             aria-hidden="true"
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl shrink-0 bg-gray-100 flex items-center justify-center text-muted-foreground font-bold text-lg"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl shrink-0 bg-muted flex items-center justify-center text-muted-foreground font-bold text-lg"
           >
             {destinationName.slice(0, 2).toUpperCase()}
           </div>
@@ -103,13 +103,13 @@ export default function OpenTripBookingCard({
             <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-primary border border-primary/30">
               Open Trip
             </span>
-            <p className="text-sm font-bold text-gray-900 truncate">{destinationName}</p>
+            <p className="text-sm font-bold text-foreground truncate">{destinationName}</p>
             <p className="text-xs text-muted-foreground">{booking.totalParticipants} Peserta</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-gray-100 rounded px-2 py-0.5">
+            <span className="inline-flex items-center gap-1 font-mono text-gray-700 bg-muted rounded px-2 py-0.5">
               {booking.bookingCode}
-              <button onClick={copyCode} title="Salin Kode Booking" className="hover:text-gray-900 transition p-0.5">
+              <button onClick={copyCode} title="Salin Kode Booking" className="hover:text-foreground transition p-0.5">
                 {copied ? icons.copied : icons.copy}
               </button>
             </span>
@@ -171,7 +171,7 @@ export default function OpenTripBookingCard({
       </div>
 
       {open && (
-        <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4 bg-gray-50/30">
+        <div className="border-t border-border px-5 pb-5 pt-4 space-y-4 bg-muted/30">
           {(() => {
             const waNumber = NEXT_PUBLIC_WHATSAPP_NUMBER;
             if (!waNumber) return null;
@@ -191,7 +191,7 @@ export default function OpenTripBookingCard({
             );
           })()}
 
-          <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-2">
+          <div className="bg-background rounded-xl border border-border p-4 space-y-2">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Rincian Pembayaran</p>
             <div className="flex justify-between text-xs text-gray-600">
               <span>Subtotal ({booking.totalParticipants} pax)</span>
@@ -203,7 +203,7 @@ export default function OpenTripBookingCard({
                 <span>-{formatIDR(booking.discountAmount)}</span>
               </div>
             )}
-            <div className="border-t border-gray-100 pt-2 flex justify-between text-sm font-bold text-gray-900">
+            <div className="border-t border-border pt-2 flex justify-between text-sm font-bold text-foreground">
               <span>Total Pembayaran</span>
               <span style={{ color: A }}>{formatIDR(booking.totalAmount)}</span>
             </div>
@@ -219,10 +219,10 @@ export default function OpenTripBookingCard({
           </div>
 
           {paymentProof && (
-            <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-2">
+            <div className="bg-background rounded-xl border border-border p-4 space-y-2">
               <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Bukti Pembayaran</p>
               <a href={paymentProof} target="_blank" rel="noopener noreferrer" className="block">
-                <img src={paymentProof} alt="Bukti pembayaran" className="w-full max-h-64 object-contain bg-gray-50 rounded-lg border border-gray-200" />
+                <img src={paymentProof} alt="Bukti pembayaran" className="w-full max-h-64 object-contain bg-muted rounded-lg border border-border" />
               </a>
             </div>
           )}
@@ -242,7 +242,7 @@ export default function OpenTripBookingCard({
           )}
 
           {(customerName || customerEmail || customerPhone) && (
-            <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-1.5">
+            <div className="bg-background rounded-xl border border-border p-4 space-y-1.5">
               <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Kontak Pemesan</p>
               {customerName && (
                 <div className="flex text-xs">
@@ -272,13 +272,13 @@ export default function OpenTripBookingCard({
           )}
 
           {booking.participants && booking.participants.length > 0 && (
-            <div className="bg-background rounded-xl border border-gray-100 p-4">
+            <div className="bg-background rounded-xl border border-border p-4">
               <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
                 Daftar Peserta ({booking.participants.length} Orang)
               </p>
               <div className="space-y-2">
                 {booking.participants.map((p, idx) => (
-                  <div key={p.id || idx} className="flex items-center justify-between text-xs bg-gray-50 rounded-lg p-2.5">
+                  <div key={p.id || idx} className="flex items-center justify-between text-xs bg-muted rounded-lg p-2.5">
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-orange-100 text-primary font-bold text-[10px] flex items-center justify-center">
                         {idx + 1}

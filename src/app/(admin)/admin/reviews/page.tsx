@@ -71,17 +71,17 @@ export default function AdminReviews() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Ulasan</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Manajemen Ulasan</h1>
           <p className="text-sm text-muted-foreground mt-1">Moderasi ulasan dan rating dari pengguna.</p>
         </div>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-4 py-4">Pengguna</th>
                 <th className="px-4 py-4">Trip & Grup</th>
@@ -98,21 +98,21 @@ export default function AdminReviews() {
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">Belum ada data ulasan.</td></tr>
               ) : (
                 rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/60 transition">
+                  <tr key={r.id} className="hover:bg-muted/60 transition">
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-[#1CA6B7]/10 flex items-center justify-center">
                           <User className="w-4 h-4 text-[#1CA6B7]" />
                         </div>
                         <div>
-                          <p className="text-xs font-semibold text-slate-900">{r.userName || "-"}</p>
+                          <p className="text-xs font-semibold text-foreground">{r.userName || "-"}</p>
                           <p className="text-[10px] text-muted-foreground truncate max-w-[120px]">{r.userEmail || "-"}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">
                       <div className="space-y-1">
-                        <p className="text-xs font-semibold text-slate-900 truncate max-w-[150px]">{r.tripTitle || "-"}</p>
+                        <p className="text-xs font-semibold text-foreground truncate max-w-[150px]">{r.tripTitle || "-"}</p>
                         {r.groupStartDate && (
                           <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                             <Calendar className="w-3 h-3" />
@@ -137,14 +137,14 @@ export default function AdminReviews() {
                       <p className="text-xs text-slate-600 max-w-[200px] truncate">{r.content || "-"}</p>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${statusStyles[r.status] || "bg-slate-100 text-slate-600"}`}>{r.status}</span>
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${statusStyles[r.status] || "bg-muted text-slate-600"}`}>{r.status}</span>
                     </td>
                     <td className="px-4 py-4 text-right">
                       <div className="inline-flex items-center gap-2">
                         <button onClick={() => openEdit(r)} className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Ulasan">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => confirmDelete(r.id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(r.id)} className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -162,7 +162,7 @@ export default function AdminReviews() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>
             <select name="status" value={form.status} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
@@ -170,7 +170,7 @@ export default function AdminReviews() {
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isFeatured" type="checkbox" checked={form.isFeatured} onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-ring/30" />
+              className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30" />
             <span className="font-medium text-slate-700">Featured Review</span>
           </label>
           <div className="flex items-center gap-3 pt-2">
@@ -179,7 +179,7 @@ export default function AdminReviews() {
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={closeModal}
-              className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+              className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition">
               Batal
             </button>
           </div>

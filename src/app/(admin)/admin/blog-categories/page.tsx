@@ -72,19 +72,19 @@ export default function AdminBlogCategories() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Kategori Blog</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Kategori Blog</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola daftar kategori artikel publik.</p>
         </div>
       </div>
 
-      <form onSubmit={handleAdd} className="flex items-center gap-3 bg-background p-4 rounded-3xl border border-slate-200/80 shadow-xs">
+      <form onSubmit={handleAdd} className="flex items-center gap-3 bg-background p-4 rounded-3xl border border-border/80 shadow-xs">
         <input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Nama kategori baru..."
-          className="flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+          className="flex-1 rounded-xl border border-border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
         />
         <button
           type="submit"
@@ -97,10 +97,10 @@ export default function AdminBlogCategories() {
       </form>
 
       {error && (
-        <p className="text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</p>
+        <p className="text-xs font-semibold text-destructive bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</p>
       )}
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         {loading ? (
           <p className="px-6 py-12 text-center text-sm text-muted-foreground">Memuat kategori...</p>
         ) : categories.length === 0 ? (
@@ -115,7 +115,7 @@ export default function AdminBlogCategories() {
                 </div>
                 <button
                   onClick={() => handleDelete(c.id)}
-                  className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                  className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition"
                   title={`Hapus kategori ${c.name}`}
                 >
                   <Trash2 className="w-4 h-4" />

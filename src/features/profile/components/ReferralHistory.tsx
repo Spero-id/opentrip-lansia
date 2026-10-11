@@ -32,7 +32,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
   },
   cancelled: {
     label: "Dibatalkan",
-    color: "text-red-600",
+    color: "text-destructive",
     bg: "bg-red-50",
     icon: XCircle,
   },
@@ -61,13 +61,13 @@ export default function ReferralHistory() {
 
   if (loading && history.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
-        <h2 className="text-base font-bold text-slate-900">History Referral</h2>
+      <div className="rounded-2xl border border-border bg-background p-5 sm:p-7">
+        <h2 className="text-base font-bold text-foreground">History Referral</h2>
         <div className="mt-4 space-y-3">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="animate-pulse flex gap-3 p-3 rounded-xl bg-slate-50"
+              className="animate-pulse flex gap-3 p-3 rounded-xl bg-muted"
             >
               <div className="h-10 w-10 rounded-full bg-slate-200" />
               <div className="flex-1 space-y-2">
@@ -82,15 +82,15 @@ export default function ReferralHistory() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
-      <h2 className="text-base font-bold text-slate-900">History Referral</h2>
+    <div className="rounded-2xl border border-border bg-background p-5 sm:p-7">
+      <h2 className="text-base font-bold text-foreground">History Referral</h2>
       <p className="mt-0.5 text-xs text-muted-foreground">
         Daftar orang yang menggunakan kode referral kamu.
       </p>
 
       {history.length === 0 ? (
         <div className="mt-6 py-8 text-center">
-          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
             <Clock size={20} className="text-muted-foreground" />
           </div>
           <p className="text-sm text-muted-foreground">Belum ada referral</p>
@@ -107,11 +107,11 @@ export default function ReferralHistory() {
             return (
               <div
                 key={item.id}
-                className="border border-slate-100 rounded-xl overflow-hidden"
+                className="border border-border rounded-xl overflow-hidden"
               >
                 <button
                   onClick={() => toggleExpand(item.id)}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors"
+                  className="w-full flex items-center gap-3 p-3 hover:bg-muted transition-colors"
                 >
                   <div className="h-10 w-10 rounded-full bg-[#FEF6E7] flex items-center justify-center flex-shrink-0">
                     <span className="text-sm font-bold text-primary/85">
@@ -120,7 +120,7 @@ export default function ReferralHistory() {
                   </div>
 
                   <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-semibold text-slate-900 truncate">
+                    <p className="text-sm font-semibold text-foreground truncate">
                       {item.referredUserName ?? "User"}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
@@ -143,29 +143,29 @@ export default function ReferralHistory() {
                 </button>
 
                 {isExpanded && (
-                  <div className="px-3 pb-3 pt-1 border-t border-slate-100 bg-slate-50">
+                  <div className="px-3 pb-3 pt-1 border-t border-border bg-muted">
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div>
                         <p className="text-muted-foreground">Kode Booking</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-foreground">
                           {item.bookingCode ?? "-"}
                         </p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Trip</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-foreground">
                           {item.tripName ?? "-"}
                         </p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Komisi</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-foreground">
                           {formatCurrency(item.commissionAmount)}
                         </p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Status Komisi</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-foreground">
                           {item.commissionStatus ?? "Belum ada"}
                         </p>
                       </div>
@@ -185,7 +185,7 @@ export default function ReferralHistory() {
                 <button
                   onClick={() => setPage(Math.max(1, page - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-muted text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Sebelumnya
                 </button>
@@ -194,7 +194,7 @@ export default function ReferralHistory() {
                     setPage(Math.min(pagination.totalPages, page + 1))
                   }
                   disabled={page === pagination.totalPages}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-muted text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Selanjutnya
                 </button>

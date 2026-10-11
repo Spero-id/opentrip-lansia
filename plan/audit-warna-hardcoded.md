@@ -51,13 +51,12 @@ Centang `[x]` hanya jika SEMUA:
 
 ## Fase 3 — Perubahan halus-menengah 🟡🔴
 
-- [ ] **3.1** `text-slate/gray-900`, `text-black` → `text-foreground` — **220 / 74** (`#0F172A`→`#171717`, nyaris sama)
-- [ ] **3.2** `text-slate/gray-600` → `text-foreground` atau `text-muted-foreground` (pilih per konteks) — **135 / 55**
-- [ ] **3.3** `bg-slate/gray-50|100` → `bg-muted` — **241 / 77** (`#F8FAFC`→`#EDEDED`, halus)
-- [ ] **3.4** `border-slate/gray-100..300` → `border-border` / `border-input` — **407 / 81**
-      *Catatan: `border-slate-300` (`#CBD5E1`) → `border-input` (`#F6F6F6`) membuat garis form **lebih samar** — review per halaman*
-- [ ] **3.5** `*-red-500/600` → `*-destructive` (`#EF4444`→`#CA3214`, merah bergeser nyata) — **104 / 43**
-- [ ] **3.6** Verifikasi Fase 3 (lint + build + review form, badge, kartu, tabel)
+- [x] **3.1** `text-slate/gray-900`, `text-black` → `text-foreground` — **220 / 74** (`#0F172A`→`#171717`, nyaris sama)
+- [x] **3.2** `text-slate/gray-600` → **DIBIARKAN** (keputusan 3.2:c) — 135 / 55
+- [x] **3.3** `bg-slate/gray-50|100` → `bg-muted` — **241 / 77** (`#F8FAFC`→`#EDEDED`, halus)
+- [x] **3.4** `border-slate/gray-100..300` → `border-border` — **407 / 81** (keputusan 3.4:a; slate-300 jadi sedikit lebih gelap, konsisten)
+- [x] **3.5** `*-red-500/600` → `*-destructive` — **104 / 43** (keputusan 3.5:ya; merah `#EF4444`→`#CA3214`, lebih gelap)
+- [x] **3.6** Verifikasi Fase 3: lint 0E/80W · build sukses · grep 0 sisa target
 
 ## Fase 4 — TIDAK disentuh (keputusan: hex tetap) ⚪
 

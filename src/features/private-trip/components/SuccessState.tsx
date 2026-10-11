@@ -94,12 +94,12 @@ export default function SuccessState({
   return (
     <>
 
-      <div className="bg-background border-b border-gray-100">
+      <div className="bg-background border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-5 pt-5 pb-8">
           <p className="font-semibold text-sm tracking-wide mb-2" style={{ color: A }}>
             PRIVATE TRIP
           </p>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
             Request <span style={{ color: A }}>Berhasil</span>
           </h1>
         </div>
@@ -108,7 +108,7 @@ export default function SuccessState({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3">
         <div className="max-w-lg mx-auto flex flex-col gap-5">
 
-          <div className="bg-background rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-background rounded-2xl border border-border shadow-sm overflow-hidden">
             <div
               className="p-8 flex flex-col items-center text-center relative overflow-hidden"
               style={{ backgroundColor: A }}
@@ -191,7 +191,7 @@ export default function SuccessState({
                   style={{ backgroundColor: `${A}08`, border: `1px solid ${A}20` }}
                 >
                   <span className="text-xs font-semibold text-gray-700">Estimasi Budget</span>
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-sm font-bold text-foreground">
                     {formatIDR(form.tripType === "explorer" ? form.selectedDestinasi?.priceMin : form.budget) ?? "-"}
                     <span className="text-xs font-normal text-muted-foreground"> /pax</span>
                   </span>
@@ -201,7 +201,7 @@ export default function SuccessState({
             </div>
           </div>
 
-          <div className="bg-background rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-background rounded-2xl border border-border shadow-sm p-5">
             <h3 className="text-xs font-semibold text-gray-700 mb-3">Langkah Selanjutnya</h3>
             <div className="space-y-3">
               {[
@@ -249,7 +249,7 @@ export default function SuccessState({
 
           <button
             onClick={onReset}
-            className="w-full py-3 rounded-xl border border-gray-200 text-gray-600 mb-10 font-semibold text-sm transition-all hover:bg-gray-50 active:scale-95 flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-xl border border-border text-gray-600 mb-10 font-semibold text-sm transition-all hover:bg-muted active:scale-95 flex items-center justify-center gap-2"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <polyline points="15 18 9 12 15 6" />

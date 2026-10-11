@@ -36,14 +36,14 @@ export default function ConfirmDelete({
         <button
           onClick={handleConfirm}
           disabled={loading}
-          className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50"
+          className="rounded-xl bg-destructive px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition disabled:opacity-50"
         >
           {loading ? "Menghapus..." : "Ya, Hapus"}
         </button>
         <button
           onClick={onClose}
           disabled={loading}
-          className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition disabled:opacity-50"
+          className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition disabled:opacity-50"
         >
           Batal
         </button>

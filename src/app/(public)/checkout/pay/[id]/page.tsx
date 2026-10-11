@@ -147,7 +147,7 @@ function PayContent() {
       <div className="flex flex-col min-h-screen bg-background">
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <p className="text-sm text-red-500 font-semibold">{error}</p>
+            <p className="text-sm text-destructive font-semibold">{error}</p>
             <Link href="/my-trips" className="text-sm text-primary font-semibold hover:underline">
               Kembali ke Perjalanan Saya
             </Link>
@@ -216,10 +216,10 @@ function PayContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background font-sans text-gray-900">
+    <div className="flex flex-col min-h-screen bg-background font-sans text-foreground">
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-20">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Pembayaran</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Pembayaran</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Pilih metode pembayaran dan unggah bukti transfer
           </p>

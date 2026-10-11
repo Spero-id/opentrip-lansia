@@ -56,7 +56,7 @@ export default function DestinationSection() {
             <p className="text-primary font-semibold text-sm tracking-wide mb-3">
               DESTINASI PILIHAN
             </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-snug">
               Destinasi Paling <span className="text-primary">Diminati</span>
             </h2>
           </div>
@@ -94,7 +94,7 @@ export default function DestinationSection() {
 
       {!loading && destinations.length === 0 && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6">
-          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-gray-200 bg-background">
+          <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-dashed border-border bg-background">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
               style={{ backgroundColor: "rgba(223,114,36,0.08)" }}
@@ -120,7 +120,7 @@ export default function DestinationSection() {
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 0}
             aria-label="Muat destinasi sebelumnya"
-            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+            className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-gray-600 transition-colors hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-border disabled:hover:text-gray-600"
           >
             <ChevronUp size={20} />
           </button>
@@ -134,7 +134,7 @@ export default function DestinationSection() {
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage >= pageCount - 1}
             aria-label="Lihat destinasi lainnya"
-            className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 transition-colors hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:text-gray-600"
+            className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-gray-600 transition-colors hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-border disabled:hover:text-gray-600"
           >
             <ChevronDown size={20} />
           </button>
@@ -144,13 +144,13 @@ export default function DestinationSection() {
       <div className="flex md:hidden items-center justify-center gap-2">
         <button
           onClick={() => scroll("left")}
-          className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600"
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-gray-600"
         >
           <ChevronLeft size={18} />
         </button>
         <button
           onClick={() => scroll("right")}
-          className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600"
+          className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-gray-600"
         >
           <ChevronRight size={18} />
         </button>

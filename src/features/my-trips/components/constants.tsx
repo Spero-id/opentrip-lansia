@@ -10,7 +10,7 @@ export const STATUS_LABEL: Record<string, string> = {
 };
 
 export const STATUS_COLOR: Record<string, string> = {
-  draft: "bg-gray-100 text-gray-600",
+  draft: "bg-muted text-gray-600",
   submitted: "bg-blue-100 text-blue-700",
   reviewed: "bg-violet-100 text-violet-700",
   approved: "bg-emerald-100 text-emerald-700",
@@ -47,7 +47,7 @@ export const OPEN_TRIP_STATUS_COLOR: Record<string, string> = {
   pending: "bg-blue-100 text-blue-700",
   awaiting_verification: "bg-orange-100 text-orange-700",
   cancelled: "bg-red-100 text-red-700",
-  completed: "bg-gray-100 text-gray-600",
+  completed: "bg-muted text-gray-600",
 };
 
 export const PAYMENT_STATUS_LABEL: Record<string, string> = {

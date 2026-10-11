@@ -79,7 +79,7 @@ function Changes({ entry }: { entry: AuditEntry }) {
                 <span className="text-slate-300">&rarr;</span>
               </>
             )}
-            <span className={before !== null ? "font-medium text-slate-900" : "text-slate-600"}>{after}</span>
+            <span className={before !== null ? "font-medium text-foreground" : "text-slate-600"}>{after}</span>
           </li>
         );
       })}
@@ -124,18 +124,18 @@ export default function AdminAuditLogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Audit Log</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Audit Log</h1>
           <p className="text-sm text-muted-foreground mt-1">Jejak perubahan penting oleh admin. Catatan bersifat permanen dan tidak dapat diubah.</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-slate-50 rounded-full px-3 py-1.5">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted rounded-full px-3 py-1.5">
           <ScrollText className="w-4 h-4 text-[#1CA6B7]" />
           {entries.length} catatan terbaru
         </div>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-5 flex flex-wrap items-end gap-3">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs p-4 sm:p-5 flex flex-wrap items-end gap-3">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground pb-2">
           <Filter className="w-4 h-4" />
           Filter
@@ -146,7 +146,7 @@ export default function AdminAuditLogPage() {
             id="audit-entity"
             value={entityType}
             onChange={(e) => setEntityType(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background"
+            className="rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background"
           >
             {ENTITY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -159,7 +159,7 @@ export default function AdminAuditLogPage() {
             id="audit-action"
             value={action}
             onChange={(e) => setAction(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background"
+            className="rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background"
           >
             {ACTION_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -179,10 +179,10 @@ export default function AdminAuditLogPage() {
         )}
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-4 py-4 w-8" />
                 <th className="px-4 py-4">Waktu</th>
@@ -196,7 +196,7 @@ export default function AdminAuditLogPage() {
               {loading ? (
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">Memuat data...</td></tr>
               ) : error ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-red-500">{error}</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-destructive">{error}</td></tr>
               ) : entries.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
@@ -208,7 +208,7 @@ export default function AdminAuditLogPage() {
                   const isOpen = expanded === entry.id;
                   return (
                     <Fragment key={entry.id}>
-                      <tr className="hover:bg-slate-50/60 transition">
+                      <tr className="hover:bg-muted/60 transition">
                         <td className="px-4 py-4">
                           <button
                             onClick={() => setExpanded(isOpen ? null : entry.id)}
@@ -227,7 +227,7 @@ export default function AdminAuditLogPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4">
-                          <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${ACTION_STYLES[entry.action] ?? "bg-slate-100 text-slate-600"}`}>
+                          <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${ACTION_STYLES[entry.action] ?? "bg-muted text-slate-600"}`}>
                             {entry.action}
                           </span>
                         </td>
@@ -235,7 +235,7 @@ export default function AdminAuditLogPage() {
                         <td className="px-4 py-4 text-slate-700">{entry.description || "-"}</td>
                       </tr>
                       {isOpen && (
-                        <tr className="bg-slate-50/60">
+                        <tr className="bg-muted/60">
                           <td colSpan={6} className="px-6 py-4">
                             <div className="flex items-start gap-2">
                               <Clock className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />

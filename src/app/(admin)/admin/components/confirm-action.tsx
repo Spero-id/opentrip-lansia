@@ -50,7 +50,7 @@ export default function ConfirmAction({
         <button
           onClick={onClose}
           disabled={loading}
-          className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition disabled:opacity-50"
+          className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition disabled:opacity-50"
         >
           Batal
         </button>

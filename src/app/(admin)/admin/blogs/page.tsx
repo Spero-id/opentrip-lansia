@@ -125,9 +125,9 @@ export default function AdminBlogs() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Blog</h1>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Manajemen Blog</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola artikel blog dan konten publikasi.</p>
         </div>
         <button
@@ -139,10 +139,10 @@ export default function AdminBlogs() {
         </button>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Sampul</th>
                 <th className="px-6 py-4">Judul</th>
@@ -159,16 +159,16 @@ export default function AdminBlogs() {
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">Belum ada data blog.</td></tr>
               ) : (
                 rows.map((b) => (
-                  <tr key={b.id} className="hover:bg-slate-50/60 transition">
+                  <tr key={b.id} className="hover:bg-muted/60 transition">
                     <td className="px-6 py-4">
                       {b.coverImage ? (
-                        <img src={b.coverImage} alt="" className="w-16 h-12 object-cover rounded-lg border border-slate-200" />
+                        <img src={b.coverImage} alt="" className="w-16 h-12 object-cover rounded-lg border border-border" />
                       ) : (
-                        <div className="w-16 h-12 rounded-lg border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-[10px] text-slate-300">-
+                        <div className="w-16 h-12 rounded-lg border border-dashed border-border bg-muted flex items-center justify-center text-[10px] text-slate-300">-
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900">{b.title}</td>
+                    <td className="px-6 py-4 font-bold text-foreground">{b.title}</td>
                     <td className="px-6 py-4">
                       {categoryNameOf(b.categoryId) ? (
                         <span className="rounded-full px-2.5 py-1 text-[10px] font-bold bg-primary/10 text-primary">{categoryNameOf(b.categoryId)}</span>
@@ -177,7 +177,7 @@ export default function AdminBlogs() {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${b.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : "bg-slate-100 text-slate-600"}`}>{b.status}</span>
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${b.status === "published" ? "bg-[#1CA6B7]/15 text-[#1CA6B7]" : "bg-muted text-slate-600"}`}>{b.status}</span>
                     </td>
                     <td className="px-6 py-4 text-muted-foreground">{b.createdAt ? new Date(b.createdAt).toLocaleDateString("id-ID") : "-"}</td>
                     <td className="px-6 py-4 text-right">
@@ -185,7 +185,7 @@ export default function AdminBlogs() {
                         <button onClick={() => openEdit(b)} className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl transition" title="Edit Blog">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => confirmDelete(b.id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition" title="Hapus">
+                        <button onClick={() => confirmDelete(b.id)} className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -203,17 +203,17 @@ export default function AdminBlogs() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Judul</label>
             <input name="title" value={form.title} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Slug</label>
             <input name="slug" value={form.slug} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-muted-foreground bg-slate-50 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground bg-muted focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Ringkasan (Excerpt)</label>
             <textarea name="excerpt" value={form.excerpt} onChange={handleChange} rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
@@ -246,13 +246,13 @@ export default function AdminBlogs() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>
             <select name="status" value={form.status} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
           </div>
           {saveError && (
-            <p className="text-xs font-medium text-red-600 bg-red-50 rounded-lg px-3 py-2">{saveError}</p>
+            <p className="text-xs font-medium text-destructive bg-red-50 rounded-lg px-3 py-2">{saveError}</p>
           )}
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" disabled={saving}
@@ -260,7 +260,7 @@ export default function AdminBlogs() {
               {saving ? "Menyimpan..." : "Simpan"}
             </button>
             <button type="button" onClick={closeModal}
-              className="rounded-xl border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+              className="rounded-xl border border-border px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-muted transition">
               Batal
             </button>
           </div>

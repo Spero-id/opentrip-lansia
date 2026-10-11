@@ -53,7 +53,7 @@ export default function TutorialSection() {
             <p className="text-primary font-semibold text-sm tracking-wide mb-3">
               CARA BOOKING
             </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground leading-snug mb-4">
               Booking Trip Impian mu Cuma{" "}
               <span className="text-primary">5 Langkah</span>
             </h2>
@@ -77,7 +77,7 @@ export default function TutorialSection() {
                   <Send size={16} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-foreground">
                     E-voucher terkirim
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -97,7 +97,7 @@ export default function TutorialSection() {
                 return (
                   <div key={step.number} className="relative flex gap-6">
                     <div className="relative z-10 w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                      <Icon size={18} className="text-gray-900" />
+                      <Icon size={18} className="text-foreground" />
                     </div>
 
                     <div className="flex-1 pt-1">
@@ -106,7 +106,7 @@ export default function TutorialSection() {
                           LANGKAH {step.number}
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      <h3 className="text-lg font-bold text-foreground mb-2">
                         {step.title}
                       </h3>
                       <p className="text-[15px] text-muted-foreground leading-relaxed max-w-lg">

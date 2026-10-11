@@ -103,19 +103,19 @@ export default function MyTripsPage() {
   const activeFilters = tab === "open" ? openFilters : privateFilters;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50/50">
+    <div className="flex flex-col min-h-screen bg-muted/50">
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Perjalanan Saya</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Perjalanan Saya</h1>
           <p className="text-sm text-muted-foreground mt-1">Kelola booking open trip dan private trip Anda</p>
         </div>
 
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 w-fit">
+        <div className="flex gap-1 bg-muted rounded-xl p-1 mb-6 w-fit">
           <button
             onClick={() => { setTab("open"); setFilter("all"); }}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-              tab === "open" ? "bg-background text-gray-900 shadow-sm" : "text-muted-foreground hover:text-gray-700"
+              tab === "open" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-gray-700"
             }`}
           >
             Open Trip ({bookings.length})
@@ -123,7 +123,7 @@ export default function MyTripsPage() {
           <button
             onClick={() => { setTab("private"); setFilter("all"); }}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-              tab === "private" ? "bg-background text-gray-900 shadow-sm" : "text-muted-foreground hover:text-gray-700"
+              tab === "private" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-gray-700"
             }`}
           >
             Private Trip ({requests.length})
@@ -138,7 +138,7 @@ export default function MyTripsPage() {
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
                 filter === f.value
                   ? "bg-primary text-primary-foreground"
-                  : "bg-background text-gray-600 border border-gray-200 hover:border-primary/50"
+                  : "bg-background text-gray-600 border border-border hover:border-primary/50"
               }`}
             >
               {f.label}

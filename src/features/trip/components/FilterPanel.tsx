@@ -93,7 +93,7 @@ export default function FilterPanel({
         <button
           type="button"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="flex items-center justify-between w-full p-4 rounded-2xl bg-background border border-gray-200 font-semibold text-sm shadow-sm"
+          className="flex items-center justify-between w-full p-4 rounded-2xl bg-background border border-border font-semibold text-sm shadow-sm"
         >
           <div className="flex items-center gap-2">
             <Filter size={16} style={{ color: A }} />
@@ -116,11 +116,11 @@ export default function FilterPanel({
       </div>
 
       <div
-        className={`bg-background rounded-2xl border border-gray-200 shadow-sm overflow-visible ${
+        className={`bg-background rounded-2xl border border-border shadow-sm overflow-visible ${
           isMobileOpen ? "block" : "hidden lg:block"
         }`}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <Filter size={16} style={{ color: A }} />
             <h2 className="text-sm font-bold text-gray-800">Filter</h2>
@@ -218,7 +218,7 @@ export default function FilterPanel({
             </div>
           </div>
 
-          <hr className="border-gray-100" />
+          <hr className="border-border" />
 
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -229,7 +229,7 @@ export default function FilterPanel({
               <button
                 type="button"
                 onClick={() => setIsLocationOpen(!isLocationOpen)}
-                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-800 text-left focus:outline-none focus:border-primary transition-colors"
+                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted text-sm font-medium text-gray-800 text-left focus:outline-none focus:border-primary transition-colors"
               >
                 <span className={selectedLocation ? "text-gray-800" : "text-muted-foreground"}>
                   {selectedLocation || "Semua Lokasi"}
@@ -246,7 +246,7 @@ export default function FilterPanel({
                     className="fixed inset-0 z-10"
                     onClick={() => setIsLocationOpen(false)}
                   />
-                  <div className="absolute left-0 right-0 mt-1.5 bg-background border border-gray-200 rounded-xl shadow-lg z-20 max-h-52 overflow-y-auto py-1">
+                  <div className="absolute left-0 right-0 mt-1.5 bg-background border border-border rounded-xl shadow-lg z-20 max-h-52 overflow-y-auto py-1">
                     <button
                       type="button"
                       onClick={() => { setSelectedLocation(""); setIsLocationOpen(false); }}
@@ -301,7 +301,7 @@ export default function FilterPanel({
             </div>
           </div>
 
-          <hr className="border-gray-100" />
+          <hr className="border-border" />
 
           <div className="space-y-2.5">
             <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -337,7 +337,7 @@ export default function FilterPanel({
                       else if (text === "") setPriceMin("");
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted text-xs font-semibold text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMin !== "" ? formatFilterPrice(priceMin) : "Tanpa batas minimal"}
@@ -371,7 +371,7 @@ export default function FilterPanel({
                       else if (text === "") setPriceMax("");
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted text-xs font-semibold text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMax !== "" ? formatFilterPrice(priceMax) : "Tanpa batas maksimal"}
@@ -384,7 +384,7 @@ export default function FilterPanel({
             <button
               type="button"
               onClick={onResetAll}
-              className="w-full py-2.5 px-4 rounded-xl text-red-500 text-xs font-bold border border-red-200 bg-red-50 hover:bg-red-100 transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl text-destructive text-xs font-bold border border-red-200 bg-red-50 hover:bg-red-100 transition-colors"
             >
               Hapus Semua Filter
             </button>

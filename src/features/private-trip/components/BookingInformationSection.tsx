@@ -86,7 +86,7 @@ export default function BookingInformationSection({
             })}
           </fieldset>
           {errors.tripFrom && (
-            <p className="text-xs text-red-500 mt-1.5">{errors.tripFrom}</p>
+            <p className="text-xs text-destructive mt-1.5">{errors.tripFrom}</p>
           )}
 
           {isInstitusi && (
@@ -103,7 +103,7 @@ export default function BookingInformationSection({
                 className={`${baseInput} mt-1.5 ${errors.namaInstitusi ? errorBorder : normalBorder}`}
               />
               {errors.namaInstitusi && (
-                <p className="text-xs text-red-500 mt-1.5">{errors.namaInstitusi}</p>
+                <p className="text-xs text-destructive mt-1.5">{errors.namaInstitusi}</p>
               )}
             </div>
           )}
@@ -123,7 +123,7 @@ export default function BookingInformationSection({
               className={`${baseInput} mt-1.5 ${errors.nama ? errorBorder : normalBorder}`}
             />
             {errors.nama && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.nama}</p>
+              <p className="text-xs text-destructive mt-1.5">{errors.nama}</p>
             )}
           </div>
 
@@ -156,7 +156,7 @@ export default function BookingInformationSection({
               className={`${baseInput} mt-1.5 ${errors.phone ? errorBorder : normalBorder}`}
             />
             {errors.phone && (
-              <p className="text-xs text-red-500 mt-1.5">{errors.phone}</p>
+              <p className="text-xs text-destructive mt-1.5">{errors.phone}</p>
             )}
           </div>
         </div>
@@ -174,7 +174,7 @@ export default function BookingInformationSection({
             className={`${baseInput} mt-1.5 ${errors.email ? errorBorder : normalBorder}`}
           />
           {errors.email ? (
-            <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>
+            <p className="text-xs text-destructive mt-1.5">{errors.email}</p>
           ) : (
             <p className="text-[11px] leading-4 text-[#9CA3AF] mt-1.5">
               Proposal &amp; detail penawaran akan dikirimkan ke email ini.

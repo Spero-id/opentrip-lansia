@@ -19,10 +19,10 @@ export default function ReferralInput({
   onRemove: () => void;
 }) {
   return (
-    <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
+    <div className="bg-background border border-border rounded-2xl p-5 space-y-3 shadow-sm">
       <div className="flex items-center gap-2">
-        <h2 className="text-base font-bold text-gray-900">Kode Referral</h2>
-        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-muted-foreground text-[10px] font-semibold">
+        <h2 className="text-base font-bold text-foreground">Kode Referral</h2>
+        <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-semibold">
           Opsional
         </span>
       </div>
@@ -59,7 +59,7 @@ export default function ReferralInput({
               placeholder="Masukkan kode referral"
               value={referralCode}
               onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 uppercase"
+              className="flex-1 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 uppercase"
             />
             <button
               onClick={onApply}
@@ -80,7 +80,7 @@ export default function ReferralInput({
       )}
 
       {referralError && (
-        <div className="flex items-center gap-2 text-xs text-red-500">
+        <div className="flex items-center gap-2 text-xs text-destructive">
           <AlertCircle size={12} />
           {referralError}
         </div>

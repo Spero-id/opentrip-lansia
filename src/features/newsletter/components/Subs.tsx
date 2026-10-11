@@ -38,7 +38,7 @@ export default function Subs() {
                     onChange={(e) => changeEmail(e.target.value)}
                     placeholder="Masukkan email kamu"
                     disabled={loading}
-                    className="flex-1 lg:w-72 bg-background border border-white/10 rounded-full px-5 py-3 text-sm text-black placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
+                    className="flex-1 lg:w-72 bg-background border border-white/10 rounded-full px-5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
                   />
                   <button
                     type="submit"
@@ -77,7 +77,7 @@ export default function Subs() {
           onClick={closePopup}
         >
           <div
-            className="relative bg-background rounded-3xl max-w-md w-full p-8 text-center shadow-2xl border border-gray-100 transform scale-100 transition-all duration-300 flex flex-col items-center"
+            className="relative bg-background rounded-3xl max-w-md w-full p-8 text-center shadow-2xl border border-border transform scale-100 transition-all duration-300 flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-primary/5 pointer-events-none" />
@@ -85,7 +85,7 @@ export default function Subs() {
 
             <button
               onClick={closePopup}
-              className="absolute top-4 right-4 text-muted-foreground hover:text-gray-600 transition-colors w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100"
+              className="absolute top-4 right-4 text-muted-foreground hover:text-gray-600 transition-colors w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted"
               aria-label="Tutup"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -102,7 +102,7 @@ export default function Subs() {
               </svg>
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Selamat Bergabung di Keluarga Jelajah Memoria!</h3>
+            <h3 className="text-xl font-bold text-foreground mb-3">Selamat Bergabung di Keluarga Jelajah Memoria!</h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-6 font-medium">
               Kami telah mengirimkan email sambutan untuk Anda. Sampai jumpa di perjalanan seru berikutnya!
             </p>

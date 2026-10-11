@@ -46,7 +46,7 @@ interface NotesInfo {
 const statusBadge: Record<string, { label: string; className: string }> = {
   pending_payment: {
     label: "Belum Bayar",
-    className: "bg-slate-100 text-slate-600",
+    className: "bg-muted text-slate-600",
   },
   pending: {
     label: "Menunggu Verifikasi",
@@ -266,9 +266,9 @@ export default function AdminPesanan() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
             Manajemen Pesanan
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -277,10 +277,10 @@ export default function AdminPesanan() {
         </div>
       </div>
 
-      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-border/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-muted-foreground font-semibold border-b border-slate-200/80">
+            <thead className="bg-muted text-muted-foreground font-semibold border-b border-border/80">
               <tr>
                 <th className="px-6 py-4">Kode Booking</th>
                 <th className="px-6 py-4">Peserta</th>
@@ -308,18 +308,18 @@ export default function AdminPesanan() {
                 rows.map((b) => {
                   const badge = statusBadge[b.status] ?? {
                     label: b.status,
-                    className: "bg-slate-100 text-slate-600",
+                    className: "bg-muted text-slate-600",
                   };
                   const rowPayment = getPendingPayment(b.payments);
                   return (
-                    <tr key={b.id} className="hover:bg-slate-50/60 transition">
+                    <tr key={b.id} className="hover:bg-muted/60 transition">
                       <td className="px-6 py-4 font-mono font-bold text-primary">
                         {b.bookingCode}
                       </td>
                       <td className="px-6 py-4">
                         {b.totalParticipants} orang
                       </td>
-                      <td className="px-6 py-4 font-bold text-slate-900">
+                      <td className="px-6 py-4 font-bold text-foreground">
                         {b.currency === "IDR"
                           ? `Rp ${Number(b.totalAmount).toLocaleString("id-ID")}`
                           : b.totalAmount}
@@ -363,7 +363,7 @@ export default function AdminPesanan() {
                                     .then(d => { if (d) setDetailData(d); })
                                     .finally(() => setDetailLoading(false));
                                 }}
-                                className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition"
+                                className="p-2 text-destructive hover:bg-destructive/10 rounded-xl transition"
                                 title="Tolak"
                               >
                                 <XCircle className="w-4 h-4" />
@@ -416,7 +416,7 @@ export default function AdminPesanan() {
                 <p className="text-muted-foreground font-medium">Status</p>
                 <p>
                   <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                    statusBadge[displayData.status]?.className ?? "bg-slate-100 text-slate-600"
+                    statusBadge[displayData.status]?.className ?? "bg-muted text-slate-600"
                   }`}>
                     {statusBadge[displayData.status]?.label ?? displayData.status}
                   </span>
@@ -441,7 +441,7 @@ export default function AdminPesanan() {
               </div>
               <div>
                 <p className="text-muted-foreground font-medium">Total Pembayaran</p>
-                <p className="font-bold text-slate-900">
+                <p className="font-bold text-foreground">
                   Rp {Number(displayData.totalAmount).toLocaleString("id-ID")}
                 </p>
               </div>
@@ -464,13 +464,13 @@ export default function AdminPesanan() {
             </div>
 
             {proofPayments.length > 0 && (
-              <div className="border-t border-slate-100 pt-4">
+              <div className="border-t border-border pt-4">
                 <p className="text-muted-foreground font-medium mb-3">Bukti Pembayaran</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {proofPayments.map((payment) => {
                     const proof = getProofUrl(payment);
                     return (
-                      <div key={payment.id} className="relative group rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                      <div key={payment.id} className="relative group rounded-xl border border-border overflow-hidden bg-muted">
                         <img
                           src={proof!}
                           alt="Bukti pembayaran"
@@ -507,13 +507,13 @@ export default function AdminPesanan() {
             {notesInfo?.specialRequest && (
               <div>
                 <p className="text-muted-foreground font-medium mb-1">Catatan / Permintaan Khusus</p>
-                <p className="bg-slate-50 rounded-xl p-3 text-slate-700">
+                <p className="bg-muted rounded-xl p-3 text-slate-700">
                   {notesInfo.specialRequest}
                 </p>
               </div>
             )}
 
-            <div className="border-t border-slate-100 pt-4">
+            <div className="border-t border-border pt-4">
               <p className="text-muted-foreground font-medium mb-1">
                 Feedback / Pesan ke Pengguna
               </p>
@@ -531,7 +531,7 @@ export default function AdminPesanan() {
                   onChange={(e) => setFeedbackText(e.target.value)}
                   placeholder="Tulis pesan/feedback untuk pengguna..."
                   rows={3}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/40"
+                  className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/40"
                 />
                 <button
                   onClick={handleSendFeedback}
@@ -545,7 +545,7 @@ export default function AdminPesanan() {
             </div>
 
             {(displayData.status === "pending" || displayData.status === "awaiting_verification") && detailPendingPayment && (
-              <div className="border-t border-slate-100 pt-4 space-y-3">
+              <div className="border-t border-border pt-4 space-y-3">
                 {rejectPaymentId === detailPendingPayment.id ? (
                   <div className="space-y-2">
                     <textarea
@@ -553,20 +553,20 @@ export default function AdminPesanan() {
                       onChange={(e) => setRejectNote(e.target.value)}
                       placeholder="Alasan penolakan (wajib)..."
                       rows={3}
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleReview(detailPendingPayment.id, "reject", rejectNote)}
                         disabled={rejecting}
-                        className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-destructive text-white text-sm font-bold rounded-xl hover:bg-destructive transition disabled:opacity-50"
                       >
                         {rejecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
                         {rejecting ? "Memproses..." : "Konfirmasi Tolak"}
                       </button>
                       <button
                         onClick={() => setRejectPaymentId(null)}
-                        className="px-5 py-3 bg-slate-100 text-slate-600 text-sm font-bold rounded-xl hover:bg-slate-200 transition"
+                        className="px-5 py-3 bg-muted text-slate-600 text-sm font-bold rounded-xl hover:bg-slate-200 transition"
                       >
                         Batal
                       </button>
@@ -585,7 +585,7 @@ export default function AdminPesanan() {
                     <button
                       onClick={() => { setRejectPaymentId(detailPendingPayment.id); setRejectNote(""); }}
                       disabled={approving}
-                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl hover:bg-red-100 transition disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-red-50 text-destructive text-sm font-bold rounded-xl hover:bg-red-100 transition disabled:opacity-50"
                     >
                       <XCircle className="w-4 h-4" />
                       Tolak Pembayaran

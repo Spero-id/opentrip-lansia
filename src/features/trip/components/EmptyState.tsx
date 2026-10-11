@@ -4,7 +4,7 @@ import { SlidersHorizontal } from "lucide-react";
 
 export default function EmptyState({ onReset }: { onReset: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-gray-200 bg-background">
+    <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-background">
       <div
         className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
         style={{ backgroundColor: "rgba(223,114,36,0.08)" }}
