@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { NEXT_PUBLIC_WHATSAPP_MESSAGE } from "@/lib/env/client";
 import { ArrowRight, Loader2, Phone, Mail, MapPin, Send, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     "Jl. Ratu Bidadari 3 No. 2, Ciputat, Tangerang Selatan"
@@ -237,10 +238,10 @@ export default function ContactPage() {
                                         )}
 
                                         <div className="flex justify-end">
-                                            <button
+                                            <Button
                                                 type="submit"
                                                 disabled={loading}
-                                                className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold text-[13px] tracking-wide transition-colors hover:bg-primary/85 active:scale-[0.98] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer shrink-0 shadow-sm"
+                                                className="px-6 py-3 text-[13px] tracking-wide gap-2 active:scale-[0.98] shadow-sm"
                                             >
                                                 {loading ? "Mengirim..." : "Kirim Pesan"}
                                                 {loading ? (
@@ -248,7 +249,7 @@ export default function ContactPage() {
                                                 ) : (
                                                     <ArrowRight size={14} strokeWidth={2.2} />
                                                 )}
-                                            </button>
+                                            </Button>
                                         </div>
                                     </form>
                                 )}
