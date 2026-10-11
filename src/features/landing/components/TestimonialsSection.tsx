@@ -25,16 +25,16 @@ export default function TestimonialsSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 gap-4">
           <div>
-            <p className="text-[#F49D1A] font-semibold text-sm tracking-wide mb-3">TESTIMONI</p>
+            <p className="text-primary font-semibold text-sm tracking-wide mb-3">TESTIMONI</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">
-              Apa Kata Mereka Setelah <span className="text-[#F49D1A]">Traveling</span>
+              Apa Kata Mereka Setelah <span className="text-primary">Traveling</span>
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} className="text-[#F49D1A] fill-[#F49D1A]" />
+                <Star key={i} size={18} className="text-primary fill-primary" />
               ))}
             </div>
             <div>
@@ -48,7 +48,7 @@ export default function TestimonialsSection() {
           {visibleReviews.map((r, i) => (
             <div
               key={`${page}-${i}`}
-              className="bg-white rounded-xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+              className="bg-background rounded-xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex items-start justify-between gap-3 mb-4">
                 <div className="flex items-center gap-3 min-w-0">
@@ -68,7 +68,7 @@ export default function TestimonialsSection() {
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0">
-                  <Star size={14} className="text-[#F49D1A] fill-[#F49D1A]" />
+                  <Star size={14} className="text-primary fill-primary" />
                   <span className="text-sm font-bold text-gray-900">{r.rating.toFixed(1)}</span>
                 </div>
               </div>
@@ -94,7 +94,7 @@ export default function TestimonialsSection() {
                   key={i}
                   onClick={() => goTo(i)}
                   aria-label={`Ke halaman ${i + 1}`}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${i === page ? "w-7 bg-[#F49D1A]" : "w-2.5 bg-gray-200 hover:bg-gray-300"
+                  className={`h-2.5 rounded-full transition-all duration-300 ${i === page ? "w-7 bg-primary" : "w-2.5 bg-gray-200 hover:bg-gray-300"
                     }`}
                 />
               ))}

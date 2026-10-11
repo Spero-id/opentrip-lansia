@@ -58,7 +58,7 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="fixed inset-0 overflow-hidden lg:static lg:h-auto lg:min-h-screen bg-white flex flex-col lg:flex lg:items-center lg:justify-center lg:p-4">
+        <div className="fixed inset-0 overflow-hidden lg:static lg:h-auto lg:min-h-screen bg-background flex flex-col lg:flex lg:items-center lg:justify-center lg:p-4">
             <div className="flex flex-col flex-1 min-h-0 lg:min-h-0 lg:flex-none w-full max-w-6xl lg:grid lg:grid-cols-2 lg:rounded-2xl overflow-hidden lg:shadow-2xl">
 
                 <div
@@ -71,7 +71,7 @@ export default function RegisterPage() {
 
                     <Link
                         href="/"
-                        className="relative z-10 flex items-center gap-2 text-[#F49D1A] font-bold text-lg"
+                        className="relative z-10 flex items-center gap-2 text-primary font-bold text-lg"
                     >
                         <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-14 w-auto" />
                     </Link>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
                     </div>
                 </div>
 
-                <div className="order-2 lg:order-2 relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-white rounded-t-[2.5rem] lg:rounded-none p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="order-2 lg:order-2 relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-[2.5rem] lg:rounded-none p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     <Link
                         href="/"
                         className="hidden lg:inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-900 transition-colors mb-8 self-start"
@@ -119,7 +119,7 @@ export default function RegisterPage() {
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Masukkan nama kamu"
                                 required
-                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
                             />
                         </div>
 
@@ -133,7 +133,7 @@ export default function RegisterPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Masukkan email kamu"
                                 required
-                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
+                                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
                             />
                         </div>
 
@@ -148,7 +148,7 @@ export default function RegisterPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Masukkan password kamu"
                                     required
-                                    className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 focus:border-[#F49D1A] transition-colors"
+                                    className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-colors"
                                 />
                                 <button
                                     type="button"
@@ -164,7 +164,7 @@ export default function RegisterPage() {
                             <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    className="w-4 h-4 rounded border-gray-300 text-[#F49D1A] focus:ring-[#F49D1A]/30"
+                                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-ring/30"
                                 />
                                 Saya setuju dengan Syarat & Ketentuan
                             </label>
@@ -173,7 +173,7 @@ export default function RegisterPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#F49D1A]/80 transition-colors disabled:opacity-50"
+                            className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold hover:bg-primary/80 transition-colors disabled:opacity-50"
                         >
                             {loading ? "Memproses..." : "Daftar"}
                         </button>
@@ -214,7 +214,7 @@ export default function RegisterPage() {
 
                     <p className="text-center text-sm text-gray-500 mt-4 sm:mt-8">
                         Sudah Punya Akun?{" "}
-                        <a href="/login" className="italic text-gray-900 font-semibold hover:text-[#F49D1A]">
+                        <a href="/login" className="italic text-gray-900 font-semibold hover:text-primary">
                             Masuk di sini
                         </a>
                     </p>

@@ -19,9 +19,9 @@ export default function ItinerarySection({ dest, shortLocation }: { dest: TripDe
               <div className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF6E7] text-xs font-bold text-[#c47d12] ring-4 ring-white">
                 {item.day}
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-[#F49D1A]/40 hover:shadow-md sm:p-5">
+              <div className="rounded-2xl border border-slate-200 bg-background p-4 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:p-5">
                 <div className="mb-1.5 flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wide text-[#F49D1A]">
+                  <span className="text-[11px] font-bold uppercase tracking-wide text-primary">
                     Hari {item.day}
                   </span>
                   <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-500">

@@ -22,7 +22,7 @@ export default function ParsedPreferences({ text }: { text?: string | null }) {
             {sec.rows.map((row, ri) => (
               <div
                 key={ri}
-                className={`flex text-xs ${ri % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                className={`flex text-xs ${ri % 2 === 0 ? "bg-gray-50" : "bg-background"}`}
               >
                 <span className="w-40 shrink-0 px-3 py-2 text-gray-500 font-medium border-r border-gray-100">
                   {row.key}

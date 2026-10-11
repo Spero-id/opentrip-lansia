@@ -88,7 +88,7 @@ export default function TermsModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl border border-gray-200/50 shadow-xl w-full max-w-lg flex flex-col overflow-hidden"
+        className="bg-background rounded-2xl border border-gray-200/50 shadow-xl w-full max-w-lg flex flex-col overflow-hidden"
         style={{ maxHeight: "85vh" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -192,7 +192,7 @@ export default function TermsModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 bg-background text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
             >
               Batal
             </button>

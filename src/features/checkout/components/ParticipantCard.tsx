@@ -31,7 +31,7 @@ export default function ParticipantCard({
             placeholder="Nama Lengkap"
             value={participant.fullName}
             onChange={(e) => onUpdate(participant.id, "fullName", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
+            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
           />
         </div>
         <input
@@ -43,12 +43,12 @@ export default function ParticipantCard({
             if (val && val.split("-")[0] && val.split("-")[0].length > 4) return;
             onUpdate(participant.id, "birthDate", val);
           }}
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
+          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
         <select
           value={participant.gender}
           onChange={(e) => onUpdate(participant.id, "gender", e.target.value)}
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
+          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-ring/20"
         >
           <option value="">Jenis Kelamin</option>
           <option value="L">Laki-laki</option>
@@ -59,14 +59,14 @@ export default function ParticipantCard({
           placeholder="No. Telepon"
           value={participant.phone}
           onChange={(e) => onUpdate(participant.id, "phone", e.target.value)}
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
+          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
         <input
           type="email"
           placeholder="Email"
           value={participant.email}
           onChange={(e) => onUpdate(participant.id, "email", e.target.value)}
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
+          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
         <div className="col-span-2">
           <input
@@ -74,7 +74,7 @@ export default function ParticipantCard({
             placeholder="Hubungan dengan pemesan (keluarga/teman)"
             value={participant.relationship}
             onChange={(e) => onUpdate(participant.id, "relationship", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20"
+            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20"
           />
         </div>
       </div>

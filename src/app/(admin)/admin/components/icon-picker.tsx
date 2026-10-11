@@ -208,10 +208,10 @@ export default function IconPicker({
           className={`relative group h-10 w-10 rounded-xl flex items-center justify-center transition-all shadow-xs border shrink-0 ${
             isOpen
               ? hasIcon
-                ? "bg-[#F49D1A] text-white border-[#F49D1A] ring-2 ring-[#F49D1A]/30 scale-105"
-                : "bg-slate-700 text-white border-slate-700 ring-2 ring-slate-400/30 scale-105"
+                ? "bg-primary text-primary-foreground border-primary ring-2 ring-ring/30 scale-105"
+                : "bg-slate-700 text-primary-foreground border-slate-700 ring-2 ring-slate-400/30 scale-105"
               : hasIcon
-              ? "bg-amber-50/90 text-[#F49D1A] hover:bg-amber-100/90 border-amber-200 hover:border-amber-300 hover:scale-102"
+              ? "bg-amber-50/90 text-primary hover:bg-amber-100/90 border-amber-200 hover:border-amber-300 hover:scale-102"
               : "bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 border-slate-200 hover:border-slate-300 hover:scale-102"
           } ${buttonClassName || ""}`}
         >
@@ -223,8 +223,8 @@ export default function IconPicker({
           <span
             className={`absolute -bottom-1 -right-1 rounded-full p-0.5 shadow-xs border transition ${
               hasIcon
-                ? "bg-white text-slate-400 border-slate-200 group-hover:text-[#F49D1A] group-hover:border-amber-300"
-                : "bg-white text-slate-400 border-slate-200 group-hover:text-slate-600 group-hover:border-slate-300"
+                ? "bg-background text-slate-400 border-slate-200 group-hover:text-primary group-hover:border-amber-300"
+                : "bg-background text-slate-400 border-slate-200 group-hover:text-slate-600 group-hover:border-slate-300"
             }`}
           >
             <ChevronDown className="w-2.5 h-2.5" />
@@ -235,11 +235,11 @@ export default function IconPicker({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center gap-2 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white hover:border-[#F49D1A] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition shadow-xs ${buttonClassName || ""}`}
+          className={`flex items-center gap-2 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-background hover:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 transition shadow-xs ${buttonClassName || ""}`}
         >
           <span
             className={`p-1 rounded-lg shrink-0 border ${
-              hasIcon ? "bg-amber-50 text-[#F49D1A] border-amber-200/50" : "bg-slate-100 text-slate-400 border-slate-200"
+              hasIcon ? "bg-amber-50 text-primary border-amber-200/50" : "bg-slate-100 text-slate-400 border-slate-200"
             }`}
           >
             {hasIcon ? <DynamicLucideIcon name={selectedIcon} className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -254,12 +254,12 @@ export default function IconPicker({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-white hover:border-[#F49D1A] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition shadow-xs ${buttonClassName || ""}`}
+          className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-xs border border-slate-300 rounded-xl bg-background hover:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 transition shadow-xs ${buttonClassName || ""}`}
         >
           <div className="flex items-center gap-2 truncate">
             <span
               className={`p-1 rounded-lg shrink-0 border ${
-                hasIcon ? "bg-amber-50 text-[#F49D1A] border-amber-200/50" : "bg-slate-100 text-slate-400 border-slate-200"
+                hasIcon ? "bg-amber-50 text-primary border-amber-200/50" : "bg-slate-100 text-slate-400 border-slate-200"
               }`}
             >
               {hasIcon ? <DynamicLucideIcon name={selectedIcon} className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -278,11 +278,11 @@ export default function IconPicker({
           <div
             ref={popoverRef}
             style={popoverStyle}
-            className="bg-white rounded-2xl border border-slate-200 shadow-2xl p-3.5 space-y-3 animate-in fade-in zoom-in-95 duration-150"
+            className="bg-background rounded-2xl border border-slate-200 shadow-2xl p-3.5 space-y-3 animate-in fade-in zoom-in-95 duration-150"
           >
             <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
               <div className="flex items-center gap-2">
-                <span className="p-1 rounded-lg bg-amber-50 text-[#F49D1A]">
+                <span className="p-1 rounded-lg bg-amber-50 text-primary">
                   <Sparkles className="w-4 h-4" />
                 </span>
                 <span className="text-xs font-bold text-slate-800">Pilih Ikon Fasilitas</span>
@@ -318,7 +318,7 @@ export default function IconPicker({
                 placeholder="Cari ikon (cth: Bus, Wifi, Bed, Shield)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-8 pr-8 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+                className="w-full pl-8 pr-8 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                 autoFocus
               />
               {search && (
@@ -342,7 +342,7 @@ export default function IconPicker({
                       onClick={() => setActiveCategory(cat.category)}
                       className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition ${
                         activeCategory === cat.category
-                          ? "bg-[#F49D1A] text-white shadow-xs"
+                          ? "bg-primary text-primary-foreground shadow-xs"
                           : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"
                       }`}
                     >
@@ -363,8 +363,8 @@ export default function IconPicker({
                       }}
                       className={`p-2 rounded-xl flex flex-col items-center justify-center transition group relative ${
                         selectedIcon === iconName
-                          ? "bg-[#F49D1A] text-white shadow-md ring-2 ring-[#F49D1A]/40 scale-105"
-                          : "bg-white text-slate-700 hover:bg-amber-50 hover:text-[#F49D1A] border border-slate-200/80 hover:border-amber-200"
+                          ? "bg-primary text-primary-foreground shadow-md ring-2 ring-ring/40 scale-105"
+                          : "bg-background text-slate-700 hover:bg-amber-50 hover:text-primary border border-slate-200/80 hover:border-amber-200"
                       }`}
                     >
                       <DynamicLucideIcon name={iconName} className="w-4 h-4" />
@@ -389,8 +389,8 @@ export default function IconPicker({
                       }}
                       className={`p-2 rounded-xl flex flex-col items-center justify-center transition ${
                         selectedIcon === iconName
-                          ? "bg-[#F49D1A] text-white shadow-md ring-2 ring-[#F49D1A]/40 scale-105"
-                          : "bg-white text-slate-700 hover:bg-amber-50 hover:text-[#F49D1A] border border-slate-200/80 hover:border-amber-200"
+                          ? "bg-primary text-primary-foreground shadow-md ring-2 ring-ring/40 scale-105"
+                          : "bg-background text-slate-700 hover:bg-amber-50 hover:text-primary border border-slate-200/80 hover:border-amber-200"
                       }`}
                     >
                       <DynamicLucideIcon name={iconName} className="w-4 h-4" />
@@ -409,7 +409,7 @@ export default function IconPicker({
               <span>Ikon terpilih:</span>
               {hasIcon ? (
                 <span className="font-semibold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md inline-flex items-center gap-1.5">
-                  <DynamicLucideIcon name={selectedIcon} className="w-3.5 h-3.5 text-[#F49D1A]" />
+                  <DynamicLucideIcon name={selectedIcon} className="w-3.5 h-3.5 text-primary" />
                   {selectedIcon}
                 </span>
               ) : (

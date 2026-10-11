@@ -40,7 +40,7 @@ export default function Lightbox({ images, startIndex, onClose }: LightboxProps)
     >
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-background/10 hover:bg-background/20 flex items-center justify-center text-white transition-colors z-10"
         aria-label="Tutup"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -56,7 +56,7 @@ export default function Lightbox({ images, startIndex, onClose }: LightboxProps)
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); prev(); }}
-          className="absolute left-3 sm:left-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+          className="absolute left-3 sm:left-6 w-10 h-10 rounded-full bg-background/10 hover:bg-background/20 flex items-center justify-center text-white transition-colors z-10"
           aria-label="Sebelumnya"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -81,7 +81,7 @@ export default function Lightbox({ images, startIndex, onClose }: LightboxProps)
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); next(); }}
-          className="absolute right-3 sm:right-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+          className="absolute right-3 sm:right-6 w-10 h-10 rounded-full bg-background/10 hover:bg-background/20 flex items-center justify-center text-white transition-colors z-10"
           aria-label="Berikutnya"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

@@ -106,7 +106,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="bg-slate-100/70 min-w-0">
-        <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white px-4 sm:px-6">
+        <header className="sticky top-0 left-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-background px-4 sm:px-6">
           <div className="flex items-center gap-2 min-w-0">
             <SidebarTrigger className="-ml-1 text-slate-500" />
             {activeMenu && (
@@ -161,7 +161,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs text-[#F49D1A] hover:text-[#E08A0E] font-medium"
+                        className="text-xs text-primary hover:text-[#E08A0E] font-medium"
                       >
                         Tandai semua dibaca
                       </button>
@@ -225,7 +225,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         <Link
                           href="/admin/notifications"
                           onClick={() => setShowNotifications(false)}
-                          className="block rounded-sm px-2 py-1.5 text-center text-xs font-medium text-[#F49D1A] hover:bg-accent transition-colors"
+                          className="block rounded-sm px-2 py-1.5 text-center text-xs font-medium text-primary hover:bg-accent transition-colors"
                         >
                           Lihat semua notifikasi →
                         </Link>
@@ -251,17 +251,17 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     alt={adminName}
                     width={40}
                     height={40}
-                    className="h-10 w-10 rounded-full object-cover border border-[#F49D1A]/20"
+                    className="h-10 w-10 rounded-full object-cover border border-primary/20"
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F49D1A]/15 border border-[#F49D1A]/20 font-bold text-[#F49D1A] group-hover:bg-[#F49D1A]/25 transition-colors">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 border border-primary/20 font-bold text-primary group-hover:bg-primary/25 transition-colors">
                     {adminInitials}
                   </div>
                 )}
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-white border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
+                <div className="absolute right-0 mt-4 w-56 rounded-2xl bg-background border border-slate-200/80 shadow-xl shadow-black/10 overflow-hidden z-50">
                   <div className="px-4 py-3 border-b border-slate-200">
                     <p className="text-sm font-medium text-slate-900 truncate">
                       {adminName}

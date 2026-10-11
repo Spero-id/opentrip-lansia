@@ -14,7 +14,7 @@ interface TierSelectorProps {
 export default function TierSelector({ tiers, tierQty, loading, onChange }: TierSelectorProps) {
   if (loading) {
     return (
-      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+      <div className="bg-background border border-gray-100 rounded-2xl p-5 shadow-sm">
         <h2 className="text-base font-bold text-gray-900 mb-1">Jumlah Peserta</h2>
         <p className="text-xs text-gray-400">Memuat tier harga...</p>
       </div>
@@ -22,7 +22,7 @@ export default function TierSelector({ tiers, tierQty, loading, onChange }: Tier
   }
   if (tiers.length === 0) return null;
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
+    <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Jumlah Peserta</h2>
         <p className="text-xs text-gray-400">Atur jumlah peserta per tier harga.</p>
@@ -46,7 +46,7 @@ export default function TierSelector({ tiers, tierQty, loading, onChange }: Tier
                   aria-label={`Kurangi ${tier.name}`}
                   disabled={qty <= 0}
                   onClick={() => onChange(tier.id, qty - 1)}
-                  className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-30 transition"
+                  className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-primary hover:text-primary disabled:opacity-30 transition"
                 >
                   <Minus size={14} />
                 </button>
@@ -56,7 +56,7 @@ export default function TierSelector({ tiers, tierQty, loading, onChange }: Tier
                   aria-label={`Tambah ${tier.name}`}
                   disabled={soldOut || qty >= tier.remaining}
                   onClick={() => onChange(tier.id, qty + 1)}
-                  className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#F49D1A] hover:text-[#F49D1A] disabled:opacity-30 transition"
+                  className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-primary hover:text-primary disabled:opacity-30 transition"
                 >
                   <Plus size={14} />
                 </button>

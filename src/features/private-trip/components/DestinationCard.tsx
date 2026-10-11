@@ -17,7 +17,7 @@ export default function DestinationCard({
     <button
       type="button"
       onClick={onSelect}
-      className="w-full flex items-stretch gap-0 rounded-xl border border-[#E5E7EB] bg-white text-left transition-colors hover:border-[#F49D1A] hover:bg-[#FFFBEB] cursor-pointer overflow-hidden"
+      className="w-full flex items-stretch gap-0 rounded-xl border border-[#E5E7EB] bg-background text-left transition-colors hover:border-primary hover:bg-[#FFFBEB] cursor-pointer overflow-hidden"
     >
       {dest.image ? (
         <img

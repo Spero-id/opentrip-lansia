@@ -124,7 +124,7 @@ export default function AdminAuditLogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Audit Log</h1>
           <p className="text-sm text-slate-500 mt-1">Jejak perubahan penting oleh admin. Catatan bersifat permanen dan tidak dapat diubah.</p>
@@ -135,7 +135,7 @@ export default function AdminAuditLogPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-5 flex flex-wrap items-end gap-3">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 sm:p-5 flex flex-wrap items-end gap-3">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 pb-2">
           <Filter className="w-4 h-4" />
           Filter
@@ -146,7 +146,7 @@ export default function AdminAuditLogPage() {
             id="audit-entity"
             value={entityType}
             onChange={(e) => setEntityType(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] bg-white"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background"
           >
             {ENTITY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -159,7 +159,7 @@ export default function AdminAuditLogPage() {
             id="audit-action"
             value={action}
             onChange={(e) => setAction(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] bg-white"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background"
           >
             {ACTION_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -172,14 +172,14 @@ export default function AdminAuditLogPage() {
               setEntityType("");
               setAction("");
             }}
-            className="text-xs font-medium text-[#E08A0E] hover:text-[#F49D1A] pb-2.5"
+            className="text-xs font-medium text-[#E08A0E] hover:text-primary pb-2.5"
           >
             Reset filter
           </button>
         )}
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">

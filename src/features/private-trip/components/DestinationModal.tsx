@@ -7,8 +7,8 @@ import DestinationCard from "./DestinationCard";
 import type { PrivateTripDestination } from "@/features/private-trip/types";
 
 const baseInput =
-  "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
-const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
+  "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-background placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors";
+const normalBorder = "border-[#D1D5DB] focus:border-primary";
 
 export default function DestinationModal({
   isOpen,
@@ -52,7 +52,7 @@ export default function DestinationModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm w-full max-w-4xl flex flex-col overflow-hidden"
+        className="bg-background rounded-xl border border-[#E5E7EB] shadow-sm w-full max-w-4xl flex flex-col overflow-hidden"
         style={{ maxHeight: "85vh" }}
         onClick={(e) => e.stopPropagation()}
       >

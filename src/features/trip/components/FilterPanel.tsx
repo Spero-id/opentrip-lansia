@@ -93,7 +93,7 @@ export default function FilterPanel({
         <button
           type="button"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="flex items-center justify-between w-full p-4 rounded-2xl bg-white border border-gray-200 font-semibold text-sm shadow-sm"
+          className="flex items-center justify-between w-full p-4 rounded-2xl bg-background border border-gray-200 font-semibold text-sm shadow-sm"
         >
           <div className="flex items-center gap-2">
             <Filter size={16} style={{ color: A }} />
@@ -116,7 +116,7 @@ export default function FilterPanel({
       </div>
 
       <div
-        className={`bg-white rounded-2xl border border-gray-200 shadow-sm overflow-visible ${
+        className={`bg-background rounded-2xl border border-gray-200 shadow-sm overflow-visible ${
           isMobileOpen ? "block" : "hidden lg:block"
         }`}
       >
@@ -165,7 +165,7 @@ export default function FilterPanel({
                 }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow-md ring-0 transition duration-200 ease-in-out ${
                     isSeniorFriendlyOnly ? "translate-x-5" : "translate-x-0"
                   }`}
                 />
@@ -229,7 +229,7 @@ export default function FilterPanel({
               <button
                 type="button"
                 onClick={() => setIsLocationOpen(!isLocationOpen)}
-                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-800 text-left focus:outline-none focus:border-[#F49D1A] transition-colors"
+                className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm font-medium text-gray-800 text-left focus:outline-none focus:border-primary transition-colors"
               >
                 <span className={selectedLocation ? "text-gray-800" : "text-gray-400"}>
                   {selectedLocation || "Semua Lokasi"}
@@ -246,14 +246,14 @@ export default function FilterPanel({
                     className="fixed inset-0 z-10"
                     onClick={() => setIsLocationOpen(false)}
                   />
-                  <div className="absolute left-0 right-0 mt-1.5 bg-white border border-gray-200 rounded-xl shadow-lg z-20 max-h-52 overflow-y-auto py-1">
+                  <div className="absolute left-0 right-0 mt-1.5 bg-background border border-gray-200 rounded-xl shadow-lg z-20 max-h-52 overflow-y-auto py-1">
                     <button
                       type="button"
                       onClick={() => { setSelectedLocation(""); setIsLocationOpen(false); }}
                       className={`w-full text-left px-4 py-2 text-xs font-semibold transition-colors ${
                         selectedLocation === ""
-                          ? "text-white"
-                          : "text-gray-700 hover:bg-[#F49D1A]/10"
+                          ? "text-primary-foreground"
+                          : "text-gray-700 hover:bg-primary/10"
                       }`}
                       style={selectedLocation === "" ? { backgroundColor: A } : {}}
                     >
@@ -266,8 +266,8 @@ export default function FilterPanel({
                         onClick={() => { setSelectedLocation(loc); setIsLocationOpen(false); }}
                         className={`w-full text-left px-4 py-2 text-xs font-semibold transition-colors ${
                           selectedLocation === loc
-                            ? "text-white"
-                            : "text-gray-700 hover:bg-[#F49D1A]/10"
+                            ? "text-primary-foreground"
+                            : "text-gray-700 hover:bg-primary/10"
                         }`}
                         style={selectedLocation === loc ? { backgroundColor: A } : {}}
                       >
@@ -337,7 +337,7 @@ export default function FilterPanel({
                       else if (text === "") setPriceMin("");
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMin !== "" ? formatFilterPrice(priceMin) : "Tanpa batas minimal"}
@@ -371,7 +371,7 @@ export default function FilterPanel({
                       else if (text === "") setPriceMax("");
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F49D1A] focus:ring-2 focus:ring-[#F49D1A]/15 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-ring/15 transition-all"
                 />
                 <p className="text-[10px] pl-1 font-medium" style={{ color: A }}>
                   {priceMax !== "" ? formatFilterPrice(priceMax) : "Tanpa batas maksimal"}

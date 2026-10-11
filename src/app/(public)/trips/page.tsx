@@ -31,8 +31,8 @@ function TripsContent() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
+      <main className="min-h-screen bg-background">
         <DestinationListHeader search={filter.search} setSearch={filter.setSearch} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8 items-stretch">

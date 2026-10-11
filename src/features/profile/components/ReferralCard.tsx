@@ -49,7 +49,7 @@ export default function ReferralCard({
   if (!referralCode) return null;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+    <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-slate-900">Kode Referral</h2>
@@ -86,8 +86,8 @@ export default function ReferralCard({
           onClick={copyCode}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
             copied
-              ? "bg-green-500 text-white"
-              : "bg-[#F49D1A] text-white hover:bg-[#c47d12]"
+              ? "bg-green-500 text-primary-foreground"
+              : "bg-primary text-primary-foreground hover:bg-[#c47d12]"
           }`}
         >
           {copied ? (

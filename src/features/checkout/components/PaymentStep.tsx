@@ -59,7 +59,7 @@ export default function PaymentStep({
               checkout.isLoading ||
               accountsStatus === "loading"
             }
-            className="flex-1 bg-[#F49D1A] text-white py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {checkout.isLoading ? (
               <>
@@ -117,7 +117,7 @@ function PaymentSelector({
   const isQRIS = selected === "QRIS";
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
+    <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Metode Pembayaran</h2>
         <p className="text-xs text-gray-400 mt-0.5">
@@ -144,7 +144,7 @@ function PaymentSelector({
 
         {showBCA && (
           <label
-            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
+            className="flex items-center justify-between rounded-xl border border-gray-200 bg-background p-4 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition"
             onClick={() => setPaymentMethod?.("BCA")}
           >
             <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ function PaymentSelector({
         )}
 
         <label
-          className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition"
+          className="flex items-center justify-between rounded-xl border border-gray-200 bg-background p-4 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition"
           onClick={() => setPaymentMethod?.("QRIS")}
         >
           <div className="flex items-center gap-3">
@@ -210,7 +210,7 @@ function PaymentSelector({
               alt="QRIS QR Code"
               width={200}
               height={200}
-              className="mx-auto object-contain rounded-lg bg-white p-2"
+              className="mx-auto object-contain rounded-lg bg-background p-2"
             />
             <p className="text-[11px] text-gray-400 mt-2">Scan kode QR di atas menggunakan aplikasi e-wallet/banking</p>
           </div>
@@ -255,10 +255,10 @@ function AccountCard({ account }: { account: PaymentAccountLike }) {
         </div>
       )}
       {accountNumber && (
-        <div className="flex justify-between gap-2 text-xs bg-white rounded-lg px-3 py-2">
+        <div className="flex justify-between gap-2 text-xs bg-background rounded-lg px-3 py-2">
           <span className="text-gray-500">Nomor</span>
           <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-[#F49D1A] tracking-wide">{accountNumber}</span>
+            <span className="font-mono font-bold text-primary tracking-wide">{accountNumber}</span>
             <button
               onClick={copy}
               className="text-[11px] font-semibold text-[#1CA6B7] hover:underline"
@@ -308,7 +308,7 @@ function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> 
   }
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
+    <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
       <div>
         <h2 className="text-base font-bold text-gray-900">Bukti Transfer</h2>
         <p className="text-xs text-gray-400 mt-0.5">
@@ -331,10 +331,10 @@ function ProofUploader({ checkout }: { checkout: ReturnType<typeof useCheckout> 
           </button>
         </div>
       ) : (
-        <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:border-[#F49D1A]/50 hover:bg-[#F49D1A]/5 transition">
+        <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition">
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
           {uploading ? (
-            <div className="w-6 h-6 rounded-full border-2 border-[#F49D1A]/30 border-t-[#F49D1A] animate-spin" />
+            <div className="w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
           ) : (
             <Upload className="w-6 h-6 text-gray-400" />
           )}

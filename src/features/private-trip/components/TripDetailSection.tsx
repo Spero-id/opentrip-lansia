@@ -44,8 +44,8 @@ export default function TripDetailSection({
   destinationsData?: PrivateTripDestination[];
 }) {
   const baseInput =
-    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 transition-colors";
-  const normalBorder = "border-[#D1D5DB] focus:border-[#F49D1A]";
+    "w-full px-3 py-2.5 rounded-lg border text-[13px] leading-5 bg-background placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-ring/30 transition-colors";
+  const normalBorder = "border-[#D1D5DB] focus:border-primary";
   const errorBorder = "border-red-300 focus:border-red-400 focus:ring-red-100";
   const todayStr = new Date().toLocaleDateString("en-CA");
 
@@ -59,7 +59,7 @@ export default function TripDetailSection({
     : destinationsData;
 
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+    <div className="bg-background rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
       <div className="px-5 sm:px-6 pt-5 pb-4">
         <h3 className="text-[14px] font-semibold text-[#1F2A37] flex items-center gap-2">
           <Calendar size={16} strokeWidth={1.8} color="#6B7280" className="shrink-0" />
@@ -81,8 +81,8 @@ export default function TripDetailSection({
                   key={opt.value}
                   className={`flex-1 flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer transition-colors ${
                     active
-                      ? "border-[#F49D1A] bg-[#FFFBEB]/50"
-                      : "border-[#D1D5DB] bg-white hover:bg-gray-50"
+                      ? "border-primary bg-[#FFFBEB]/50"
+                      : "border-[#D1D5DB] bg-background hover:bg-gray-50"
                   }`}
                 >
                   <input
@@ -95,11 +95,11 @@ export default function TripDetailSection({
                   />
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                      active ? "border-[#F49D1A] bg-white" : "border-[#D1D5DB] bg-white"
+                      active ? "border-primary bg-background" : "border-[#D1D5DB] bg-background"
                     }`}
                     aria-hidden="true"
                   >
-                    {active && <span className="w-2 h-2 rounded-full bg-[#F49D1A]" />}
+                    {active && <span className="w-2 h-2 rounded-full bg-primary" />}
                   </span>
                   <span
                     className={`text-[13px] ${active ? "text-[#1F2A37] font-medium" : "text-[#374151] font-normal"}`}
@@ -300,8 +300,8 @@ export default function TripDetailSection({
               <span
                 className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-colors ${
                   form.tanggalFleksibel
-                    ? "bg-[#F49D1A] border-[#F49D1A]"
-                    : "bg-white border-[#D1D5DB]"
+                    ? "bg-primary border-primary"
+                    : "bg-background border-[#D1D5DB]"
                 }`}
                 aria-hidden="true"
               >
@@ -352,8 +352,8 @@ export default function TripDetailSection({
                   key={opt.value}
                   className={`flex-1 flex flex-col gap-1.5 px-4 py-3 rounded-lg border cursor-pointer transition-colors text-left ${
                     active
-                      ? "border-[#F49D1A] bg-[#FFFBEB]/50"
-                      : "border-[#D1D5DB] bg-white hover:bg-gray-50"
+                      ? "border-primary bg-[#FFFBEB]/50"
+                      : "border-[#D1D5DB] bg-background hover:bg-gray-50"
                   }`}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -367,11 +367,11 @@ export default function TripDetailSection({
                     />
                     <span
                       className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                        active ? "border-[#F49D1A] bg-white" : "border-[#D1D5DB] bg-white"
+                        active ? "border-primary bg-background" : "border-[#D1D5DB] bg-background"
                       }`}
                       aria-hidden="true"
                     >
-                      {active && <span className="w-2 h-2 rounded-full bg-[#F49D1A]" />}
+                      {active && <span className="w-2 h-2 rounded-full bg-primary" />}
                     </span>
                     <span className="text-[12px] font-semibold text-[#1F2A37] leading-tight">
                       {opt.title}

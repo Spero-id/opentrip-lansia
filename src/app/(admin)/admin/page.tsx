@@ -21,7 +21,7 @@ function formatStatus(status: string): { label: string; className: string } {
 
 function StatCardSkeleton() {
   return (
-    <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 animate-pulse">
+    <div className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4 animate-pulse">
       <div className="flex items-center justify-between">
         <div className="h-3 w-32 bg-slate-200 rounded" />
         <div className="w-10 h-10 rounded-2xl bg-slate-200" />
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
           value: String(stats.totalTrips),
           change: "Total aktif",
           icon: Compass,
-          color: "text-[#F49D1A]",
+          color: "text-primary",
           bg: "bg-[#FEF6E7]",
         },
         {
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard Overview</h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
         </div>
         <Link
           href="/admin/trips"
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <span>+ Buat Trip Baru</span>
         </Link>
@@ -110,7 +110,7 @@ export default function AdminDashboard() {
               return (
                 <div
                   key={idx}
-                  className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4"
+                  className="bg-background p-5 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-400">{stat.label}</span>
@@ -129,10 +129,10 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <div className="lg:col-span-8 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+        <div className="lg:col-span-8 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Pemesanan Terbaru</h2>
-            <Link href="/admin/notifications" className="text-xs font-semibold text-[#F49D1A] hover:underline flex items-center gap-1">
+            <Link href="/admin/notifications" className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
               <span>Lihat Semua Notifikasi</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
                         <td className="px-4 py-3 font-mono font-bold text-slate-900">{row.bookingCode}</td>
                         <td className="px-4 py-3 font-medium">{row.customerName}</td>
                         <td className="px-4 py-3 text-slate-500">{row.tripName}</td>
-                        <td className="px-4 py-3 font-bold text-[#F49D1A]">{formatIDRCompact(row.totalAmount)}</td>
+                        <td className="px-4 py-3 font-bold text-primary">{formatIDRCompact(row.totalAmount)}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${className}`}>
                             {label}
@@ -189,37 +189,37 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+        <div className="lg:col-span-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
           <h2 className="text-lg font-bold text-slate-900">Aksi Cepat</h2>
 
           <div className="space-y-3 text-xs">
             <Link
               href="/admin/trips"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Kelola Paket Trip</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-slate-800 group-hover:text-primary">Kelola Paket Trip</span>
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
             </Link>
             <Link
               href="/admin/trips"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Tambah Trip Baru</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-slate-800 group-hover:text-primary">Tambah Trip Baru</span>
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
             </Link>
             <Link
               href="/admin/promotions"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Buat Kode Kupon / Promo</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-slate-800 group-hover:text-primary">Buat Kode Kupon / Promo</span>
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
             </Link>
             <Link
               href="/admin/bookings"
-              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-[#F49D1A]/10 hover:border-[#F49D1A]/20 border border-slate-100 transition group"
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-primary/10 hover:border-primary/20 border border-slate-100 transition group"
             >
-              <span className="font-semibold text-slate-800 group-hover:text-[#F49D1A]">Lihat Semua Pemesanan</span>
-              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#F49D1A]" />
+              <span className="font-semibold text-slate-800 group-hover:text-primary">Lihat Semua Pemesanan</span>
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-primary" />
             </Link>
           </div>
         </div>

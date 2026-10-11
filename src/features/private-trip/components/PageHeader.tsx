@@ -7,7 +7,7 @@ export default function PageHeader() {
         SESUAI KEINGINANMU
       </p>
       <h1 className="text-3xl sm:text-4xl font-bold leading-tight text-[#111827] mb-2.5">
-        Private <span className="text-[#F49D1A]">Trip</span>
+        Private <span className="text-primary">Trip</span>
       </h1>
       <p className="text-sm sm:text-base leading-[1.6] text-[#6B7280] max-w-[560px]">
         Rancang perjalananmu sendiri. Isi form di bawah dan tim kami akan segera menghubungi untuk mewujudkan trip impianmu.

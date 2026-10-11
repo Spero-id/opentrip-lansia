@@ -202,7 +202,7 @@ export default function AdminGroupGalleryPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#F49D1A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -235,7 +235,7 @@ export default function AdminGroupGalleryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div className="flex items-start gap-3">
           <button
             onClick={() => router.push(`/admin/trips/${tripId}/groups`)}
@@ -254,7 +254,7 @@ export default function AdminGroupGalleryPage() {
         </div>
         <button
           onClick={() => setUploadOpen(true)}
-          className="rounded-2xl bg-[#F49D1A] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
+          className="rounded-2xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition inline-flex items-center gap-2 shrink-0"
         >
           <Upload className="w-4 h-4" />
           <span>Upload Foto</span>
@@ -262,7 +262,7 @@ export default function AdminGroupGalleryPage() {
       </div>
 
       {media.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
+        <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-12 text-center">
           <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
             <ImageIcon className="w-8 h-8 text-slate-400" />
           </div>
@@ -272,7 +272,7 @@ export default function AdminGroupGalleryPage() {
           </p>
           <button
             onClick={() => setUploadOpen(true)}
-            className="mt-6 px-6 py-3 bg-[#F49D1A] text-white rounded-2xl text-sm font-semibold hover:bg-[#c47d12] transition inline-flex items-center gap-2"
+            className="mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-[#c47d12] transition inline-flex items-center gap-2"
           >
             <Upload className="w-4 h-4" />
             Upload Foto Pertama
@@ -283,7 +283,7 @@ export default function AdminGroupGalleryPage() {
           {media.map((item) => (
             <div
               key={item.id}
-              className="group relative bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden aspect-square"
+              className="group relative bg-background rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden aspect-square"
             >
               {item.url ? (
                 <img
@@ -301,7 +301,7 @@ export default function AdminGroupGalleryPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDeleteMedia(item.id)}
-                    className="p-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                    className="p-2 bg-red-600 text-primary-foreground rounded-xl hover:bg-red-700 transition"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -315,7 +315,7 @@ export default function AdminGroupGalleryPage() {
       {uploadOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => !uploading && setUploadOpen(false)} />
-          <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-background rounded-3xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-slate-900">Upload Foto</h2>
               {!uploading && (
@@ -342,7 +342,7 @@ export default function AdminGroupGalleryPage() {
                   accept="image/*"
                   multiple
                   onChange={handleFileSelect}
-                  className="w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#F49D1A]/10 file:text-[#F49D1A] hover:file:bg-[#F49D1A]/20"
+                  className="w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                 />
               </div>
 
@@ -365,7 +365,7 @@ export default function AdminGroupGalleryPage() {
                 <button
                   onClick={handleUpload}
                   disabled={selectedFiles.length === 0 || uploading}
-                  className="rounded-xl bg-[#F49D1A] px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#F49D1A]/20 hover:bg-[#c47d12] transition disabled:opacity-50"
+                  className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-[#c47d12] transition disabled:opacity-50"
                 >
                   {uploading ? (
                     <span className="inline-flex items-center gap-2">

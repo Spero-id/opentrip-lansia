@@ -62,7 +62,7 @@ export default function DestinationGallery({ images, title, onOpenLightbox }: De
           {imagesList.map((_, i) => (
             <div
               key={i}
-              className={`rounded-full transition-all ${i === mobileSlide ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"}`}
+              className={`rounded-full transition-all ${i === mobileSlide ? "w-4 h-1.5 bg-background" : "w-1.5 h-1.5 bg-background/50"}`}
             />
           ))}
         </div>

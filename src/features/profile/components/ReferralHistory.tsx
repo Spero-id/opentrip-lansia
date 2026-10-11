@@ -61,7 +61,7 @@ export default function ReferralHistory() {
 
   if (loading && history.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+      <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
         <h2 className="text-base font-bold text-slate-900">History Referral</h2>
         <div className="mt-4 space-y-3">
           {[1, 2, 3].map((i) => (
@@ -82,7 +82,7 @@ export default function ReferralHistory() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+    <div className="rounded-2xl border border-slate-200 bg-background p-5 sm:p-7">
       <h2 className="text-base font-bold text-slate-900">History Referral</h2>
       <p className="mt-0.5 text-xs text-slate-400">
         Daftar orang yang menggunakan kode referral kamu.

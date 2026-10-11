@@ -36,7 +36,7 @@ export default function ProposalCard({
   if (requestStatus !== "revision" && proposal.status !== "pending") return null;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+    <div className="bg-background rounded-xl border border-gray-100 p-4 space-y-3">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Proposal</p>
@@ -80,7 +80,7 @@ export default function ProposalCard({
             onChange={(e) => setNote(e.target.value)}
             placeholder="Catatan revisi..."
             rows={2}
-            className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#F49D1A]/30 resize-none"
+            className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-ring/30 resize-none"
           />
           <button
             onClick={() => handleAction("propose")}

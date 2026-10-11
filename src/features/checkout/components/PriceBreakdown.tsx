@@ -48,7 +48,7 @@ export default function PriceBreakdown({
   const perPax = pax > 0 ? Math.round(total / pax) : 0;
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm space-y-3 sticky top-24">
+    <div className="bg-background border border-gray-100 rounded-2xl p-5 shadow-sm space-y-3 sticky top-24">
       <h2 className="text-base font-bold text-gray-900">Ringkasan Harga</h2>
 
       <div className="space-y-3">
@@ -88,7 +88,7 @@ export default function PriceBreakdown({
                 <polyline points="20 6 9 17 4 12" />
               </svg>
               <div>
-                <span className="font-bold text-[#F49D1A]">
+                <span className="font-bold text-primary">
                   {appliedVoucher.code}
                 </span>
                 <p className="text-[10px] text-gray-400">
@@ -96,7 +96,7 @@ export default function PriceBreakdown({
                 </p>
               </div>
             </div>
-            <span className="font-bold text-[#F49D1A]">
+            <span className="font-bold text-primary">
               −{formatIDR(discount)}
             </span>
           </div>
@@ -130,7 +130,7 @@ export default function PriceBreakdown({
               type="checkbox"
               checked={agreeToTerms}
               readOnly
-              className="mt-1 w-4 h-4 rounded border-gray-300 text-[#F49D1A] focus:ring-[#F49D1A]/30 pointer-events-none"
+              className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-ring/30 pointer-events-none"
             />
             <span className="text-xs text-gray-500">
               Saya setuju dengan{" "}
@@ -140,7 +140,7 @@ export default function PriceBreakdown({
                   e.stopPropagation();
                   setModalType("terms");
                 }}
-                className="text-[#F49D1A] font-semibold hover:underline"
+                className="text-primary font-semibold hover:underline"
               >
                 syarat & ketentuan
               </button>{" "}
@@ -151,7 +151,7 @@ export default function PriceBreakdown({
                   e.stopPropagation();
                   setModalType("privacy");
                 }}
-                className="text-[#F49D1A] font-semibold hover:underline"
+                className="text-primary font-semibold hover:underline"
               >
                 kebijakan privasi
               </button>{" "}
@@ -162,7 +162,7 @@ export default function PriceBreakdown({
           <button
             onClick={onNext}
             disabled={!canProceed || !agreeToTerms || isLoading}
-            className="w-full bg-[#F49D1A] text-white py-3.5 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-semibold hover:bg-[#c47d12] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>

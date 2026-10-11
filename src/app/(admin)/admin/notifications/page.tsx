@@ -166,7 +166,7 @@ export default function AdminNotifications() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Notifikasi</h1>
           <p className="text-sm text-slate-500 mt-1">Pantau bukti pembayaran, request private trip, dan peserta baru.</p>
@@ -174,7 +174,7 @@ export default function AdminNotifications() {
         {unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="rounded-2xl bg-[#F49D1A]/10 px-5 py-2.5 text-xs font-semibold text-[#F49D1A] border border-[#F49D1A]/20 hover:bg-[#F49D1A]/20 transition inline-flex items-center gap-2 shrink-0"
+            className="rounded-2xl bg-primary/10 px-5 py-2.5 text-xs font-semibold text-primary border border-primary/20 hover:bg-primary/20 transition inline-flex items-center gap-2 shrink-0"
           >
             <CheckCircle className="w-4 h-4" />
             Tandai Semua Dibaca
@@ -189,25 +189,25 @@ export default function AdminNotifications() {
         </div>
       )}
 
-      <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs w-fit">
+      <div className="flex items-center gap-2 bg-background p-2 rounded-2xl border border-slate-200/80 shadow-xs w-fit">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${filter === "all" ? "bg-[#F49D1A] text-white shadow-sm" : "text-slate-500 hover:bg-slate-100"}`}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${filter === "all" ? "bg-primary text-primary-foreground shadow-sm" : "text-slate-500 hover:bg-slate-100"}`}
         >
           Semua
         </button>
         <button
           onClick={() => setFilter("unread")}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition inline-flex items-center gap-1.5 ${filter === "unread" ? "bg-[#F49D1A] text-white shadow-sm" : "text-slate-500 hover:bg-slate-100"}`}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition inline-flex items-center gap-1.5 ${filter === "unread" ? "bg-primary text-primary-foreground shadow-sm" : "text-slate-500 hover:bg-slate-100"}`}
         >
           Belum Dibaca
           {unreadCount > 0 && (
-            <span className={`min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1 ${filter === "unread" ? "bg-white/20 text-white" : "bg-red-500 text-white"}`}>{unreadCount}</span>
+            <span className={`min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1 ${filter === "unread" ? "bg-background/20 text-white" : "bg-red-500 text-white"}`}>{unreadCount}</span>
           )}
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="px-6 py-16 text-center">
             <Loader2 className="w-8 h-8 text-slate-300 mx-auto mb-3 animate-spin" />
@@ -227,11 +227,11 @@ export default function AdminNotifications() {
                 <div
                   key={notification.id}
                   onClick={() => handleClick(notification)}
-                  className={`px-4 sm:px-6 py-4 hover:bg-slate-50/60 cursor-pointer transition ${!notification.isRead ? "bg-[#F49D1A]/[0.03]" : ""}`}
+                  className={`px-4 sm:px-6 py-4 hover:bg-slate-50/60 cursor-pointer transition ${!notification.isRead ? "bg-primary/[0.03]" : ""}`}
                 >
                   <div className="flex items-start gap-4">
                     <div className="mt-0.5 shrink-0">
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${!notification.isRead ? "bg-[#F49D1A]/10" : "bg-slate-100"}`}>{getNotificationIcon(notification.type)}</div>
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${!notification.isRead ? "bg-primary/10" : "bg-slate-100"}`}>{getNotificationIcon(notification.type)}</div>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
@@ -239,7 +239,7 @@ export default function AdminNotifications() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className={`text-sm truncate ${!notification.isRead ? "font-bold text-slate-900" : "font-semibold text-slate-700"}`}>{notification.title}</p>
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${badge.className}`}>{badge.label}</span>
-                            {!notification.isRead && <span className="w-2 h-2 rounded-full bg-[#F49D1A] shrink-0" />}
+                            {!notification.isRead && <span className="w-2 h-2 rounded-full bg-primary shrink-0" />}
                           </div>
                           <p className="text-xs text-slate-500 mt-1 line-clamp-2">{notification.message}</p>
                         </div>
@@ -248,7 +248,7 @@ export default function AdminNotifications() {
                             <Clock className="w-3 h-3" />
                             {formatTimeAgo(notification.createdAt)}
                           </div>
-                          {notification.amount ? <p className="text-xs font-bold text-[#F49D1A] mt-1">{formatIDR(notification.amount)}</p> : null}
+                          {notification.amount ? <p className="text-xs font-bold text-primary mt-1">{formatIDR(notification.amount)}</p> : null}
                         </div>
                       </div>
                       <div className="flex items-center gap-3 mt-2 flex-wrap">

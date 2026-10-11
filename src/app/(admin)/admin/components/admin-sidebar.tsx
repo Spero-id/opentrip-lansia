@@ -22,7 +22,7 @@ import { adminNavGroups, isHrefActive } from "./nav-data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const menuButtonClass =
-  "h-9 rounded-md text-sidebar-foreground/80 hover:text-sidebar-foreground data-active:text-[#F49D1A] data-active:bg-[#F49D1A]/15 data-active:font-medium data-active:hover:bg-[#F49D1A]/20 data-active:hover:text-[#F49D1A]";
+  "h-9 rounded-md text-sidebar-foreground/80 hover:text-sidebar-foreground data-active:text-primary data-active:bg-primary/15 data-active:font-medium data-active:hover:bg-primary/20 data-active:hover:text-primary";
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
@@ -107,7 +107,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
               href="/"
               className="flex items-center gap-2 px-2 py-1.5 text-xs font-medium text-sidebar-foreground/70 hover:text-sidebar-foreground transition"
             >
-              <ArrowLeft className="size-4 shrink-0 text-[#F49D1A]" />
+              <ArrowLeft className="size-4 shrink-0 text-primary" />
               <span className="group-data-[collapsible=icon]:hidden">
                 Kembali ke Website Utama
               </span>

@@ -121,7 +121,7 @@ export default function AdminPrivateTripsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Private Trip Request</h1>
           <p className="text-sm text-slate-500 mt-1">Kelola permintaan Private Trip dari pengguna.</p>
@@ -134,7 +134,7 @@ export default function AdminPrivateTripsList() {
         </div>
       )}
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
           <Filter className="w-4 h-4" />
           <span>Filter:</span>
@@ -143,7 +143,7 @@ export default function AdminPrivateTripsList() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-slate-300 bg-white px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+            className="appearance-none rounded-xl border border-slate-300 bg-background px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
           >
             <option value="">Semua Status</option>
             <option value="submitted">Submitted</option>
@@ -158,14 +158,14 @@ export default function AdminPrivateTripsList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari judul atau kode PTR-..."
-          className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A] w-full sm:w-56"
+          className="rounded-xl border border-slate-300 px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary w-full sm:w-56"
         />
         <span className="text-xs text-slate-400 ml-auto">
           {isCodeSearch ? `${visibleRows.length} hasil` : `${total} request`}
         </span>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
@@ -223,7 +223,7 @@ export default function AdminPrivateTripsList() {
                             <Link
                               href={`/admin/private-trips/${r.id}?proposal=1`}
                               title="Buat Proposal"
-                              className="inline-flex items-center gap-1 rounded-xl bg-[#F49D1A]/10 text-[#F49D1A] hover:bg-[#F49D1A] hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition"
+                              className="inline-flex items-center gap-1 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground px-2.5 py-1.5 text-[11px] font-bold transition"
                             >
                               <FileSignature className="w-3.5 h-3.5" />
                               <span className="hidden lg:inline">Proposal</span>
@@ -234,7 +234,7 @@ export default function AdminPrivateTripsList() {
                               disabled={busy}
                               onClick={() => quickAction(r.id, "reject")}
                               title="Tolak Request"
-                              className="inline-flex items-center gap-1 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
+                              className="inline-flex items-center gap-1 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-primary-foreground px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-40"
                             >
                               <Ban className="w-3.5 h-3.5" />
                               <span className="hidden lg:inline">Tolak</span>

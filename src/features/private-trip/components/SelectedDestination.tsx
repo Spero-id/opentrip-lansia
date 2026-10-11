@@ -15,7 +15,7 @@ export default function SelectedDestination({
 
   return (
     <div
-      className="flex items-stretch gap-0 rounded-xl border border-[#E5E7EB] bg-white text-left overflow-hidden"
+      className="flex items-stretch gap-0 rounded-xl border border-[#E5E7EB] bg-background text-left overflow-hidden"
     >
       {destination.image ? (
         <img

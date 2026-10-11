@@ -82,7 +82,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
   }
 
   const mobileMenuClasses = cn(
-    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-4/5 max-w-sm transform overflow-hidden bg-white shadow-2xl transition-transform duration-300 ease-in-out",
+    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-4/5 max-w-sm transform overflow-hidden bg-background shadow-2xl transition-transform duration-300 ease-in-out",
     isOpen ? "translate-x-0" : "-translate-x-full"
   );
 
@@ -112,7 +112,7 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-full text-black hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]"
+              className="p-2 rounded-full text-black hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Close menu"
             >
               <X size={20} />

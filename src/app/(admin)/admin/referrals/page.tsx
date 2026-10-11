@@ -102,7 +102,7 @@ export default function AdminReferralHistoryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             History Referral
@@ -113,7 +113,7 @@ export default function AdminReferralHistoryPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5">
+      <div className="bg-background rounded-2xl border border-slate-200/80 p-5">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="w-4 h-4 text-slate-500" />
           <h2 className="text-sm font-bold text-slate-700">Pengaturan Referral</h2>
@@ -128,7 +128,7 @@ export default function AdminReferralHistoryPage() {
               min={0}
               value={bonusPointsInput}
               onChange={(e) => setBonusPointsInput(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
             />
             <p className="text-[10px] text-slate-400 mt-1">
               Poin yang diberikan ke akun referrer saat referral berhasil (status Berhasil)
@@ -137,7 +137,7 @@ export default function AdminReferralHistoryPage() {
           <button
             onClick={handleSaveBonus}
             disabled={savingBonus}
-            className="flex items-center gap-2 px-4 py-2 bg-[#F49D1A] text-white text-sm font-semibold rounded-xl hover:bg-[#E08A0E] disabled:opacity-50 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-[#E08A0E] disabled:opacity-50 transition"
           >
             {savingBonus ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -152,21 +152,21 @@ export default function AdminReferralHistoryPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
+        <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
           <p className="text-xs font-semibold text-slate-500 uppercase">Total Referral</p>
           <p className="text-2xl font-bold text-slate-900 mt-1">{totalReferrals}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
+        <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
           <p className="text-xs font-semibold text-slate-500 uppercase">Converted</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{converted}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
+        <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
           <p className="text-xs font-semibold text-slate-500 uppercase">Pending</p>
           <p className="text-2xl font-bold text-yellow-600 mt-1">{pending}</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
+      <div className="bg-background rounded-2xl border border-slate-200/80 p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -174,12 +174,12 @@ export default function AdminReferralHistoryPage() {
             placeholder="Cari nama, email, kode booking, atau trip..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/30 focus:border-[#F49D1A]"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-background rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
@@ -196,7 +196,7 @@ export default function AdminReferralHistoryPage() {
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin text-[#F49D1A] mx-auto mb-2" />
+                    <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-2" />
                     <p className="text-slate-400">Memuat data...</p>
                   </td>
                 </tr>
@@ -229,7 +229,7 @@ export default function AdminReferralHistoryPage() {
                     </td>
                     <td className="px-6 py-4">
                       {r.bookingCode ? (
-                        <span className="font-mono font-bold text-[#F49D1A] text-xs">
+                        <span className="font-mono font-bold text-primary text-xs">
                           {r.bookingCode}
                         </span>
                       ) : (

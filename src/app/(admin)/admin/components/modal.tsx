@@ -37,7 +37,7 @@ export default function Modal({ open, onClose, title, children, size = "md" }: M
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/40" onClick={onClose} />
       <div
-        className={`relative w-full ${sizeClasses[size]} mx-4 bg-white rounded-3xl border border-slate-200/80 shadow-xl`}
+        className={`relative w-full ${sizeClasses[size]} mx-4 bg-background rounded-3xl border border-slate-200/80 shadow-xl`}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">{title}</h2>

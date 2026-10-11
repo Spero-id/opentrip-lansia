@@ -29,7 +29,7 @@ export default function ProfilePage() {
   if (isPending || !session?.user) {
     return (
       <>
-        <main className="flex min-h-screen items-center justify-center bg-white">
+        <main className="flex min-h-screen items-center justify-center bg-background">
           <p className="text-sm text-slate-400">Memuat...</p>
         </main>
       </>
@@ -38,7 +38,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-background">
         <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
           <Link
             href="/"

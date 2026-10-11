@@ -37,7 +37,7 @@ export default function ProfileStats({ user }: { user?: ProfileUser | null }) {
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
+          className="rounded-2xl border border-slate-200 bg-background p-4 sm:p-5"
         >
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FEF6E7] text-[#c47d12]">

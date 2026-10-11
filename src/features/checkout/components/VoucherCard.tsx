@@ -21,7 +21,7 @@ export default function VoucherCard({
   vouchersLoading: boolean;
 }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
+    <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
       <h2 className="text-base font-bold text-gray-900">Voucher / Kode Promo</h2>
       {appliedVoucher ? (
         <div className="flex items-center justify-between p-3 rounded-xl bg-[#1CA6B7]/10 border border-[#1CA6B7]/20">
@@ -47,7 +47,7 @@ export default function VoucherCard({
               }
             }}
             disabled={vouchersLoading}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F49D1A]/20 disabled:bg-gray-50 disabled:cursor-not-allowed"
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:bg-gray-50 disabled:cursor-not-allowed"
           />
           <button
             onClick={onApply}

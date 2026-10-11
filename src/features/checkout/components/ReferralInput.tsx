@@ -19,7 +19,7 @@ export default function ReferralInput({
   onRemove: () => void;
 }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
+    <div className="bg-background border border-gray-100 rounded-2xl p-5 space-y-3 shadow-sm">
       <div className="flex items-center gap-2">
         <h2 className="text-base font-bold text-gray-900">Kode Referral</h2>
         <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-semibold">

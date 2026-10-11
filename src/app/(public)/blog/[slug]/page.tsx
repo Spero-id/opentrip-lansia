@@ -47,7 +47,7 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {status !== "found" || !post ? (
         <div className="flex items-center justify-center min-h-[60vh] text-sm text-[#6B7280]">
           Memuat artikel...
@@ -57,14 +57,14 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#6B7280] hover:text-[#F49D1A] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#6B7280] hover:text-primary transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Kembali ke Blog
             </Link>
 
             <div className="mt-6">
-              <div className="text-xs font-semibold text-[#F49D1A] uppercase tracking-wider mb-3">
+              <div className="text-xs font-semibold text-primary uppercase tracking-wider mb-3">
                 {formatBlogDate(post.publishedAt || post.createdAt)}
                 {category && (
                   <>

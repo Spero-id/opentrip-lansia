@@ -17,13 +17,13 @@ export default function MarketingSection() {
   };
 
   return (
-    <section className="relative bg-white py-16">
+    <section className="relative bg-background py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug mb-6 max-w-md">
               Kenapa Harus Pilih{" "}
-              <span className="text-[#F49D1A]">Jelajah Memoria Ini</span>?
+              <span className="text-primary">Jelajah Memoria Ini</span>?
             </h2>
             <p className="text-gray-500 mb-8 max-w-md leading-relaxed">
               Kami siap membantu setiap perjalanan Anda menjadi lebih mudah, aman, dan terjangkau, mulai dari proses pemesanan hingga tiba di destinasi impian.
@@ -37,8 +37,8 @@ export default function MarketingSection() {
                   <div
                     key={i}
                     className={`rounded-xl border transition-colors duration-300 ${isOpen
-                      ? "border-[#F49D1A]/30 bg-[#F49D1A]/10 shadow-xs"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-primary/30 bg-primary/10 shadow-xs"
+                      : "border-gray-200 bg-background hover:border-gray-300"
                       }`}
                   >
                     <button
@@ -46,7 +46,7 @@ export default function MarketingSection() {
                       className="w-full flex items-center gap-4 px-5 py-4 text-left"
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${isOpen ? "bg-[#F49D1A]" : "bg-gray-100"
+                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${isOpen ? "bg-primary" : "bg-gray-100"
                           }`}
                       >
                         <Icon
@@ -65,7 +65,7 @@ export default function MarketingSection() {
                       </div>
 
                       <span
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? "bg-[#F49D1A] text-white rotate-180" : "bg-gray-100 text-gray-600"
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? "bg-primary text-primary-foreground rotate-180" : "bg-gray-100 text-gray-600"
                           }`}
                       >
                         <ChevronDown size={16} />
@@ -115,7 +115,7 @@ export default function MarketingSection() {
               />
               <div className="absolute inset-0 bg-black/40" />
               <div className="relative z-10 flex items-center justify-center gap-3 px-6">
-                <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-full bg-background flex items-center justify-center shrink-0">
                   <ArrowDownToLine size={18} className="text-gray-900" />
                 </div>
                 <span className="text-white font-bold text-xl tracking-wide">
