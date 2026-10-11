@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const VALID = {
   DATABASE_URL: "postgresql://user:pass@host:5432/db",
   BETTER_AUTH_SECRET: "s3cret",
+  RESEND_API_KEY: "re_test_key",
 };
 
 async function loadServer(env: Record<string, string | undefined>) {
@@ -28,10 +29,19 @@ describe("env/server", () => {
     ).rejects.toThrow("Invalid environment variables");
   });
 
-  it("menyurut boot gagal bila BETTER_AUTH_SECRET kosong", async () => {
+  it("menyuruh boot gagal bila BETTER_AUTH_SECRET kosong", async () => {
     await expect(
       loadServer({ ...VALID, BETTER_AUTH_SECRET: "" }),
     ).rejects.toThrow("Invalid environment variables");
+  });
+
+  it("menyuruh boot gagal bila RESEND_API_KEY hilang", async () => {
+    await expect(
+      loadServer({ ...VALID, RESEND_API_KEY: undefined }),
+    ).rejects.toThrow("Invalid environment variables");
+    await expect(loadServer({ ...VALID, RESEND_API_KEY: "" })).rejects.toThrow(
+      "Invalid environment variables",
+    );
   });
 
   it("menolak DATABASE_URL yang bukan URL", async () => {
@@ -57,86 +67,50 @@ describe("env/server", () => {
     const env = await loadServer({
       ...VALID,
       BETTER_AUTH_URL: "https://auth.example.com",
-      SMTP_HOST: "smtp.example.com",
-      SMTP_USER: "mailer",
+      GOOGLE_CLIENT_ID: "client-id",
+      ADMIN_EMAIL: "admin@example.com",
+      RESEND_EMAIL_FROM: "sistem@example.com",
     });
 
     expect(env.DATABASE_URL).toBe(VALID.DATABASE_URL);
     expect(env.BETTER_AUTH_SECRET).toBe("s3cret");
     expect(env.BETTER_AUTH_URL).toBe("https://auth.example.com");
-    expect(env.SMTP_HOST).toBe("smtp.example.com");
-    expect(env.SMTP_USER).toBe("mailer");
-  });
-
-  it("mengubah SMTP_PORT menjadi number", async () => {
-    const env = await loadServer({ ...VALID, SMTP_PORT: "2525" });
-    expect(env.SMTP_PORT).toBe(2525);
-  });
-
-  it("memberi default 587 bila SMTP_PORT tidak diisi", async () => {
-    const env = await loadServer({ ...VALID, SMTP_PORT: undefined });
-    expect(env.SMTP_PORT).toBe(587);
-  });
-
-  it("mengubah SMTP_SECURE dari string menjadi boolean", async () => {
-    expect((await loadServer({ ...VALID, SMTP_SECURE: "true" })).SMTP_SECURE).toBe(
-      true,
-    );
-    expect(
-      (await loadServer({ ...VALID, SMTP_SECURE: "false" })).SMTP_SECURE,
-    ).toBe(false);
+    expect(env.GOOGLE_CLIENT_ID).toBe("client-id");
+    expect(env.ADMIN_EMAIL).toBe("admin@example.com");
+    expect(env.RESEND_EMAIL_FROM).toBe("sistem@example.com");
   });
 
   it("memberi default pada variabel opsional yang kosong", async () => {
     const env = await loadServer({
       ...VALID,
       GOOGLE_CLIENT_ID: undefined,
-      SMTP_FROM: undefined,
+      GOOGLE_CLIENT_SECRET: undefined,
       ADMIN_EMAIL: undefined,
+      RESEND_EMAIL_FROM: undefined,
+      BETTER_AUTH_URL: undefined,
       BASE_URL: undefined,
     });
 
     expect(env.GOOGLE_CLIENT_ID).toBe("");
-    expect(env.SMTP_FROM).toBe("");
+    expect(env.GOOGLE_CLIENT_SECRET).toBe("");
     expect(env.ADMIN_EMAIL).toBe("");
+    expect(env.RESEND_EMAIL_FROM).toBe("onboarding@resend.dev");
+    expect(env.BETTER_AUTH_URL).toBe("http://localhost:3000");
     expect(env.BASE_URL).toBe("http://localhost:3000");
   });
 
   it("memperlakukan string kosong sebagai belum diisi", async () => {
     const env = await loadServer({
       ...VALID,
-      SMTP_PORT: "",
-      SMTP_SECURE: "",
-      SMTP_HOST: "",
       BETTER_AUTH_URL: "",
       BASE_URL: "",
+      RESEND_EMAIL_FROM: "",
+      ADMIN_EMAIL: "",
     });
 
-    expect(env.SMTP_PORT).toBe(587);
-    expect(env.SMTP_SECURE).toBe(false);
-    expect(env.SMTP_HOST).toBe("");
     expect(env.BETTER_AUTH_URL).toBe("http://localhost:3000");
     expect(env.BASE_URL).toBe("http://localhost:3000");
-  });
-
-  it("tetap gagal bila variabel wajib diisi kosong", async () => {
-    await expect(
-      loadServer({ ...VALID, BETTER_AUTH_SECRET: "" }),
-    ).rejects.toThrow("Invalid environment variables");
-  });
-
-  it("menolak SMTP_PORT yang bukan angka", async () => {
-    await expect(loadServer({ ...VALID, SMTP_PORT: "abc" })).rejects.toThrow(
-      "Invalid environment variables",
-    );
-  });
-
-  it("menolak SMTP_PORT di luar rentang port", async () => {
-    await expect(loadServer({ ...VALID, SMTP_PORT: "70000" })).rejects.toThrow(
-      "Invalid environment variables",
-    );
-    await expect(loadServer({ ...VALID, SMTP_PORT: "0" })).rejects.toThrow(
-      "Invalid environment variables",
-    );
+    expect(env.RESEND_EMAIL_FROM).toBe("onboarding@resend.dev");
+    expect(env.ADMIN_EMAIL).toBe("");
   });
 });

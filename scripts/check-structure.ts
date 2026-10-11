@@ -272,7 +272,7 @@ function main(): void {
   const ENV_CLIENT = "src/lib/env/client.ts";
   const STATIC_IMPORT_RE = /(?:import|export)[^'"]*?from\s*["']([^"']+)["']/g;
 const BARE_IMPORT_RE = /(?:from\s*|import\s*\(\s*|require\s*\(\s*)["']([^"'\n.]+[^"'\n]*)["']/g;
-const SERVER_ONLY_PACKAGES = new Set(["bcryptjs", "pg", "nodemailer"]);
+const SERVER_ONLY_PACKAGES = new Set(["bcryptjs", "pg", "resend"]);
   const importCache = new Map<string, string[]>();
   function resolveLocal(fromFile: string, spec: string): string | null {
     let base: string;

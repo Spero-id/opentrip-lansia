@@ -49,13 +49,11 @@ describe.skipIf(!hasRealEnv)("env terhadap .env sungguhan", () => {
     expect(() => new URL(env.BETTER_AUTH_URL)).not.toThrow();
   });
 
-  it("memberi SMTP_PORT berupa nomor port yang bisa dipakai", async () => {
+  it("memberi konfigurasi Resend yang siap dipakai", async () => {
     const env = await import("@/lib/env/server");
 
-    expect(Number.isInteger(env.SMTP_PORT)).toBe(true);
-    expect(env.SMTP_PORT).toBeGreaterThan(0);
-    expect(env.SMTP_PORT).toBeLessThanOrEqual(65535);
-    expect(typeof env.SMTP_SECURE).toBe("boolean");
+    expect(env.RESEND_API_KEY.length).toBeGreaterThan(0);
+    expect(env.RESEND_EMAIL_FROM.length).toBeGreaterThan(0);
   });
 
   it("memuat client env tanpa menyentuh variabel server", async () => {

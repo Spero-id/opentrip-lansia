@@ -1,9 +1,19 @@
 # Spesifikasi Fitur: Group Trip Management
 
 > **Feature ID:** feat-011b (extension dari feat-011 Trip Departure Management)
-> **Status:** Approved
+> **Status:** ✅ Completed (implemented)
 > **Priority:** 11b
 > **Depends on:** feat-010, feat-011
+
+> **Status implementasi (9 Okt 2026):** ✅ Selesai — `feat-011b` berstatus
+> `completed` di `feature_list.json`. Dokumen ini ditulis saat modul masih di
+> `src/modules/`. Kondisi kode sekarang:
+> - logic: `src/features/trip/` (`group.controller.ts`, `trip.service.ts`, `trip.repository.ts`)
+> - schema: `src/db/schema/trips.ts`
+> - API: `src/app/api/trips/[id]/groups/...`
+> - halaman admin: `src/app/(admin)/admin/trips/[id]/groups/`
+>
+> Checklist di §9 adalah rencana awal; status terkini merujuk `feature_list.json`.
 
 ---
 
@@ -457,18 +467,18 @@ CREATE INDEX idx_galleries_departure ON trip_galleries (departure_id)
 
 | File | Action | Description |
 |------|--------|-------------|
-| `src/modules/trip/trip.schema.ts` | Edit | Tambah `isActive` ke `tripDepartures` |
-| `src/modules/trip/trip.repository.ts` | Edit | Tambah methods: `findAllGroupsByTripId`, `activateGroup`, `findActiveGroupByTripId` |
-| `src/modules/trip/trip.service.ts` | Edit | Tambah service methods group management |
-| `src/app/api/trips/[tripId]/groups/route.ts` | Create | API GET/POST groups |
-| `src/app/api/trips/[tripId]/groups/[groupId]/route.ts` | Create | API PUT/DELETE group |
-| `src/app/api/trips/[tripId]/groups/[groupId]/activate/route.ts` | Create | API PUT activate group |
-| `src/app/admin/trips/[tripId]/groups/page.tsx` | Create | Admin page manage groups |
-| `src/app/admin/trips/page.tsx` | Edit | Tambah tombol "Grup" di tabel |
-| `src/modules/booking/booking.service.ts` | Edit | Validasi grup aktif saat booking |
-| `src/app/destinasi/[slug]/page.tsx` | Edit | Tampilkan info grup aktif |
-| `src/shared/utils/migrate.ts` | Edit | Tambah migration SQL |
+| `src/db/schema/trips.ts` | Edit | Tambah `isActive` ke `tripDepartures` |
+| `src/features/trip/trip.repository.ts` | Edit | Methods group management (`findAllGroupsByTripId`, `activateGroup`, `findActiveGroupByTripId`) |
+| `src/features/trip/trip.service.ts` | Edit | Service group management |
+| `src/app/api/trips/[id]/groups/route.ts` | Create | API GET/POST groups |
+| `src/app/api/trips/[id]/groups/[groupId]/route.ts` | Create | API PUT/DELETE group |
+| `src/app/api/trips/[id]/groups/[groupId]/activate/route.ts` | Create | API PUT activate group |
+| `src/app/(admin)/admin/trips/[id]/groups/page.tsx` | Create | Admin page manage groups |
+| `src/app/(admin)/admin/trips/page.tsx` | Edit | Tambah tombol "Grup" di tabel |
+| `src/features/booking/booking.service.ts` | Edit | Validasi grup aktif saat booking |
+| `src/app/(public)/trips/[id]/page.tsx` | Edit | Tampilkan info grup aktif |
+| `drizzle-kit push` | Jalankan | Terapkan kolom `is_active` + index |
 
 ---
 
-*Last updated: 6 September 2026*
+*Terakhir diperbarui: 9 Oktober 2026*
