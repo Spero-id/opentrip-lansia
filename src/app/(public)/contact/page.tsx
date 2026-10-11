@@ -241,7 +241,7 @@ export default function ContactPage() {
                                             <Button
                                                 type="submit"
                                                 disabled={loading}
-                                                className="px-6 py-3 text-[13px] tracking-wide gap-2 active:scale-[0.98] shadow-sm"
+                                                className="px-6 py-3 text-[13px] tracking-wide gap-2 active:scale-[0.98] shadow-sm h-auto"
                                             >
                                                 {loading ? "Mengirim..." : "Kirim Pesan"}
                                                 {loading ? (
