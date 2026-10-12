@@ -2714,3 +2714,8 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 
 **Audit:** radius/type/spacing Auth vs `design.md` — sebagian besar sesuai (input rounded-xl=token xl, tombol rounded-lg, kartu rounded-2xl, type & spacing skala baku).
 **Diselaraskan (5 edit):** sheet mobile `rounded-[2.5rem]` (40px arbitrary) → `rounded-3xl` (24px) di login (atas+bawah) & register (atas); teks pembatas `text-[13px]` → `text-xs` di keduanya. Verifikasi visual mobile 390px: sheet tetap melengkung wajar, border & divider terbaca.
+
+## Session 96 — Auth input radius xl→default (feat/form-migration)
+
+**Sebab:** override `rounded-xl` di Auth ditulis saat token 0.25rem (ter-render 8px); pasca-revert 0.5rem menggelembung ke 12px. Dibuktikan: kelas tak berubah sejak Phase 1 + token pindah + rumus `--radius-xl` + ukur browser 12px vs tombol 8px.
+**Perbaikan:** hapus override `rounded-xl` di 5 Input (login 2, register 3) → ikut default komponen `rounded-lg` = 8px. Kotak error `rounded-xl` dibiarkan (alert, bukan input). Terukur kini 8px, screenshot OK.
