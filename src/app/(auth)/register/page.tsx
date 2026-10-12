@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -88,7 +90,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="order-2 lg:order-2 relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-[2.5rem] lg:rounded-none p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="order-2 lg:order-2 relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-3xl lg:rounded-none p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
             className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
@@ -152,24 +154,26 @@ export default function RegisterPage() {
                   required
                   className="w-full pr-11"
                 />
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30"
-                />
-                Saya setuju dengan Syarat & Ketentuan
-              </label>
+              <div className="flex items-center gap-2">
+                <Checkbox id="terms" />
+                <Label htmlFor="terms" className="text-muted-foreground font-normal cursor-pointer">
+                  Saya setuju dengan Syarat & Ketentuan
+                </Label>
+              </div>
             </div>
 
             <Button
@@ -185,7 +189,7 @@ export default function RegisterPage() {
 
           <div className="flex items-center gap-3 my-3 sm:my-4">
             <div className="flex-1 h-px bg-muted" />
-            <span className="text-[13px] text-muted-foreground">Atau lanjutkan dengan</span>
+            <span className="text-xs text-muted-foreground">Atau lanjutkan dengan</span>
             <div className="flex-1 h-px bg-muted" />
           </div>
 

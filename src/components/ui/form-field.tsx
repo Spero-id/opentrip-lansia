@@ -92,7 +92,7 @@ function FormField({
       case "select":
         return (
           <Select
-            onValueChange={(val: string) => onChange?.(val)}
+            onValueChange={(val: string | null) => onChange?.(val ?? "")}
             value={value as string}
             disabled={disabled}
           >

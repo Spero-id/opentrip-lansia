@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signIn } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 function getServerSnapshot() {
   return "/";
@@ -76,7 +78,7 @@ export default function LoginPage() {
             backgroundImage: "url('/login-image-page.jpeg')",
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/70 rounded-b-[2.5rem] lg:rounded-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/70 rounded-b-3xl lg:rounded-none" />
 
           <Link
             href="/"
@@ -101,7 +103,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-[2.5rem] lg:rounded-none p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-3xl lg:rounded-none p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
             className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-end"
@@ -151,24 +153,26 @@ export default function LoginPage() {
                   required
                   className="w-full pr-11"
                 />
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30"
-                />
-                Ingat saya
-              </label>
+              <div className="flex items-center gap-2">
+                <Checkbox id="remember-me" />
+                <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
+                  Ingat saya
+                </Label>
+              </div>
               <a
                 href="#"
                 className="text-primary font-medium hover:underline"
@@ -190,7 +194,7 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-3 my-3 sm:my-7">
             <div className="flex-1 h-px bg-muted" />
-            <span className="text-[13px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               Atau lanjutkan dengan
             </span>
             <div className="flex-1 h-px bg-muted" />

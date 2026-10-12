@@ -2680,6 +2680,74 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Branch:** `refactor/tokenisasi-fase1` (PR #135)
 **Verified:** `npm run lint` 0E/80W · `npm run build` success · `tsc --noEmit` 0 errors
 
+## Session 89 — Phase 1 Auth Form Migration Complete (feat/form-migration)
+
+**Branch:** `feat/form-migration` (dari `fix/ui-consistency-auth-forms`)
+**Scope:** Sisa Phase 1 — `src/app/(auth)/login/page.tsx`, `src/app/(auth)/register/page.tsx`
+**Perubahan:**
+- Password-toggle native `<button>` → `<Button variant="ghost" size="icon-sm" aria-label="Tampilkan/Sembunyikan password" className="absolute right-1.5 ...">` (2 file)
+- Checkbox native `<input type="checkbox">` → `<Checkbox id="remember-me" / terms>` + `<Label htmlFor>` (login: "Ingat saya", register: "Syarat & Ketentuan")
+- Import baru: `Checkbox`, `Label` di kedua file
+**Verifikasi:** grep native di kedua file = 0 · `npm run lint` 0 errors / 84 warnings (baseline, mostly no-img-element) · `plan/form-migration-todo.md` Phase 1 ditandai DONE, Next Action → Phase 2 Public Pages
+**Belum commit** — perlu commit sebelum pindah branch/lanjut Phase 2.
+
+## Session 90 — Radix → Base UI Migration (feat/form-migration)
+
+**Alasan:** ShadCN generasi baru default Base UI, tapi repo campuran (Button/Input Base UI + Checkbox/Label/Radio/Select/Switch Radix dari commit 26ceaed). Konsumen hanya via wrapper `src/components/ui/*`, blast radius kecil.
+**Perubahan (5 file):**
+- `checkbox.tsx` → `Checkbox.Root/Indicator` Base UI; `data-[state=checked]` → `data-checked`
+- `switch.tsx` → `Switch.Root/Thumb`; `data-[state=*]` → `data-checked/data-unchecked`
+- `radio-group.tsx` → `RadioGroup` + `Radio.Root/Indicator` (pisah paket radio & radio-group)
+- `select.tsx` → struktur `Root/Trigger(Value+Icon)/Portal/Positioner/Popup/List/Item(ItemText+ItemIndicator)/Group/GroupLabel/Separator/ScrollUpArrow/ScrollDownArrow`; highlight `focus:` → `data-highlighted:`, selected → `data-selected`; `SelectContent` kini terima `side/sideOffset/align` (ganti `position` tak terpakai)
+- `label.tsx` → native `<label>` (Base UI tak punya Label mandiri; label hidup di Field.Label)
+- `form-field.tsx`: `onValueChange={(val: string | null) => onChange?.(val ?? "")}` (Base UI value nullable)
+- `package.json`: cabut 6 dep `@radix-ui/*` (checkbox, label, radio-group, select, slot, switch); `npm install` prune
+**Verifikasi:** grep `@radix-ui` di src = 0 · `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/84 warnings (baseline) · lock bersih dari "radix"
+**Catatan:** visual perlu cek manual (dev server) — khususnya Select popup & state checked; `data-slot` ditambahkan mengikuti pola avatar/button.
+
+## Session 91 — Revert --radius ke 0.5rem (feat/form-migration)
+
+**Keputusan user:** kembalikan no.1 dari audit (commit 3d538b9) → `--radius: 0.25rem` kembali ke `0.5rem` (nilai orisinil TweakCN, `:root` + `.dark`). No.2 (`--muted-foreground` #64748B) TIDAK diubah — tetap sesuai keputusan eksplisit user (placeholder readable).
+**Efek:** rounded-lg 4→8px, md 2→6px, sm 0→4px, xl 4→12px di seluruh aplikasi. Kode kini sinkron lagi dengan `design.md` (yang menulis 0.5rem).
+**Verifikasi:** `npm run lint` 0 errors. Perlu cek visual (dev server) karena mengubah seluruh sudut komponen.
+
+## Session 92 — Keputusan tokenisasi (feat/form-migration)
+
+**Keputusan user:** navy `#0D238E`, teal `#1CA6B7`, obsidian `#0B0F19` TETAP hex langsung, tidak dijadikan token. Alasan: sudah didokumentasikan di `design.md` (26-27, 35, 53); teal (23 file) diterima sebagai tech debt sadar. Prinsip ditegakkan: kode = kebenaran, `design.md` = cermin (diterapkan: revert radius 0.5rem + selaraskan muted-foreground #64748B).
+**Status:** `design.md` kini sinkron dengan `globals.css` untuk radius & muted-foreground.
+
+## Session 93 — Tes visual fondasi + hapus form-design-system.md (feat/form-migration)
+
+**Hapus doc (commit 79f145e):** aturan pemetaan + checklist verifikasi digabung ke `plan/form-migration-todo.md` (dengan koreksi: `variant="default"`, `RadioGroupItem`); `plan/form-design-system.md` di-`git rm`; rujukan di `plan/README.md` dihapus. `lint` 0 errors. Riwayat file tetap ada di git.
+**Tes visual (Playwright headless, dev server fresh restart):**
+- `/login`, `/register`: render benar; checkbox unchecked & checked (oranye penuh, ikon centang putih, tanpa rim terang); klik teks label men-toggle (`aria-checked` false→true, `data-checked` hadir); eye-toggle & tombol radius 8px normal; placeholder #64748B terbaca
+- `/private-trip` full-page: radio terpilih (dot oranye), checkbox fasilitas, kartu radius 8px — semua normal
+- Console/page errors: none. Badge "1 Issue" di load pertama ternyata transien (tidak muncul di reload) — bukan masalah.
+- Catatan teknis: Base UI menaruh `id` di hidden input + `aria-labelledby` otomatis di box; asosiasi label tetap berfungsi.
+**Belum dites live:** Select & Switch Base UI (belum ada halaman konsumen) — tervalidasi via `tsc`+`build` saja.
+
+## Session 94 — Input border fix (feat/form-migration)
+
+**Masalah:** border istirahat input tak terlihat (token `--input` terang `oklch(0.9731)` ≈ #F6F6F6 — efek samping export TweakCN, sebelumnya `oklch(0.922)`). Semua komponen form memakai `border-input`, bukan `border-border` (#DFDFDF) — sesuai dugaan user.
+**Perbaikan (1 baris):** `--input` terang → `oklch(0.9037 0 0)` (samakan `--border`); dark tak disentuh. `design.md` diselaraskan (2 titik → #DFDFDF + catatan asal).
+**Verifikasi:** computed border lab(96.9)→lab(88.8); screenshot login: border Email/Password/Google-button/checkbox kini terlihat; fokus ring oranye tetap; `lint` 0 errors. Badge dev-overlay "1 Issue" muncul sesekali saat load pertama tapi hilang sendiri, tanpa console/page error — noise dev, bukan bug aplikasi.
+
+## Session 95 — Auth audit radius/type/spacing (feat/form-migration)
+
+**Audit:** radius/type/spacing Auth vs `design.md` — sebagian besar sesuai (input rounded-xl=token xl, tombol rounded-lg, kartu rounded-2xl, type & spacing skala baku).
+**Diselaraskan (5 edit):** sheet mobile `rounded-[2.5rem]` (40px arbitrary) → `rounded-3xl` (24px) di login (atas+bawah) & register (atas); teks pembatas `text-[13px]` → `text-xs` di keduanya. Verifikasi visual mobile 390px: sheet tetap melengkung wajar, border & divider terbaca.
+
+## Session 96 — Auth input radius xl→default (feat/form-migration)
+
+**Sebab:** override `rounded-xl` di Auth ditulis saat token 0.25rem (ter-render 8px); pasca-revert 0.5rem menggelembung ke 12px. Dibuktikan: kelas tak berubah sejak Phase 1 + token pindah + rumus `--radius-xl` + ukur browser 12px vs tombol 8px.
+**Perbaikan:** hapus override `rounded-xl` di 5 Input (login 2, register 3) → ikut default komponen `rounded-lg` = 8px. Kotak error `rounded-xl` dibiarkan (alert, bukan input). Terukur kini 8px, screenshot OK.
+
+## Session 97 — Revert 7 komponen ke stock registry (feat/form-migration)
+
+**Perintah:** `shadcn add button textarea avatar select checkbox radio-group switch label --overwrite -y` (style base-nova). Avatar di-skip CLI (sudah identik = ternyata stock sejak awal).
+**Kejutan baik:** stock button SUDAH punya xs/icon-xs/sm/lg (dugaan custom keliru; hanya `xl` yang benar-benar custom, tanpa pemakai) dan stock select SUDAH punya prop `size` — 3 pemakai `icon-sm` tidak pecah. Prop `size` textarea hilang tanpa korban (0 pemakai). Polish checkbox kita ikut ter-reset ke bawaan.
+**Verifikasi:** `tsc` 0 error · `lint` 0 errors/83 warnings · toggle+checkbox loginnyala (`aria-checked` true, tanpa error) · screenshot OK.
+
 ### Session 91 — Terapkan fix token --input di main (border shadcn Input)
 
 **Laporan:** halaman login masih terlihat "aneh" setelah PR #141 merge.
@@ -2692,3 +2760,5 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 - Komponen shadcn tidak disentuh — `border-input` tetap canonical (audit: dipakai input, textarea, select, checkbox, radio-group, button variant outline).
 
 **Verifikasi:** computed style `/login` border `lab(96.88)` → `lab(88.83)` = `#DFDFDF`; screenshot resting & focus (ring oranye tetap). `npm run lint` 0E/84W (baseline main).
+
+> Catatan merge: sesi di main ini bernomor sama (91) dengan sesi feat/form-migration di atas — penomoran bertabrakan, keduanya dipertahankan apa adanya.

@@ -4,19 +4,34 @@
 
 ---
 
+## 🔄 Aturan Pemetaan (dipindah dari `form-design-system.md` — file itu dihapus 2026-10-12, sumber token: `design.md`)
+| Kode lama (native) | Ganti dengan (ShadCN) |
+|---|---|
+| `<button>` aksi utama penuh (`bg-primary...`) | `<Button size="lg" className="w-full">` |
+| `<button>` ikon (`p-2 rounded-xl hover:bg-primary/10`) | `<Button size="icon" variant="ghost">` |
+| `<button>` toggle password di dalam input | `<Button variant="ghost" size="icon-sm" aria-label="...">` |
+| `<input>` teks/email/password | `<Input>` |
+| `<textarea>` | `<Textarea>` |
+| `<select>` | `<Select>` + `<SelectTrigger>`/`<SelectContent>`/`<SelectItem>` |
+| `<input type="checkbox">` | `<Checkbox id="...">` + `<Label htmlFor="...">` |
+| `<input type="radio">` | `<RadioGroup>` + `<RadioGroupItem value="...">` |
+| `<label>` | `<Label>` |
+
+---
+
 ## ✅ Done
 - [x] ShadCN UI library setup (Button, Input, Textarea, Select, Checkbox, RadioGroup, Switch, Label, FormField, FormSection)
 - [x] Button size variants (xs, sm, default, lg, xl, icon-xs, icon-sm, icon-lg)
 - [x] Contact page submit button → `<Button>` (size=default, variant=primary, h-auto)
-- [x] Design tokens: `--radius: 0.25rem`, `--primary: #F49D1A`, `--muted-foreground: #64748B`
+- [x] Design tokens: `--radius: 0.5rem`, `--primary: #F49D1A`, `--muted-foreground: #64748B`
 
 ---
 
-## 🔴 Phase 1: Auth Pages (High Visibility)
+## ✅ Phase 1: Auth Pages (DONE 2026-10-12, branch `feat/form-migration`)
 | File | Elements | Target |
 |---|---|---|
-| `src/app/(auth)/login/page.tsx` | 3 `<button>`, 3 `<input>` | `<Button size="lg" variant="primary" className="w-full">`, `<Input>` |
-| `src/app/(auth)/register/page.tsx` | 3 `<button>`, 4 `<input>` | `<Button size="lg" variant="primary" className="w-full">`, `<Input>` |
+| `src/app/(auth)/login/page.tsx` | 0 native ✅ | `<Button size="lg" className="w-full">`, `<Input>`, password-toggle `<Button variant="ghost" size="icon-sm">`, `<Checkbox id="remember-me">` + `<Label>` |
+| `src/app/(auth)/register/page.tsx` | 0 native ✅ | `<Button size="lg" className="w-full">`, `<Input>`, password-toggle `<Button variant="ghost" size="icon-sm">`, `<Checkbox id="terms">` + `<Label>` |
 
 ---
 
@@ -135,5 +150,16 @@
 
 ---
 
+## ✅ Checklist Verifikasi per Fase (dipindah dari `form-design-system.md`)
+- [ ] TypeScript compiles (`npx tsc --noEmit` 0 error)
+- [ ] Lint passes (0 errors)
+- [ ] Build succeeds (`npm run build`)
+- [ ] Visual review: radius konsisten, spacing konsisten
+- [ ] Accessibility: label terasosiasi, `aria-invalid`, `focus-visible`
+- [ ] Dark mode tidak rusak
+- [ ] Responsive: breakpoint sm/md/lg
+
+---
+
 ## 🎯 Next Action
-Mulai **Phase 1: Auth Pages** (Login + Register) - highest visibility, quick wins.
+Phase 1 DONE ✅ — lanjut **Phase 2: Public Pages** (`checkout/page.tsx` 1 button/15 input/2 select, `blog/page.tsx` 2 button).
