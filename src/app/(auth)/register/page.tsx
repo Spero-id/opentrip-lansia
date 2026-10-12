@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -152,24 +154,26 @@ export default function RegisterPage() {
                   required
                   className="w-full rounded-xl pr-11"
                 />
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-border text-primary focus:ring-ring/30"
-                />
-                Saya setuju dengan Syarat & Ketentuan
-              </label>
+              <div className="flex items-center gap-2">
+                <Checkbox id="terms" />
+                <Label htmlFor="terms" className="text-muted-foreground font-normal cursor-pointer">
+                  Saya setuju dengan Syarat & Ketentuan
+                </Label>
+              </div>
             </div>
 
             <Button

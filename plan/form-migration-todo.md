@@ -12,11 +12,11 @@
 
 ---
 
-## 🔴 Phase 1: Auth Pages (High Visibility)
+## ✅ Phase 1: Auth Pages (DONE 2026-10-12, branch `feat/form-migration`)
 | File | Elements | Target |
 |---|---|---|
-| `src/app/(auth)/login/page.tsx` | 3 `<button>`, 3 `<input>` | `<Button size="lg" variant="primary" className="w-full">`, `<Input>` |
-| `src/app/(auth)/register/page.tsx` | 3 `<button>`, 4 `<input>` | `<Button size="lg" variant="primary" className="w-full">`, `<Input>` |
+| `src/app/(auth)/login/page.tsx` | 0 native ✅ | `<Button size="lg" className="w-full">`, `<Input>`, password-toggle `<Button variant="ghost" size="icon-sm">`, `<Checkbox id="remember-me">` + `<Label>` |
+| `src/app/(auth)/register/page.tsx` | 0 native ✅ | `<Button size="lg" className="w-full">`, `<Input>`, password-toggle `<Button variant="ghost" size="icon-sm">`, `<Checkbox id="terms">` + `<Label>` |
 
 ---
 
@@ -136,4 +136,4 @@
 ---
 
 ## 🎯 Next Action
-Mulai **Phase 1: Auth Pages** (Login + Register) - highest visibility, quick wins.
+Phase 1 DONE ✅ — lanjut **Phase 2: Public Pages** (`checkout/page.tsx` 1 button/15 input/2 select, `blog/page.tsx` 2 button).

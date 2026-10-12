@@ -2657,3 +2657,14 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 
 **Branch:** `refactor/tokenisasi-fase1` (PR #135)
 **Verified:** `npm run lint` 0E/80W · `npm run build` success · `tsc --noEmit` 0 errors
+
+## Session 89 — Phase 1 Auth Form Migration Complete (feat/form-migration)
+
+**Branch:** `feat/form-migration` (dari `fix/ui-consistency-auth-forms`)
+**Scope:** Sisa Phase 1 — `src/app/(auth)/login/page.tsx`, `src/app/(auth)/register/page.tsx`
+**Perubahan:**
+- Password-toggle native `<button>` → `<Button variant="ghost" size="icon-sm" aria-label="Tampilkan/Sembunyikan password" className="absolute right-1.5 ...">` (2 file)
+- Checkbox native `<input type="checkbox">` → `<Checkbox id="remember-me" / terms>` + `<Label htmlFor>` (login: "Ingat saya", register: "Syarat & Ketentuan")
+- Import baru: `Checkbox`, `Label` di kedua file
+**Verifikasi:** grep native di kedua file = 0 · `npm run lint` 0 errors / 84 warnings (baseline, mostly no-img-element) · `plan/form-migration-todo.md` Phase 1 ditandai DONE, Next Action → Phase 2 Public Pages
+**Belum commit** — perlu commit sebelum pindah branch/lanjut Phase 2.
