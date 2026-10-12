@@ -2703,3 +2703,9 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 - Console/page errors: none. Badge "1 Issue" di load pertama ternyata transien (tidak muncul di reload) — bukan masalah.
 - Catatan teknis: Base UI menaruh `id` di hidden input + `aria-labelledby` otomatis di box; asosiasi label tetap berfungsi.
 **Belum dites live:** Select & Switch Base UI (belum ada halaman konsumen) — tervalidasi via `tsc`+`build` saja.
+
+## Session 94 — Input border fix (feat/form-migration)
+
+**Masalah:** border istirahat input tak terlihat (token `--input` terang `oklch(0.9731)` ≈ #F6F6F6 — efek samping export TweakCN, sebelumnya `oklch(0.922)`). Semua komponen form memakai `border-input`, bukan `border-border` (#DFDFDF) — sesuai dugaan user.
+**Perbaikan (1 baris):** `--input` terang → `oklch(0.9037 0 0)` (samakan `--border`); dark tak disentuh. `design.md` diselaraskan (2 titik → #DFDFDF + catatan asal).
+**Verifikasi:** computed border lab(96.9)→lab(88.8); screenshot login: border Email/Password/Google-button/checkbox kini terlihat; fokus ring oranye tetap; `lint` 0 errors. Badge dev-overlay "1 Issue" muncul sesekali saat load pertama tapi hilang sendiri, tanpa console/page error — noise dev, bukan bug aplikasi.
