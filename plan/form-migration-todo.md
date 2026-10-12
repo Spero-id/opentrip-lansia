@@ -8,7 +8,7 @@
 - [x] ShadCN UI library setup (Button, Input, Textarea, Select, Checkbox, RadioGroup, Switch, Label, FormField, FormSection)
 - [x] Button size variants (xs, sm, default, lg, xl, icon-xs, icon-sm, icon-lg)
 - [x] Contact page submit button → `<Button>` (size=default, variant=primary, h-auto)
-- [x] Design tokens: `--radius: 0.25rem`, `--primary: #F49D1A`, `--muted-foreground: #64748B`
+- [x] Design tokens: `--radius: 0.5rem`, `--primary: #F49D1A`, `--muted-foreground: #64748B`
 
 ---
 

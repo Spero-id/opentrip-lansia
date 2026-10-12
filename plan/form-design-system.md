@@ -3,12 +3,11 @@
 ## Design Tokens (globals.css)
 ```css
 :root {
-  --radius: 0.25rem;              /* 4px base */
-  --radius-sm: calc(var(--radius) - 2px);  /* 2px */
-  --radius-md: var(--radius);      /* 4px */
-  --radius-lg: calc(var(--radius) + 4px);  /* 8px */
-  --radius-xl: calc(var(--radius) + 8px);  /* 12px */
-  --radius-full: 9999px;
+  --radius: 0.5rem;                 /* 8px base (revert 2026-10-12, sinkron design.md) */
+  --radius-sm: calc(var(--radius) - 4px);  /* 4px */
+  --radius-md: calc(var(--radius) - 2px);  /* 6px */
+  --radius-lg: var(--radius);              /* 8px */
+  --radius-xl: calc(var(--radius) + 4px);  /* 12px */
 }
 ```
 
