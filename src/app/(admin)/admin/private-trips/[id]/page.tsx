@@ -480,7 +480,7 @@ export default function AdminPrivateTripDetail() {
                       value={inclusions}
                       onChange={(e) => setInclusions(e.target.value)}
                       rows={4}
-                      className="w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 focus:bg-background resize-none transition"
+                      className="w-full rounded-lg border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring focus:bg-background resize-none transition"
                       placeholder={"Hotel bintang 3\nMakan 3x sehari\nTransportasi AC\nGuide lokal"}
                     />
                   </div>
@@ -495,7 +495,7 @@ export default function AdminPrivateTripDetail() {
                       value={exclusions}
                       onChange={(e) => setExclusions(e.target.value)}
                       rows={4}
-                      className="w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 focus:bg-background resize-none transition"
+                      className="w-full rounded-lg border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring focus:bg-background resize-none transition"
                       placeholder={"Tiket pesawat\nBelanja pribadi\nObat-obatan"}
                     />
                   </div>

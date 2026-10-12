@@ -47,7 +47,7 @@ Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 
 ### Mode Gelap (blok `.dark`)
 - `--background #121212`, `--card #171717`, `--popover #242424` (fg `#A9A9A9`), `--foreground #E2E8F0`
-- `--secondary #242424`, `--muted #1F1F1F`, `--accent #313131`, `--muted-foreground #A2A2A2`
+- `--secondary #242424`, `--muted #1F1F1F`, `--accent #313131`, `--muted-foreground #DCDCDC`
 - `--border #292929`, `--input #292929`, `--destructive #541C15`
 - `--primary` & `--ring`: **tetap `#F49D1A`** (perbaikan manual — sebelumnya sempat ter-export hijau `#006239`)
 - Warna hex langsung (`#0D238E`, `#1CA6B7`, `#0B0F19`, kelas `bg-white`/`text-slate-*` di halaman) **tidak ikut berubah** di mode gelap.
