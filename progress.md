@@ -2668,3 +2668,17 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 - Import baru: `Checkbox`, `Label` di kedua file
 **Verifikasi:** grep native di kedua file = 0 · `npm run lint` 0 errors / 84 warnings (baseline, mostly no-img-element) · `plan/form-migration-todo.md` Phase 1 ditandai DONE, Next Action → Phase 2 Public Pages
 **Belum commit** — perlu commit sebelum pindah branch/lanjut Phase 2.
+
+## Session 90 — Radix → Base UI Migration (feat/form-migration)
+
+**Alasan:** ShadCN generasi baru default Base UI, tapi repo campuran (Button/Input Base UI + Checkbox/Label/Radio/Select/Switch Radix dari commit 26ceaed). Konsumen hanya via wrapper `src/components/ui/*`, blast radius kecil.
+**Perubahan (5 file):**
+- `checkbox.tsx` → `Checkbox.Root/Indicator` Base UI; `data-[state=checked]` → `data-checked`
+- `switch.tsx` → `Switch.Root/Thumb`; `data-[state=*]` → `data-checked/data-unchecked`
+- `radio-group.tsx` → `RadioGroup` + `Radio.Root/Indicator` (pisah paket radio & radio-group)
+- `select.tsx` → struktur `Root/Trigger(Value+Icon)/Portal/Positioner/Popup/List/Item(ItemText+ItemIndicator)/Group/GroupLabel/Separator/ScrollUpArrow/ScrollDownArrow`; highlight `focus:` → `data-highlighted:`, selected → `data-selected`; `SelectContent` kini terima `side/sideOffset/align` (ganti `position` tak terpakai)
+- `label.tsx` → native `<label>` (Base UI tak punya Label mandiri; label hidup di Field.Label)
+- `form-field.tsx`: `onValueChange={(val: string | null) => onChange?.(val ?? "")}` (Base UI value nullable)
+- `package.json`: cabut 6 dep `@radix-ui/*` (checkbox, label, radio-group, select, slot, switch); `npm install` prune
+**Verifikasi:** grep `@radix-ui` di src = 0 · `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/84 warnings (baseline) · lock bersih dari "radix"
+**Catatan:** visual perlu cek manual (dev server) — khususnya Select popup & state checked; `data-slot` ditambahkan mengikuti pola avatar/button.
