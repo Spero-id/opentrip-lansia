@@ -90,7 +90,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="order-2 lg:order-2 relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-[2.5rem] lg:rounded-none p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="order-2 lg:order-2 relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-3xl lg:rounded-none p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
             className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
@@ -189,7 +189,7 @@ export default function RegisterPage() {
 
           <div className="flex items-center gap-3 my-3 sm:my-4">
             <div className="flex-1 h-px bg-muted" />
-            <span className="text-[13px] text-muted-foreground">Atau lanjutkan dengan</span>
+            <span className="text-xs text-muted-foreground">Atau lanjutkan dengan</span>
             <div className="flex-1 h-px bg-muted" />
           </div>
 

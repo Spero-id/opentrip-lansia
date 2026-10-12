@@ -2709,3 +2709,8 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Masalah:** border istirahat input tak terlihat (token `--input` terang `oklch(0.9731)` ≈ #F6F6F6 — efek samping export TweakCN, sebelumnya `oklch(0.922)`). Semua komponen form memakai `border-input`, bukan `border-border` (#DFDFDF) — sesuai dugaan user.
 **Perbaikan (1 baris):** `--input` terang → `oklch(0.9037 0 0)` (samakan `--border`); dark tak disentuh. `design.md` diselaraskan (2 titik → #DFDFDF + catatan asal).
 **Verifikasi:** computed border lab(96.9)→lab(88.8); screenshot login: border Email/Password/Google-button/checkbox kini terlihat; fokus ring oranye tetap; `lint` 0 errors. Badge dev-overlay "1 Issue" muncul sesekali saat load pertama tapi hilang sendiri, tanpa console/page error — noise dev, bukan bug aplikasi.
+
+## Session 95 — Auth audit radius/type/spacing (feat/form-migration)
+
+**Audit:** radius/type/spacing Auth vs `design.md` — sebagian besar sesuai (input rounded-xl=token xl, tombol rounded-lg, kartu rounded-2xl, type & spacing skala baku).
+**Diselaraskan (5 edit):** sheet mobile `rounded-[2.5rem]` (40px arbitrary) → `rounded-3xl` (24px) di login (atas+bawah) & register (atas); teks pembatas `text-[13px]` → `text-xs` di keduanya. Verifikasi visual mobile 390px: sheet tetap melengkung wajar, border & divider terbaca.
