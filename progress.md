@@ -2688,3 +2688,8 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Keputusan user:** kembalikan no.1 dari audit (commit 3d538b9) → `--radius: 0.25rem` kembali ke `0.5rem` (nilai orisinil TweakCN, `:root` + `.dark`). No.2 (`--muted-foreground` #64748B) TIDAK diubah — tetap sesuai keputusan eksplisit user (placeholder readable).
 **Efek:** rounded-lg 4→8px, md 2→6px, sm 0→4px, xl 4→12px di seluruh aplikasi. Kode kini sinkron lagi dengan `design.md` (yang menulis 0.5rem).
 **Verifikasi:** `npm run lint` 0 errors. Perlu cek visual (dev server) karena mengubah seluruh sudut komponen.
+
+## Session 92 — Keputusan tokenisasi (feat/form-migration)
+
+**Keputusan user:** navy `#0D238E`, teal `#1CA6B7`, obsidian `#0B0F19` TETAP hex langsung, tidak dijadikan token. Alasan: sudah didokumentasikan di `design.md` (26-27, 35, 53); teal (23 file) diterima sebagai tech debt sadar. Prinsip ditegakkan: kode = kebenaran, `design.md` = cermin (diterapkan: revert radius 0.5rem + selaraskan muted-foreground #64748B).
+**Status:** `design.md` kini sinkron dengan `globals.css` untuk radius & muted-foreground.
