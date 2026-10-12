@@ -121,7 +121,7 @@ export default function RegisterPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Masukkan nama kamu"
                 required
-                className="w-full rounded-xl"
+                className="w-full"
               />
             </div>
 
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Masukkan email kamu"
                 required
-                className="w-full rounded-xl"
+                className="w-full"
               />
             </div>
 
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan password kamu"
                   required
-                  className="w-full rounded-xl pr-11"
+                  className="w-full pr-11"
                 />
                 <button
                   type="button"
