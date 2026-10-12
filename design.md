@@ -30,18 +30,18 @@ Nilai pada bagian ini adalah nilai aktual yang terdapat di `src/app/globals.css`
 - **Base Background**: `#FCFCFC` — token `--background`; kini benar-benar berlaku karena `<body>` tidak lagi memakai kelas `bg-white` (lihat `src/app/layout.tsx`).
 - **Card / Popover**: `#FCFCFC` (foreground kartu `#171717`, popover `#525252`).
 - **Secondary (shadcn)**: `#FDFDFD` — nyaris putih; `bg-secondary` = surface/tombol terang, **bukan** navy.
-- **Muted / Accent**: `#EDEDED`; `--muted-foreground` = `#202020` (kontras tinggi — teks meta tetap gelap).
+- **Muted / Accent**: `#EDEDED`; `--muted-foreground` = `#64748B` (slate-500 — kontras sedang, nyaman dibaca).
 - **Border**: `#DFDFDF` · **Input**: `#DFDFDF` (warna border input; `--input` di shadcn = warna **border**, bukan warna isian) · **Ring (focus)**: `#F49D1A` (oranye — konsisten brand).
 - **Dark Theme (Footer & Banner CTA)**: `#0B0F19` (Obsidian Deep Navy) — kelas hex eksplisit di komponen (mis. `src/components/layout/Footer.tsx`), bukan token CSS.
 
 ### Token Semantik Lengkap (mode terang)
 Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 - `--primary` `#F49D1A` (fg `#FDFDFD`) · `--secondary` `#FDFDFD` · `--muted` / `--accent` `#EDEDED`
-- `--background` `#FCFCFC` · `--foreground` `#171717` · `--muted-foreground` `#202020`
+- `--background` `#FCFCFC` · `--foreground` `#171717` · `--muted-foreground` `#64748B`
 - `--border` `#DFDFDF` · `--input` `#DFDFDF` (per Session 89: di shadcn `--input` = warna **border** input, jadi harus terlihat di atas background `#FCFCFC`; `#F6F6F6` membuat border nyaris tak terlihat) · `--ring` `#F49D1A`
 - `--destructive` (error): `#CA3214` (fg `#FFFCFC`)
 - **Chart**: `--chart-1..5` = `#72E3AD`, `#3B82F6`, `#8B5CF6`, `#F59E0B`, `#10B981` (berwarna, bukan grayscale)
-- **Radius**: `--radius: 0.5rem` → `rounded-sm` 4px, `rounded-md` 6px, `rounded-lg` 8px, `rounded-xl` 12px; `rounded-2xl`/`rounded-3xl` memakai default Tailwind (16px/24px) — **tidak** lagi kelipatan `--radius` seperti tema lama.
+- **Radius**: `--radius: 0.25rem` (4px) → `rounded-sm` 0px, `rounded-md` 2px, `rounded-lg` 4px, `rounded-xl` 8px; `rounded-2xl`/`rounded-3xl` memakai default Tailwind (16px/24px) — **tidak** lagi kelipatan `--radius` seperti tema lama.
 - **Shadow**: skala TweakCN (`shadow-sm` = `0 1px 3px -1px` 17% + `0 1px 2px -1px` 17%, dst.).
 - **Letter-spacing**: `--tracking-normal: 0.025em` diterapkan ke seluruh `body`; akibatnya `tracking-tight` = `0em` dan `tracking-tighter` = `-0.025em` (skala digeser).
 
@@ -57,7 +57,7 @@ Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 - **Headings / Judul**: `#0F172A` (Slate-900) via kelas `text-slate-900` di halaman — tebal (*bold / extrabold*), elegan
 - **Body Text**: `#475569` (Slate-600) via kelas `text-slate-600` — nyaman dibaca
 - **Muted Text / Meta**: `#94A3B8` (Slate-400) via kelas `text-slate-400` / `text-slate-500`
-- Token semantik (`--foreground #171717`, `--muted-foreground #202020`) dipakai komponen shadcn (`text-foreground`, `text-muted-foreground`); `<body>` kini memakai `text-foreground` (kelas `bg-white text-slate-900` dihapus dari `layout.tsx`).
+- Token semantik (`--foreground #171717`, `--muted-foreground #64748B`) dipakai komponen shadcn (`text-foreground`, `text-muted-foreground`); `<body>` kini memakai `text-foreground` (kelas `bg-white text-slate-900` dihapus dari `layout.tsx`).
 
 ### Status & Indicator Colors
 - **Rating / Star**: `#F59E0B` (Amber-500 ⭐)
