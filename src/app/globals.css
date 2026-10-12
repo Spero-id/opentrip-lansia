@@ -22,7 +22,7 @@
   --destructive: oklch(0.5523 0.1927 32.7272);
   --destructive-foreground: oklch(0.9934 0.0032 17.2118);
   --border: oklch(0.9037 0 0);
-  --input: oklch(0.9731 0 0);
+  --input: oklch(0.9037 0 0);
   --ring: oklch(0.7660 0.1615 69.0313);
   --chart-1: oklch(0.8348 0.1302 160.9080);
   --chart-2: oklch(0.6231 0.1880 259.8145);
@@ -77,7 +77,7 @@
   --destructive: oklch(0.3123 0.0852 29.7877);
   --destructive-foreground: oklch(0.9368 0.0045 34.3092);
   --border: oklch(0.2809 0 0);
-  --input: oklch(0.2603 0 0);
+  --input: oklch(0.2809 0 0);
   --ring: oklch(0.7660 0.1615 69.0313);
   --chart-1: oklch(0.8003 0.1821 151.7110);
   --chart-2: oklch(0.7137 0.1434 254.6240);
@@ -174,23 +174,20 @@
 
 
 
-/* Dark sidebar untuk area admin — nilai token diambil 1:1 dari blok `.dark`
-   (theme TweakCN) supaya tetap single-source: kalau theme di-re-export,
-   sinkronkan dari blok `.dark`, jangan hardcode warna baru. */
 .admin-sidebar-dark,
 [data-mobile="true"][data-sidebar="sidebar"] {
-  /* `text-sidebar-foreground` ada di div induk (di luar blok ini), jadi warnanya
-     resolve di :root (gelap) lalu di-inherit ke dalam. Restabilisasi di sini
-     agar semua keturunan tanpa warna eksplisit mewarisi warna sidebar yang benar. */
-  color: var(--sidebar-foreground);
-  --sidebar: oklch(0.1822 0 0);
-  --sidebar-foreground: oklch(0.9288 0.0126 255.5078);
-  --sidebar-primary: oklch(0.7660 0.1615 69.0313);
-  --sidebar-primary-foreground: oklch(0.9213 0.0135 167.1556);
-  --sidebar-accent: oklch(0.3132 0 0);
-  --sidebar-accent-foreground: oklch(0.9851 0 0);
-  --sidebar-border: oklch(0.2809 0 0);
-  --sidebar-ring: oklch(0.7660 0.1615 69.0313);
+  --sidebar: oklch(0.24 0.02 262);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.3 0.025 262);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+.admin-sidebar-dark :where(span, p, a, button) {
+  color: #fff;
 }
 
 @layer base {

@@ -2679,3 +2679,16 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 
 **Branch:** `refactor/tokenisasi-fase1` (PR #135)
 **Verified:** `npm run lint` 0E/80W · `npm run build` success · `tsc --noEmit` 0 errors
+
+### Session 91 — Terapkan fix token --input di main (border shadcn Input)
+
+**Laporan:** halaman login masih terlihat "aneh" setelah PR #141 merge.
+
+**Penyebab:** merge membawa form-migration Phase 1 ke main → login/register/contact kembali memakai komponen shadcn `Input`/`Textarea` (`border-input`), tapi fix token `--input` dari Session 89 hanya tersimpan di stash — tidak ikut PR sidebar. `--input` di main masih `#F6F6F6` (≈ background `#FCFCFC`), border nyaris tak terlihat.
+
+**Fix (dari stash Session 89, `git checkout stash@{0} --`):**
+- `src/app/globals.css`: `--input` light `oklch(0.9731 0 0)` → `oklch(0.9037 0 0)` (= `--border` `#DFDFDF`); dark `oklch(0.2603 0 0)` → `oklch(0.2809 0 0)` (= dark `--border`).
+- `design.md`: dokumentasi token disinkronkan (2 titik) + catatan rasional shadcn `--input` = warna border.
+- Komponen shadcn tidak disentuh — `border-input` tetap canonical (audit: dipakai input, textarea, select, checkbox, radio-group, button variant outline).
+
+**Verifikasi:** computed style `/login` border `lab(96.88)` → `lab(88.83)` = `#DFDFDF`; screenshot resting & focus (ring oranye tetap). `npm run lint` 0E/84W (baseline main).
