@@ -2693,3 +2693,13 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 
 **Keputusan user:** navy `#0D238E`, teal `#1CA6B7`, obsidian `#0B0F19` TETAP hex langsung, tidak dijadikan token. Alasan: sudah didokumentasikan di `design.md` (26-27, 35, 53); teal (23 file) diterima sebagai tech debt sadar. Prinsip ditegakkan: kode = kebenaran, `design.md` = cermin (diterapkan: revert radius 0.5rem + selaraskan muted-foreground #64748B).
 **Status:** `design.md` kini sinkron dengan `globals.css` untuk radius & muted-foreground.
+
+## Session 93 — Tes visual fondasi + hapus form-design-system.md (feat/form-migration)
+
+**Hapus doc (commit 79f145e):** aturan pemetaan + checklist verifikasi digabung ke `plan/form-migration-todo.md` (dengan koreksi: `variant="default"`, `RadioGroupItem`); `plan/form-design-system.md` di-`git rm`; rujukan di `plan/README.md` dihapus. `lint` 0 errors. Riwayat file tetap ada di git.
+**Tes visual (Playwright headless, dev server fresh restart):**
+- `/login`, `/register`: render benar; checkbox unchecked & checked (oranye penuh, ikon centang putih, tanpa rim terang); klik teks label men-toggle (`aria-checked` false→true, `data-checked` hadir); eye-toggle & tombol radius 8px normal; placeholder #64748B terbaca
+- `/private-trip` full-page: radio terpilih (dot oranye), checkbox fasilitas, kartu radius 8px — semua normal
+- Console/page errors: none. Badge "1 Issue" di load pertama ternyata transien (tidak muncul di reload) — bukan masalah.
+- Catatan teknis: Base UI menaruh `id` di hidden input + `aria-labelledby` otomatis di box; asosiasi label tetap berfungsi.
+**Belum dites live:** Select & Switch Base UI (belum ada halaman konsumen) — tervalidasi via `tsc`+`build` saja.
