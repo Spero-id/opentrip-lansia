@@ -318,7 +318,7 @@ export default function IconPicker({
                 placeholder="Cari ikon (cth: Bus, Wifi, Bed, Shield)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-8 pr-8 py-1.5 text-xs bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                className="w-full pl-8 pr-8 py-1.5 text-xs bg-muted border border-border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                 autoFocus
               />
               {search && (

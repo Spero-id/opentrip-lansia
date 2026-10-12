@@ -954,7 +954,7 @@ export default function AdminTripGroupsPage() {
                     name="startDate"
                     value={form.startDate}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring ${
                       formErrors.startDate ? "border-red-400" : "border-border"
                     }`}
                   />
@@ -971,7 +971,7 @@ export default function AdminTripGroupsPage() {
                     name="endDate"
                     value={form.endDate}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring ${
                       formErrors.endDate ? "border-red-400" : "border-border"
                     }`}
                   />
@@ -992,7 +992,7 @@ export default function AdminTripGroupsPage() {
                     min={1}
                     value={form.maxParticipants}
                     onChange={handleChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring ${
                       formErrors.maxParticipants ? "border-red-400" : "border-border"
                     }`}
                   />
@@ -1010,7 +1010,7 @@ export default function AdminTripGroupsPage() {
                     min={1}
                     value={form.minParticipants}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                    className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                   />
                 </div>
               </div>
@@ -1023,7 +1023,7 @@ export default function AdminTripGroupsPage() {
                   onChange={handleChange}
                   rows={2}
                   placeholder="Opsional: catatan untuk grup ini..."
-                  className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                  className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                 />
               </div>
 
@@ -1064,7 +1064,7 @@ export default function AdminTripGroupsPage() {
                   onChange={handlePriceChange}
                   list="tier-suggestions"
                   placeholder="cth: Dewasa, Anak, Early Bird"
-                  className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.name ? "border-red-400" : "border-border"}`}
+                  className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring ${priceErrors.name ? "border-red-400" : "border-border"}`}
                 />
                 <datalist id="tier-suggestions">
                   {PRICE_TIER_SUGGESTIONS.map((s) => (
@@ -1090,7 +1090,7 @@ export default function AdminTripGroupsPage() {
                     }}
                     inputMode="numeric"
                     placeholder="cth: 1500000"
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.price ? "border-red-400" : "border-border"}`}
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring ${priceErrors.price ? "border-red-400" : "border-border"}`}
                   />
                   {priceErrors.price && <p className="mt-1 text-xs text-destructive">{priceErrors.price}</p>}
                 </div>
@@ -1100,9 +1100,9 @@ export default function AdminTripGroupsPage() {
                     type="number"
                     name="quota"
                     min={1}
-                    value={priceForm.quota}
-                    onChange={handlePriceChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.quota ? "border-red-400" : "border-border"}`}
+                      value={priceForm.quota}
+                      onChange={handlePriceChange}
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring ${priceErrors.quota ? "border-red-400" : "border-border"}`}
                   />
                   {priceErrors.quota && <p className="mt-1 text-xs text-destructive">{priceErrors.quota}</p>}
                 </div>
@@ -1115,7 +1115,7 @@ export default function AdminTripGroupsPage() {
                     name="validFrom"
                     value={priceForm.validFrom}
                     onChange={handlePriceChange}
-                    className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                    className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                   />
                 </div>
                 <div>
@@ -1125,7 +1125,7 @@ export default function AdminTripGroupsPage() {
                     name="validUntil"
                     value={priceForm.validUntil}
                     onChange={handlePriceChange}
-                    className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary ${priceErrors.validUntil ? "border-red-400" : "border-border"}`}
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring ${priceErrors.validUntil ? "border-red-400" : "border-border"}`}
                   />
                   {priceErrors.validUntil && <p className="mt-1 text-xs text-destructive">{priceErrors.validUntil}</p>}
                 </div>
