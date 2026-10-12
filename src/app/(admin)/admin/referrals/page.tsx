@@ -128,7 +128,7 @@ export default function AdminReferralHistoryPage() {
               min={0}
               value={bonusPointsInput}
               onChange={(e) => setBonusPointsInput(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
             />
             <p className="text-[10px] text-muted-foreground mt-1">
               Poin yang diberikan ke akun referrer saat referral berhasil (status Berhasil)
@@ -137,7 +137,7 @@ export default function AdminReferralHistoryPage() {
           <button
             onClick={handleSaveBonus}
             disabled={savingBonus}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-[#E08A0E] disabled:opacity-50 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-[#E08A0E] disabled:opacity-50 transition"
           >
             {savingBonus ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -174,7 +174,7 @@ export default function AdminReferralHistoryPage() {
             placeholder="Cari nama, email, kode booking, atau trip..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
           />
         </div>
       </div>

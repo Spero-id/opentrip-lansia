@@ -235,7 +235,7 @@ export default function IconPicker({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center gap-2 px-3 py-2 text-xs border border-border rounded-xl bg-background hover:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 transition shadow-xs ${buttonClassName || ""}`}
+          className={`flex items-center gap-2 px-3 py-2 text-xs border border-border rounded-lg bg-background hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring transition shadow-xs ${buttonClassName || ""}`}
         >
           <span
             className={`p-1 rounded-lg shrink-0 border ${
@@ -254,7 +254,7 @@ export default function IconPicker({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-xs border border-border rounded-xl bg-background hover:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 transition shadow-xs ${buttonClassName || ""}`}
+          className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-xs border border-border rounded-lg bg-background hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring transition shadow-xs ${buttonClassName || ""}`}
         >
           <div className="flex items-center gap-2 truncate">
             <span
@@ -318,7 +318,7 @@ export default function IconPicker({
                 placeholder="Cari ikon (cth: Bus, Wifi, Bed, Shield)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-8 pr-8 py-1.5 text-xs bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                className="w-full pl-8 pr-8 py-1.5 text-xs bg-muted border border-border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                 autoFocus
               />
               {search && (

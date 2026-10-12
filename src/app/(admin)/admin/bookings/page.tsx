@@ -531,7 +531,7 @@ export default function AdminPesanan() {
                   onChange={(e) => setFeedbackText(e.target.value)}
                   placeholder="Tulis pesan/feedback untuk pengguna..."
                   rows={3}
-                  className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/40"
+                  className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                 />
                 <button
                   onClick={handleSendFeedback}
@@ -553,7 +553,7 @@ export default function AdminPesanan() {
                       onChange={(e) => setRejectNote(e.target.value)}
                       placeholder="Alasan penolakan (wajib)..."
                       rows={3}
-                      className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                     />
                     <div className="flex gap-2">
                       <button

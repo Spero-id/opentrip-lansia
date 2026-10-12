@@ -124,17 +124,17 @@ export default function AdminGalleries() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Trip ID</label>
             <input name="tripId" value={form.tripId} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Judul</label>
             <input name="title" value={form.title} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isPrivate" type="checkbox" checked={form.isPrivate} onChange={handleChange}

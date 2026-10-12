@@ -31,24 +31,24 @@ Nilai pada bagian ini adalah nilai aktual yang terdapat di `src/app/globals.css`
 - **Card / Popover**: `#FCFCFC` (foreground kartu `#171717`, popover `#525252`).
 - **Secondary (shadcn)**: `#FDFDFD` — nyaris putih; `bg-secondary` = surface/tombol terang, **bukan** navy.
 - **Muted / Accent**: `#EDEDED`; `--muted-foreground` = `#64748B` (slate-500 — placeholder input terbaca; diubah dari `#202020` via commit `4c641a4`).
-- **Border**: `#DFDFDF` · **Input**: `#DFDFDF` (disamakan dengan `--border` via commit revert-input 2026-10-12; sebelumnya `#F6F6F6` dari export TweakCN yang terlalu pudar) · **Ring (focus)**: `#F49D1A` (oranye — konsisten brand).
+- **Border**: `#DFDFDF` · **Input**: `#DFDFDF` (disamakan dengan `--border`; di shadcn `--input` = warna **border**, bukan warna isian) · **Ring (focus)**: `#F49D1A` (oranye — konsisten brand).
 - **Dark Theme (Footer & Banner CTA)**: `#0B0F19` (Obsidian Deep Navy) — kelas hex eksplisit di komponen (mis. `src/components/layout/Footer.tsx`), bukan token CSS.
 
 ### Token Semantik Lengkap (mode terang)
 Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 - `--primary` `#F49D1A` (fg `#FDFDFD`) · `--secondary` `#FDFDFD` · `--muted` / `--accent` `#EDEDED`
 - `--background` `#FCFCFC` · `--foreground` `#171717` · `--muted-foreground` `#64748B`
-- `--border` `#DFDFDF` · `--input` `#DFDFDF` · `--ring` `#F49D1A`
+- `--border` `#DFDFDF` · `--input` `#DFDFDF` (di shadcn `--input` = warna **border** input, harus terlihat di atas `#FCFCFC`) · `--ring` `#F49D1A`
 - `--destructive` (error): `#CA3214` (fg `#FFFCFC`)
 - **Chart**: `--chart-1..5` = `#72E3AD`, `#3B82F6`, `#8B5CF6`, `#F59E0B`, `#10B981` (berwarna, bukan grayscale)
-- **Radius**: `--radius: 0.5rem` → `rounded-sm` 4px, `rounded-md` 6px, `rounded-lg` 8px, `rounded-xl` 12px; `rounded-2xl`/`rounded-3xl` memakai default Tailwind (16px/24px) — **tidak** lagi kelipatan `--radius` seperti tema lama.
+- **Radius**: `--radius: 0.5rem` → `rounded-sm` 4px, `rounded-md` 6px, `rounded-lg` 8px, `rounded-xl` 12px; *(branch ini memakai 0.5rem; main memakai 0.25rem — diputuskan saat review PR)*; `rounded-2xl`/`rounded-3xl` memakai default Tailwind (16px/24px) — **tidak** lagi kelipatan `--radius` seperti tema lama.
 - **Shadow**: skala TweakCN (`shadow-sm` = `0 1px 3px -1px` 17% + `0 1px 2px -1px` 17%, dst.).
 - **Letter-spacing**: `--tracking-normal: 0.025em` diterapkan ke seluruh `body`; akibatnya `tracking-tight` = `0em` dan `tracking-tighter` = `-0.025em` (skala digeser).
 
 ### Mode Gelap (blok `.dark`)
 - `--background #121212`, `--card #171717`, `--popover #242424` (fg `#A9A9A9`), `--foreground #E2E8F0`
-- `--secondary #242424`, `--muted #1F1F1F`, `--accent #313131`, `--muted-foreground #A2A2A2`
-- `--border #292929`, `--input #242424`, `--destructive #541C15`
+- `--secondary #242424`, `--muted #1F1F1F`, `--accent #313131`, `--muted-foreground #DCDCDC`
+- `--border #292929`, `--input #292929`, `--destructive #541C15`
 - `--primary` & `--ring`: **tetap `#F49D1A`** (perbaikan manual — sebelumnya sempat ter-export hijau `#006239`)
 - Warna hex langsung (`#0D238E`, `#1CA6B7`, `#0B0F19`, kelas `bg-white`/`text-slate-*` di halaman) **tidak ikut berubah** di mode gelap.
 > Catatan: saat ini tidak ada pemicu toggle tema (tanpa `next-themes` atau script), sehingga mode gelap belum aktif; utility `dark:` baru berfungsi jika kelas `.dark` diaktifkan.

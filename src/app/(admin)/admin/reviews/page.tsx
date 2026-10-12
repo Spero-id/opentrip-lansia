@@ -162,7 +162,7 @@ export default function AdminReviews() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Status</label>
             <select name="status" value={form.status} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring">
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>

@@ -141,7 +141,7 @@ export default function AdminVendors() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Tipe Vendor</label>
             <select name="typeId" value={form.typeId} onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" required>
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" required>
               <option value="">-- Pilih Tipe --</option>
               {types.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
@@ -149,30 +149,30 @@ export default function AdminVendors() {
           <div>
             <label className="block text-sm font-medium text-slate-700">Nama Vendor</label>
             <input name="name" value={form.name} onChange={handleChange} required
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Kontak Person</label>
               <input name="contactPerson" value={form.contactPerson} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Telepon</label>
               <input name="phone" value={form.phone} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Email</label>
               <input name="email" type="email" value={form.email} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Area Layanan</label>
               <input name="serviceArea" value={form.serviceArea} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
           </div>
           <div className="flex items-center gap-6">

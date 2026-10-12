@@ -143,7 +143,7 @@ export default function AdminPrivateTripsList() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="appearance-none rounded-xl border border-border bg-background px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+            className="appearance-none rounded-lg border border-border bg-background px-4 py-2 pr-8 text-xs font-medium text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
           >
             <option value="">Semua Status</option>
             <option value="submitted">Submitted</option>
@@ -158,7 +158,7 @@ export default function AdminPrivateTripsList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari judul atau kode PTR-..."
-          className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary w-full sm:w-56"
+          className="rounded-lg border border-border px-4 py-2 text-xs font-medium text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring w-full sm:w-56"
         />
         <span className="text-xs text-muted-foreground ml-auto">
           {isCodeSearch ? `${visibleRows.length} hasil` : `${total} request`}
