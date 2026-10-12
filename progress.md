@@ -2719,3 +2719,9 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 
 **Sebab:** override `rounded-xl` di Auth ditulis saat token 0.25rem (ter-render 8px); pasca-revert 0.5rem menggelembung ke 12px. Dibuktikan: kelas tak berubah sejak Phase 1 + token pindah + rumus `--radius-xl` + ukur browser 12px vs tombol 8px.
 **Perbaikan:** hapus override `rounded-xl` di 5 Input (login 2, register 3) → ikut default komponen `rounded-lg` = 8px. Kotak error `rounded-xl` dibiarkan (alert, bukan input). Terukur kini 8px, screenshot OK.
+
+## Session 97 — Revert 7 komponen ke stock registry (feat/form-migration)
+
+**Perintah:** `shadcn add button textarea avatar select checkbox radio-group switch label --overwrite -y` (style base-nova). Avatar di-skip CLI (sudah identik = ternyata stock sejak awal).
+**Kejutan baik:** stock button SUDAH punya xs/icon-xs/sm/lg (dugaan custom keliru; hanya `xl` yang benar-benar custom, tanpa pemakai) dan stock select SUDAH punya prop `size` — 3 pemakai `icon-sm` tidak pecah. Prop `size` textarea hilang tanpa korban (0 pemakai). Polish checkbox kita ikut ter-reset ke bawaan.
+**Verifikasi:** `tsc` 0 error · `lint` 0 errors/83 warnings · toggle+checkbox loginnyala (`aria-checked` true, tanpa error) · screenshot OK.
