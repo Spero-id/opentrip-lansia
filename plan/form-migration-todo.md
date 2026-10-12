@@ -4,6 +4,21 @@
 
 ---
 
+## 🔄 Aturan Pemetaan (dipindah dari `form-design-system.md` — file itu dihapus 2026-10-12, sumber token: `design.md`)
+| Kode lama (native) | Ganti dengan (ShadCN) |
+|---|---|
+| `<button>` aksi utama penuh (`bg-primary...`) | `<Button size="lg" className="w-full">` |
+| `<button>` ikon (`p-2 rounded-xl hover:bg-primary/10`) | `<Button size="icon" variant="ghost">` |
+| `<button>` toggle password di dalam input | `<Button variant="ghost" size="icon-sm" aria-label="...">` |
+| `<input>` teks/email/password | `<Input>` |
+| `<textarea>` | `<Textarea>` |
+| `<select>` | `<Select>` + `<SelectTrigger>`/`<SelectContent>`/`<SelectItem>` |
+| `<input type="checkbox">` | `<Checkbox id="...">` + `<Label htmlFor="...">` |
+| `<input type="radio">` | `<RadioGroup>` + `<RadioGroupItem value="...">` |
+| `<label>` | `<Label>` |
+
+---
+
 ## ✅ Done
 - [x] ShadCN UI library setup (Button, Input, Textarea, Select, Checkbox, RadioGroup, Switch, Label, FormField, FormSection)
 - [x] Button size variants (xs, sm, default, lg, xl, icon-xs, icon-sm, icon-lg)
@@ -132,6 +147,17 @@
 | 5. Features | 30 | 58 | 28 | 4 | 6 | 6 jam |
 | 6. Layout | 3 | 4 | 0 | 0 | 0 | 0.5 jam |
 | **TOTAL** | **~61** | **~150** | **~122** | **16** | **15** | **~21.5 jam** |
+
+---
+
+## ✅ Checklist Verifikasi per Fase (dipindah dari `form-design-system.md`)
+- [ ] TypeScript compiles (`npx tsc --noEmit` 0 error)
+- [ ] Lint passes (0 errors)
+- [ ] Build succeeds (`npm run build`)
+- [ ] Visual review: radius konsisten, spacing konsisten
+- [ ] Accessibility: label terasosiasi, `aria-invalid`, `focus-visible`
+- [ ] Dark mode tidak rusak
+- [ ] Responsive: breakpoint sm/md/lg
 
 ---
 
