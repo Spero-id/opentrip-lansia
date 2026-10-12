@@ -445,7 +445,7 @@ export default function AdminPrivateTripDetail() {
                     value={proposalContent}
                     onChange={(e) => setProposalContent(e.target.value)}
                     rows={5}
-                    className="w-full rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background resize-none transition"
+                    className="w-full rounded-lg border border-border bg-muted px-4 py-3 text-sm text-slate-800 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring focus:bg-background resize-none transition"
                     placeholder="Deskripsikan rencana perjalanan, akomodasi, transportasi, dan layanan yang ditawarkan..."
                     required
                   />
@@ -459,7 +459,7 @@ export default function AdminPrivateTripDetail() {
                       type="number"
                       value={estimatedPrice}
                       onChange={(e) => setEstimatedPrice(e.target.value)}
-                      className="w-full rounded-2xl border border-border bg-muted pl-10 pr-4 py-3 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-background transition"
+                      className="w-full rounded-lg border border-border bg-muted pl-10 pr-4 py-3 text-sm text-slate-800 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring focus:bg-background transition"
                       placeholder="0"
                       min={0}
                       max={999999999999}

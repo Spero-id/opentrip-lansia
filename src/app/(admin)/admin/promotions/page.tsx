@@ -174,12 +174,12 @@ export default function AdminPromotions() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Kode Kupon</label>
               <input name="code" value={form.code} onChange={handleChange} required
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Tipe Diskon</label>
               <select name="type" value={form.type} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary">
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring">
                 <option value="percentage">Persentase</option>
                 <option value="nominal">Nominal</option>
               </select>
@@ -189,32 +189,32 @@ export default function AdminPromotions() {
             <div>
               <label className="block text-sm font-medium text-slate-700">Nilai Diskon</label>
               <input name="value" value={form.value} onChange={handleChange} required
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
                 placeholder={form.type === "percentage" ? "20 atau 20%" : "100000"} />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Judul Promo</label>
               <input name="title" value={form.title} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Min. Pembelian</label>
               <input name="minPurchase" value={form.minPurchase} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">Maks. Diskon</label>
               <input name="maxDiscount" value={form.maxDiscount} onChange={handleChange}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700">Batas Pemakaian</label>
               <input name="usageLimit" type="number" value={form.usageLimit ?? ""} onChange={e => setForm(prev => ({ ...prev, usageLimit: e.target.value ? Number(e.target.value) : null }))}
-                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" min={0} />
+                className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" min={0} />
             </div>
           </div>
           <label className="flex items-center gap-3 text-sm">

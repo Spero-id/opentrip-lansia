@@ -145,19 +145,19 @@ export default function AdminMeetingPoints() {
             <label className="block text-sm font-medium text-slate-700">Nama Meeting Point *</label>
             <input name="name" value={form.name} onChange={handleChange} required
               placeholder="Contoh: Bandara Soekarno-Hatta, Stasiun Bandung"
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Alamat / Lokasi</label>
             <input name="address" value={form.address} onChange={handleChange}
               placeholder="Contoh: Terminal 3, Soekarno-Hatta, Tangerang"
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Deskripsi</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={3}
               placeholder="Contoh: Titik kumpul di depan pintu kedatangan. Silakan hadir 15 menit sebelum waktu kumpul."
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary resize-none" />
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring resize-none" />
           </div>
           <label className="flex items-center gap-3 text-sm">
             <input name="isActive" type="checkbox" checked={form.isActive} onChange={handleChange}
