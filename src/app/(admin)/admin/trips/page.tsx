@@ -728,14 +728,14 @@ if (categories.length === 0) await fetchCategories();
                         value={item.name}
                         onChange={(e) => handleFacilityChange(index, "name", e.target.value)}
                         placeholder="Nama Fasilitas (cth: Bus AC Executive, Tour Guide, Medis)"
-                        className="w-full h-10 rounded-xl border border-border px-3.5 text-xs text-slate-800 bg-muted/50 focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary font-medium transition flex items-center"
+                        className="w-full h-10 rounded-lg border border-border px-3.5 text-xs text-slate-800 bg-muted/50 focus:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring font-medium transition flex items-center"
                       />
                     </div>
 
                     <button
                       type="button"
                       onClick={() => removeFacilityItem(index)}
-                      className="h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-xl transition shrink-0"
+                      className="h-10 w-10 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-lg transition shrink-0"
                       title="Hapus Fasilitas"
                     >
                       <Trash2 className="w-4 h-4" />

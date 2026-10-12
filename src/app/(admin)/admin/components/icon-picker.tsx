@@ -235,7 +235,7 @@ export default function IconPicker({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center gap-2 px-3 py-2 text-xs border border-border rounded-xl bg-background hover:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 transition shadow-xs ${buttonClassName || ""}`}
+          className={`flex items-center gap-2 px-3 py-2 text-xs border border-border rounded-lg bg-background hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring transition shadow-xs ${buttonClassName || ""}`}
         >
           <span
             className={`p-1 rounded-lg shrink-0 border ${
@@ -254,7 +254,7 @@ export default function IconPicker({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-xs border border-border rounded-xl bg-background hover:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30 transition shadow-xs ${buttonClassName || ""}`}
+          className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-xs border border-border rounded-lg bg-background hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring transition shadow-xs ${buttonClassName || ""}`}
         >
           <div className="flex items-center gap-2 truncate">
             <span

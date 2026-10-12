@@ -84,12 +84,12 @@ export default function AdminBlogCategories() {
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Nama kategori baru..."
-          className="flex-1 rounded-xl border border-border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+          className="flex-1 rounded-lg border border-border px-3 py-2.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
         />
         <button
           type="submit"
           disabled={saving || !newName.trim()}
-          className="rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50 inline-flex items-center gap-2 shrink-0"
+          className="rounded-lg bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/85 transition disabled:opacity-50 inline-flex items-center gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah</span>
