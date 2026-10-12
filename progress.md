@@ -2682,3 +2682,9 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 - `package.json`: cabut 6 dep `@radix-ui/*` (checkbox, label, radio-group, select, slot, switch); `npm install` prune
 **Verifikasi:** grep `@radix-ui` di src = 0 · `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/84 warnings (baseline) · lock bersih dari "radix"
 **Catatan:** visual perlu cek manual (dev server) — khususnya Select popup & state checked; `data-slot` ditambahkan mengikuti pola avatar/button.
+
+## Session 91 — Revert --radius ke 0.5rem (feat/form-migration)
+
+**Keputusan user:** kembalikan no.1 dari audit (commit 3d538b9) → `--radius: 0.25rem` kembali ke `0.5rem` (nilai orisinil TweakCN, `:root` + `.dark`). No.2 (`--muted-foreground` #64748B) TIDAK diubah — tetap sesuai keputusan eksplisit user (placeholder readable).
+**Efek:** rounded-lg 4→8px, md 2→6px, sm 0→4px, xl 4→12px di seluruh aplikasi. Kode kini sinkron lagi dengan `design.md` (yang menulis 0.5rem).
+**Verifikasi:** `npm run lint` 0 errors. Perlu cek visual (dev server) karena mengubah seluruh sudut komponen.
