@@ -146,7 +146,7 @@ export default function AdminUsersPage() {
             placeholder="Cari nama, email, telepon..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-lg border border-border focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
           />
         </div>
 
@@ -155,7 +155,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="w-full sm:w-40 px-3 py-2 text-xs rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary bg-background font-medium text-slate-700"
+            className="w-full sm:w-40 px-3 py-2 text-xs rounded-lg border border-border focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring bg-background font-medium text-slate-700"
           >
             <option value="all">Semua Role</option>
             <option value="user">User Biasa</option>
@@ -300,7 +300,7 @@ export default function AdminUsersPage() {
               value={form.name}
               onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
               required
-              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
             />
           </div>
 
@@ -310,7 +310,7 @@ export default function AdminUsersPage() {
               type="email"
               value={editingUser?.email || ""}
               disabled
-              className="mt-1 w-full rounded-xl border border-border bg-muted px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
+              className="mt-1 w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
             />
           </div>
 
@@ -321,7 +321,7 @@ export default function AdminUsersPage() {
               value={form.phone}
               onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
               placeholder="e.g. 08123456789"
-              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
             />
           </div>
 
@@ -330,7 +330,7 @@ export default function AdminUsersPage() {
             <select
               value={form.role}
               onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
             >
               <option value="user">User Biasa</option>
               <option value="agent">Agent Partner</option>
@@ -345,7 +345,7 @@ export default function AdminUsersPage() {
               value={form.loyaltyPoints}
               onChange={(e) => setForm((prev) => ({ ...prev, loyaltyPoints: parseInt(e.target.value) || 0 }))}
               min={0}
-              className="mt-1 w-full rounded-xl border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
+              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring"
             />
           </div>
 
