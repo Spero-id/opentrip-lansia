@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "@/lib/auth/client";
 import {
   DEFAULT_REDIRECT,
   buildAuthHref,
   readRedirectFromSearch,
 } from "@/utils/redirect";
+import { loginSchema, type LoginInput } from "@/features/auth/auth.schema";
 import AuthAside from "@/features/auth/components/AuthAside";
 import AuthTextField from "@/features/auth/components/AuthTextField";
 import PasswordField from "@/features/auth/components/PasswordField";
@@ -30,28 +33,28 @@ const emptySubscribe = () => () => {};
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    mode: "onSubmit",
+  });
+
   const registerHref = buildAuthHref("/register", redirectPath);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(values: LoginInput) {
     setError("");
-    setLoading(true);
 
-    const { error: signInError } = await signIn.email({
-      email,
-      password,
-    });
+    const { error: signInError } = await signIn.email(values);
 
     if (signInError) {
       setError(signInError.message || "Email atau password salah");
-      setLoading(false);
       return;
     }
 
@@ -107,16 +110,20 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
             <AuthTextField
               label="Email"
               type="email"
-              value={email}
-              onChange={setEmail}
               placeholder="Masukkan email kamu"
+              error={errors.email?.message}
+              {...register("email")}
             />
 
-            <PasswordField value={password} onChange={setPassword} />
+            <PasswordField
+              placeholder="Masukkan password kamu"
+              error={errors.password?.message}
+              {...register("password")}
+            />
 
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
@@ -135,12 +142,12 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               size="lg"
               variant="default"
               className="w-full"
             >
-              {loading ? "Memproses..." : "Login"}
+              {isSubmitting ? "Memproses..." : "Login"}
             </Button>
           </form>
 

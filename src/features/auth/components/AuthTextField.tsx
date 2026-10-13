@@ -2,20 +2,18 @@
 
 import { Input } from "@/components/ui/input";
 
-interface AuthTextFieldProps {
+interface AuthTextFieldProps
+  extends Omit<React.ComponentProps<typeof Input>, "type"> {
   label: string;
   type?: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
+  error?: string;
 }
 
 export default function AuthTextField({
   label,
   type = "text",
-  value,
-  onChange,
-  placeholder,
+  error,
+  ...inputProps
 }: AuthTextFieldProps) {
   return (
     <div>
@@ -23,13 +21,12 @@ export default function AuthTextField({
         {label}
       </label>
       <Input
+        {...inputProps}
         type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        required
+        aria-invalid={error ? true : undefined}
         className="w-full"
       />
+      {error && <p className="mt-1.5 text-sm text-destructive">{error}</p>}
     </div>
   );
 }

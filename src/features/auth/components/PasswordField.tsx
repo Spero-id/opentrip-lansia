@@ -5,16 +5,14 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface PasswordFieldProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
+interface PasswordFieldProps
+  extends Omit<React.ComponentProps<typeof Input>, "type"> {
+  error?: string;
 }
 
 export default function PasswordField({
-  value,
-  onChange,
-  placeholder = "Masukkan password kamu",
+  error,
+  ...inputProps
 }: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -25,11 +23,9 @@ export default function PasswordField({
       </label>
       <div className="relative">
         <Input
+          {...inputProps}
           type={showPassword ? "text" : "password"}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          required
+          aria-invalid={error ? true : undefined}
           className="w-full pr-11"
         />
         <Button
@@ -43,6 +39,7 @@ export default function PasswordField({
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </Button>
       </div>
+      {error && <p className="mt-1.5 text-sm text-destructive">{error}</p>}
     </div>
   );
 }

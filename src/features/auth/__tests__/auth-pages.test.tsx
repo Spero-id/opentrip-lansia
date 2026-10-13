@@ -1,0 +1,310 @@
+﻿import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+const { pushMock, refreshMock, signInEmailMock, signInSocialMock, signUpEmailMock } =
+  vi.hoisted(() => ({
+    pushMock: vi.fn(),
+    refreshMock: vi.fn(),
+    signInEmailMock: vi.fn(),
+    signInSocialMock: vi.fn(),
+    signUpEmailMock: vi.fn(),
+  }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock, refresh: refreshMock }),
+}));
+
+vi.mock("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: React.ComponentProps<"a"> & { href: string }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
+vi.mock("@/lib/auth/client", () => ({
+  signIn: { email: signInEmailMock, social: signInSocialMock },
+  signUp: { email: signUpEmailMock },
+}));
+
+import LoginPage from "@/app/(auth)/login/page";
+import RegisterPage from "@/app/(auth)/register/page";
+
+function setUrl(path: string) {
+  window.history.pushState({}, "", path);
+}
+
+async function clickSubmit(
+  user: ReturnType<typeof userEvent.setup>,
+  name: "Login" | "Daftar"
+) {
+  await user.click(screen.getByRole("button", { name }));
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  setUrl("/login");
+});
+
+afterEach(() => {
+  setUrl("/");
+});
+
+describe("LoginPage validasi", () => {
+  it("menampilkan pesan error per-field saat submit kosong", async () => {
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    await clickSubmit(user, "Login");
+
+    expect(await screen.findByText("Email wajib diisi")).toBeTruthy();
+    expect(screen.getByText("Password wajib diisi")).toBeTruthy();
+    expect(signInEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("menolak format email tidak valid tanpa memanggil signIn", async () => {
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi-at-example");
+    await clickSubmit(user, "Login");
+
+    expect(await screen.findByText("Email tidak valid")).toBeTruthy();
+    expect(signInEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("memanggil signIn.email dan redirect setelah login valid", async () => {
+    signInEmailMock.mockResolvedValue({ error: null });
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Login");
+
+    await waitFor(() => {
+      expect(signInEmailMock).toHaveBeenCalledWith({
+        email: "budi@example.com",
+        password: "rahasia123",
+      });
+    });
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith("/");
+      expect(refreshMock).toHaveBeenCalled();
+    });
+  });
+
+  it("menampilkan pesan server saat login gagal", async () => {
+    signInEmailMock.mockResolvedValue({
+      error: { message: "Email atau password salah" },
+    });
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "salah");
+    await clickSubmit(user, "Login");
+
+    expect(
+      await screen.findByText("Email atau password salah")
+    ).toBeTruthy();
+    expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it("link daftar polos saat tidak ada query redirect", () => {
+    render(<LoginPage />);
+
+    expect(
+      screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
+    ).toBe("/register");
+  });
+
+  it("meneruskan redirect ?redirect=/trips ke link daftar dan hasil login", async () => {
+    signInEmailMock.mockResolvedValue({ error: null });
+    setUrl("/login?redirect=%2Ftrips");
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    const daftarLink = screen.getByRole("link", { name: "Daftar di sini" });
+    expect(daftarLink.getAttribute("href")).toBe("/register?redirect=%2Ftrips");
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Login");
+
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith("/trips");
+    });
+  });
+
+  it("mengarahkan redirect tidak aman (//evil.com) ke beranda", async () => {
+    signInEmailMock.mockResolvedValue({ error: null });
+    setUrl("/login?redirect=%2F%2Fevil.com");
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    expect(
+      screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
+    ).toBe("/register");
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Login");
+
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith("/");
+    });
+  });
+
+  it("memanggil signIn.social saat klik Masuk dengan Google", async () => {
+    signInSocialMock.mockResolvedValue({ error: null });
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    await user.click(screen.getByRole("button", { name: "Masuk dengan Google" }));
+
+    expect(signInSocialMock).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/",
+    });
+  });
+});
+
+describe("RegisterPage validasi", () => {
+  beforeEach(() => {
+    setUrl("/register");
+  });
+
+  it("menampilkan pesan error per-field saat submit kosong", async () => {
+    const user = userEvent.setup();
+    render(<RegisterPage />);
+
+    await clickSubmit(user, "Daftar");
+
+    expect(await screen.findByText("Nama wajib diisi")).toBeTruthy();
+    expect(screen.getByText("Email wajib diisi")).toBeTruthy();
+    expect(screen.getByText("Password wajib diisi")).toBeTruthy();
+    expect(signUpEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("menolak password kurang dari 8 karakter", async () => {
+    const user = userEvent.setup();
+    render(<RegisterPage />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "pendek");
+    await clickSubmit(user, "Daftar");
+
+    expect(
+      await screen.findByText("Password minimal 8 karakter")
+    ).toBeTruthy();
+    expect(signUpEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("memanggil signUp.email dengan data form dan redirect setelah valid", async () => {
+    signUpEmailMock.mockResolvedValue({ error: null });
+    const user = userEvent.setup();
+    render(<RegisterPage />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Daftar");
+
+    await waitFor(() => {
+      expect(signUpEmailMock).toHaveBeenCalledWith({
+        name: "Budi Santoso",
+        email: "budi@example.com",
+        password: "rahasia123",
+      });
+    });
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith("/");
+      expect(refreshMock).toHaveBeenCalled();
+    });
+  });
+
+  it("menampilkan pesan server saat registrasi gagal", async () => {
+    signUpEmailMock.mockResolvedValue({
+      error: { message: "Email sudah terdaftar" },
+    });
+    const user = userEvent.setup();
+    render(<RegisterPage />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Daftar");
+
+    expect(await screen.findByText("Email sudah terdaftar")).toBeTruthy();
+    expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it("menolak redirect /admin dari query string", async () => {
+    signUpEmailMock.mockResolvedValue({ error: null });
+    setUrl("/register?redirect=%2Fadmin");
+    const user = userEvent.setup();
+    render(<RegisterPage />);
+
+    expect(
+      screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
+    ).toBe("/login");
+
+    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Daftar");
+
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith("/");
+    });
+  });
+
+  it("meneruskan redirect ke link masuk dan hasil registrasi", async () => {
+    signUpEmailMock.mockResolvedValue({ error: null });
+    setUrl("/register?redirect=%2Ftrips");
+    const user = userEvent.setup();
+    render(<RegisterPage />);
+
+    expect(
+      screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
+    ).toBe("/login?redirect=%2Ftrips");
+
+    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Daftar");
+
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith("/trips");
+    });
+  });
+
+  it("link masuk polos saat tidak ada query redirect", () => {
+    render(<RegisterPage />);
+
+    expect(
+      screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
+    ).toBe("/login");
+  });
+
+  it("memanggil signIn.social saat klik Daftar dengan Google", async () => {
+    signInSocialMock.mockResolvedValue({ error: null });
+    const user = userEvent.setup();
+    render(<RegisterPage />);
+
+    await user.click(screen.getByRole("button", { name: "Daftar dengan Google" }));
+
+    expect(signInSocialMock).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/",
+    });
+  });
+});
+

@@ -1,11 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp, signIn } from "@/lib/auth/client";
-import { readRedirectFromSearch } from "@/utils/redirect";
+import {
+  DEFAULT_REDIRECT,
+  buildAuthHref,
+  readRedirectFromSearch,
+} from "@/utils/redirect";
+import {
+  registerSchema,
+  type RegisterInput,
+} from "@/features/auth/auth.schema";
 import AuthAside from "@/features/auth/components/AuthAside";
 import AuthTextField from "@/features/auth/components/AuthTextField";
 import PasswordField from "@/features/auth/components/PasswordField";
@@ -14,40 +24,50 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
+function getServerSnapshot() {
+  return DEFAULT_REDIRECT;
+}
+
+function getClientSnapshot() {
+  return readRedirectFromSearch(window.location.search, {
+    allowAdmin: false,
+  });
+}
+
+const emptySubscribe = () => () => {};
+
 export default function RegisterPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const redirectPath = useSyncExternalStore(
+    emptySubscribe,
+    getClientSnapshot,
+    getServerSnapshot
+  );
 
-  function getRedirectPath() {
-    if (typeof window === "undefined") return "/admin";
-    return readRedirectFromSearch(window.location.search, {
-      allowAdmin: false,
-    });
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    mode: "onSubmit",
+  });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const loginHref = buildAuthHref("/login", redirectPath);
+
+  async function onSubmit(values: RegisterInput) {
     setError("");
-    setLoading(true);
 
-    const { error: signUpError } = await signUp.email({
-      name,
-      email,
-      password,
-    });
+    const { error: signUpError } = await signUp.email(values);
 
     if (signUpError) {
       setError(signUpError.message || "Gagal mendaftar, coba lagi.");
-      setLoading(false);
       return;
     }
 
-    router.push(getRedirectPath());
+    router.push(redirectPath);
     router.refresh();
   }
 
@@ -56,7 +76,7 @@ export default function RegisterPage() {
     setGoogleLoading(true);
     await signIn.social({
       provider: "google",
-      callbackURL: getRedirectPath(),
+      callbackURL: redirectPath,
     });
     setGoogleLoading(false);
   }
@@ -99,23 +119,27 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
             <AuthTextField
               label="Nama Lengkap"
-              value={name}
-              onChange={setName}
               placeholder="Masukkan nama kamu"
+              error={errors.name?.message}
+              {...register("name")}
             />
 
             <AuthTextField
               label="Email"
               type="email"
-              value={email}
-              onChange={setEmail}
               placeholder="Masukkan email kamu"
+              error={errors.email?.message}
+              {...register("email")}
             />
 
-            <PasswordField value={password} onChange={setPassword} />
+            <PasswordField
+              placeholder="Masukkan password kamu"
+              error={errors.password?.message}
+              {...register("password")}
+            />
 
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
@@ -128,12 +152,12 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               size="lg"
               variant="default"
               className="w-full"
             >
-              {loading ? "Memproses..." : "Daftar"}
+              {isSubmitting ? "Memproses..." : "Daftar"}
             </Button>
           </form>
 
@@ -146,9 +170,12 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-8">
             Sudah Punya Akun?{" "}
-            <a href="/login" className="italic text-foreground font-semibold hover:text-primary">
+            <Link
+              href={loginHref}
+              className="italic text-foreground font-semibold hover:text-primary"
+            >
               Masuk di sini
-            </a>
+            </Link>
           </p>
         </div>
       </div>

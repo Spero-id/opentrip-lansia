@@ -32,7 +32,9 @@ export function readRedirectFromSearch(
 }
 
 export function buildAuthHref(basePath: string, redirectPath: string): string {
-  if (redirectPath === "/admin") return basePath;
+  if (redirectPath === "/admin" || redirectPath === DEFAULT_REDIRECT) {
+    return basePath;
+  }
   const qs = new URLSearchParams({ redirect: redirectPath }).toString();
   return `${basePath}?${qs}`;
 }
