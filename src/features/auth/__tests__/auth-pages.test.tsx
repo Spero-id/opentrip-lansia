@@ -212,6 +212,31 @@ describe("RegisterForm validasi", () => {
     expect(signUpEmailMock).not.toHaveBeenCalled();
   });
 
+  it("tidak menampilkan error saat mengetik sebelum submit", async () => {
+    const user = userEvent.setup();
+    render(<RegisterForm />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "bukan-email");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "pendek");
+
+    expect(screen.queryByText("Email tidak valid")).toBeNull();
+    expect(screen.queryByText("Password minimal 8 karakter")).toBeNull();
+    expect(signUpEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("menghilangkan error satu field saat diketik setelah submit gagal", async () => {
+    const user = userEvent.setup();
+    render(<RegisterForm />);
+
+    await clickSubmit(user, "Daftar");
+    expect(await screen.findByText("Email wajib diisi")).toBeTruthy();
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "x");
+
+    expect(screen.queryByText("Email wajib diisi")).toBeNull();
+    expect(screen.getByText("Password wajib diisi")).toBeTruthy();
+  });
+
   it("menolak password kurang dari 8 karakter", async () => {
     const user = userEvent.setup();
     render(<RegisterForm />);

@@ -47,10 +47,12 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   const loginHref = buildAuthHref("/login", redirectPath);
@@ -126,7 +128,7 @@ export default function RegisterForm() {
               label="Nama Lengkap"
               placeholder="Masukkan nama kamu"
               error={errors.name?.message}
-              {...register("name")}
+              {...register("name", { onChange: () => clearErrors("name") })}
             />
 
             <AuthTextField
@@ -134,20 +136,20 @@ export default function RegisterForm() {
               type="email"
               placeholder="Masukkan email kamu"
               error={errors.email?.message}
-              {...register("email")}
+              {...register("email", { onChange: () => clearErrors("email") })}
             />
 
             <PasswordField
               placeholder="Masukkan password kamu"
               error={errors.password?.message}
-              {...register("password")}
+              {...register("password", { onChange: () => clearErrors("password") })}
             />
 
             <PasswordField
               label="Konfirmasi Password"
               placeholder="Masukkan konfirmasi password kamu"
               error={errors.confirmPassword?.message}
-              {...register("confirmPassword")}
+              {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
             />
 
             <Button

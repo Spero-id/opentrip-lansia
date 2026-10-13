@@ -40,10 +40,12 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   const registerHref = buildAuthHref("/register", redirectPath);
@@ -116,13 +118,13 @@ export default function LoginForm() {
               type="email"
               placeholder="Masukkan email kamu"
               error={errors.email?.message}
-              {...register("email")}
+              {...register("email", { onChange: () => clearErrors("email") })}
             />
 
             <PasswordField
               placeholder="Masukkan password kamu"
               error={errors.password?.message}
-              {...register("password")}
+              {...register("password", { onChange: () => clearErrors("password") })}
             />
 
             <div className="flex items-center justify-between text-sm">
