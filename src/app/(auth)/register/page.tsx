@@ -172,7 +172,7 @@ export default function RegisterPage() {
             Sudah Punya Akun?{" "}
             <Link
               href={loginHref}
-              className="italic text-foreground font-semibold hover:text-primary"
+              className="italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
             >
               Masuk di sini
             </Link>

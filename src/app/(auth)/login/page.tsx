@@ -161,7 +161,7 @@ export default function LoginPage() {
             Belum punya akun?{" "}
             <Link
               href={registerHref}
-              className="text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
+              className="italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
             >
               Daftar di sini
             </Link>
