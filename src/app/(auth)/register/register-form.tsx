@@ -103,7 +103,7 @@ export default function RegisterForm() {
             className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
           >
             <ArrowLeft size={14} />
-            Kembali ke Website
+            Kembali ke Beranda
           </Link>
 
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground pt-30 sm:pt-0 mb-2">
