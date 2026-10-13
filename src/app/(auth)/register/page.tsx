@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth/client";
+import { readRedirectFromSearch } from "@/lib/redirect";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -22,12 +23,9 @@ export default function RegisterPage() {
 
   function getRedirectPath() {
     if (typeof window === "undefined") return "/admin";
-    const params = new URLSearchParams(window.location.search);
-    const redirect = params.get("redirect");
-    if (redirect && redirect.startsWith("/") && !redirect.startsWith("//") && !redirect.startsWith("/admin")) {
-      return redirect;
-    }
-    return "/";
+    return readRedirectFromSearch(window.location.search, {
+      allowAdmin: false,
+    });
   }
 
   async function handleSubmit(e: React.FormEvent) {

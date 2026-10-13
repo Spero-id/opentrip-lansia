@@ -5,26 +5,22 @@ import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signIn } from "@/lib/auth/client";
+import {
+  DEFAULT_REDIRECT,
+  buildAuthHref,
+  readRedirectFromSearch,
+} from "@/lib/redirect";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 function getServerSnapshot() {
-  return "/";
+  return DEFAULT_REDIRECT;
 }
 
 function getClientSnapshot() {
-  const params = new URLSearchParams(window.location.search);
-  const redirect = params.get("redirect");
-  if (
-    redirect &&
-    redirect.startsWith("/") &&
-    !redirect.startsWith("//")
-  ) {
-    return redirect;
-  }
-  return "/";
+  return readRedirectFromSearch(window.location.search, { allowAdmin: true });
 }
 
 const emptySubscribe = () => () => {};
@@ -38,6 +34,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
+
+  const registerHref = buildAuthHref("/register", redirectPath);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -230,16 +228,12 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-8">
             Belum punya akun?{" "}
-            <a
-              href={
-                redirectPath === "/admin"
-                  ? "/register"
-                  : `/register?redirect=${encodeURIComponent(redirectPath)}`
-              }
-              className="italic text-foreground font-semibold hover:text-primary"
+            <Link
+              href={registerHref}
+              className="text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
             >
               Daftar di sini
-            </a>
+            </Link>
           </p>
         </div>
       </div>
