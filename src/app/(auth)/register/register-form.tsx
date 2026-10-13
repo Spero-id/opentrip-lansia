@@ -21,8 +21,6 @@ import AuthTextField from "@/features/auth/components/AuthTextField";
 import PasswordField from "@/features/auth/components/PasswordField";
 import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 
 function getServerSnapshot() {
   return DEFAULT_REDIRECT;
@@ -140,15 +138,6 @@ export default function RegisterForm() {
               error={errors.password?.message}
               {...register("password")}
             />
-
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Checkbox id="terms" />
-                <Label htmlFor="terms" className="text-muted-foreground font-normal cursor-pointer">
-                  Saya setuju dengan Syarat & Ketentuan
-                </Label>
-              </div>
-            </div>
 
             <Button
               type="submit"
