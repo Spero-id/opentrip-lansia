@@ -58,7 +58,11 @@ export default function RegisterForm() {
   async function onSubmit(values: RegisterInput) {
     setError("");
 
-    const { error: signUpError } = await signUp.email(values);
+    const { error: signUpError } = await signUp.email({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    });
 
     if (signUpError) {
       setError(signUpError.message || "Gagal mendaftar, coba lagi.");
@@ -137,6 +141,13 @@ export default function RegisterForm() {
               placeholder="Masukkan password kamu"
               error={errors.password?.message}
               {...register("password")}
+            />
+
+            <PasswordField
+              label="Konfirmasi Password"
+              placeholder="Masukkan konfirmasi password kamu"
+              error={errors.confirmPassword?.message}
+              {...register("confirmPassword")}
             />
 
             <Button

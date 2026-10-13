@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 interface PasswordFieldProps
   extends Omit<React.ComponentProps<typeof Input>, "type"> {
   error?: string;
+  label?: string;
 }
 
 export default function PasswordField({
   error,
+  label = "Password",
   ...inputProps
 }: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +21,7 @@ export default function PasswordField({
   return (
     <div>
       <label className="block text-sm font-medium text-foreground mb-2">
-        Password
+        {label}
       </label>
       <div className="relative">
         <Input

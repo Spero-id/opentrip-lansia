@@ -208,6 +208,7 @@ describe("RegisterForm validasi", () => {
     expect(await screen.findByText("Nama wajib diisi")).toBeTruthy();
     expect(screen.getByText("Email wajib diisi")).toBeTruthy();
     expect(screen.getByText("Password wajib diisi")).toBeTruthy();
+    expect(screen.getByText("Konfirmasi password wajib diisi")).toBeTruthy();
     expect(signUpEmailMock).not.toHaveBeenCalled();
   });
 
@@ -218,6 +219,7 @@ describe("RegisterForm validasi", () => {
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "pendek");
+    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "pendek");
     await clickSubmit(user, "Daftar");
 
     expect(
@@ -234,6 +236,7 @@ describe("RegisterForm validasi", () => {
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     await waitFor(() => {
@@ -259,10 +262,25 @@ describe("RegisterForm validasi", () => {
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     expect(await screen.findByText("Email sudah terdaftar")).toBeTruthy();
     expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it("menolak konfirmasi password yang tidak sama", async () => {
+    const user = userEvent.setup();
+    render(<RegisterForm />);
+
+    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "berbeda123");
+    await clickSubmit(user, "Daftar");
+
+    expect(await screen.findByText("Konfirmasi password tidak sama")).toBeTruthy();
+    expect(signUpEmailMock).not.toHaveBeenCalled();
   });
 
   it("menolak redirect /admin dari query string", async () => {
@@ -278,6 +296,7 @@ describe("RegisterForm validasi", () => {
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     await waitFor(() => {
@@ -298,6 +317,7 @@ describe("RegisterForm validasi", () => {
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     await waitFor(() => {

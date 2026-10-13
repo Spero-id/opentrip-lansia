@@ -5,14 +5,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password wajib diisi"),
 });
 
-export const registerSchema = z.object({
-  name: z.string().min(1, "Nama wajib diisi").max(255),
-  email: z.string().min(1, "Email wajib diisi").email("Email tidak valid").max(255),
-  password: z
-    .string()
-    .min(1, "Password wajib diisi")
-    .min(8, "Password minimal 8 karakter"),
-});
+export const registerSchema = z
+  .object({
+    name: z.string().min(1, "Nama wajib diisi").max(255),
+    email: z.string().min(1, "Email wajib diisi").email("Email tidak valid").max(255),
+    password: z
+      .string()
+      .min(1, "Password wajib diisi")
+      .min(8, "Password minimal 8 karakter"),
+    confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Konfirmasi password tidak sama",
+    path: ["confirmPassword"],
+  });
 
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;

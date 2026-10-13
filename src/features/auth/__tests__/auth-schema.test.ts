@@ -38,6 +38,7 @@ describe("registerSchema", () => {
       name: "Budi Santoso",
       email: "budi@example.com",
       password: "rahasia123",
+      confirmPassword: "rahasia123",
     });
     expect(result.success).toBe(true);
   });
@@ -47,6 +48,7 @@ describe("registerSchema", () => {
       name: "",
       email: "budi@example.com",
       password: "rahasia123",
+      confirmPassword: "rahasia123",
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe("Nama wajib diisi");
@@ -57,8 +59,31 @@ describe("registerSchema", () => {
       name: "Budi Santoso",
       email: "budi@example.com",
       password: "pendek",
+      confirmPassword: "pendek",
     });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe("Password minimal 8 karakter");
+  });
+
+  it("menolak konfirmasi password kosong", () => {
+    const result = registerSchema.safeParse({
+      name: "Budi Santoso",
+      email: "budi@example.com",
+      password: "rahasia123",
+      confirmPassword: "",
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Konfirmasi password wajib diisi");
+  });
+
+  it("menolak konfirmasi password yang tidak sama", () => {
+    const result = registerSchema.safeParse({
+      name: "Budi Santoso",
+      email: "budi@example.com",
+      password: "rahasia123",
+      confirmPassword: "berbeda123",
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Konfirmasi password tidak sama");
   });
 });
