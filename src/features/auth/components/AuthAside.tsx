@@ -22,7 +22,7 @@ export default function AuthAside({
   return (
     <div
       className={cn(
-        "shrink-0 relative flex flex-col justify-between p-6 lg:p-10 h-56 lg:min-h-[650px] lg:h-auto bg-cover bg-center",
+        "shrink-0 relative hidden lg:flex flex-col justify-between p-6 lg:p-10 h-56 lg:min-h-[650px] lg:h-auto bg-cover bg-center",
         wrapperClassName
       )}
       style={{

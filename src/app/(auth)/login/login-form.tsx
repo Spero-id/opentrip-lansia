@@ -88,16 +88,16 @@ export default function LoginForm() {
           description="Dari trip singkat akhir pekan sampai petualangan panjang, temukan semuanya lewat satu platform."
         />
 
-        <div className="relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-3xl lg:rounded-none p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
-            className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
           >
             <ArrowLeft size={14} />
             Kembali ke Beranda
           </Link>
 
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground pt-15 sm:pt-0 mb-2">
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
             Selamat Datang Kembali
           </h1>
           <p className="text-muted-foreground text-sm mb-8">

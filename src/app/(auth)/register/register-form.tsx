@@ -97,16 +97,16 @@ export default function RegisterForm() {
           description="Daftar sekarang dan temukan destinasi impian dengan pengalaman tak terlupakan."
         />
 
-        <div className="order-2 lg:order-2 relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-3xl lg:rounded-none p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="order-2 lg:order-2 relative flex-1 min-h-0 overflow-y-auto bg-background p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
-            className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
           >
             <ArrowLeft size={14} />
             Kembali ke Beranda
           </Link>
 
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground pt-30 sm:pt-0 mb-2">
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
             Buat Akun Baru
           </h1>
           <p className="text-muted-foreground text-sm mb-8">
