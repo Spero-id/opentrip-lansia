@@ -32,8 +32,8 @@ vi.mock("@/lib/auth/client", () => ({
   signUp: { email: signUpEmailMock },
 }));
 
-import LoginPage from "@/app/(auth)/login/page";
-import RegisterPage from "@/app/(auth)/register/page";
+import LoginForm from "@/app/(auth)/login/login-form";
+import RegisterForm from "@/app/(auth)/register/register-form";
 
 function setUrl(path: string) {
   window.history.pushState({}, "", path);
@@ -55,10 +55,10 @@ afterEach(() => {
   setUrl("/");
 });
 
-describe("LoginPage validasi", () => {
+describe("LoginForm validasi", () => {
   it("menampilkan pesan error per-field saat submit kosong", async () => {
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     await clickSubmit(user, "Login");
 
@@ -69,7 +69,7 @@ describe("LoginPage validasi", () => {
 
   it("menolak format email tidak valid tanpa memanggil signIn", async () => {
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi-at-example");
     await clickSubmit(user, "Login");
@@ -81,7 +81,7 @@ describe("LoginPage validasi", () => {
   it("memanggil signIn.email dan redirect setelah login valid", async () => {
     signInEmailMock.mockResolvedValue({ error: null });
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
@@ -104,7 +104,7 @@ describe("LoginPage validasi", () => {
       error: { message: "Email atau password salah" },
     });
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "salah");
@@ -117,7 +117,7 @@ describe("LoginPage validasi", () => {
   });
 
   it("link daftar polos saat tidak ada query redirect", () => {
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     expect(
       screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
@@ -128,7 +128,7 @@ describe("LoginPage validasi", () => {
     signInEmailMock.mockResolvedValue({ error: null });
     setUrl("/login?redirect=%2Ftrips");
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     const daftarLink = screen.getByRole("link", { name: "Daftar di sini" });
     expect(daftarLink.getAttribute("href")).toBe("/register?redirect=%2Ftrips");
@@ -146,7 +146,7 @@ describe("LoginPage validasi", () => {
     signInEmailMock.mockResolvedValue({ error: null });
     setUrl("/login?redirect=%2F%2Fevil.com");
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     expect(
       screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
@@ -165,7 +165,7 @@ describe("LoginPage validasi", () => {
     signInEmailMock.mockResolvedValue({ error: null });
     setUrl("/login?redirect=%2F%5Cevil.com");
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     expect(
       screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
@@ -183,7 +183,7 @@ describe("LoginPage validasi", () => {
   it("memanggil signIn.social saat klik Masuk dengan Google", async () => {
     signInSocialMock.mockResolvedValue({ error: null });
     const user = userEvent.setup();
-    render(<LoginPage />);
+    render(<LoginForm />);
 
     await user.click(screen.getByRole("button", { name: "Masuk dengan Google" }));
 
@@ -194,14 +194,14 @@ describe("LoginPage validasi", () => {
   });
 });
 
-describe("RegisterPage validasi", () => {
+describe("RegisterForm validasi", () => {
   beforeEach(() => {
     setUrl("/register");
   });
 
   it("menampilkan pesan error per-field saat submit kosong", async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     await clickSubmit(user, "Daftar");
 
@@ -213,7 +213,7 @@ describe("RegisterPage validasi", () => {
 
   it("menolak password kurang dari 8 karakter", async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
@@ -229,7 +229,7 @@ describe("RegisterPage validasi", () => {
   it("memanggil signUp.email dengan data form dan redirect setelah valid", async () => {
     signUpEmailMock.mockResolvedValue({ error: null });
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
@@ -254,7 +254,7 @@ describe("RegisterPage validasi", () => {
       error: { message: "Email sudah terdaftar" },
     });
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
@@ -269,7 +269,7 @@ describe("RegisterPage validasi", () => {
     signUpEmailMock.mockResolvedValue({ error: null });
     setUrl("/register?redirect=%2Fadmin");
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     expect(
       screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
@@ -289,7 +289,7 @@ describe("RegisterPage validasi", () => {
     signUpEmailMock.mockResolvedValue({ error: null });
     setUrl("/register?redirect=%2Ftrips");
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     expect(
       screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
@@ -306,7 +306,7 @@ describe("RegisterPage validasi", () => {
   });
 
   it("link masuk polos saat tidak ada query redirect", () => {
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     expect(
       screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
@@ -316,7 +316,7 @@ describe("RegisterPage validasi", () => {
   it("memanggil signIn.social saat klik Daftar dengan Google", async () => {
     signInSocialMock.mockResolvedValue({ error: null });
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterForm />);
 
     await user.click(screen.getByRole("button", { name: "Daftar dengan Google" }));
 

@@ -16,3 +16,8 @@ export async function requireAdminLayout() {
 
   return session;
 }
+
+export async function getCurrentUser() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  return session?.user ?? null;
+}

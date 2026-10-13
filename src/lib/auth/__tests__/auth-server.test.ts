@@ -85,3 +85,32 @@ describe("requireAdminLayout", () => {
     expect(redirect).not.toHaveBeenCalled();
   });
 });
+
+describe("getCurrentUser", () => {
+  beforeEach(() => {
+    getSession.mockReset();
+    redirect.mockReset();
+  });
+
+  it("mengembalikan user dari sesi yang valid", async () => {
+    getSession.mockResolvedValue({ user: { id: "u1" } });
+    const { getCurrentUser } = await load();
+
+    await expect(getCurrentUser()).resolves.toEqual({ id: "u1" });
+    expect(getSession).toHaveBeenCalledWith({ headers: requestHeaders });
+  });
+
+  it("mengembalikan null saat tidak ada sesi", async () => {
+    getSession.mockResolvedValue(null);
+    const { getCurrentUser } = await load();
+
+    await expect(getCurrentUser()).resolves.toBeNull();
+  });
+
+  it("meneruskan error dari getSession", async () => {
+    getSession.mockRejectedValue(new Error("session store down"));
+    const { getCurrentUser } = await load();
+
+    await expect(getCurrentUser()).rejects.toThrow("session store down");
+  });
+});

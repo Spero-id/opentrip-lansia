@@ -1,173 +1,23 @@
-"use client";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import { sanitizeRedirectPath } from "@/utils/redirect";
+import LoginForm from "./login-form";
 
-import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "@/lib/auth/client";
-import {
-  DEFAULT_REDIRECT,
-  buildAuthHref,
-  readRedirectFromSearch,
-} from "@/utils/redirect";
-import { loginSchema, type LoginInput } from "@/features/auth/auth.schema";
-import AuthAside from "@/features/auth/components/AuthAside";
-import AuthTextField from "@/features/auth/components/AuthTextField";
-import PasswordField from "@/features/auth/components/PasswordField";
-import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-
-function getServerSnapshot() {
-  return DEFAULT_REDIRECT;
+interface LoginPageProps {
+  searchParams: Promise<{ redirect?: string | string[] }>;
 }
 
-function getClientSnapshot() {
-  return readRedirectFromSearch(window.location.search, { allowAdmin: true });
-}
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const user = await getCurrentUser();
 
-const emptySubscribe = () => () => {};
-
-export default function LoginPage() {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-    mode: "onSubmit",
-  });
-
-  const registerHref = buildAuthHref("/register", redirectPath);
-
-  async function onSubmit(values: LoginInput) {
-    setError("");
-
-    const { error: signInError } = await signIn.email(values);
-
-    if (signInError) {
-      setError(signInError.message || "Email atau password salah");
-      return;
-    }
-
-    router.push(redirectPath);
-    router.refresh();
+  if (!user) {
+    return <LoginForm />;
   }
 
-  async function handleGoogleLogin() {
-    setError("");
-    setGoogleLoading(true);
-    await signIn.social({
-      provider: "google",
-      callbackURL: redirectPath,
-    });
-    setGoogleLoading(false);
-  }
-
-  return (
-    <div className="fixed inset-0 overflow-hidden lg:static lg:h-auto lg:min-h-screen bg-background flex flex-col lg:flex lg:items-center lg:justify-center lg:p-4">
-      <div className="flex flex-col flex-1 min-h-0 lg:min-h-0 lg:flex-none w-full max-w-6xl lg:grid lg:grid-cols-2 lg:rounded-2xl overflow-hidden lg:shadow-2xl">
-        <AuthAside
-          image="/login-image-page.jpeg"
-          wrapperClassName="lg:rounded-none"
-          gradientClassName="rounded-b-3xl lg:rounded-none"
-          title={
-            <>
-              Jelajahi Lebih Jauh. <br className="hidden lg:block" /> Kenangan
-              Lebih Lama.
-            </>
-          }
-          description="Dari trip singkat akhir pekan sampai petualangan panjang, temukan semuanya lewat satu platform."
-        />
-
-        <div className="relative -mt-8 lg:mt-0 flex-1 min-h-0 overflow-y-auto bg-background rounded-t-3xl lg:rounded-none p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <Link
-            href="/"
-            className="hidden lg:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-end"
-          >
-            <ArrowLeft size={14} />
-            Kembali ke Website
-          </Link>
-
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground pt-15 sm:pt-0 mb-2">
-            Selamat Datang Kembali!
-          </h1>
-          <p className="text-muted-foreground text-sm mb-8">
-            Masuk untuk mulai merencanakan trip berikutnya.
-          </p>
-
-          {error && (
-            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-              {error}
-            </div>
-          )}
-
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
-            <AuthTextField
-              label="Email"
-              type="email"
-              placeholder="Masukkan email kamu"
-              error={errors.email?.message}
-              {...register("email")}
-            />
-
-            <PasswordField
-              placeholder="Masukkan password kamu"
-              error={errors.password?.message}
-              {...register("password")}
-            />
-
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Checkbox id="remember-me" />
-                <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
-                  Ingat saya
-                </Label>
-              </div>
-              <a
-                href="#"
-                className="text-primary font-medium hover:underline"
-              >
-                Lupa Password?
-              </a>
-            </div>
-
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              size="lg"
-              variant="default"
-              className="w-full"
-            >
-              {isSubmitting ? "Memproses..." : "Login"}
-            </Button>
-          </form>
-
-          <SocialLoginButton
-            onClick={handleGoogleLogin}
-            loading={googleLoading}
-            label="Masuk dengan Google"
-          />
-
-          <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-8">
-            Belum punya akun?{" "}
-            <Link
-              href={registerHref}
-              className="italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
-            >
-              Daftar di sini
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+  const { redirect: target } = await searchParams;
+  redirect(
+    sanitizeRedirectPath(typeof target === "string" ? target : null, {
+      allowAdmin: true,
+    })
   );
 }
