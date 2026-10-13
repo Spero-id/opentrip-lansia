@@ -5,20 +5,24 @@ export interface RedirectOptions {
   fallback?: string;
 }
 
+const PARSE_BASE = "http://n";
+
 export function sanitizeRedirectPath(
   value: string | null | undefined,
   options: RedirectOptions = {}
 ): string {
   const { allowAdmin = true, fallback = DEFAULT_REDIRECT } = options;
-  if (
-    value &&
-    value.startsWith("/") &&
-    !value.startsWith("//") &&
-    (allowAdmin || !value.startsWith("/admin"))
-  ) {
-    return value;
+  if (!value) return fallback;
+  try {
+    const url = new URL(value, PARSE_BASE);
+    if (url.origin !== PARSE_BASE) return fallback;
+    const path = url.pathname + url.search + url.hash;
+    if (!path.startsWith("/")) return fallback;
+    if (!allowAdmin && path.startsWith("/admin")) return fallback;
+    return path;
+  } catch {
+    return fallback;
   }
-  return fallback;
 }
 
 export function readRedirectFromSearch(

@@ -161,6 +161,25 @@ describe("LoginPage validasi", () => {
     });
   });
 
+  it("mengarahkan redirect backslash (/%5Cevil.com) ke beranda", async () => {
+    signInEmailMock.mockResolvedValue({ error: null });
+    setUrl("/login?redirect=%2F%5Cevil.com");
+    const user = userEvent.setup();
+    render(<LoginPage />);
+
+    expect(
+      screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
+    ).toBe("/register");
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Login");
+
+    await waitFor(() => {
+      expect(pushMock).toHaveBeenCalledWith("/");
+    });
+  });
+
   it("memanggil signIn.social saat klik Masuk dengan Google", async () => {
     signInSocialMock.mockResolvedValue({ error: null });
     const user = userEvent.setup();
