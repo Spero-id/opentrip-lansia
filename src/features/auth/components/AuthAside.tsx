@@ -48,7 +48,7 @@ export default function AuthAside({
       </Link>
 
       <div className="relative z-10">
-        <h2 className="text-xl lg:text-3xl hidden sm:block font-bold text-white leading-snug mb-1 lg:mb-3">
+        <h2 className="text-xl lg:text-3xl font-bold text-white leading-snug mb-1 lg:mb-3">
           {title}
         </h2>
         <p className="hidden lg:block text-white/70 text-sm max-w-sm">

@@ -14,7 +14,7 @@ export default function SocialLoginButton({
   onClick,
   loading,
   label,
-  dividerClassName = "my-3 sm:my-7",
+  dividerClassName = "my-4",
 }: SocialLoginButtonProps) {
   return (
     <>

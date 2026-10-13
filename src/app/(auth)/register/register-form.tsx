@@ -95,7 +95,7 @@ export default function RegisterForm() {
           description="Daftar sekarang dan temukan destinasi impian dengan pengalaman tak terlupakan."
         />
 
-        <div className="order-2 lg:order-2 relative flex-1 min-h-0 overflow-y-auto bg-background p-6 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="order-2 lg:order-2 relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
@@ -154,10 +154,9 @@ export default function RegisterForm() {
             onClick={handleGoogleLogin}
             loading={googleLoading}
             label="Daftar dengan Google"
-            dividerClassName="my-3 sm:my-4"
           />
 
-          <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-8">
+          <p className="text-center text-sm text-muted-foreground mt-8">
             Sudah Punya Akun?{" "}
             <Link
               href={loginHref}

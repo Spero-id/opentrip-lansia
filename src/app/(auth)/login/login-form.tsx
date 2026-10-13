@@ -88,7 +88,7 @@ export default function LoginForm() {
           description="Dari trip singkat akhir pekan sampai petualangan panjang, temukan semuanya lewat satu platform."
         />
 
-        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-8 sm:p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
@@ -157,7 +157,7 @@ export default function LoginForm() {
             label="Masuk dengan Google"
           />
 
-          <p className="text-center text-sm text-muted-foreground mt-4 sm:mt-8">
+          <p className="text-center text-sm text-muted-foreground mt-8">
             Belum punya akun?{" "}
             <Link
               href={registerHref}
