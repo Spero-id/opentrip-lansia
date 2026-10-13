@@ -110,7 +110,7 @@ export default function LoginForm() {
             </div>
           )}
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <AuthTextField
               label="Email"
               type="email"

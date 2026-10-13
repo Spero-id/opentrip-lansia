@@ -117,7 +117,7 @@ export default function RegisterForm() {
             </div>
           )}
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <AuthTextField
               label="Nama Lengkap"
               placeholder="Masukkan nama kamu"
