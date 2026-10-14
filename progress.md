@@ -2813,3 +2813,31 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Hasil terukur:** halaman tidak scroll di 1440x900 dan 1280x700 (docH = innerHeight, aside = viewport height); register di 1280x600 overflow internal (kolom scroll, konten mulai dari atas, footer terjangkau); login center dalam 2px di 1440x900; mobile 390x844 tidak berubah.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos (1x gagal flaky timing, run ulang lulus) • `playwright e2e/public/auth.spec.ts` 15/15 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 101 - Auth: rapatkan gap judul ke isi form (feat/form-migration)
+
+**Laporan user:** "Apakah kamu bisa melihat gap antara judul form dengan isi form di halaman Auth?"
+
+**Diagnosis — tiga lapis ruang kosong, dua di antaranya slot cadangan dari Session 98 yang selalu dirender kosong:**
+- Banner error `mb-4 min-h-[46px]` di `login-form.tsx` / `register-form.tsx` → 46px kosong + 16px margin; bersama `mb-4` subjudul → **subjudul ke field pertama = 78px**.
+- Slot error per field `min-h-[32px] pt-1.5` di `AuthTextField.tsx` / `PasswordField.tsx` → **antar field = 32px** (`box-sizing: border-box`, jadi tepat 32px saat kosong).
+- Login saja: Link "Kembali ke Beranda" `mb-8` = 32px sebelum h1.
+
+**Kenapa slot itu dibuat, dan kenapa sekarang boleh dibuang:** Session 98 menambahkannya karena kolom form tumbuh saat error dan `AuthAside` ikut meregang (grid `align-items: stretch` + `bg-cover`) → foto membesar. Sejak Session 100: outer `lg:h-screen` + inner `lg:h-full` + `grid-rows-1` → baris grid = tepat tinggi viewport, kelebihan konten ditampung `overflow-y-auto` kolom form. Tinggi aside sudah terkunci, jadi alasan slot reserved kedaluwarsa.
+
+**Perubahan (5 file):**
+- `AuthTextField.tsx` / `PasswordField.tsx`: buang wrapper `min-h-[32px] pt-1.5`, kembali ke `{error && <p className="mt-1.5 text-sm text-destructive">}`.
+- `login-form.tsx` / `register-form.tsx`: banner error kembali conditional (tidak ada wrapper kosong) dengan `mb-6`, subjudul `mb-4` → `mb-6`, `<form>` kembali `space-y-5` (dihilangkan di Session 98), tombol login buang `mt-5` (space-y sudah memberi 20px).
+- `e2e/public/auth.spec.ts`: 3 test "tinggi konten form tidak berubah" diganti invarian yang relevan — **tinggi aside tidak berubah dan tetap = viewport saat error muncul** (bug asli Session 98); tambah 2 test "jarak subjudul ke field pertama tetap rapat" (≤ 32px); helper `formContentHeight` dihapus (tak terpakai).
+
+**Hasil terukur (1440x900, dev server):**
+- subjudul → field pertama: **78px → 24px** (h1 → subjudul tetap 8px).
+- antar field: **32px → 20px** (login 2 gap, register 4 gap).
+- tinggi konten natural kolom: login **618 → 540px**, register **778 → 676px**. Delta register −102 = −62 (banner) −128 (4×32 slot) +80 (space-y 4 gap) +8 (`mb-6`); login −78 = −62 −64 (2×32) +60 (space-y 3 gap) −20 (`mt-5`) +8.
+- aside & dokumen tetap **900px** sebelum & sesudah error validasi; `col.scrollHeight == col.clientHeight` di kedua halaman (tanpa overflow).
+
+**Test regresi diverifikasi kekuatannya:** 4 file src di-`git stash push -- <path>` lalu e2e dijalankan dengan test baru → 2 test gap **gagal dengan nilai 78** (persis hitungan CSS), sedangkan 3 test stabilitas aside **tetap lolos di kode lama** — membuktikan slot reserved memang sudah redundan. Stash di-pop, 17/17 lolos lagi.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 17/17 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+> Catatan environment: `./init.sh` tidak bisa dieksekusi di sesi ini (tidak ada `bash`/Git-bash di mesin). Semua langkah di dalamnya dijalankan terpisah dengan hasil di atas; `npm install` dilewati karena dependensi sudah terpasang dan semua tool berjalan, `check:routes` dilewati karena manifest build belum ada (sama seperti baseline).

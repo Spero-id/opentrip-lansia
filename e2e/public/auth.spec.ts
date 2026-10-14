@@ -41,8 +41,8 @@ test.describe("Auth Pages", () => {
 
   test.describe("Layout viewport-fit & stabilitas tinggi", () => {
     // The page is pinned to the viewport height (no page scroll), so the outer card
-    // always equals the viewport. Height stability is therefore asserted on the
-    // natural height of the form content, which is what errors would otherwise grow.
+    // always equals the viewport. What must stay stable when errors appear is the
+    // image column: it used to stretch with the form column and re-scale the photo.
     async function gotoAuth(
       page: import("@playwright/test").Page,
       path: string,
@@ -52,25 +52,6 @@ test.describe("Auth Pages", () => {
       await page.goto(path);
       // wait for React hydration so the submit is handled by the form
       await page.waitForLoadState("networkidle");
-    }
-
-    async function formContentHeight(page: import("@playwright/test").Page) {
-      return page.evaluate(() => {
-        const aside = document.querySelector<HTMLDivElement>('div[style*="-image"]');
-        const col = aside?.parentElement?.lastElementChild as HTMLElement | null;
-        if (!col) return null;
-        const toNum = (value: string) => (value === "auto" ? 0 : parseFloat(value) || 0);
-        const colStyle = getComputedStyle(col);
-        let height = toNum(colStyle.paddingTop) + toNum(colStyle.paddingBottom);
-        for (const el of Array.from(col.children)) {
-          const style = getComputedStyle(el);
-          height +=
-            el.getBoundingClientRect().height +
-            toNum(style.marginTop) +
-            toNum(style.marginBottom);
-        }
-        return Math.round(height);
-      });
     }
 
     async function pageMetrics(page: import("@playwright/test").Page) {
@@ -84,40 +65,71 @@ test.describe("Auth Pages", () => {
       });
     }
 
-    test("login: tinggi konten form tidak berubah saat error validasi", async ({ page }) => {
+    // Errors legitimately grow the form content (no reserved slots are kept
+    // anymore), so the regression to guard is the image column: it must not
+    // stretch with the form and re-scale the photo.
+    async function expectImageColumnStable(
+      page: import("@playwright/test").Page,
+      trigger: () => Promise<void>
+    ) {
+      const before = await pageMetrics(page);
+      await trigger();
+      const after = await pageMetrics(page);
+
+      expect(after.asideH).toBe(before.asideH);
+      expect(after.asideH).toBe(after.viewportH);
+      expect(after.docH).toBe(after.viewportH);
+    }
+
+    test("login: tinggi aside tidak berubah saat error validasi", async ({ page }) => {
       await gotoAuth(page, "/login");
 
-      const before = await formContentHeight(page);
-
-      await page.getByRole("button", { name: "Masuk", exact: true }).click();
-      await expect(page.getByText("Email wajib diisi")).toBeVisible();
-
-      expect(await formContentHeight(page)).toBe(before);
+      await expectImageColumnStable(page, async () => {
+        await page.getByRole("button", { name: "Masuk", exact: true }).click();
+        await expect(page.getByText("Email wajib diisi")).toBeVisible();
+      });
     });
 
-    test("login: tinggi konten form tidak berubah saat banner error server", async ({ page }) => {
+    test("login: tinggi aside tidak berubah saat banner error server", async ({ page }) => {
       await gotoAuth(page, "/login");
 
-      const before = await formContentHeight(page);
-
-      await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
-      await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
-      await page.getByRole("button", { name: "Masuk", exact: true }).click();
-      await expect(page.locator("div.bg-red-50")).toBeVisible({ timeout: 15000 });
-
-      expect(await formContentHeight(page)).toBe(before);
+      await expectImageColumnStable(page, async () => {
+        await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
+        await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
+        await page.getByRole("button", { name: "Masuk", exact: true }).click();
+        await expect(page.locator("div.bg-red-50")).toBeVisible({ timeout: 15000 });
+      });
     });
 
-    test("register: tinggi konten form tidak berubah saat error validasi", async ({ page }) => {
+    test("register: tinggi aside tidak berubah saat error validasi", async ({ page }) => {
       await gotoAuth(page, "/register");
 
-      const before = await formContentHeight(page);
-
-      await page.getByRole("button", { name: "Daftar", exact: true }).click();
-      await expect(page.getByText("Nama wajib diisi")).toBeVisible();
-
-      expect(await formContentHeight(page)).toBe(before);
+      await expectImageColumnStable(page, async () => {
+        await page.getByRole("button", { name: "Daftar", exact: true }).click();
+        await expect(page.getByText("Nama wajib diisi")).toBeVisible();
+      });
     });
+
+    for (const path of ["/login", "/register"]) {
+      test(`${path}: jarak subjudul ke field pertama tetap rapat`, async ({ page }) => {
+        await gotoAuth(page, path);
+
+        // -1 signals the expected DOM shape is missing, which fails the bounds below.
+        const gap = await page.evaluate(() => {
+          const aside = document.querySelector<HTMLDivElement>('div[style*="-image"]');
+          const col = aside?.parentElement?.lastElementChild as HTMLElement | null;
+          const subtitle = col?.querySelector("h1 + p") as HTMLElement | null;
+          const form = col?.querySelector("form") as HTMLElement | null;
+          if (!subtitle || !form) return -1;
+          return Math.round(
+            form.getBoundingClientRect().top - subtitle.getBoundingClientRect().bottom
+          );
+        });
+
+        expect(gap).toBeGreaterThan(0);
+        expect(gap).toBeLessThanOrEqual(32);
+      });
+    }
 
     for (const size of [
       { width: 1440, height: 900 },

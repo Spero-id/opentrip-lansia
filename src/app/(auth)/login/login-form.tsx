@@ -105,20 +105,17 @@ export default function LoginForm() {
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
             Selamat Datang Kembali
           </h1>
-          <p className="text-muted-foreground text-sm mb-4">
+          <p className="text-muted-foreground text-sm mb-6">
             Masuk untuk mulai merencanakan trip berikutnya.
           </p>
 
-          {/* Always render this slot so the card height stays stable when a server error appears */}
-          <div className="mb-4 min-h-[46px]">
-            {error && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-                {error}
-              </div>
-            )}
-          </div>
+          {error && (
+            <div className="mb-6 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <AuthTextField
               label="Email"
               type="email"
@@ -153,7 +150,7 @@ export default function LoginForm() {
               disabled={isSubmitting}
               size="lg"
               variant="default"
-              className="w-full mt-5"
+              className="w-full"
             >
               {isSubmitting ? "Memproses..." : "Masuk"}
             </Button>
