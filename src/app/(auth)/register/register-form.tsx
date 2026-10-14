@@ -163,11 +163,11 @@ export default function RegisterForm() {
             label="Daftar dengan Google"
           />
 
-          <p className="text-center text-sm text-muted-foreground mt-4">
+          <p className="text-center text-xs text-muted-foreground mt-4">
             Sudah Punya Akun?{" "}
             <Link
               href={loginHref}
-              className="italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
+              className="text-primary font-bold hover:underline"
             >
               Masuk di sini
             </Link>

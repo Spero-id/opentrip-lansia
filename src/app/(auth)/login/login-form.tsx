@@ -153,11 +153,11 @@ export default function LoginForm() {
             label="Masuk dengan Google"
           />
 
-          <p className="text-center text-sm text-muted-foreground mt-4">
+          <p className="text-center text-xs text-muted-foreground mt-4">
             Belum punya akun?{" "}
             <Link
               href={registerHref}
-              className="italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
+              className="text-primary font-bold hover:underline"
             >
               Daftar di sini
             </Link>

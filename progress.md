@@ -2893,3 +2893,31 @@ Pusat tetap tepat: login 206/206 → **220/220**, register 138/138 → **154/154
 **Temuan flaky yang diperbaiki:** pada run pertama sesudah stash, test login gagal dengan `gaps[0] = 0` (bukan 24). Probe membuktikan gap aslinya 24 → pengukuran jalan **sebelum stylesheet terpasang**, sehingga semua margin terbaca 0. Fix: `gotoAuth` kini menunggu `getComputedStyle(col).paddingTop === "40px"` sebelum mengukur apa pun.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` **19/19** lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 104 - Auth: samakan ukuran & styling link pergantian halaman (feat/form-migration)
+
+**Permintaan user (4 poin):** samakan ukuran teks "Masuk di sini" / "Daftar di sini" dengan "Atau lanjutkan dengan", warnai link dengan warna brand, buat lebih tebal, tampilkan underline saat hover — lalu revisi: **jangan italic**.
+
+**Perubahan (2 file: `login-form.tsx`, `register-form.tsx` — hanya blok footer):**
+- `<p>` footer: `text-sm` → `text-xs`, sehingga seluruh baris (termasuk link) = 12px dan sama persis dengan divider `Atau lanjutkan dengan` (`text-xs`).
+- `<Link>`: `italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors` → `text-primary font-bold hover:underline`.
+
+Kalimat induk ("Belum punya akun?" / "Sudah Punya Akun?") ikut turun ke 12px supaya tidak ada perbedaan ukuran di dalam satu baris.
+
+**Hasil terukur (Playwright, computed style, 1440x900):**
+
+| | divider "Atau lanjutkan dengan" | link footer |
+|---|---|---|
+| font-size | 12px | **12px** ✓ |
+| font-weight | 400 | **700** ✓ |
+| font-style | normal | **normal** ✓ (italic dibuang) |
+| color | `--muted-foreground` | **`--primary` #F49D1A** ✓ |
+| decoration istirahat / hover | — | **none → underline** ✓ |
+
+**⚠️ Kontras terukur (rumus WCAG, latar terang `--background` `#FCFCFC`):**
+- `text-primary` **#F49D1A → 2.11:1** — di bawah ambang AA (4.5:1 untuk teks 12px). Sebelumnya link memakai `text-foreground` **#171717 = 17.47:1**.
+- Mode gelap `#121212` → **8.64:1** ✓ lolos.
+- Shade brand family yang lolos AA di latar terang: `#B45309` (amber-700, hover lama) **4.89:1**; `#c47d12` (hover brand terdokumentasi di `design.md` baris 24) hanya **3.25:1**.
+- Dilaporkan ke user sebagai catatan; belum ada tindak lanjut — permintaan dieksekusi apa adanya.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 19/19 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK. Tidak ada test yang mengunci kelas CSS link (unit test hanya memeriksa `href`, e2e hanya mengkliknya), jadi perubahan styling tidak menyentuh test mana pun.
