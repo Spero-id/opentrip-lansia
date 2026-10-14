@@ -153,7 +153,7 @@ export default function LoginForm() {
             label="Masuk dengan Google"
           />
 
-          <p className="text-center text-xs text-muted-foreground mt-4">
+          <p className="text-center text-sm text-muted-foreground mt-4">
             Belum punya akun?{" "}
             <Link
               href={registerHref}

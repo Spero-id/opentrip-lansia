@@ -2921,3 +2921,18 @@ Kalimat induk ("Belum punya akun?" / "Sudah Punya Akun?") ikut turun ke 12px sup
 - Dilaporkan ke user sebagai catatan; belum ada tindak lanjut — permintaan dieksekusi apa adanya.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 19/19 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK. Tidak ada test yang mengunci kelas CSS link (unit test hanya memeriksa `href`, e2e hanya mengkliknya), jadi perubahan styling tidak menyentuh test mana pun.
+
+## Session 105 - Auth: kembalikan ukuran baris footer ke 14px (feat/form-migration)
+
+**Permintaan user:** "Coba kembalikan ukuran teksnya." Karena bisa bermakna tiga hal, ditanyakan langsung; jawaban user: **baris footer → 14px, divider tetap 12px** (bukan "keduanya 14px", bukan "hanya kalimat induk").
+
+**Perubahan (2 file):** `<p>` footer `text-xs` → `text-sm` di `login-form.tsx` dan `register-form.tsx`. Styling link dari Session 104 **tidak disentuh** (`text-primary font-bold hover:underline`, tanpa italic) dan `SocialLoginButton` tetap `text-xs`.
+
+**Efek ke permintaan awal:** penyamaran **ukuran** di Session 104 kini dibatalkan secara sadar — link 14px vs divider "Atau lanjutkan dengan" 12px. Yang tersisa dari permintaan itu hanya warna brand, ketebalan, dan underline saat hover.
+
+**Hasil terukur (Playwright, computed style, 1440x900, kedua halaman identik):**
+- divider **12px** · kalimat induk **14px** · link **14px**, `font-weight 700`, `font-style normal`, warna `--primary` `#F49D1A`, `text-decoration none` → `underline` saat hover.
+
+**Catatan kontras terbuka (dari Session 104, belum ditindaklanjuti):** `#F49D1A` di atas `#FCFCFC` = **2.11:1**. Menaikkan ke 14px **tidak** mengubah ambangnya — 14px tebal masih di bawah ambang "large text" (≥18.66px tebal), jadi syaratnya tetap 4.5:1. Opsi yang lolos dengan tetap brand family: `#B45309` = **4.89:1**.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 19/19 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
