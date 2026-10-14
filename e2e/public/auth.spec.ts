@@ -39,6 +39,60 @@ test.describe("Auth Pages", () => {
     });
   });
 
+  test.describe("Stabilitas tinggi kartu", () => {
+    // The image column stretches to match the form column height (grid stretch),
+    // so the card height must be measured before and after errors appear.
+    async function gotoAuth(page: import("@playwright/test").Page, path: string) {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto(path);
+      // wait for React hydration so the submit is handled by the form
+      await page.waitForLoadState("networkidle");
+    }
+
+    async function cardHeight(page: import("@playwright/test").Page) {
+      return page.evaluate(() => {
+        const aside = document.querySelector<HTMLDivElement>('div[style*="-image"]');
+        if (!aside?.parentElement) return null;
+        return Math.round(aside.parentElement.getBoundingClientRect().height);
+      });
+    }
+
+    test("login: tinggi kartu tidak berubah saat error validasi", async ({ page }) => {
+      await gotoAuth(page, "/login");
+
+      const before = await cardHeight(page);
+
+      await page.getByRole("button", { name: "Masuk", exact: true }).click();
+      await expect(page.getByText("Email wajib diisi")).toBeVisible();
+
+      expect(await cardHeight(page)).toBe(before);
+    });
+
+    test("login: tinggi kartu tidak berubah saat banner error server", async ({ page }) => {
+      await gotoAuth(page, "/login");
+
+      const before = await cardHeight(page);
+
+      await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
+      await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
+      await page.getByRole("button", { name: "Masuk", exact: true }).click();
+      await expect(page.locator("div.bg-red-50")).toBeVisible({ timeout: 15000 });
+
+      expect(await cardHeight(page)).toBe(before);
+    });
+
+    test("register: tinggi kartu tidak berubah saat error validasi", async ({ page }) => {
+      await gotoAuth(page, "/register");
+
+      const before = await cardHeight(page);
+
+      await page.getByRole("button", { name: "Daftar", exact: true }).click();
+      await expect(page.getByText("Nama wajib diisi")).toBeVisible();
+
+      expect(await cardHeight(page)).toBe(before);
+    });
+  });
+
   test.describe("Register Page", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto("/register");

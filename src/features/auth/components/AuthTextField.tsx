@@ -26,7 +26,10 @@ export default function AuthTextField({
         aria-invalid={error ? true : undefined}
         className="w-full"
       />
-      {error && <p className="mt-1.5 text-sm text-destructive">{error}</p>}
+      {/* Always render this slot so the form height stays stable when an error appears */}
+      <div className="min-h-[32px] pt-1.5">
+        {error && <p className="text-sm text-destructive">{error}</p>}
+      </div>
     </div>
   );
 }

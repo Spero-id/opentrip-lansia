@@ -137,7 +137,7 @@
           "verification": [
             "npm run lint"
           ],
-          "evidence": "/login, /register pages, Navbar.jsx, Footer.jsx from GH repo"
+          "evidence": "/login, /register pages, Navbar.jsx, Footer.jsx from GH repo. Session 98: fixed card height jump after submit (reserved error slots in AuthTextField/PasswordField + banner slot in both forms), verified 698px/858px stable in Playwright; 3 regression tests added in e2e/public/auth.spec.ts"
         },
         {
           "id": "feat-022",

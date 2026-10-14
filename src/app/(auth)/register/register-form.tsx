@@ -113,17 +113,20 @@ export default function RegisterForm() {
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
             Buat Akun Baru
           </h1>
-          <p className="text-muted-foreground text-sm mb-8">
+          <p className="text-muted-foreground text-sm mb-4">
             Daftar untuk mulai merencanakan trip berikutnya.
           </p>
 
-          {error && (
-            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-              {error}
-            </div>
-          )}
+          {/* Always render this slot so the card height stays stable when a server error appears */}
+          <div className="mb-4 min-h-[46px]">
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+          </div>
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form noValidate onSubmit={handleSubmit(onSubmit)}>
             <AuthTextField
               label="Nama Lengkap"
               placeholder="Masukkan nama kamu"

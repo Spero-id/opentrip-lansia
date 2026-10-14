@@ -41,7 +41,10 @@ export default function PasswordField({
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </Button>
       </div>
-      {error && <p className="mt-1.5 text-sm text-destructive">{error}</p>}
+      {/* Always render this slot so the form height stays stable when an error appears */}
+      <div className="min-h-[32px] pt-1.5">
+        {error && <p className="text-sm text-destructive">{error}</p>}
+      </div>
     </div>
   );
 }

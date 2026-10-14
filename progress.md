@@ -2762,3 +2762,17 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Verifikasi:** computed style `/login` border `lab(96.88)` → `lab(88.83)` = `#DFDFDF`; screenshot resting & focus (ring oranye tetap). `npm run lint` 0E/84W (baseline main).
 
 > Catatan merge: sesi di main ini bernomor sama (91) dengan sesi feat/form-migration di atas — penomoran bertabrakan, keduanya dipertahankan apa adanya.
+
+## Session 98 — Fix layout jump: gambar auth membesar setelah submit (feat/form-migration)
+
+**Laporan:** setelah submit, gambar di samping form auth ikut membesar.
+
+**Penyebab (diukur di browser 1440×900):** layout `lg:grid lg:grid-cols-2` memakai `align-items: stretch` bawaan, jadi tinggi kartu = tinggi kolom form. Saat submit muncul banner error server (`mb-4 p-3` = 62px) dan/atau pesan error per field (`mt-1.5 text-sm` = 26px/field) → kolom form tumbuh → baris memanjang → `bg-cover` di `AuthAside` di-scale ulang. Terukur sebelum fix: login 650→680 (error validasi) / 690 (banner server); register 764→868.
+
+**Fix — reserve space (4 file):**
+- `AuthTextField.tsx` / `PasswordField.tsx`: slot error selalu dirender, `min-h-[32px] pt-1.5`. Pakai padding, bukan margin — `mt-1.5` pada `<p>` ternyata collapse keluar dari slot dan masih menambah tinggi 6px/error.
+- `login-form.tsx` / `register-form.tsx`: slot banner error selalu dirender (`mb-4 min-h-[46px]`); paragraf intro `mb-8` → `mb-4`; `space-y-5` di `<form>` dihapus karena jarak antar field kini ditentukan slot error (login: tombol dapat `mt-5` karena didahului baris checkbox).
+
+**Hasil terukur sesudah fix:** login 698px di 3 state (normal, error validasi, banner server); register 858px di 2 state — tidak berubah sama sekali; tinggi dokumen tetap 900px (tanpa scroll). Base line naik dari 650/764 ke 698/858 (konsekuensi ruang yang disisakan) tapi stabil.
+
+**Verifikasi:** `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/82 warnings (baseline, tak berubah) · `vitest` 50 file/435 test lolos · `playwright e2e/public/auth.spec.ts` 9/9 lolos (3 test regresi "Stabilitas tinggi kartu" ditambahkan; perlu `waitForLoadState("networkidle")` sebelum submit karena React belum ter-hydration) · `check:schema-drift` OK · `check:structure` R1 0 (komentar baru dikonversi ke Inggris — aturan larang komentar Indonesia); R3 234 vs 220 tetap FAIL dan sudah dipastikan pre-existing lewat `git stash`.
