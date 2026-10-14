@@ -2965,3 +2965,37 @@ Kalimat induk ("Belum punya akun?" / "Sudah Punya Akun?") ikut turun ke 12px sup
 - Tidak centang: `rememberMe: false` → cookie tanpa `maxAge` (session cookie, hilang saat browser ditutup) + session DB kedaluwarsa **1 hari** (`better-auth/dist/db/internal-adapter.mjs:271`).
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/**436** test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 107 - Auth: selaraskan AuthSkeleton dengan form asli (feat/form-migration)
+
+**Permintaan user:** "Apakah skeleton sudah sesuai" → dijawab **belum**, lalu "Kerjakan".
+
+**Temuan (diukur live di 1440x900, form asli vs skeleton):**
+
+| Blok | Form asli | Skeleton lama | Δ |
+|---|---|---|---|
+| Judul h1 (`lg:text-3xl` = 36px) | 36 | 32 (`h-8`) | -4 |
+| Subjudul (`text-sm` = 20px) | 20 | 16 (`h-4`) | -4 |
+| Label tiap field (`text-sm`) | 20 | 16 (`h-4`) | -4 x2 / x4 |
+| Baris "Ingat saya" (login) | 20 + gap 16 | **tidak ada** | **-36** |
+| Label divider (`text-xs` = 16px) | 16 | 12 (`h-3`) | -4 |
+| Tombol Google (`size` default = `h-10`) | 40 | 44 (`h-11`) | **+4** |
+| Bar footer (`text-sm`) | 20 | 16 (`h-4`) | -4 |
+| **Total konten** | **login 460 / register 592** | **404 / 564** | **-56 / -28** |
+
+Karena kolom memakai auto-margin centering, skeleton yang lebih pendek berarti konten **melompat 28px (login) / 14px (register)** saat loading selesai: top gap skeleton 248 vs form 220 (login), 168 vs 154 (register). Penyebab terbesar di login (36 dari 56px) adalah baris checkbox yang tidak pernah ada di skeleton. Akar masalahnya: **tidak ada satu pun test yang mengunci AuthSkeleton** — Session 103 hanya menyamakan jarak (16px), tinggi tiap bar tidak pernah dicocokkan ulang.
+
+**Perubahan (3 file):**
+- `AuthSkeleton.tsx`: 7 nilai tinggi diperbaiki (judul `h-8 lg:h-9`, subjudul/label/divider-label/footer `h-4`/`h-3` → `h-5`/`h-4`, tombol Google `h-11` → `h-10`; tombol submit memang `h-11` dan tidak diubah) + prop baru `rememberRow?: boolean` yang me-render baris dua bar `justify-between` (h-5) di antara field terakhir dan tombol submit.
+- `login/loading.tsx`: `<AuthSkeleton fields={2} rememberRow />`. `register/loading.tsx` tetap `fields={4}` tanpa remember row. `(auth)/loading.tsx` (fallback grup, `fields={2}`) sengaja **tidak** diubah — boundary loading spesifik tiap segmen yang dipakai, dan fallback grup tidak jelas milik halaman mana.
+- `__tests__/auth-skeleton.test.tsx` (baru, 4 test): memutar ulang pixel math dari kelas tinggi (jsdom tidak bisa layout) dan mengassert total login **460** / register **592** + ada/tidaknya remember row + ritme `space-y-4`.
+
+**Cek matematika:** login 72+136+20+44+16+40+20=348 + 7x16=112 → **460** ✓; register 72+272+44+16+40+20=464 + 8x16=128 → **592** ✓.
+
+**Teeth check:** satu bar Google dikembalikan sementara ke `h-11` → 2 test gagal (`464 vs 460`, `596 vs 592`, tepat +4px); dikembalikan → lolos. Catatan: `sed`-style replace sempat mengenai dua bar `h-11` sekaligus (submit ikut berubah) — diperbaiki dengan edit presisi, diff akhir dikonfirmasi hanya menyentuh bar Google.
+
+**Verifikasi live komponen asli:** route sementara me-render `AuthSkeleton` sungguhan (bukan rekonstruksi) → login **460=460 topGap 220**, register **592=592 topGap 154** → lompatan **0px** di kedua halaman. Route sementara + skrip ukur sudah dihapus; tree hanya berisi 3 file yang dituju. Insiden: folder `__skel-check__` me-return 404 karena Next.js menganggap folder berawalan underscore sebagai private (dikeluarkan dari route tree) + dev server mengunci rename di Windows — dipakai nama `skel-check-temp` lalu dihapus penuh.
+
+**Test & lint hygiene:** file test baru sempat menambah 2 error `react/jsx-key` (elemen array tanpa key) → diperbaiki, kembali 0 errors/82 warnings. Import test memakai relative path (`../components/...`) supaya `check:structure` R3 tidak naik (tetap 234 pre-existing, R1 0).
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 51 file/**440** test lolos (+4) • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing 234) • `check:schema-drift` OK.
