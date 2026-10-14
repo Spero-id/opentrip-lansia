@@ -2794,3 +2794,22 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Test regresi diverifikasi kekuatannya:** slot error di AuthTextField sementara dihapus → tes gagal (login 666→692, register 794→846), lalu dikembalikan. Artinya tes benar-benar mengukur konten, bukan viewport.
 
 **Verifikasi:** `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/82 warnings · `vitest` 435 test lolos · `playwright e2e/public/auth.spec.ts` 9/9 lolos · `check:structure` R1 0 (R3 pre-existing) · `check:schema-drift` OK.
+
+## Session 100 - Auth viewport-fit: halaman pas viewport, tanpa scroll (feat/form-migration)
+
+**Permintaan user:** "ubah agar sesuai viewport saja, jadi tanpa harus scroll" - tinggi halaman = viewport, gambar tidak lagi mengikuti tinggi konten form.
+
+**Perubahan (5 file src):**
+- `login-form.tsx` / `register-form.tsx`: outer `lg:h-auto lg:min-h-screen` -> `lg:h-screen` (tinggi definite + `overflow-hidden` -> halaman tidak pernah scroll); inner `lg:min-h-screen` -> `lg:h-full` (baris grid = tepat tinggi viewport).
+- Kolom form: buang `justify-center`, ganti `[&>*:first-child]:mt-auto [&>*:last-child]:mb-auto`. Margin auto memusatkan konten saat muat, dan collapse ke 0 saat overflow sehingga kolom bisa di-scroll dari atas.
+- `AuthAside.tsx`: buang `lg:min-h-[650px]` (viewport < 650px akan memotong teks deskripsi).
+- `AuthSkeleton.tsx`: disamakan dengan layout baru (sebelumnya masih gaya card lama: `max-w-6xl`, rounded, border, `p-4`).
+- `e2e/public/auth.spec.ts`: 15 test - 3 stabilitas tinggi (diubah ukur tinggi konten form, bukan kartu, karena kartu kini = viewport), 4 "tanpa scroll halaman" (2 halaman x 1440x900 & 1280x700), 1 "konten center saat muat", 1 "konten terjangkau saat overflow".
+
+**Dua temuan yang hanya ketahuan lewat pengukuran:**
+1. `justify-content: center` TIDAK menyelesaikan masalah overflow - auto-margin dianggap 0 saat free space negatif, tapi justify-content tetap memusatkan item yang meluber -> bagian atas terpotong dan tidak bisa dijangkau (terukur topGap -89px di 1280x600). Fix: buang `justify-center` sama sekali, andalkan auto-margin (topGap >= 0, bottomGap >= 0 sesudah scroll).
+2. Kartu kini selalu = viewport, jadi test stabilitas berbasis tinggi kartu jadi tumpul. Diganti pengukuran tinggi konten alami kolom form (jumlah tinggi + margin tiap child).
+
+**Hasil terukur:** halaman tidak scroll di 1440x900 dan 1280x700 (docH = innerHeight, aside = viewport height); register di 1280x600 overflow internal (kolom scroll, konten mulai dari atas, footer terjangkau); login center dalam 2px di 1440x900; mobile 390x844 tidak berubah.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos (1x gagal flaky timing, run ulang lulus) • `playwright e2e/public/auth.spec.ts` 15/15 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.

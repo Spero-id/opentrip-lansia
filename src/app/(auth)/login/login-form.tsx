@@ -75,8 +75,8 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="fixed inset-0 overflow-hidden lg:static lg:h-auto lg:min-h-screen bg-background flex flex-col lg:flex">
-      <div className="flex flex-col flex-1 min-h-0 lg:min-h-screen lg:flex-none w-full lg:grid lg:grid-cols-2 lg:grid-rows-1 overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden lg:static lg:h-screen bg-background flex flex-col lg:flex">
+      <div className="flex flex-col flex-1 min-h-0 lg:h-full lg:flex-none w-full lg:grid lg:grid-cols-2 lg:grid-rows-1 overflow-hidden">
         <AuthAside
           image="/login-image-page.jpeg"
           wrapperClassName="lg:rounded-none"
@@ -90,7 +90,10 @@ export default function LoginForm() {
           description="Dari trip singkat akhir pekan sampai petualangan panjang, temukan semuanya lewat satu platform."
         />
 
-        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col justify-center lg:w-full lg:mx-auto lg:max-w-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {/* Auto margins center the form vertically when it fits, and collapse to 0 on
+            overflow so the column stays scrollable from the very top (justify-content
+            would keep centering and clip the top away). */}
+        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto lg:w-full lg:mx-auto lg:max-w-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"

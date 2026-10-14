@@ -7,12 +7,12 @@ export default function AuthSkeleton({ fields = 2 }: AuthSkeletonProps) {
     <div
       aria-busy="true"
       aria-label="Memuat"
-      className="fixed inset-0 overflow-hidden lg:static lg:h-auto lg:min-h-screen bg-background flex flex-col lg:flex lg:items-center lg:justify-center lg:p-4"
+      className="fixed inset-0 overflow-hidden lg:static lg:h-screen bg-background flex flex-col lg:flex"
     >
-      <div className="flex flex-col flex-1 min-h-0 lg:min-h-0 lg:flex-none w-full max-w-6xl lg:grid lg:grid-cols-2 lg:rounded-2xl overflow-hidden lg:border lg:border-border lg:shadow-xs">
-        <div className="hidden lg:block bg-muted lg:min-h-[650px]" />
+      <div className="flex flex-col flex-1 min-h-0 lg:h-full lg:flex-none w-full lg:grid lg:grid-cols-2 lg:grid-rows-1 overflow-hidden">
+        <div className="hidden lg:block bg-muted" />
 
-        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col justify-center">
+        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto lg:w-full lg:mx-auto lg:max-w-xl">
           <div className="flex flex-col space-y-5 animate-pulse">
             <div className="h-4 w-36 self-start rounded bg-muted" />
 
