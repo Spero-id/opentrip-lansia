@@ -17,11 +17,14 @@ test.describe("Auth Pages", () => {
     test("should have password visibility toggle", async ({ page }) => {
       const passwordInput = page.getByPlaceholder("Masukkan password kamu");
       await expect(passwordInput).toHaveAttribute("type", "password");
-      const toggleButton = page.locator("button").filter({ has: page.locator("svg") }).first();
-      if (await toggleButton.count() > 0) {
-        await toggleButton.click();
+
+      await expect(async () => {
+        await page.getByRole("button", { name: "Tampilkan password" }).click();
         await expect(passwordInput).toHaveAttribute("type", "text");
-      }
+      }).toPass();
+
+      await page.getByRole("button", { name: "Sembunyikan password" }).click();
+      await expect(passwordInput).toHaveAttribute("type", "password");
     });
 
     test("should have register link", async ({ page }) => {
@@ -43,14 +46,14 @@ test.describe("Auth Pages", () => {
 
     test("should display register form elements", async ({ page }) => {
       await expect(page.getByText("Buat Akun Baru")).toBeVisible();
-      await expect(page.getByPlaceholder("Masukkan Username kamu")).toBeVisible();
+      await expect(page.getByPlaceholder("Masukkan nama kamu")).toBeVisible();
       await expect(page.getByPlaceholder("Masukkan email kamu")).toBeVisible();
       await expect(page.getByPlaceholder("Masukkan password kamu")).toBeVisible();
       await expect(page.getByRole("button", { name: "Daftar", exact: true })).toBeVisible();
     });
 
     test("should have login link", async ({ page }) => {
-      await page.getByText("Masuk disini").click();
+      await page.getByRole("link", { name: "Masuk di sini" }).click();
       await page.waitForURL("/login");
     });
   });

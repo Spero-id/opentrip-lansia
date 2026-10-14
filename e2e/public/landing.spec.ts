@@ -29,12 +29,12 @@ test.describe("Landing Page", () => {
   });
 
   test("should navigate to login page", async ({ page }) => {
-    await page.getByRole("link", { name: "Login", exact: true }).click();
+    await page.getByRole("link", { name: "Masuk", exact: true }).click();
     await page.waitForURL(/\/login/);
   });
 
   test("should navigate to register page", async ({ page }) => {
-    await page.getByRole("link", { name: "Register", exact: true }).click();
+    await page.getByRole("link", { name: "Daftar", exact: true }).click();
     await page.waitForURL(/\/register/);
   });
 
