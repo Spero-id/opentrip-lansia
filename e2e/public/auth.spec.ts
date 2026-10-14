@@ -42,8 +42,10 @@ test.describe("Auth Pages", () => {
   test.describe("Stabilitas tinggi kartu", () => {
     // The image column stretches to match the form column height (grid stretch),
     // so the card height must be measured before and after errors appear.
+    // Short viewport so card height is driven by the form content (not the viewport),
+    // so this test still detects height growth caused by errors.
     async function gotoAuth(page: import("@playwright/test").Page, path: string) {
-      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.setViewportSize({ width: 1280, height: 600 });
       await page.goto(path);
       // wait for React hydration so the submit is handled by the form
       await page.waitForLoadState("networkidle");

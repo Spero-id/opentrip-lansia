@@ -2776,3 +2776,21 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Hasil terukur sesudah fix:** login 698px di 3 state (normal, error validasi, banner server); register 858px di 2 state — tidak berubah sama sekali; tinggi dokumen tetap 900px (tanpa scroll). Base line naik dari 650/764 ke 698/858 (konsekuensi ruang yang disisakan) tapi stabil.
 
 **Verifikasi:** `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/82 warnings (baseline, tak berubah) · `vitest` 50 file/435 test lolos · `playwright e2e/public/auth.spec.ts` 9/9 lolos (3 test regresi "Stabilitas tinggi kartu" ditambahkan; perlu `waitForLoadState("networkidle")` sebelum submit karena React belum ter-hydration) · `check:schema-drift` OK · `check:structure` R1 0 (komentar baru dikonversi ke Inggris — aturan larang komentar Indonesia); R3 234 vs 220 tetap FAIL dan sudah dipastikan pre-existing lewat `git stash`.
+
+## Session 99 — Auth full-bleed: hilangkan card, 2 kolom penuh (feat/form-migration)
+
+**Permintaan user:** card dibuang, hanya 2 kolom penuh; isi form tetap dibatasi & di-center (keputusan user: batasi lebar form, jangan ikut melebar).
+
+**Perubahan (2 file src):**
+- `login-form.tsx` / `register-form.tsx`: outer buang `lg:items-center lg:justify-center lg:p-4`; inner buang `max-w-6xl lg:rounded-2xl lg:border lg:border-border lg:shadow-xs`, ganti `lg:min-h-0` → `lg:min-h-screen`, tambah `lg:grid-rows-1`; kolom form tambah `lg:w-full lg:mx-auto lg:max-w-xl`.
+- `e2e/public/auth.spec.ts`: viewport tes stabilitas pindah 1440×900 → 1280×600 (alasan di bawah).
+
+**Dua jebakan yang hanya ketahuan lewat pengukuran browser:**
+1. Baris grid auto TIDAK ikut meregang ke tinggi container (kolom cuma 698px di viewport 900 → 202px kosong di bawah). Fix: `lg:grid-rows-1` + `lg:min-h-screen` di inner. Inner-lah yang harus memegang min-height karena outer ternyata `flex-col` di semua breakpoint — `lg:flex` itu utility display, bukan `flex-row` — jadi child tidak pernah ikut meregang vertikal.
+2. `mx-auto` pada grid item menonaktifkan `justify-self: stretch`, sehingga kolom menyusut ke max-content (444px login / 421px register, lebarnya beda tiap halaman). Fix: tambah `lg:w-full`.
+
+**Hasil terukur 1440×900:** aside 720×900 mulai (0,0), radius & border 0px; kolom form 576px di-center di sel kanan, input 496px (persis seperti layout card lama); tinggi kartu tetap 900 di semua state error. 1280×700: login 700px, register 858px → halaman scroll, footer tidak terpotong (docBottom 818 < 858). Mobile 390px: tidak berubah (input 310px, aside tetap tersembunyi).
+
+**Test regresi diverifikasi kekuatannya:** slot error di AuthTextField sementara dihapus → tes gagal (login 666→692, register 794→846), lalu dikembalikan. Artinya tes benar-benar mengukur konten, bukan viewport.
+
+**Verifikasi:** `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/82 warnings · `vitest` 435 test lolos · `playwright e2e/public/auth.spec.ts` 9/9 lolos · `check:structure` R1 0 (R3 pre-existing) · `check:schema-drift` OK.
