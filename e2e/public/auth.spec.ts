@@ -10,7 +10,7 @@ test.describe("Auth Pages", () => {
       await expect(page.getByText("Selamat Datang Kembali")).toBeVisible();
       await expect(page.getByPlaceholder("Masukkan email kamu")).toBeVisible();
       await expect(page.getByPlaceholder("Masukkan password kamu")).toBeVisible();
-      await expect(page.getByRole("button", { name: /login/i })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Masuk", exact: true })).toBeVisible();
       await expect(page.getByText("Masuk dengan Google")).toBeVisible();
     });
 
@@ -32,7 +32,7 @@ test.describe("Auth Pages", () => {
     test("should show error on invalid login", async ({ page }) => {
       await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
       await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
-      await page.getByRole("button", { name: /login/i }).click();
+      await page.getByRole("button", { name: "Masuk", exact: true }).click();
     });
   });
 

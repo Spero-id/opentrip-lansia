@@ -41,7 +41,7 @@ function setUrl(path: string) {
 
 async function clickSubmit(
   user: ReturnType<typeof userEvent.setup>,
-  name: "Login" | "Daftar"
+  name: "Masuk" | "Daftar"
 ) {
   await user.click(screen.getByRole("button", { name }));
 }
@@ -60,7 +60,7 @@ describe("LoginForm validasi", () => {
     const user = userEvent.setup();
     render(<LoginForm />);
 
-    await clickSubmit(user, "Login");
+    await clickSubmit(user, "Masuk");
 
     expect(await screen.findByText("Email wajib diisi")).toBeTruthy();
     expect(screen.getByText("Password wajib diisi")).toBeTruthy();
@@ -72,7 +72,7 @@ describe("LoginForm validasi", () => {
     render(<LoginForm />);
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi-at-example");
-    await clickSubmit(user, "Login");
+    await clickSubmit(user, "Masuk");
 
     expect(await screen.findByText("Email tidak valid")).toBeTruthy();
     expect(signInEmailMock).not.toHaveBeenCalled();
@@ -85,7 +85,7 @@ describe("LoginForm validasi", () => {
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await clickSubmit(user, "Login");
+    await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
       expect(signInEmailMock).toHaveBeenCalledWith({
@@ -108,7 +108,7 @@ describe("LoginForm validasi", () => {
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "salah");
-    await clickSubmit(user, "Login");
+    await clickSubmit(user, "Masuk");
 
     expect(
       await screen.findByText("Email atau password salah")
@@ -135,7 +135,7 @@ describe("LoginForm validasi", () => {
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await clickSubmit(user, "Login");
+    await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/trips");
@@ -154,7 +154,7 @@ describe("LoginForm validasi", () => {
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await clickSubmit(user, "Login");
+    await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/");
@@ -173,7 +173,7 @@ describe("LoginForm validasi", () => {
 
     await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
     await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await clickSubmit(user, "Login");
+    await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/");

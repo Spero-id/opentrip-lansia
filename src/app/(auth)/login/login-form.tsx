@@ -149,7 +149,7 @@ export default function LoginForm() {
               variant="default"
               className="w-full"
             >
-              {isSubmitting ? "Memproses..." : "Login"}
+              {isSubmitting ? "Memproses..." : "Masuk"}
             </Button>
           </form>
 

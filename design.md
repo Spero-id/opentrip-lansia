@@ -150,7 +150,7 @@ Sesuai dengan acuan desain gambar 2:
   - Subjudul `Masuk untuk mulai merencanakan trip berikutnya.`.
   - Input Email & Password (dengan ikon toggle mata).
   - Checkbox `Ingat saya` & link `Lupa Password?`.
-  - Tombol Oranye Solid `Login`.
+  - Tombol Oranye Solid `Masuk`.
   - Pembatas `Atau lanjutkan dengan`.
   - Tombol Google `Masuk dengan Google`.
   - Link beralih `Belum punya akun? Daftar di sini`.
