@@ -2936,3 +2936,32 @@ Kalimat induk ("Belum punya akun?" / "Sudah Punya Akun?") ikut turun ke 12px sup
 **Catatan kontras terbuka (dari Session 104, belum ditindaklanjuti):** `#F49D1A` di atas `#FCFCFC` = **2.11:1**. Menaikkan ke 14px **tidak** mengubah ambangnya — 14px tebal masih di bawah ambang "large text" (≥18.66px tebal), jadi syaratnya tetap 4.5:1. Opsi yang lolos dengan tetap brand family: `#B45309` = **4.89:1**.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 19/19 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 106 - Auth: aktifkan checkbox "Ingat saya" (feat/form-migration)
+
+**Permintaan user:** "Apakah tombol Ingat Saya benar-benar bekerja?" → dijawab **tidak** dengan bukti, lalu user meminta "Kerjakan".
+
+**Temuan sebelum diubah:**
+- `<Checkbox id="remember-me" />` tanpa `checked`/`onCheckedChange` dan tidak di-`register()` ke react-hook-form → Base UI hanya menyimpan state visualnya sendiri; tidak ada yang membacanya.
+- `loginSchema` hanya berisi `email` + `password`; `onSubmit` mengirim `{email, password}`.
+- Grep seluruh repo: 6 kemunculan "remember/Ingat saya", semuanya di `design.md`/`plan/`/`progress.md` — **0 test**.
+- Karena better-auth default `rememberMe: true` dan proyek tidak pernah mengirimkannya, login **selalu** berperilaku "diingat": cookie `maxAge = session.expiresIn` (default 7 hari, `auth.config.ts` tidak override) + session DB 7 hari. Menandai/menidak centang hasilnya identik.
+
+**Keputusan desain (menyimpang dari rencana yang ditawarkan ke user):** rencana awal menambah `rememberMe: z.boolean().default(true)` ke `loginSchema`. Kode itu **gagal tsc** — zodResolver mengetik `Resolver<z.input<S>, any, z.output<S>>` dan `.default()` membuat input (`boolean | undefined`) ≠ output (`boolean`) → `TS2322`. Solusi standarnya `useForm<z.input<...>, any, z.output<...>>`, yang memperkenalkan `any` dan berisiko mengubah baseline lint (82 warning). `rememberMe` juga bukan field yang divalidasi, jadi ia dikeluarkan dari skema validasi: `loginSchema` tetap berarti "apakah kredensial ini sah" dan `auth-schema.test.ts` tidak perlu disentuh. Deviasi ini dilaporkan ke user.
+
+**Perubahan (2 file kode + 2 file test):**
+- `login-form.tsx`: state lokal `const [rememberMe, setRememberMe] = useState(true)` (default `true` supaya perilaku user lama tidak berubah), `<Checkbox checked={rememberMe} onCheckedChange={setRememberMe}>`, dan `signIn.email({ ...values, rememberMe })`.
+- `auth.schema.ts` **tidak berubah** (revert penuh setelah percobaan `.default(true)` — tidak muncul di `git status`).
+
+**Test & teeth check:**
+- `auth-pages.test.tsx`: assertion `toHaveBeenCalledWith({email, password})` diperbarui → kini `+ rememberMe: true`; **+1 test** untuk arah yang belum tercentang: `rememberMe: false`.
+- `e2e/public/auth.spec.ts`: **+1 test wire-level** — intercept `POST /api/auth/sign-in/email` lalu assert `body.rememberMe === false`. Lebih kuat dari mock unit test karena membuktikan field-nya sampai ke server.
+- **Teeth check:** `signIn.email(values)` dikembalikan sementara → test e2e **1 failed**; dikembalikan → **20 passed**.
+
+**Bentuk DOM terukur (Base UI):** `Checkbox` me-render `<span role="checkbox">` yang terlihat plus `<input type="checkbox" aria-hidden tabindex="-1" id="remember-me">` yang menerima `<label for>`. Baik klik label maupun klik role sama-sama men-toggle `checked` (true → false → true); `getByRole("checkbox", { name: "Ingat saya" })` cocok.
+
+**Efek perilaku:**
+- Centang (bawaan): cookie 7 hari + session DB 7 hari — **identik dengan kondisi sebelum perubahan**, jadi tidak ada kejutan bagi user lama.
+- Tidak centang: `rememberMe: false` → cookie tanpa `maxAge` (session cookie, hilang saat browser ditutup) + session DB kedaluwarsa **1 hari** (`better-auth/dist/db/internal-adapter.mjs:271`).
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/**436** test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.

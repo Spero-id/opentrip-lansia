@@ -34,6 +34,9 @@ export default function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
+  // Session preference, not a validated credential - lives outside the zod
+  // schema so loginSchema keeps meaning "are these credentials acceptable".
+  const [rememberMe, setRememberMe] = useState(true);
   const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
   const {
@@ -52,7 +55,7 @@ export default function LoginForm() {
   async function onSubmit(values: LoginInput) {
     setError("");
 
-    const { error: signInError } = await signIn.email(values);
+    const { error: signInError } = await signIn.email({ ...values, rememberMe });
 
     if (signInError) {
       setError(signInError.message || "Email atau password salah");
@@ -123,7 +126,11 @@ export default function LoginForm() {
 
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <Checkbox id="remember-me" />
+                <Checkbox
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={setRememberMe}
+                />
                 <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
                   Ingat saya
                 </Label>

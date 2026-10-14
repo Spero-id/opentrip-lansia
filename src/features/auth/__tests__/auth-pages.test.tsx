@@ -91,11 +91,32 @@ describe("LoginForm validasi", () => {
       expect(signInEmailMock).toHaveBeenCalledWith({
         email: "budi@example.com",
         password: "rahasia123",
+        rememberMe: true,
       });
     });
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/");
       expect(refreshMock).toHaveBeenCalled();
+    });
+  });
+
+  it("mengirim rememberMe=false setelah checkbox Ingat saya di-centang ulang", async () => {
+    signInEmailMock.mockResolvedValue({ error: null });
+    const user = userEvent.setup();
+    render(<LoginForm />);
+
+    await user.click(screen.getByRole("checkbox", { name: "Ingat saya" }));
+
+    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
+    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await clickSubmit(user, "Masuk");
+
+    await waitFor(() => {
+      expect(signInEmailMock).toHaveBeenCalledWith({
+        email: "budi@example.com",
+        password: "rahasia123",
+        rememberMe: false,
+      });
     });
   });
 

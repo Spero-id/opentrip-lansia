@@ -37,6 +37,35 @@ test.describe("Auth Pages", () => {
       await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
       await page.getByRole("button", { name: "Masuk", exact: true }).click();
     });
+
+    test("checkbox Ingat saya ikut terkirim ke server sebagai rememberMe", async ({ page }) => {
+      await page.goto("/login");
+      await page.waitForLoadState("networkidle");
+
+      const checkbox = page.getByRole("checkbox", { name: "Ingat saya" });
+      // Default is checked, which matches better-auth's own default: anyone who
+      // never touches the box keeps exactly the behaviour they had before.
+      await expect(checkbox).toBeChecked();
+
+      // A click only flips the box once React has bound the handler, so retrying
+      // doubles as the hydration gate for the submit below.
+      await expect(async () => {
+        await checkbox.click();
+        await expect(checkbox).not.toBeChecked();
+      }).toPass();
+
+      const sent = page.waitForRequest(
+        (r) => r.method() === "POST" && r.url().includes("/api/auth/sign-in/email")
+      );
+
+      await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
+      await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
+      await page.getByRole("button", { name: "Masuk", exact: true }).click();
+
+      // Wire-level proof: without the wiring this field is absent, not false.
+      const body = JSON.parse((await sent).postData() ?? "{}");
+      expect(body.rememberMe).toBe(false);
+    });
   });
 
   test.describe("Layout viewport-fit & stabilitas tinggi", () => {
