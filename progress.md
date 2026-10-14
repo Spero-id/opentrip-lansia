@@ -2853,8 +2853,9 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 
 **Dampak layout:** anak pertama kolom form kini `<h1>` (sebelumnya Link). Selektor `[&>*:first-child]:mt-auto` otomatis berpindah ke h1, jadi perilaku centering auto-margin tidak berubah — terbukti test "konten form tetap center saat muat" tetap lolos. Tinggi konten form berkurang 52px (20px tinggi link + `mb-8` 32px).
 
-**Trade-off yang tercatat (belum ditindaklanjuti, menunggu keputusan user):**
+**Trade-off yang tercatat — keputusan user: dibiarkan apa adanya, tanpa pengganti:**
 - Desktop (lg+): masih ada jalan ke beranda via logo di `AuthAside` (`<Link href="/">`).
 - Mobile (<lg): `AuthAside` berkelas `hidden lg:flex`, dan grup `(auth)` tidak punya layout `SiteChrome` (navbar) → **tidak ada lagi link beranda yang terlihat**; pengguna hanya punya tombol back browser.
+- User ditawari dua opsi pengganti (tampilkan logo aside di mobile, atau tambah link beranda alternatif di bawah form) dan memilih **tidak usah ditambahi**. Jangan mengangkat ini lagi kecuali ada laporan user.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline; `ArrowLeft` tidak jadi unused-var) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 17/17 lolos • `check:structure` R1 0 (R3 pre-existing, 234 vs 220 tidak berubah) • `check:schema-drift` OK. Pencarian repo: tidak ada test/e2e yang mereferensikan link ini.
