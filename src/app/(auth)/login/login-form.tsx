@@ -93,20 +93,20 @@ export default function LoginForm() {
             overflow so the column stays scrollable from the very top (justify-content
             would keep centering and clip the top away). */}
         <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto lg:w-full lg:mx-auto lg:max-w-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
             Selamat Datang Kembali
           </h1>
-          <p className="text-muted-foreground text-sm mb-6">
+          <p className="text-muted-foreground text-sm mb-4">
             Masuk untuk mulai merencanakan trip berikutnya.
           </p>
 
           {error && (
-            <div className="mb-6 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
               {error}
             </div>
           )}
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <AuthTextField
               label="Email"
               type="email"
@@ -153,7 +153,7 @@ export default function LoginForm() {
             label="Masuk dengan Google"
           />
 
-          <p className="text-center text-sm text-muted-foreground mt-8">
+          <p className="text-center text-sm text-muted-foreground mt-4">
             Belum punya akun?{" "}
             <Link
               href={registerHref}

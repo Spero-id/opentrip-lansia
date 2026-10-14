@@ -13,8 +13,8 @@ export default function AuthSkeleton({ fields = 2 }: AuthSkeletonProps) {
         <div className="hidden lg:block bg-muted" />
 
         <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto lg:w-full lg:mx-auto lg:max-w-xl">
-          <div className="flex flex-col space-y-5 animate-pulse">
-            <div className="space-y-2">
+          <div className="flex flex-col space-y-4 animate-pulse">
+            <div className="space-y-4">
               <div className="h-8 w-2/3 rounded-lg bg-muted" />
               <div className="h-4 w-1/2 rounded bg-muted" />
             </div>

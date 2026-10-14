@@ -52,6 +52,14 @@ test.describe("Auth Pages", () => {
       await page.goto(path);
       // wait for React hydration so the submit is handled by the form
       await page.waitForLoadState("networkidle");
+      // The compiled stylesheet must be applied before any getBoundingClientRect
+      // measurement: right after a recompile the document can still be unstyled,
+      // and every margin then reads as 0 (measured: gaps came back 0/0/0/0/0).
+      await page.waitForFunction(() => {
+        const aside = document.querySelector<HTMLDivElement>('div[style*="-image"]');
+        const col = aside?.parentElement?.lastElementChild as HTMLElement | null;
+        return !!col && getComputedStyle(col).paddingTop === "40px";
+      });
     }
 
     async function pageMetrics(page: import("@playwright/test").Page) {
@@ -128,6 +136,35 @@ test.describe("Auth Pages", () => {
 
         expect(gap).toBeGreaterThan(0);
         expect(gap).toBeLessThanOrEqual(32);
+      });
+    }
+
+    for (const path of ["/login", "/register"]) {
+      test(`${path}: jarak antar blok form seragam 16px`, async ({ page }) => {
+        await gotoAuth(page, path);
+
+        // Empty array signals the expected DOM shape is missing, which fails below.
+        const gaps = await page.evaluate(() => {
+          const aside = document.querySelector<HTMLDivElement>('div[style*="-image"]');
+          const col = aside?.parentElement?.lastElementChild as HTMLElement | null;
+          if (!col || col.children.length < 2) return [];
+          const kids = Array.from(col.children) as HTMLElement[];
+          const out: number[] = [];
+          for (let i = 1; i < kids.length; i++) {
+            out.push(
+              kids[i].getBoundingClientRect().top -
+                kids[i - 1].getBoundingClientRect().bottom
+            );
+          }
+          return out;
+        });
+
+        expect(gaps.length).toBeGreaterThan(0);
+        // every block boundary must share a single value...
+        expect(Math.max(...gaps) - Math.min(...gaps)).toBeLessThanOrEqual(1);
+        // ...and that value is the 16px rhythm chosen for the auth column
+        expect(gaps[0]).toBeGreaterThan(15);
+        expect(gaps[0]).toBeLessThan(17);
       });
     }
 

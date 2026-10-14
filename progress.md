@@ -2859,3 +2859,37 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 - User ditawari dua opsi pengganti (tampilkan logo aside di mobile, atau tambah link beranda alternatif di bawah form) dan memilih **tidak usah ditambahi**. Jangan mengangkat ini lagi kecuali ada laporan user.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline; `ArrowLeft` tidak jadi unused-var) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 17/17 lolos • `check:structure` R1 0 (R3 pre-existing, 234 vs 220 tidak berubah) • `check:schema-drift` OK. Pencarian repo: tidak ada test/e2e yang mereferensikan link ini.
+
+## Session 103 - Auth: grup form terpusat + jarak antar blok seragam 16px (feat/form-migration)
+
+**Permintaan user:** "Coba pusatkan keseluruhan kelompok form secara vertikal dengan jarak yang konsisten." Saat ditanya targetnya, user memilih **seragam 16px**.
+
+**Temuan pengukuran (1440x900) sebelum perubahan:**
+- Pusat vertikal **sudah tepat**: `topGap === bottomGap` (login 206/206, register 138/138), margin auto anak pertama/terakhir juga identik (166/166 dan 98/98).
+- Yang tidak konsisten adalah jarak antar blok: h1→subjudul **8** (`mb-2`), subjudul→form **24** (`mb-6`), form→divider **16** (`my-4`), divider→Google **16** (`my-4`), Google→footer **32** (`mt-8`).
+
+**Perubahan (4 file):**
+- `login-form.tsx` / `register-form.tsx`: `h1 mb-2`→`mb-4`, subjudul `mb-6`→`mb-4`, banner error `mb-6`→`mb-4`, `<form> space-y-5`→`space-y-4`, footer `mt-8`→`mt-4`.
+- `AuthSkeleton.tsx`: `space-y-5`→`space-y-4`, blok header `space-y-2`→`space-y-4`; blok field `space-y-2` **dipertahankan** (itu jarak label→input, memang harus rapat).
+- `SocialLoginButton.tsx`: tidak diubah — default `my-4` sudah 16px.
+- `e2e/public/auth.spec.ts`: +2 test "jarak antar blok form seragam 16px"; helper `gotoAuth` diperkuat.
+
+**Keputusan teknis — container sengaja TIDAK memakai `space-y-*`:** di Tailwind v4, `space-y` diimplementasikan lewat selektor `:not(:last-child)` yang spesifikasinya **sama** dengan `[&>*:first-child]:mt-auto` / `[&>*:last-child]:mb-auto`. Yang menentukan jadi urutan stylesheet, sehingga centering bisa hilang tanpa sengaja. Karena container ber-layout flex (margin antar-item tidak pernah collapse), margin eksplisit per anak adalah cara yang deterministik.
+
+**Hasil terukur (1440x900):**
+
+| Antar blok | Sebelum | Sesudah |
+|---|---|---|
+| h1 → subjudul | 8 | 16 |
+| subjudul → form | 24 | 16 |
+| form → divider | 16 | 16 |
+| divider → tombol Google | 16 | 16 |
+| tombol Google → footer | 32 | 16 |
+
+Pusat tetap tepat: login 206/206 → **220/220**, register 138/138 → **154/154** (margin auto simetris 180/180 dan 114/114). Tidak ada overflow. Jarak antar field dalam form: `space-y-5` 20px → `space-y-4` **16px**.
+
+**Test regresi diverifikasi kekuatannya:** 3 file src di-`git stash push -- <path>` lalu test baru dijalankan → register gagal dengan **spread 24** (32−8); probe terukur login `[8,24,16,16,32]` = spread 24 juga. Setelah pop: 19/19 lolos.
+
+**Temuan flaky yang diperbaiki:** pada run pertama sesudah stash, test login gagal dengan `gaps[0] = 0` (bukan 24). Probe membuktikan gap aslinya 24 → pengukuran jalan **sebelum stylesheet terpasang**, sehingga semua margin terbaca 0. Fix: `gotoAuth` kini menunggu `getComputedStyle(col).paddingTop === "40px"` sebelum mengukur apa pun.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` **19/19** lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
