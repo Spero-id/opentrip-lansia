@@ -2762,3 +2762,266 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Verifikasi:** computed style `/login` border `lab(96.88)` → `lab(88.83)` = `#DFDFDF`; screenshot resting & focus (ring oranye tetap). `npm run lint` 0E/84W (baseline main).
 
 > Catatan merge: sesi di main ini bernomor sama (91) dengan sesi feat/form-migration di atas — penomoran bertabrakan, keduanya dipertahankan apa adanya.
+
+## Session 98 — Fix layout jump: gambar auth membesar setelah submit (feat/form-migration)
+
+**Laporan:** setelah submit, gambar di samping form auth ikut membesar.
+
+**Penyebab (diukur di browser 1440×900):** layout `lg:grid lg:grid-cols-2` memakai `align-items: stretch` bawaan, jadi tinggi kartu = tinggi kolom form. Saat submit muncul banner error server (`mb-4 p-3` = 62px) dan/atau pesan error per field (`mt-1.5 text-sm` = 26px/field) → kolom form tumbuh → baris memanjang → `bg-cover` di `AuthAside` di-scale ulang. Terukur sebelum fix: login 650→680 (error validasi) / 690 (banner server); register 764→868.
+
+**Fix — reserve space (4 file):**
+- `AuthTextField.tsx` / `PasswordField.tsx`: slot error selalu dirender, `min-h-[32px] pt-1.5`. Pakai padding, bukan margin — `mt-1.5` pada `<p>` ternyata collapse keluar dari slot dan masih menambah tinggi 6px/error.
+- `login-form.tsx` / `register-form.tsx`: slot banner error selalu dirender (`mb-4 min-h-[46px]`); paragraf intro `mb-8` → `mb-4`; `space-y-5` di `<form>` dihapus karena jarak antar field kini ditentukan slot error (login: tombol dapat `mt-5` karena didahului baris checkbox).
+
+**Hasil terukur sesudah fix:** login 698px di 3 state (normal, error validasi, banner server); register 858px di 2 state — tidak berubah sama sekali; tinggi dokumen tetap 900px (tanpa scroll). Base line naik dari 650/764 ke 698/858 (konsekuensi ruang yang disisakan) tapi stabil.
+
+**Verifikasi:** `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/82 warnings (baseline, tak berubah) · `vitest` 50 file/435 test lolos · `playwright e2e/public/auth.spec.ts` 9/9 lolos (3 test regresi "Stabilitas tinggi kartu" ditambahkan; perlu `waitForLoadState("networkidle")` sebelum submit karena React belum ter-hydration) · `check:schema-drift` OK · `check:structure` R1 0 (komentar baru dikonversi ke Inggris — aturan larang komentar Indonesia); R3 234 vs 220 tetap FAIL dan sudah dipastikan pre-existing lewat `git stash`.
+
+## Session 99 — Auth full-bleed: hilangkan card, 2 kolom penuh (feat/form-migration)
+
+**Permintaan user:** card dibuang, hanya 2 kolom penuh; isi form tetap dibatasi & di-center (keputusan user: batasi lebar form, jangan ikut melebar).
+
+**Perubahan (2 file src):**
+- `login-form.tsx` / `register-form.tsx`: outer buang `lg:items-center lg:justify-center lg:p-4`; inner buang `max-w-6xl lg:rounded-2xl lg:border lg:border-border lg:shadow-xs`, ganti `lg:min-h-0` → `lg:min-h-screen`, tambah `lg:grid-rows-1`; kolom form tambah `lg:w-full lg:mx-auto lg:max-w-xl`.
+- `e2e/public/auth.spec.ts`: viewport tes stabilitas pindah 1440×900 → 1280×600 (alasan di bawah).
+
+**Dua jebakan yang hanya ketahuan lewat pengukuran browser:**
+1. Baris grid auto TIDAK ikut meregang ke tinggi container (kolom cuma 698px di viewport 900 → 202px kosong di bawah). Fix: `lg:grid-rows-1` + `lg:min-h-screen` di inner. Inner-lah yang harus memegang min-height karena outer ternyata `flex-col` di semua breakpoint — `lg:flex` itu utility display, bukan `flex-row` — jadi child tidak pernah ikut meregang vertikal.
+2. `mx-auto` pada grid item menonaktifkan `justify-self: stretch`, sehingga kolom menyusut ke max-content (444px login / 421px register, lebarnya beda tiap halaman). Fix: tambah `lg:w-full`.
+
+**Hasil terukur 1440×900:** aside 720×900 mulai (0,0), radius & border 0px; kolom form 576px di-center di sel kanan, input 496px (persis seperti layout card lama); tinggi kartu tetap 900 di semua state error. 1280×700: login 700px, register 858px → halaman scroll, footer tidak terpotong (docBottom 818 < 858). Mobile 390px: tidak berubah (input 310px, aside tetap tersembunyi).
+
+**Test regresi diverifikasi kekuatannya:** slot error di AuthTextField sementara dihapus → tes gagal (login 666→692, register 794→846), lalu dikembalikan. Artinya tes benar-benar mengukur konten, bukan viewport.
+
+**Verifikasi:** `npx tsc --noEmit` 0 error · `npm run lint` 0 errors/82 warnings · `vitest` 435 test lolos · `playwright e2e/public/auth.spec.ts` 9/9 lolos · `check:structure` R1 0 (R3 pre-existing) · `check:schema-drift` OK.
+
+## Session 100 - Auth viewport-fit: halaman pas viewport, tanpa scroll (feat/form-migration)
+
+**Permintaan user:** "ubah agar sesuai viewport saja, jadi tanpa harus scroll" - tinggi halaman = viewport, gambar tidak lagi mengikuti tinggi konten form.
+
+**Perubahan (5 file src):**
+- `login-form.tsx` / `register-form.tsx`: outer `lg:h-auto lg:min-h-screen` -> `lg:h-screen` (tinggi definite + `overflow-hidden` -> halaman tidak pernah scroll); inner `lg:min-h-screen` -> `lg:h-full` (baris grid = tepat tinggi viewport).
+- Kolom form: buang `justify-center`, ganti `[&>*:first-child]:mt-auto [&>*:last-child]:mb-auto`. Margin auto memusatkan konten saat muat, dan collapse ke 0 saat overflow sehingga kolom bisa di-scroll dari atas.
+- `AuthAside.tsx`: buang `lg:min-h-[650px]` (viewport < 650px akan memotong teks deskripsi).
+- `AuthSkeleton.tsx`: disamakan dengan layout baru (sebelumnya masih gaya card lama: `max-w-6xl`, rounded, border, `p-4`).
+- `e2e/public/auth.spec.ts`: 15 test - 3 stabilitas tinggi (diubah ukur tinggi konten form, bukan kartu, karena kartu kini = viewport), 4 "tanpa scroll halaman" (2 halaman x 1440x900 & 1280x700), 1 "konten center saat muat", 1 "konten terjangkau saat overflow".
+
+**Dua temuan yang hanya ketahuan lewat pengukuran:**
+1. `justify-content: center` TIDAK menyelesaikan masalah overflow - auto-margin dianggap 0 saat free space negatif, tapi justify-content tetap memusatkan item yang meluber -> bagian atas terpotong dan tidak bisa dijangkau (terukur topGap -89px di 1280x600). Fix: buang `justify-center` sama sekali, andalkan auto-margin (topGap >= 0, bottomGap >= 0 sesudah scroll).
+2. Kartu kini selalu = viewport, jadi test stabilitas berbasis tinggi kartu jadi tumpul. Diganti pengukuran tinggi konten alami kolom form (jumlah tinggi + margin tiap child).
+
+**Hasil terukur:** halaman tidak scroll di 1440x900 dan 1280x700 (docH = innerHeight, aside = viewport height); register di 1280x600 overflow internal (kolom scroll, konten mulai dari atas, footer terjangkau); login center dalam 2px di 1440x900; mobile 390x844 tidak berubah.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos (1x gagal flaky timing, run ulang lulus) • `playwright e2e/public/auth.spec.ts` 15/15 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 101 - Auth: rapatkan gap judul ke isi form (feat/form-migration)
+
+**Laporan user:** "Apakah kamu bisa melihat gap antara judul form dengan isi form di halaman Auth?"
+
+**Diagnosis — tiga lapis ruang kosong, dua di antaranya slot cadangan dari Session 98 yang selalu dirender kosong:**
+- Banner error `mb-4 min-h-[46px]` di `login-form.tsx` / `register-form.tsx` → 46px kosong + 16px margin; bersama `mb-4` subjudul → **subjudul ke field pertama = 78px**.
+- Slot error per field `min-h-[32px] pt-1.5` di `AuthTextField.tsx` / `PasswordField.tsx` → **antar field = 32px** (`box-sizing: border-box`, jadi tepat 32px saat kosong).
+- Login saja: Link "Kembali ke Beranda" `mb-8` = 32px sebelum h1.
+
+**Kenapa slot itu dibuat, dan kenapa sekarang boleh dibuang:** Session 98 menambahkannya karena kolom form tumbuh saat error dan `AuthAside` ikut meregang (grid `align-items: stretch` + `bg-cover`) → foto membesar. Sejak Session 100: outer `lg:h-screen` + inner `lg:h-full` + `grid-rows-1` → baris grid = tepat tinggi viewport, kelebihan konten ditampung `overflow-y-auto` kolom form. Tinggi aside sudah terkunci, jadi alasan slot reserved kedaluwarsa.
+
+**Perubahan (5 file):**
+- `AuthTextField.tsx` / `PasswordField.tsx`: buang wrapper `min-h-[32px] pt-1.5`, kembali ke `{error && <p className="mt-1.5 text-sm text-destructive">}`.
+- `login-form.tsx` / `register-form.tsx`: banner error kembali conditional (tidak ada wrapper kosong) dengan `mb-6`, subjudul `mb-4` → `mb-6`, `<form>` kembali `space-y-5` (dihilangkan di Session 98), tombol login buang `mt-5` (space-y sudah memberi 20px).
+- `e2e/public/auth.spec.ts`: 3 test "tinggi konten form tidak berubah" diganti invarian yang relevan — **tinggi aside tidak berubah dan tetap = viewport saat error muncul** (bug asli Session 98); tambah 2 test "jarak subjudul ke field pertama tetap rapat" (≤ 32px); helper `formContentHeight` dihapus (tak terpakai).
+
+**Hasil terukur (1440x900, dev server):**
+- subjudul → field pertama: **78px → 24px** (h1 → subjudul tetap 8px).
+- antar field: **32px → 20px** (login 2 gap, register 4 gap).
+- tinggi konten natural kolom: login **618 → 540px**, register **778 → 676px**. Delta register −102 = −62 (banner) −128 (4×32 slot) +80 (space-y 4 gap) +8 (`mb-6`); login −78 = −62 −64 (2×32) +60 (space-y 3 gap) −20 (`mt-5`) +8.
+- aside & dokumen tetap **900px** sebelum & sesudah error validasi; `col.scrollHeight == col.clientHeight` di kedua halaman (tanpa overflow).
+
+**Test regresi diverifikasi kekuatannya:** 4 file src di-`git stash push -- <path>` lalu e2e dijalankan dengan test baru → 2 test gap **gagal dengan nilai 78** (persis hitungan CSS), sedangkan 3 test stabilitas aside **tetap lolos di kode lama** — membuktikan slot reserved memang sudah redundan. Stash di-pop, 17/17 lolos lagi.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 17/17 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+> Catatan environment: `./init.sh` tidak bisa dieksekusi di sesi ini (tidak ada `bash`/Git-bash di mesin). Semua langkah di dalamnya dijalankan terpisah dengan hasil di atas; `npm install` dilewati karena dependensi sudah terpasang dan semua tool berjalan, `check:routes` dilewati karena manifest build belum ada (sama seperti baseline).
+
+## Session 102 - Auth: hapus link "Kembali ke Beranda" (feat/form-migration)
+
+**Permintaan user:** "Coba hapus tombol 'Kembali ke Beranda'".
+
+**Perubahan (5 file):**
+- `login-form.tsx` / `register-form.tsx`: hapus `<Link href="/">` berisi `← Kembali ke Beranda`, beserta import `ArrowLeft` dari `lucide-react` (import `Link` tetap dipakai untuk "Daftar di sini" / "Masuk di sini").
+- `AuthSkeleton.tsx`: hapus bar placeholder pertama `h-4 w-36 self-start` yang mewakili link tersebut, supaya skeleton tidak menampilkan konten yang sudah tidak ada.
+- `design.md`: hapus baris "Link `← Kembali ke Beranda` di pojok kanan atas." dari spesifikasi Halaman Auth agar dokumen sinkron dengan implementasi.
+
+**Dampak layout:** anak pertama kolom form kini `<h1>` (sebelumnya Link). Selektor `[&>*:first-child]:mt-auto` otomatis berpindah ke h1, jadi perilaku centering auto-margin tidak berubah — terbukti test "konten form tetap center saat muat" tetap lolos. Tinggi konten form berkurang 52px (20px tinggi link + `mb-8` 32px).
+
+**Trade-off yang tercatat — keputusan user: dibiarkan apa adanya, tanpa pengganti:**
+- Desktop (lg+): masih ada jalan ke beranda via logo di `AuthAside` (`<Link href="/">`).
+- Mobile (<lg): `AuthAside` berkelas `hidden lg:flex`, dan grup `(auth)` tidak punya layout `SiteChrome` (navbar) → **tidak ada lagi link beranda yang terlihat**; pengguna hanya punya tombol back browser.
+- User ditawari dua opsi pengganti (tampilkan logo aside di mobile, atau tambah link beranda alternatif di bawah form) dan memilih **tidak usah ditambahi**. Jangan mengangkat ini lagi kecuali ada laporan user.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline; `ArrowLeft` tidak jadi unused-var) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 17/17 lolos • `check:structure` R1 0 (R3 pre-existing, 234 vs 220 tidak berubah) • `check:schema-drift` OK. Pencarian repo: tidak ada test/e2e yang mereferensikan link ini.
+
+## Session 103 - Auth: grup form terpusat + jarak antar blok seragam 16px (feat/form-migration)
+
+**Permintaan user:** "Coba pusatkan keseluruhan kelompok form secara vertikal dengan jarak yang konsisten." Saat ditanya targetnya, user memilih **seragam 16px**.
+
+**Temuan pengukuran (1440x900) sebelum perubahan:**
+- Pusat vertikal **sudah tepat**: `topGap === bottomGap` (login 206/206, register 138/138), margin auto anak pertama/terakhir juga identik (166/166 dan 98/98).
+- Yang tidak konsisten adalah jarak antar blok: h1→subjudul **8** (`mb-2`), subjudul→form **24** (`mb-6`), form→divider **16** (`my-4`), divider→Google **16** (`my-4`), Google→footer **32** (`mt-8`).
+
+**Perubahan (4 file):**
+- `login-form.tsx` / `register-form.tsx`: `h1 mb-2`→`mb-4`, subjudul `mb-6`→`mb-4`, banner error `mb-6`→`mb-4`, `<form> space-y-5`→`space-y-4`, footer `mt-8`→`mt-4`.
+- `AuthSkeleton.tsx`: `space-y-5`→`space-y-4`, blok header `space-y-2`→`space-y-4`; blok field `space-y-2` **dipertahankan** (itu jarak label→input, memang harus rapat).
+- `SocialLoginButton.tsx`: tidak diubah — default `my-4` sudah 16px.
+- `e2e/public/auth.spec.ts`: +2 test "jarak antar blok form seragam 16px"; helper `gotoAuth` diperkuat.
+
+**Keputusan teknis — container sengaja TIDAK memakai `space-y-*`:** di Tailwind v4, `space-y` diimplementasikan lewat selektor `:not(:last-child)` yang spesifikasinya **sama** dengan `[&>*:first-child]:mt-auto` / `[&>*:last-child]:mb-auto`. Yang menentukan jadi urutan stylesheet, sehingga centering bisa hilang tanpa sengaja. Karena container ber-layout flex (margin antar-item tidak pernah collapse), margin eksplisit per anak adalah cara yang deterministik.
+
+**Hasil terukur (1440x900):**
+
+| Antar blok | Sebelum | Sesudah |
+|---|---|---|
+| h1 → subjudul | 8 | 16 |
+| subjudul → form | 24 | 16 |
+| form → divider | 16 | 16 |
+| divider → tombol Google | 16 | 16 |
+| tombol Google → footer | 32 | 16 |
+
+Pusat tetap tepat: login 206/206 → **220/220**, register 138/138 → **154/154** (margin auto simetris 180/180 dan 114/114). Tidak ada overflow. Jarak antar field dalam form: `space-y-5` 20px → `space-y-4` **16px**.
+
+**Test regresi diverifikasi kekuatannya:** 3 file src di-`git stash push -- <path>` lalu test baru dijalankan → register gagal dengan **spread 24** (32−8); probe terukur login `[8,24,16,16,32]` = spread 24 juga. Setelah pop: 19/19 lolos.
+
+**Temuan flaky yang diperbaiki:** pada run pertama sesudah stash, test login gagal dengan `gaps[0] = 0` (bukan 24). Probe membuktikan gap aslinya 24 → pengukuran jalan **sebelum stylesheet terpasang**, sehingga semua margin terbaca 0. Fix: `gotoAuth` kini menunggu `getComputedStyle(col).paddingTop === "40px"` sebelum mengukur apa pun.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` **19/19** lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 104 - Auth: samakan ukuran & styling link pergantian halaman (feat/form-migration)
+
+**Permintaan user (4 poin):** samakan ukuran teks "Masuk di sini" / "Daftar di sini" dengan "Atau lanjutkan dengan", warnai link dengan warna brand, buat lebih tebal, tampilkan underline saat hover — lalu revisi: **jangan italic**.
+
+**Perubahan (2 file: `login-form.tsx`, `register-form.tsx` — hanya blok footer):**
+- `<p>` footer: `text-sm` → `text-xs`, sehingga seluruh baris (termasuk link) = 12px dan sama persis dengan divider `Atau lanjutkan dengan` (`text-xs`).
+- `<Link>`: `italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors` → `text-primary font-bold hover:underline`.
+
+Kalimat induk ("Belum punya akun?" / "Sudah Punya Akun?") ikut turun ke 12px supaya tidak ada perbedaan ukuran di dalam satu baris.
+
+**Hasil terukur (Playwright, computed style, 1440x900):**
+
+| | divider "Atau lanjutkan dengan" | link footer |
+|---|---|---|
+| font-size | 12px | **12px** ✓ |
+| font-weight | 400 | **700** ✓ |
+| font-style | normal | **normal** ✓ (italic dibuang) |
+| color | `--muted-foreground` | **`--primary` #F49D1A** ✓ |
+| decoration istirahat / hover | — | **none → underline** ✓ |
+
+**⚠️ Kontras terukur (rumus WCAG, latar terang `--background` `#FCFCFC`):**
+- `text-primary` **#F49D1A → 2.11:1** — di bawah ambang AA (4.5:1 untuk teks 12px). Sebelumnya link memakai `text-foreground` **#171717 = 17.47:1**.
+- Mode gelap `#121212` → **8.64:1** ✓ lolos.
+- Shade brand family yang lolos AA di latar terang: `#B45309` (amber-700, hover lama) **4.89:1**; `#c47d12` (hover brand terdokumentasi di `design.md` baris 24) hanya **3.25:1**.
+- Dilaporkan ke user sebagai catatan; belum ada tindak lanjut — permintaan dieksekusi apa adanya.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 19/19 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK. Tidak ada test yang mengunci kelas CSS link (unit test hanya memeriksa `href`, e2e hanya mengkliknya), jadi perubahan styling tidak menyentuh test mana pun.
+
+## Session 105 - Auth: kembalikan ukuran baris footer ke 14px (feat/form-migration)
+
+**Permintaan user:** "Coba kembalikan ukuran teksnya." Karena bisa bermakna tiga hal, ditanyakan langsung; jawaban user: **baris footer → 14px, divider tetap 12px** (bukan "keduanya 14px", bukan "hanya kalimat induk").
+
+**Perubahan (2 file):** `<p>` footer `text-xs` → `text-sm` di `login-form.tsx` dan `register-form.tsx`. Styling link dari Session 104 **tidak disentuh** (`text-primary font-bold hover:underline`, tanpa italic) dan `SocialLoginButton` tetap `text-xs`.
+
+**Efek ke permintaan awal:** penyamaran **ukuran** di Session 104 kini dibatalkan secara sadar — link 14px vs divider "Atau lanjutkan dengan" 12px. Yang tersisa dari permintaan itu hanya warna brand, ketebalan, dan underline saat hover.
+
+**Hasil terukur (Playwright, computed style, 1440x900, kedua halaman identik):**
+- divider **12px** · kalimat induk **14px** · link **14px**, `font-weight 700`, `font-style normal`, warna `--primary` `#F49D1A`, `text-decoration none` → `underline` saat hover.
+
+**Catatan kontras terbuka (dari Session 104, belum ditindaklanjuti):** `#F49D1A` di atas `#FCFCFC` = **2.11:1**. Menaikkan ke 14px **tidak** mengubah ambangnya — 14px tebal masih di bawah ambang "large text" (≥18.66px tebal), jadi syaratnya tetap 4.5:1. Opsi yang lolos dengan tetap brand family: `#B45309` = **4.89:1**.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 19/19 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 106 - Auth: aktifkan checkbox "Ingat saya" (feat/form-migration)
+
+**Permintaan user:** "Apakah tombol Ingat Saya benar-benar bekerja?" → dijawab **tidak** dengan bukti, lalu user meminta "Kerjakan".
+
+**Temuan sebelum diubah:**
+- `<Checkbox id="remember-me" />` tanpa `checked`/`onCheckedChange` dan tidak di-`register()` ke react-hook-form → Base UI hanya menyimpan state visualnya sendiri; tidak ada yang membacanya.
+- `loginSchema` hanya berisi `email` + `password`; `onSubmit` mengirim `{email, password}`.
+- Grep seluruh repo: 6 kemunculan "remember/Ingat saya", semuanya di `design.md`/`plan/`/`progress.md` — **0 test**.
+- Karena better-auth default `rememberMe: true` dan proyek tidak pernah mengirimkannya, login **selalu** berperilaku "diingat": cookie `maxAge = session.expiresIn` (default 7 hari, `auth.config.ts` tidak override) + session DB 7 hari. Menandai/menidak centang hasilnya identik.
+
+**Keputusan desain (menyimpang dari rencana yang ditawarkan ke user):** rencana awal menambah `rememberMe: z.boolean().default(true)` ke `loginSchema`. Kode itu **gagal tsc** — zodResolver mengetik `Resolver<z.input<S>, any, z.output<S>>` dan `.default()` membuat input (`boolean | undefined`) ≠ output (`boolean`) → `TS2322`. Solusi standarnya `useForm<z.input<...>, any, z.output<...>>`, yang memperkenalkan `any` dan berisiko mengubah baseline lint (82 warning). `rememberMe` juga bukan field yang divalidasi, jadi ia dikeluarkan dari skema validasi: `loginSchema` tetap berarti "apakah kredensial ini sah" dan `auth-schema.test.ts` tidak perlu disentuh. Deviasi ini dilaporkan ke user.
+
+**Perubahan (2 file kode + 2 file test):**
+- `login-form.tsx`: state lokal `const [rememberMe, setRememberMe] = useState(true)` (default `true` supaya perilaku user lama tidak berubah), `<Checkbox checked={rememberMe} onCheckedChange={setRememberMe}>`, dan `signIn.email({ ...values, rememberMe })`.
+- `auth.schema.ts` **tidak berubah** (revert penuh setelah percobaan `.default(true)` — tidak muncul di `git status`).
+
+**Test & teeth check:**
+- `auth-pages.test.tsx`: assertion `toHaveBeenCalledWith({email, password})` diperbarui → kini `+ rememberMe: true`; **+1 test** untuk arah yang belum tercentang: `rememberMe: false`.
+- `e2e/public/auth.spec.ts`: **+1 test wire-level** — intercept `POST /api/auth/sign-in/email` lalu assert `body.rememberMe === false`. Lebih kuat dari mock unit test karena membuktikan field-nya sampai ke server.
+- **Teeth check:** `signIn.email(values)` dikembalikan sementara → test e2e **1 failed**; dikembalikan → **20 passed**.
+
+**Bentuk DOM terukur (Base UI):** `Checkbox` me-render `<span role="checkbox">` yang terlihat plus `<input type="checkbox" aria-hidden tabindex="-1" id="remember-me">` yang menerima `<label for>`. Baik klik label maupun klik role sama-sama men-toggle `checked` (true → false → true); `getByRole("checkbox", { name: "Ingat saya" })` cocok.
+
+**Efek perilaku:**
+- Centang (bawaan): cookie 7 hari + session DB 7 hari — **identik dengan kondisi sebelum perubahan**, jadi tidak ada kejutan bagi user lama.
+- Tidak centang: `rememberMe: false` → cookie tanpa `maxAge` (session cookie, hilang saat browser ditutup) + session DB kedaluwarsa **1 hari** (`better-auth/dist/db/internal-adapter.mjs:271`).
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/**436** test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
+
+## Session 107 - Auth: selaraskan AuthSkeleton dengan form asli (feat/form-migration)
+
+**Permintaan user:** "Apakah skeleton sudah sesuai" → dijawab **belum**, lalu "Kerjakan".
+
+**Temuan (diukur live di 1440x900, form asli vs skeleton):**
+
+| Blok | Form asli | Skeleton lama | Δ |
+|---|---|---|---|
+| Judul h1 (`lg:text-3xl` = 36px) | 36 | 32 (`h-8`) | -4 |
+| Subjudul (`text-sm` = 20px) | 20 | 16 (`h-4`) | -4 |
+| Label tiap field (`text-sm`) | 20 | 16 (`h-4`) | -4 x2 / x4 |
+| Baris "Ingat saya" (login) | 20 + gap 16 | **tidak ada** | **-36** |
+| Label divider (`text-xs` = 16px) | 16 | 12 (`h-3`) | -4 |
+| Tombol Google (`size` default = `h-10`) | 40 | 44 (`h-11`) | **+4** |
+| Bar footer (`text-sm`) | 20 | 16 (`h-4`) | -4 |
+| **Total konten** | **login 460 / register 592** | **404 / 564** | **-56 / -28** |
+
+Karena kolom memakai auto-margin centering, skeleton yang lebih pendek berarti konten **melompat 28px (login) / 14px (register)** saat loading selesai: top gap skeleton 248 vs form 220 (login), 168 vs 154 (register). Penyebab terbesar di login (36 dari 56px) adalah baris checkbox yang tidak pernah ada di skeleton. Akar masalahnya: **tidak ada satu pun test yang mengunci AuthSkeleton** — Session 103 hanya menyamakan jarak (16px), tinggi tiap bar tidak pernah dicocokkan ulang.
+
+**Perubahan (3 file):**
+- `AuthSkeleton.tsx`: 7 nilai tinggi diperbaiki (judul `h-8 lg:h-9`, subjudul/label/divider-label/footer `h-4`/`h-3` → `h-5`/`h-4`, tombol Google `h-11` → `h-10`; tombol submit memang `h-11` dan tidak diubah) + prop baru `rememberRow?: boolean` yang me-render baris dua bar `justify-between` (h-5) di antara field terakhir dan tombol submit.
+- `login/loading.tsx`: `<AuthSkeleton fields={2} rememberRow />`. `register/loading.tsx` tetap `fields={4}` tanpa remember row. `(auth)/loading.tsx` (fallback grup, `fields={2}`) sengaja **tidak** diubah — boundary loading spesifik tiap segmen yang dipakai, dan fallback grup tidak jelas milik halaman mana.
+- `__tests__/auth-skeleton.test.tsx` (baru, 4 test): memutar ulang pixel math dari kelas tinggi (jsdom tidak bisa layout) dan mengassert total login **460** / register **592** + ada/tidaknya remember row + ritme `space-y-4`.
+
+**Cek matematika:** login 72+136+20+44+16+40+20=348 + 7x16=112 → **460** ✓; register 72+272+44+16+40+20=464 + 8x16=128 → **592** ✓.
+
+**Teeth check:** satu bar Google dikembalikan sementara ke `h-11` → 2 test gagal (`464 vs 460`, `596 vs 592`, tepat +4px); dikembalikan → lolos. Catatan: `sed`-style replace sempat mengenai dua bar `h-11` sekaligus (submit ikut berubah) — diperbaiki dengan edit presisi, diff akhir dikonfirmasi hanya menyentuh bar Google.
+
+**Verifikasi live komponen asli:** route sementara me-render `AuthSkeleton` sungguhan (bukan rekonstruksi) → login **460=460 topGap 220**, register **592=592 topGap 154** → lompatan **0px** di kedua halaman. Route sementara + skrip ukur sudah dihapus; tree hanya berisi 3 file yang dituju. Insiden: folder `__skel-check__` me-return 404 karena Next.js menganggap folder berawalan underscore sebagai private (dikeluarkan dari route tree) + dev server mengunci rename di Windows — dipakai nama `skel-check-temp` lalu dihapus penuh.
+
+**Test & lint hygiene:** file test baru sempat menambah 2 error `react/jsx-key` (elemen array tanpa key) → diperbaiki, kembali 0 errors/82 warnings. Import test memakai relative path (`../components/...`) supaya `check:structure` R3 tidak naik (tetap 234 pre-existing, R1 0).
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 51 file/**440** test lolos (+4) • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing 234) • `check:schema-drift` OK.
+
+## Session 108 - Auth: batasi area klik logo aside selebar gambar (feat/form-migration)
+
+**Permintaan user:** "Apakah normal jika ada gambar overlay di kiri atas? jika iya apakah normal jika container-nya lebar padahal gak sesuai gambar?" → dijawab dengan pengukuran, lalu "Ya" (perbaiki).
+
+**Temuan (diukur live di 1440x900, login & register identik):**
+- Gambar kiri atas = logo "Jelajah Memoria" (`AuthAside.tsx:39-48`), disengaja sebagai branding + link ke `/` — normal.
+- Container-nya (`<Link href="/">` pembungkus logo) **tidak normal**: lebar 640px vs gambar 56px. Link sebagai flex item di parent `flex-col` default `stretch` mengikuti lebar kolom aside (720 - padding 2x40 = 640), sehingga ±584px area gelap tak terlihat ikut bisa diklik. Terbukti: klik titik kosong (600,68) memindahkan browser ke `/`.
+
+**Perubahan (1 baris):** `AuthAside.tsx` — tambah `self-start` pada Link logo sehingga area klik pas selebar gambar.
+
+**Verifikasi live setelah perbaikan (Playwright, kedua halaman):** `linkW=56 = imgW=56` (sebelumnya 640); klik area kosong (600,68) tidak lagi navigasi (tetap di `/login`/`/register`); klik logo tetap navigasi ke `/`. Skrip ukur sementara sudah dihapus.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest src/features/auth` 5 file/50 test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos.
+
+## Session 109 - Button: hapus efek tekan agar kembali ke perilaku stok (feat/form-migration)
+
+**Permintaan user:** "Apakah bagian dari animasi ShadCN?" → dijawab ya, bawaan template `base-nova` (ada sejak file disalin di `b6d67aa`, tak pernah diubah setelahnya). Lanjut: "Kalau dikembalikan ke animasi versi stok bisa gak" → ya, user setuju dikerjakan.
+
+**Keputusan cakupan:** yang dihapus hanya token `active:not-aria-[haspopup]:translate-y-px` di kelas dasar `buttonVariants` (`button.tsx:6`) — efek tekan-turun 1px di semua Button. `transition-all` dibiarkan (tanpa transform tersisa ia berperilaku sama untuk transisi warna). Efek `active:scale-*` di 8 tombol hand-written (private-trip, SearchBar, contact, newsletter, admin) TIDAK disentuh: bukan komponen Button bersama, tidak punya konflik translate, di luar cakupan.
+
+**Efek samping yang menyelesaikan bug sesi sebelumnya:** tanpa varian `:active` yang menimpa `--tw-translate-y`, centering `-translate-y-1/2` tombol mata tidak lagi terganggu — lompatan 15px hilang tanpa perlu mengubah `PasswordField`.
+
+**Verifikasi live (Playwright, mouse.down 300ms, 1440x900):** tombol mata login/register + tombol Masuk/Daftar semuanya **dy=0** (sebelumnya mata 15, submit 1). Skrip ukur sementara sudah dihapus.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 51 file/**440** test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing 234).

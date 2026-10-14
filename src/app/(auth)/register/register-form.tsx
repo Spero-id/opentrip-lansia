@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp, signIn } from "@/lib/auth/client";
@@ -86,8 +85,8 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="fixed inset-0 overflow-hidden lg:static lg:h-auto lg:min-h-screen bg-background flex flex-col lg:flex lg:items-center lg:justify-center lg:p-4">
-      <div className="flex flex-col flex-1 min-h-0 lg:min-h-0 lg:flex-none w-full max-w-6xl lg:grid lg:grid-cols-2 lg:rounded-2xl overflow-hidden lg:border lg:border-border lg:shadow-xs">
+    <div className="fixed inset-0 overflow-hidden lg:static lg:h-screen bg-background flex flex-col lg:flex">
+      <div className="flex flex-col flex-1 min-h-0 lg:h-full lg:flex-none w-full lg:grid lg:grid-cols-2 lg:grid-rows-1 overflow-hidden">
 
         <AuthAside
           image="/register-page-image.jpeg"
@@ -101,19 +100,14 @@ export default function RegisterForm() {
           description="Daftar sekarang dan temukan destinasi impian dengan pengalaman tak terlupakan."
         />
 
-        <div className="order-2 lg:order-2 relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
-          >
-            <ArrowLeft size={14} />
-            Kembali ke Beranda
-          </Link>
-
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
+        {/* Auto margins center the form vertically when it fits, and collapse to 0 on
+            overflow so the column stays scrollable from the very top (justify-content
+            would keep centering and clip the top away). */}
+        <div className="order-2 lg:order-2 relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto lg:w-full lg:mx-auto lg:max-w-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
             Buat Akun Baru
           </h1>
-          <p className="text-muted-foreground text-sm mb-8">
+          <p className="text-muted-foreground text-sm mb-4">
             Daftar untuk mulai merencanakan trip berikutnya.
           </p>
 
@@ -123,7 +117,7 @@ export default function RegisterForm() {
             </div>
           )}
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <AuthTextField
               label="Nama Lengkap"
               placeholder="Masukkan nama kamu"
@@ -169,11 +163,11 @@ export default function RegisterForm() {
             label="Daftar dengan Google"
           />
 
-          <p className="text-center text-sm text-muted-foreground mt-8">
+          <p className="text-center text-sm text-muted-foreground mt-4">
             Sudah Punya Akun?{" "}
             <Link
               href={loginHref}
-              className="italic text-foreground font-semibold hover:text-amber-700 dark:hover:text-primary transition-colors"
+              className="text-primary font-bold hover:underline"
             >
               Masuk di sini
             </Link>

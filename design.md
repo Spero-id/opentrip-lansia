@@ -145,7 +145,6 @@ Sesuai dengan acuan desain gambar 2:
 - **Layout**: Split screen (2 Kolom di Desktop).
 - **Kolom Kiri**: Full height photo underwater/diving dengan overlay gelap transparan, teks logo `OpenTrip`, tagline "Jelajahi Lebih Jauh. Kenangan Lebih Lama." dan deskripsi singkat.
 - **Kolom Kanan**: Form bersih dengan:
-  - Link `← Kembali ke Beranda` di pojok kanan atas.
   - Judul `Selamat Datang Kembali`.
   - Subjudul `Masuk untuk mulai merencanakan trip berikutnya.`.
   - Input Email & Password (dengan ikon toggle mata).
