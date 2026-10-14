@@ -38,7 +38,7 @@ export default function AuthAside({
 
       <Link
         href="/"
-        className="relative z-10 flex items-center gap-2 text-primary font-bold text-lg"
+        className="relative z-10 flex items-center gap-2 self-start text-primary font-bold text-lg"
       >
         <img
           src="/Jelajah-Memoria-01.png"

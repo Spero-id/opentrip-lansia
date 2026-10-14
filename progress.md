@@ -2999,3 +2999,17 @@ Karena kolom memakai auto-margin centering, skeleton yang lebih pendek berarti k
 **Test & lint hygiene:** file test baru sempat menambah 2 error `react/jsx-key` (elemen array tanpa key) → diperbaiki, kembali 0 errors/82 warnings. Import test memakai relative path (`../components/...`) supaya `check:structure` R3 tidak naik (tetap 234 pre-existing, R1 0).
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 51 file/**440** test lolos (+4) • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing 234) • `check:schema-drift` OK.
+
+## Session 108 - Auth: batasi area klik logo aside selebar gambar (feat/form-migration)
+
+**Permintaan user:** "Apakah normal jika ada gambar overlay di kiri atas? jika iya apakah normal jika container-nya lebar padahal gak sesuai gambar?" → dijawab dengan pengukuran, lalu "Ya" (perbaiki).
+
+**Temuan (diukur live di 1440x900, login & register identik):**
+- Gambar kiri atas = logo "Jelajah Memoria" (`AuthAside.tsx:39-48`), disengaja sebagai branding + link ke `/` — normal.
+- Container-nya (`<Link href="/">` pembungkus logo) **tidak normal**: lebar 640px vs gambar 56px. Link sebagai flex item di parent `flex-col` default `stretch` mengikuti lebar kolom aside (720 - padding 2x40 = 640), sehingga ±584px area gelap tak terlihat ikut bisa diklik. Terbukti: klik titik kosong (600,68) memindahkan browser ke `/`.
+
+**Perubahan (1 baris):** `AuthAside.tsx` — tambah `self-start` pada Link logo sehingga area klik pas selebar gambar.
+
+**Verifikasi live setelah perbaikan (Playwright, kedua halaman):** `linkW=56 = imgW=56` (sebelumnya 640); klik area kosong (600,68) tidak lagi navigasi (tetap di `/login`/`/register`); klik logo tetap navigasi ke `/`. Skrip ukur sementara sudah dihapus.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest src/features/auth` 5 file/50 test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos.
