@@ -2841,3 +2841,20 @@ Pertanyaan awal: apakah `globals.css` dan `design.md` kontradiksi? Diverifikasi 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 17/17 lolos • `check:structure` R1 0 (R3 pre-existing) • `check:schema-drift` OK.
 
 > Catatan environment: `./init.sh` tidak bisa dieksekusi di sesi ini (tidak ada `bash`/Git-bash di mesin). Semua langkah di dalamnya dijalankan terpisah dengan hasil di atas; `npm install` dilewati karena dependensi sudah terpasang dan semua tool berjalan, `check:routes` dilewati karena manifest build belum ada (sama seperti baseline).
+
+## Session 102 - Auth: hapus link "Kembali ke Beranda" (feat/form-migration)
+
+**Permintaan user:** "Coba hapus tombol 'Kembali ke Beranda'".
+
+**Perubahan (5 file):**
+- `login-form.tsx` / `register-form.tsx`: hapus `<Link href="/">` berisi `← Kembali ke Beranda`, beserta import `ArrowLeft` dari `lucide-react` (import `Link` tetap dipakai untuk "Daftar di sini" / "Masuk di sini").
+- `AuthSkeleton.tsx`: hapus bar placeholder pertama `h-4 w-36 self-start` yang mewakili link tersebut, supaya skeleton tidak menampilkan konten yang sudah tidak ada.
+- `design.md`: hapus baris "Link `← Kembali ke Beranda` di pojok kanan atas." dari spesifikasi Halaman Auth agar dokumen sinkron dengan implementasi.
+
+**Dampak layout:** anak pertama kolom form kini `<h1>` (sebelumnya Link). Selektor `[&>*:first-child]:mt-auto` otomatis berpindah ke h1, jadi perilaku centering auto-margin tidak berubah — terbukti test "konten form tetap center saat muat" tetap lolos. Tinggi konten form berkurang 52px (20px tinggi link + `mb-8` 32px).
+
+**Trade-off yang tercatat (belum ditindaklanjuti, menunggu keputusan user):**
+- Desktop (lg+): masih ada jalan ke beranda via logo di `AuthAside` (`<Link href="/">`).
+- Mobile (<lg): `AuthAside` berkelas `hidden lg:flex`, dan grup `(auth)` tidak punya layout `SiteChrome` (navbar) → **tidak ada lagi link beranda yang terlihat**; pengguna hanya punya tombol back browser.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline; `ArrowLeft` tidak jadi unused-var) • `vitest` 50 file/435 test lolos • `playwright e2e/public/auth.spec.ts` 17/17 lolos • `check:structure` R1 0 (R3 pre-existing, 234 vs 220 tidak berubah) • `check:schema-drift` OK. Pencarian repo: tidak ada test/e2e yang mereferensikan link ini.

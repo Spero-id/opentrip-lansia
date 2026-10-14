@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp, signIn } from "@/lib/auth/client";
@@ -105,14 +104,6 @@ export default function RegisterForm() {
             overflow so the column stays scrollable from the very top (justify-content
             would keep centering and clip the top away). */}
         <div className="order-2 lg:order-2 relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto lg:w-full lg:mx-auto lg:max-w-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 self-start"
-          >
-            <ArrowLeft size={14} />
-            Kembali ke Beranda
-          </Link>
-
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
             Buat Akun Baru
           </h1>
