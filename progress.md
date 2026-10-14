@@ -3013,3 +3013,15 @@ Karena kolom memakai auto-margin centering, skeleton yang lebih pendek berarti k
 **Verifikasi live setelah perbaikan (Playwright, kedua halaman):** `linkW=56 = imgW=56` (sebelumnya 640); klik area kosong (600,68) tidak lagi navigasi (tetap di `/login`/`/register`); klik logo tetap navigasi ke `/`. Skrip ukur sementara sudah dihapus.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest src/features/auth` 5 file/50 test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos.
+
+## Session 109 - Button: hapus efek tekan agar kembali ke perilaku stok (feat/form-migration)
+
+**Permintaan user:** "Apakah bagian dari animasi ShadCN?" → dijawab ya, bawaan template `base-nova` (ada sejak file disalin di `b6d67aa`, tak pernah diubah setelahnya). Lanjut: "Kalau dikembalikan ke animasi versi stok bisa gak" → ya, user setuju dikerjakan.
+
+**Keputusan cakupan:** yang dihapus hanya token `active:not-aria-[haspopup]:translate-y-px` di kelas dasar `buttonVariants` (`button.tsx:6`) — efek tekan-turun 1px di semua Button. `transition-all` dibiarkan (tanpa transform tersisa ia berperilaku sama untuk transisi warna). Efek `active:scale-*` di 8 tombol hand-written (private-trip, SearchBar, contact, newsletter, admin) TIDAK disentuh: bukan komponen Button bersama, tidak punya konflik translate, di luar cakupan.
+
+**Efek samping yang menyelesaikan bug sesi sebelumnya:** tanpa varian `:active` yang menimpa `--tw-translate-y`, centering `-translate-y-1/2` tombol mata tidak lagi terganggu — lompatan 15px hilang tanpa perlu mengubah `PasswordField`.
+
+**Verifikasi live (Playwright, mouse.down 300ms, 1440x900):** tombol mata login/register + tombol Masuk/Daftar semuanya **dy=0** (sebelumnya mata 15, submit 1). Skrip ukur sementara sudah dihapus.
+
+**Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 51 file/**440** test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing 234).
