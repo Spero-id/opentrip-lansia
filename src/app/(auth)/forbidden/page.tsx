@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home, Lock, ArrowLeft } from "lucide-react";
+import { Home, Lock } from "lucide-react";
 
 export default function ForbiddenPage() {
   return (
