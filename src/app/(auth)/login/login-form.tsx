@@ -87,13 +87,11 @@ export default function LoginForm() {
         <AuthTextField
           label="Email"
           type="email"
-          placeholder="Masukkan email kamu"
           error={errors.email?.message}
           {...register("email", { onChange: () => clearErrors("email") })}
         />
 
         <PasswordField
-          placeholder="Masukkan password kamu"
           error={errors.password?.message}
           {...register("password", { onChange: () => clearErrors("password") })}
         />

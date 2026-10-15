@@ -71,7 +71,7 @@ describe("LoginForm validasi", () => {
     const user = userEvent.setup();
     render(<LoginForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi-at-example");
+    await user.type(screen.getByLabelText("Email"), "budi-at-example");
     await clickSubmit(user, "Masuk");
 
     expect(await screen.findByText("Email tidak valid")).toBeTruthy();
@@ -83,8 +83,8 @@ describe("LoginForm validasi", () => {
     const user = userEvent.setup();
     render(<LoginForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
     await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
@@ -107,8 +107,8 @@ describe("LoginForm validasi", () => {
 
     await user.click(screen.getByRole("checkbox", { name: "Ingat saya" }));
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
     await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
@@ -127,8 +127,8 @@ describe("LoginForm validasi", () => {
     const user = userEvent.setup();
     render(<LoginForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "salah");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "salah");
     await clickSubmit(user, "Masuk");
 
     expect(
@@ -154,8 +154,8 @@ describe("LoginForm validasi", () => {
     const daftarLink = screen.getByRole("link", { name: "Daftar di sini" });
     expect(daftarLink.getAttribute("href")).toBe("/register?redirect=%2Ftrips");
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
     await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
@@ -173,8 +173,8 @@ describe("LoginForm validasi", () => {
       screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
     ).toBe("/register");
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
     await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
@@ -192,8 +192,8 @@ describe("LoginForm validasi", () => {
       screen.getByRole("link", { name: "Daftar di sini" }).getAttribute("href")
     ).toBe("/register");
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
     await clickSubmit(user, "Masuk");
 
     await waitFor(() => {
@@ -237,8 +237,8 @@ describe("RegisterForm validasi", () => {
     const user = userEvent.setup();
     render(<RegisterForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "bukan-email");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "pendek");
+    await user.type(screen.getByLabelText("Email"), "bukan-email");
+    await user.type(screen.getByLabelText("Password"), "pendek");
 
     expect(screen.queryByText("Email tidak valid")).toBeNull();
     expect(screen.queryByText("Password minimal 8 karakter")).toBeNull();
@@ -252,7 +252,7 @@ describe("RegisterForm validasi", () => {
     await clickSubmit(user, "Daftar");
     expect(await screen.findByText("Email wajib diisi")).toBeTruthy();
 
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "x");
+    await user.type(screen.getByLabelText("Email"), "x");
 
     expect(screen.queryByText("Email wajib diisi")).toBeNull();
     expect(screen.getByText("Password wajib diisi")).toBeTruthy();
@@ -262,10 +262,10 @@ describe("RegisterForm validasi", () => {
     const user = userEvent.setup();
     render(<RegisterForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "pendek");
-    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "pendek");
+    await user.type(screen.getByLabelText("Nama Lengkap"), "Budi Santoso");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "pendek");
+    await user.type(screen.getByLabelText("Konfirmasi Password"), "pendek");
     await clickSubmit(user, "Daftar");
 
     expect(
@@ -279,10 +279,10 @@ describe("RegisterForm validasi", () => {
     const user = userEvent.setup();
     render(<RegisterForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Nama Lengkap"), "Budi Santoso");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
+    await user.type(screen.getByLabelText("Konfirmasi Password"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     await waitFor(() => {
@@ -305,10 +305,10 @@ describe("RegisterForm validasi", () => {
     const user = userEvent.setup();
     render(<RegisterForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Nama Lengkap"), "Budi Santoso");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
+    await user.type(screen.getByLabelText("Konfirmasi Password"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     expect(await screen.findByText("Email sudah terdaftar")).toBeTruthy();
@@ -319,10 +319,10 @@ describe("RegisterForm validasi", () => {
     const user = userEvent.setup();
     render(<RegisterForm />);
 
-    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "berbeda123");
+    await user.type(screen.getByLabelText("Nama Lengkap"), "Budi Santoso");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
+    await user.type(screen.getByLabelText("Konfirmasi Password"), "berbeda123");
     await clickSubmit(user, "Daftar");
 
     expect(await screen.findByText("Konfirmasi password tidak sama")).toBeTruthy();
@@ -339,10 +339,10 @@ describe("RegisterForm validasi", () => {
       screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
     ).toBe("/login");
 
-    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Nama Lengkap"), "Budi Santoso");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
+    await user.type(screen.getByLabelText("Konfirmasi Password"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     await waitFor(() => {
@@ -360,10 +360,10 @@ describe("RegisterForm validasi", () => {
       screen.getByRole("link", { name: "Masuk di sini" }).getAttribute("href")
     ).toBe("/login?redirect=%2Ftrips");
 
-    await user.type(screen.getByPlaceholderText("Masukkan nama kamu"), "Budi Santoso");
-    await user.type(screen.getByPlaceholderText("Masukkan email kamu"), "budi@example.com");
-    await user.type(screen.getByPlaceholderText("Masukkan password kamu"), "rahasia123");
-    await user.type(screen.getByPlaceholderText("Masukkan konfirmasi password kamu"), "rahasia123");
+    await user.type(screen.getByLabelText("Nama Lengkap"), "Budi Santoso");
+    await user.type(screen.getByLabelText("Email"), "budi@example.com");
+    await user.type(screen.getByLabelText("Password"), "rahasia123");
+    await user.type(screen.getByLabelText("Konfirmasi Password"), "rahasia123");
     await clickSubmit(user, "Daftar");
 
     await waitFor(() => {

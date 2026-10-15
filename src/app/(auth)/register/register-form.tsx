@@ -88,7 +88,6 @@ export default function RegisterForm() {
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <AuthTextField
           label="Nama Lengkap"
-          placeholder="Masukkan nama kamu"
           error={errors.name?.message}
           {...register("name", { onChange: () => clearErrors("name") })}
         />
@@ -96,20 +95,17 @@ export default function RegisterForm() {
         <AuthTextField
           label="Email"
           type="email"
-          placeholder="Masukkan email kamu"
           error={errors.email?.message}
           {...register("email", { onChange: () => clearErrors("email") })}
         />
 
         <PasswordField
-          placeholder="Masukkan password kamu"
           error={errors.password?.message}
           {...register("password", { onChange: () => clearErrors("password") })}
         />
 
         <PasswordField
           label="Konfirmasi Password"
-          placeholder="Masukkan konfirmasi password kamu"
           error={errors.confirmPassword?.message}
           {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
         />
