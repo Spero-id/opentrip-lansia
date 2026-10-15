@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { X, LogOut, User, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth/client";
+import { Button } from "@/components/ui/button";
 
 const emptySubscribe = () => () => {};
 function useIsClient() {
@@ -56,10 +57,9 @@ function MenuItem({ href, children, className, onClick }: MenuItemProps) {
 interface MobileMenuProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  isScrolled?: boolean;
 }
 
-export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
@@ -109,14 +109,15 @@ export default function MobileMenu({ isOpen, setIsOpen, isScrolled: _isScrolled 
             <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
               <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-24 w-auto" />
             </Link>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-full text-foreground hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Close menu"
             >
-              <X size={20} />
-            </button>
+              <X size={20} className="size-5" />
+            </Button>
           </div>
 
           <div className="mt-6 flex-1 min-h-0 overflow-y-auto pr-1">

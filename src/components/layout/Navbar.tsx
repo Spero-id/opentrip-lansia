@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { Menu, X, User, ShoppingBag, LogOut, Shield } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth/client";
 import MobileMenu from "@/components/layout/MobileMenu";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { name: "Beranda", href: "/" },
@@ -17,8 +19,6 @@ const NAV_LINKS = [
 ];
 
 import type { MouseEventHandler, ReactNode } from "react";
-
-const cn = (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(" ");
 
 interface NavbarLinkProps {
   href: string;
@@ -42,18 +42,11 @@ function NavbarLink({ href, children, className, onClick }: NavbarLinkProps) {
 export default function Navbar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const { data: session } = useSession();
   const sessionUser = session?.user ?? null;
   const sessionRole = (sessionUser as { role?: string } | null)?.role;
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -66,29 +59,17 @@ export default function Navbar() {
   }, []);
 
   const navClasses = cn(
-    "w-full p-2 sticky top-0 z-40 transition-all duration-300",
-    isScrolled
-      ? "bg-black/50 backdrop-blur-sm shadow-lg border-b border-white/10"
-      : "bg-transparent border-b border-transparent",
-    isOpen && "bg-background/10 backdrop-blur-xl"
+    "w-full p-2 sticky top-0 z-40 bg-background shadow-lg border-b border-border"
   );
 
-  const logoClasses = cn(
-    "flex items-center gap-2 text-xl font-bold transition-colors",
-    isScrolled ? "text-foreground" : "text-foreground"
-  );
+  const logoClasses = cn("flex items-center gap-2 text-xl font-bold text-foreground");
 
-  const desktopLinkClasses = isScrolled
-    ? "hidden lg:flex font-medium text-sm text-white hover:text-primary"
-    : "hidden lg:flex font-medium text-sm text-foreground hover:text-primary";
+  const desktopLinkClasses =
+    "hidden lg:flex font-medium text-sm text-foreground hover:text-primary";
 
-  const loginButtonClasses = isScrolled
-    ? "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-background/0 border border-white/20 text-white hover:text-primary hover:border-primary hover:bg-background/10"
-    : "px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors bg-background/10 border border-primary text-primary backdrop-blur-sm hover:bg-primary/20 hover:border-primary/20 hover:text-primary";
-
-  const toggleButtonClasses = cn(
-    "p-2 transition-colors",
-    isScrolled ? "text-white" : "text-slate-700"
+  const loginButtonClasses = cn(
+    buttonVariants(),
+    "font-poppins"
   );
 
   return (
@@ -96,11 +77,17 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2 shrink-0">
-            <button onClick={() => setIsOpen((current) => !current)} className={cn(toggleButtonClasses, "lg:hidden")} aria-label="Toggle menu">
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen((current) => !current)}
+              className={cn("lg:hidden", "text-slate-700 hover:text-slate-700")}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X size={24} className="size-6" /> : <Menu size={24} className="size-6" />}
+            </Button>
             <Link href="/" className={logoClasses}>
-              <Image src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" width={96} height={96} priority className="h-24 w-auto" />
+              <Image src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" width={4088} height={2319} priority className="h-12 w-auto" />
             </Link>
           </div>
 
@@ -128,16 +115,14 @@ export default function Navbar() {
                     <span className="hidden sm:flex flex-col items-end leading-tight text-left">
                       <span
                         className={cn(
-                          "max-w-[140px] truncate text-sm font-semibold",
-                          isScrolled ? "text-white" : "text-foreground"
+                          "max-w-[140px] truncate text-sm font-semibold text-foreground"
                         )}
                       >
                         {sessionUser.name || "Pengguna"}
                       </span>
                       <span
                         className={cn(
-                          "text-[11px] font-medium",
-                          isScrolled ? "text-white/70" : "text-muted-foreground"
+                          "text-[11px] font-medium text-muted-foreground"
                         )}
                       >
                         {sessionRole === "admin"
@@ -228,14 +213,14 @@ export default function Navbar() {
                 </div>
               ) : (
                 <>
-                  <Link href="/register" className={loginButtonClasses}>
-                    Daftar
-                  </Link>
                   <Link
                     href="/login"
-                    className="bg-primary border border-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium font-poppins transition-colors shadow-sm hover:bg-primary/85 hover:border-primary/85 hover:shadow-xl"
+                    className={cn(buttonVariants({ variant: "ghost" }), "font-poppins")}
                   >
                     Masuk
+                  </Link>
+                  <Link href="/register" className={loginButtonClasses}>
+                    Daftar
                   </Link>
                 </>
               )}
@@ -245,7 +230,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <MobileMenu isOpen={isOpen} setIsOpen={setIsOpen} isScrolled={isScrolled} />
+      <MobileMenu isOpen={isOpen} setIsOpen={setIsOpen} />
     </nav>
   );
 }
