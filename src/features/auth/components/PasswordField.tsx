@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,15 +17,20 @@ export default function PasswordField({
   ...inputProps
 }: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const fieldId = useId();
 
   return (
     <div>
-      <label className="block text-sm font-medium text-foreground mb-2">
+      <label
+        htmlFor={fieldId}
+        className="block text-sm font-medium text-foreground mb-2"
+      >
         {label}
       </label>
       <div className="relative">
         <Input
           {...inputProps}
+          id={fieldId}
           type={showPassword ? "text" : "password"}
           aria-invalid={error ? true : undefined}
           className="w-full pr-11"

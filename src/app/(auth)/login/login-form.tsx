@@ -1,43 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "@/lib/auth/client";
-import {
-  DEFAULT_REDIRECT,
-  buildAuthHref,
-  readRedirectFromSearch,
-} from "@/utils/redirect";
+import { buildAuthHref } from "@/utils/redirect";
 import { loginSchema, type LoginInput } from "@/features/auth/auth.schema";
+import { translateAuthError } from "@/features/auth/auth-errors";
 import AuthAside from "@/features/auth/components/AuthAside";
+import AuthShell from "@/features/auth/components/AuthShell";
+import AuthErrorAlert from "@/features/auth/components/AuthErrorAlert";
 import AuthTextField from "@/features/auth/components/AuthTextField";
 import PasswordField from "@/features/auth/components/PasswordField";
 import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
+import { useAuthRedirect } from "@/features/auth/hooks/use-auth-redirect";
+import { useGoogleSignIn } from "@/features/auth/hooks/use-google-sign-in";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-function getServerSnapshot() {
-  return DEFAULT_REDIRECT;
-}
-
-function getClientSnapshot() {
-  return readRedirectFromSearch(window.location.search, { allowAdmin: true });
-}
-
-const emptySubscribe = () => () => {};
-
 export default function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState("");
-  const [googleLoading, setGoogleLoading] = useState(false);
   // Session preference, not a validated credential - lives outside the zod
   // schema so loginSchema keeps meaning "are these credentials acceptable".
   const [rememberMe, setRememberMe] = useState(true);
-  const redirectPath = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
+  const redirectPath = useAuthRedirect({ allowAdmin: true });
+  const { googleLoading, handleGoogleLogin } = useGoogleSignIn(redirectPath, setError);
 
   const {
     register,
@@ -58,7 +49,7 @@ export default function LoginForm() {
     const { error: signInError } = await signIn.email({ ...values, rememberMe });
 
     if (signInError) {
-      setError(signInError.message || "Email atau password salah");
+      setError(translateAuthError(signInError.message, "Email atau password salah"));
       return;
     }
 
@@ -66,19 +57,9 @@ export default function LoginForm() {
     router.refresh();
   }
 
-  async function handleGoogleLogin() {
-    setError("");
-    setGoogleLoading(true);
-    await signIn.social({
-      provider: "google",
-      callbackURL: redirectPath,
-    });
-    setGoogleLoading(false);
-  }
-
   return (
-    <div className="fixed inset-0 overflow-hidden lg:static lg:h-screen bg-background flex flex-col lg:flex">
-      <div className="flex flex-col flex-1 min-h-0 lg:h-full lg:flex-none w-full lg:grid lg:grid-cols-2 lg:grid-rows-1 overflow-hidden">
+    <AuthShell
+      aside={
         <AuthAside
           image="/login-image-page.jpeg"
           wrapperClassName="lg:rounded-none"
@@ -91,86 +72,75 @@ export default function LoginForm() {
           }
           description="Dari trip singkat akhir pekan sampai petualangan panjang, temukan semuanya lewat satu platform."
         />
+      }
+    >
+      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+        Selamat Datang Kembali
+      </h1>
+      <p className="text-muted-foreground text-sm mb-4">
+        Masuk untuk mulai merencanakan trip berikutnya.
+      </p>
 
-        {/* Auto margins center the form vertically when it fits, and collapse to 0 on
-            overflow so the column stays scrollable from the very top (justify-content
-            would keep centering and clip the top away). */}
-        <div className="relative flex-1 min-h-0 overflow-y-auto bg-background p-10 flex flex-col [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto lg:w-full lg:mx-auto lg:max-w-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-            Selamat Datang Kembali
-          </h1>
-          <p className="text-muted-foreground text-sm mb-4">
-            Masuk untuk mulai merencanakan trip berikutnya.
-          </p>
+      <AuthErrorAlert message={error} />
 
-          {error && (
-            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-              {error}
-            </div>
-          )}
+      <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <AuthTextField
+          label="Email"
+          type="email"
+          error={errors.email?.message}
+          {...register("email", { onChange: () => clearErrors("email") })}
+        />
 
-          <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <AuthTextField
-              label="Email"
-              type="email"
-              placeholder="Masukkan email kamu"
-              error={errors.email?.message}
-              {...register("email", { onChange: () => clearErrors("email") })}
+        <PasswordField
+          error={errors.password?.message}
+          {...register("password", { onChange: () => clearErrors("password") })}
+        />
+
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="remember-me"
+              checked={rememberMe}
+              onCheckedChange={setRememberMe}
             />
-
-            <PasswordField
-              placeholder="Masukkan password kamu"
-              error={errors.password?.message}
-              {...register("password", { onChange: () => clearErrors("password") })}
-            />
-
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="remember-me"
-                  checked={rememberMe}
-                  onCheckedChange={setRememberMe}
-                />
-                <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
-                  Ingat saya
-                </Label>
-              </div>
-              <a
-                href="#"
-                className="text-primary font-medium hover:underline"
-              >
-                Lupa Password?
-              </a>
-            </div>
-
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              size="lg"
-              variant="default"
-              className="w-full"
-            >
-              {isSubmitting ? "Memproses..." : "Masuk"}
-            </Button>
-          </form>
-
-          <SocialLoginButton
-            onClick={handleGoogleLogin}
-            loading={googleLoading}
-            label="Masuk dengan Google"
-          />
-
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Belum punya akun?{" "}
-            <Link
-              href={registerHref}
-              className="text-primary font-bold hover:underline"
-            >
-              Daftar di sini
-            </Link>
-          </p>
+            <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
+              Ingat saya
+            </Label>
+          </div>
+          <a
+            href="#"
+            className="text-primary font-medium hover:underline"
+          >
+            Lupa Password?
+          </a>
         </div>
-      </div>
-    </div>
+
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          size="lg"
+          variant="default"
+          className="w-full"
+        >
+          {isSubmitting ? "Memproses..." : "Masuk"}
+        </Button>
+      </form>
+
+      <SocialLoginButton
+        onClick={handleGoogleLogin}
+        loading={googleLoading}
+        label="Masuk dengan Google"
+      />
+
+      <p className="text-center text-sm text-muted-foreground mt-4">
+        Belum punya akun?{" "}
+        <Link
+          href={registerHref}
+          className="text-primary font-bold hover:underline"
+        >
+          Daftar di sini
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

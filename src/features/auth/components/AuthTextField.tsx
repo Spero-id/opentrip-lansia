@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { Input } from "@/components/ui/input";
 
 interface AuthTextFieldProps
@@ -15,13 +16,19 @@ export default function AuthTextField({
   error,
   ...inputProps
 }: AuthTextFieldProps) {
+  const fieldId = useId();
+
   return (
     <div>
-      <label className="block text-sm font-medium text-foreground mb-2">
+      <label
+        htmlFor={fieldId}
+        className="block text-sm font-medium text-foreground mb-2"
+      >
         {label}
       </label>
       <Input
         {...inputProps}
+        id={fieldId}
         type={type}
         aria-invalid={error ? true : undefined}
         className="w-full"

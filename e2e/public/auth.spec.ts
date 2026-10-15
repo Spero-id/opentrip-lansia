@@ -8,14 +8,14 @@ test.describe("Auth Pages", () => {
 
     test("should display login form elements", async ({ page }) => {
       await expect(page.getByText("Selamat Datang Kembali")).toBeVisible();
-      await expect(page.getByPlaceholder("Masukkan email kamu")).toBeVisible();
-      await expect(page.getByPlaceholder("Masukkan password kamu")).toBeVisible();
+      await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+      await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Masuk", exact: true })).toBeVisible();
       await expect(page.getByText("Masuk dengan Google")).toBeVisible();
     });
 
     test("should have password visibility toggle", async ({ page }) => {
-      const passwordInput = page.getByPlaceholder("Masukkan password kamu");
+      const passwordInput = page.getByLabel("Password", { exact: true });
       await expect(passwordInput).toHaveAttribute("type", "password");
 
       await expect(async () => {
@@ -33,8 +33,8 @@ test.describe("Auth Pages", () => {
     });
 
     test("should show error on invalid login", async ({ page }) => {
-      await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
-      await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
+      await page.getByLabel("Email", { exact: true }).fill("wrong@email.com");
+      await page.getByLabel("Password", { exact: true }).fill("wrongpass");
       await page.getByRole("button", { name: "Masuk", exact: true }).click();
     });
 
@@ -58,8 +58,8 @@ test.describe("Auth Pages", () => {
         (r) => r.method() === "POST" && r.url().includes("/api/auth/sign-in/email")
       );
 
-      await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
-      await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
+      await page.getByLabel("Email", { exact: true }).fill("wrong@email.com");
+      await page.getByLabel("Password", { exact: true }).fill("wrongpass");
       await page.getByRole("button", { name: "Masuk", exact: true }).click();
 
       // Wire-level proof: without the wiring this field is absent, not false.
@@ -131,10 +131,10 @@ test.describe("Auth Pages", () => {
       await gotoAuth(page, "/login");
 
       await expectImageColumnStable(page, async () => {
-        await page.getByPlaceholder("Masukkan email kamu").fill("wrong@email.com");
-        await page.getByPlaceholder("Masukkan password kamu").fill("wrongpass");
+        await page.getByLabel("Email", { exact: true }).fill("wrong@email.com");
+        await page.getByLabel("Password", { exact: true }).fill("wrongpass");
         await page.getByRole("button", { name: "Masuk", exact: true }).click();
-        await expect(page.locator("div.bg-red-50")).toBeVisible({ timeout: 15000 });
+        await expect(page.getByRole("alert")).toBeVisible({ timeout: 15000 });
       });
     });
 
@@ -263,9 +263,9 @@ test.describe("Auth Pages", () => {
 
     test("should display register form elements", async ({ page }) => {
       await expect(page.getByText("Buat Akun Baru")).toBeVisible();
-      await expect(page.getByPlaceholder("Masukkan nama kamu")).toBeVisible();
-      await expect(page.getByPlaceholder("Masukkan email kamu")).toBeVisible();
-      await expect(page.getByPlaceholder("Masukkan password kamu")).toBeVisible();
+      await expect(page.getByLabel("Nama Lengkap", { exact: true })).toBeVisible();
+      await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+      await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Daftar", exact: true })).toBeVisible();
     });
 
