@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "@/lib/auth/client";
 import { buildAuthHref } from "@/utils/redirect";
 import { loginSchema, type LoginInput } from "@/features/auth/auth.schema";
+import { translateAuthError } from "@/features/auth/auth-errors";
 import AuthAside from "@/features/auth/components/AuthAside";
 import AuthShell from "@/features/auth/components/AuthShell";
 import AuthErrorAlert from "@/features/auth/components/AuthErrorAlert";
@@ -48,7 +49,7 @@ export default function LoginForm() {
     const { error: signInError } = await signIn.email({ ...values, rememberMe });
 
     if (signInError) {
-      setError(signInError.message || "Email atau password salah");
+      setError(translateAuthError(signInError.message, "Email atau password salah"));
       return;
     }
 

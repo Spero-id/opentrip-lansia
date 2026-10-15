@@ -11,6 +11,7 @@ import {
   registerSchema,
   type RegisterInput,
 } from "@/features/auth/auth.schema";
+import { translateAuthError } from "@/features/auth/auth-errors";
 import AuthAside from "@/features/auth/components/AuthAside";
 import AuthShell from "@/features/auth/components/AuthShell";
 import AuthErrorAlert from "@/features/auth/components/AuthErrorAlert";
@@ -50,7 +51,7 @@ export default function RegisterForm() {
     });
 
     if (signUpError) {
-      setError(signUpError.message || "Gagal mendaftar, coba lagi.");
+      setError(translateAuthError(signUpError.message, "Gagal mendaftar, coba lagi."));
       return;
     }
 

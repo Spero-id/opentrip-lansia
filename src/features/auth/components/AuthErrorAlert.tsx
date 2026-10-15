@@ -8,7 +8,10 @@ export default function AuthErrorAlert({ message }: AuthErrorAlertProps) {
   if (!message) return null;
 
   return (
-    <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+    <div
+      role="alert"
+      className="mb-4 p-3 rounded-lg border border-destructive/20 bg-destructive/10 text-destructive text-sm"
+    >
       {message}
     </div>
   );
