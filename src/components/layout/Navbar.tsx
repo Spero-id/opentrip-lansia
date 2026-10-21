@@ -25,6 +25,10 @@ const NAV_LINKS = [
   { name: "Hubungi Kami", href: "/contact" },
 ];
 
+// Approximate text widths (Tailwind spacing) so the loading skeleton of each
+// nav link matches the width of the label it is standing in for.
+const NAV_SKELETON_WIDTHS = ["w-14", "w-24", "w-20", "w-10", "w-24"];
+
 import type { MouseEventHandler, ReactNode } from "react";
 
 interface NavbarLinkProps {
@@ -52,7 +56,7 @@ function NavbarLink({ href, children, className, onClick }: NavbarLinkProps) {
 export default function Navbar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const sessionUser = session?.user ?? null;
   const sessionRole = (sessionUser as { role?: string } | null)?.role;
 
@@ -74,33 +78,62 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2 shrink-0">
-            <Link href="/" className={logoClasses}>
-              <Image
-                src="/Jelajah-Memoria-01.png"
-                alt="Jelajah Memoria"
-                width={4088}
-                height={2319}
-                priority
-                className="h-12 w-auto"
+            {isPending ? (
+              <div
+                className="h-12 w-24 animate-pulse rounded-lg bg-muted"
+                aria-hidden="true"
               />
-            </Link>
+            ) : (
+              <Link href="/" className={logoClasses}>
+                <Image
+                  src="/Jelajah-Memoria-01.png"
+                  alt="Jelajah Memoria"
+                  width={4088}
+                  height={2319}
+                  priority
+                  className="h-12 w-auto"
+                />
+              </Link>
+            )}
           </div>
 
           <div className="ml-auto flex flex-1 items-center justify-end gap-4">
             <div className="hidden lg:flex flex-1 items-center justify-center space-x-8">
-              {NAV_LINKS.map((link) => (
-                <NavbarLink
-                  key={link.name}
-                  href={link.href}
-                  className={desktopLinkClasses}
-                >
-                  {link.name}
-                </NavbarLink>
-              ))}
+              {isPending
+                ? NAV_LINKS.map((link, index) => (
+                    <span
+                      key={link.name}
+                      className={cn(
+                        "h-4 animate-pulse rounded bg-muted",
+                        NAV_SKELETON_WIDTHS[index],
+                      )}
+                      aria-hidden="true"
+                    />
+                  ))
+                : NAV_LINKS.map((link) => (
+                    <NavbarLink
+                      key={link.name}
+                      href={link.href}
+                      className={desktopLinkClasses}
+                    >
+                      {link.name}
+                    </NavbarLink>
+                  ))}
             </div>
 
             <div className="hidden items-center gap-2 lg:flex">
-              {sessionUser ? (
+              {isPending ? (
+                <div
+                  className="flex items-center gap-2 rounded-full p-1 sm:pr-3"
+                  aria-hidden="true"
+                >
+                  <span className="hidden flex-col items-end gap-1.5 sm:flex">
+                    <span className="h-4 w-24 animate-pulse rounded bg-muted" />
+                    <span className="h-3 w-14 animate-pulse rounded bg-muted" />
+                  </span>
+                  <span className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-muted" />
+                </div>
+              ) : sessionUser ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     aria-label="Menu akun"
