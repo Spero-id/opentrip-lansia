@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X, User, ShoppingBag, LogOut, Shield } from "lucide-react";
+import { Menu, User, ShoppingBag, LogOut, Shield } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth/client";
 import MobileMenu from "@/components/layout/MobileMenu";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -77,15 +77,6 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2 shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen((current) => !current)}
-              className={cn("lg:hidden", "text-slate-700 hover:text-slate-700")}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X size={24} className="size-6" /> : <Menu size={24} className="size-6" />}
-            </Button>
             <Link href="/" className={logoClasses}>
               <Image src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" width={4088} height={2319} priority className="h-12 w-auto" />
             </Link>
@@ -212,7 +203,7 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <>
+                <div className="hidden items-center gap-2 lg:flex">
                   <Link
                     href="/login"
                     className={cn(buttonVariants({ variant: "ghost" }), "font-poppins")}
@@ -222,9 +213,19 @@ export default function Navbar() {
                   <Link href="/register" className={loginButtonClasses}>
                     Daftar
                   </Link>
-                </>
+                </div>
               )}
             </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen((current) => !current)}
+              className={cn("lg:hidden", "text-slate-700 hover:text-slate-700")}
+              aria-label="Toggle menu"
+            >
+              <Menu size={24} className="size-6" />
+            </Button>
 
           </div>
         </div>

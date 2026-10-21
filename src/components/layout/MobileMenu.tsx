@@ -2,18 +2,19 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { usePathname, useRouter } from "next/navigation";
-import { X, LogOut, User, ShoppingBag } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth/client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 
 const emptySubscribe = () => () => {};
 function useIsClient() {
   return useSyncExternalStore(
     emptySubscribe,
     () => true,
-    () => false
+    () => false,
   );
 }
 
@@ -27,8 +28,6 @@ const NAV_LINKS = [
 
 import type { MouseEventHandler, ReactNode } from "react";
 
-const cn = (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(" ");
-
 interface MenuItemProps {
   href?: string;
   children: ReactNode;
@@ -37,20 +36,33 @@ interface MenuItemProps {
 }
 
 function MenuItem({ href, children, className, onClick }: MenuItemProps) {
-  const commonClasses = cn("block w-full rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left", className);
+  const commonClasses = cn(
+    "w-full cursor-pointer justify-start rounded-lg px-3 py-2",
+    className,
+  );
 
   if (href) {
     return (
-      <Link href={href} onClick={onClick} className={commonClasses}>
+      <Button
+        variant="ghost"
+        nativeButton={false}
+        render={<Link href={href} onClick={onClick} />}
+        className={commonClasses}
+      >
         {children}
-      </Link>
+      </Button>
     );
   }
 
   return (
-    <button type="button" onClick={onClick} className={commonClasses}>
+    <Button
+      variant="ghost"
+      type="button"
+      onClick={onClick}
+      className={commonClasses}
+    >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -60,7 +72,6 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
-  const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
   const isLoggedIn = Boolean(session?.user);
@@ -82,19 +93,19 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
   }
 
   const mobileMenuClasses = cn(
-    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-4/5 max-w-sm transform overflow-hidden bg-background shadow-2xl transition-transform duration-300 ease-in-out",
-    isOpen ? "translate-x-0" : "-translate-x-full"
+    "lg:hidden fixed inset-y-0 left-0 top-0 z-60 h-full w-full transform overflow-hidden bg-background shadow-2xl transition-transform duration-300 ease-in-out",
+    isOpen ? "translate-x-0" : "-translate-x-full",
   );
 
   const overlayClasses = cn(
     "lg:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300",
-    isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+    isOpen
+      ? "opacity-100 pointer-events-auto"
+      : "opacity-0 pointer-events-none",
   );
 
-  const sectionLabelClasses = "px-3 text-sm font-medium tracking-wide text-muted-foreground";
-  const mobileLinkClasses = "block w-full rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-black/10 transition-colors";
-
-  const activeLinkClasses = mobileLinkClasses;
+  const sectionLabelClasses =
+    "px-3 text-sm font-medium tracking-wide text-muted-foreground";
 
   return createPortal(
     <>
@@ -106,8 +117,16 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
       <div className={mobileMenuClasses}>
         <div className="flex h-full flex-col px-4 py-6">
           <div className="flex items-center justify-between gap-4">
-            <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
-              <img src="/Jelajah-Memoria-01.png" alt="Jelajah Memoria" className="h-24 w-auto" />
+            <Link
+              href="/"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2"
+            >
+              <img
+                src="/Jelajah-Memoria-01.png"
+                alt="Jelajah Memoria"
+                className="h-12 w-auto"
+              />
             </Link>
             <Button
               variant="ghost"
@@ -128,7 +147,6 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={pathname === link.href ? activeLinkClasses : mobileLinkClasses}
                 >
                   {link.name}
                 </MenuItem>
@@ -138,44 +156,56 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
               <div className="mt-8 space-y-3">
                 <div className={sectionLabelClasses}>Akun</div>
                 <div className="space-y-3">
-                  <MenuItem
-                    href="/profile"
-                    onClick={() => setIsOpen(false)}
-                    className={pathname === "/profile" ? activeLinkClasses : mobileLinkClasses}
-                  >
+                  <MenuItem href="/profile" onClick={() => setIsOpen(false)}>
                     Profil Saya
                   </MenuItem>
-                  <MenuItem
-                    href="/my-trips"
-                    onClick={() => setIsOpen(false)}
-                    className={pathname === "/my-trips" ? activeLinkClasses : mobileLinkClasses}
-                  >
+                  <MenuItem href="/my-trips" onClick={() => setIsOpen(false)}>
                     Riwayat Trip
                   </MenuItem>
                 </div>
-                <div className="mt-4 pt-4">
-                  <div className="px-3">
-                    <div className="border-t border-border" />
-                  </div>
-                  <div className="mt-3">
-                    <MenuItem
-                      onClick={async () => {
-                        setIsOpen(false);
-                        await signOut();
-                        router.refresh();
-                      }}
-                      className="block w-full cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-destructive hover:bg-red-50 transition-colors text-left"
-                    >
-                      Keluar dari Akun
-                    </MenuItem>
-                  </div>
+              </div>
+            )}
+            {isLoggedIn && (
+              <div className="mt-4 pt-4">
+                <div className="px-3">
+                  <div className="border-t border-border" />
+                </div>
+                <div className="mt-3">
+                  <MenuItem
+                    onClick={async () => {
+                      setIsOpen(false);
+                      await signOut();
+                      router.refresh();
+                    }}
+                    className="text-destructive hover:bg-red-50 hover:text-destructive"
+                  >
+                    Keluar dari Akun
+                  </MenuItem>
                 </div>
               </div>
             )}
           </div>
+          {!isLoggedIn && (
+            <div className="grid grid-cols-2 gap-2 border-t border-border px-4 pb-2 pt-4">
+              <Link
+                href="/register"
+                onClick={() => setIsOpen(false)}
+                className={`${cn(buttonVariants({ variant: "default", size: "lg" }))} w-full`}
+              >
+                Daftar
+              </Link>
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className={`${cn(buttonVariants({ variant: "outline", size: "lg" }))} w-full`}
+              >
+                Masuk
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </>,
-    document.body
+    document.body,
   );
 }
