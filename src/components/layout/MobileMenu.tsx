@@ -140,7 +140,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
           </div>
 
           <div className="mt-6 flex-1 min-h-0 overflow-y-auto pr-1">
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className={sectionLabelClasses}>Menu</div>
               {NAV_LINKS.map((link) => (
                 <MenuItem
@@ -153,7 +153,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
               ))}
             </div>
             {isLoggedIn && (
-              <div className="mt-8 space-y-3">
+              <div className="mt-8 space-y-2">
                 <div className={sectionLabelClasses}>Akun</div>
                 <div className="space-y-3">
                   <MenuItem href="/profile" onClick={() => setIsOpen(false)}>
