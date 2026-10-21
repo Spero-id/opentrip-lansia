@@ -99,12 +99,7 @@ export default function Navbar() {
               ))}
             </div>
 
-            <div
-              className={cn(
-                "flex items-center gap-2",
-                isOpen && "bg-transparent",
-              )}
-            >
+            <div className="hidden items-center gap-2 lg:flex">
               {sessionUser ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger

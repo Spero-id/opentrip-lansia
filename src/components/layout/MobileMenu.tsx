@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth/client";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "cn";
 
 const emptySubscribe = () => () => {};
@@ -37,7 +38,7 @@ interface MenuItemProps {
 
 function MenuItem({ href, children, className, onClick }: MenuItemProps) {
   const commonClasses = cn(
-    "w-full cursor-pointer justify-start rounded-lg px-3 py-2",
+    "h-9 w-full cursor-pointer justify-start rounded-lg px-3",
     className,
   );
 
@@ -74,7 +75,9 @@ interface MobileMenuProps {
 export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const isLoggedIn = Boolean(session?.user);
+  const sessionUser = session?.user ?? null;
+  const sessionRole = (sessionUser as { role?: string } | null)?.role;
+  const isLoggedIn = Boolean(sessionUser);
   const isClient = useIsClient();
 
   useEffect(() => {
@@ -103,9 +106,6 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
       ? "opacity-100 pointer-events-auto"
       : "opacity-0 pointer-events-none",
   );
-
-  const sectionLabelClasses =
-    "px-3 text-sm font-medium tracking-wide text-muted-foreground";
 
   return createPortal(
     <>
@@ -140,8 +140,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
           </div>
 
           <div className="mt-6 flex-1 min-h-0 overflow-y-auto pr-1">
-            <div className="space-y-2">
-              <div className={sectionLabelClasses}>Menu</div>
+            <div className="space-y-1">
               {NAV_LINKS.map((link) => (
                 <MenuItem
                   key={link.name}
@@ -153,24 +152,48 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
               ))}
             </div>
             {isLoggedIn && (
-              <div className="mt-8 space-y-2">
-                <div className={sectionLabelClasses}>Akun</div>
-                <div className="space-y-3">
+              <div className="mt-6 space-y-1">
+                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
+                  <Avatar size="lg" className="bg-primary">
+                    {sessionUser?.image && (
+                      <AvatarImage src={sessionUser.image} alt="" />
+                    )}
+                    <AvatarFallback className="text-primary-foreground">
+                      {sessionUser?.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 leading-tight">
+                    <p className="truncate text-sm font-semibold text-foreground">
+                      {sessionUser?.name || "Pengguna"}
+                    </p>
+                    <p className="truncate text-xs font-medium text-muted-foreground">
+                      {sessionRole === "admin"
+                        ? "Admin"
+                        : sessionRole === "agent"
+                        ? "Agen"
+                        : "Member"}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-1">
                   <MenuItem href="/profile" onClick={() => setIsOpen(false)}>
-                    Profil Saya
+                    Profil
+                  </MenuItem>
+                  <MenuItem href="/admin" onClick={() => setIsOpen(false)}>
+                    Halaman Admin
                   </MenuItem>
                   <MenuItem href="/my-trips" onClick={() => setIsOpen(false)}>
-                    Riwayat Trip
+                    Perjalanan Saya
                   </MenuItem>
                 </div>
               </div>
             )}
             {isLoggedIn && (
-              <div className="mt-4 pt-4">
+              <div className="mt-4 pt-2">
                 <div className="px-3">
                   <div className="border-t border-border" />
                 </div>
-                <div className="mt-3">
+                <div className="mt-2">
                   <MenuItem
                     onClick={async () => {
                       setIsOpen(false);
@@ -179,7 +202,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                     }}
                     className="text-destructive hover:bg-red-50 hover:text-destructive"
                   >
-                    Keluar dari Akun
+                    Log Out
                   </MenuItem>
                 </div>
               </div>
