@@ -3,7 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
+import { LogOut, Shield, ShoppingBag, User, X } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth/client";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -38,7 +38,7 @@ interface MenuItemProps {
 
 function MenuItem({ href, children, className, onClick }: MenuItemProps) {
   const commonClasses = cn(
-    "h-9 w-full cursor-pointer justify-start rounded-lg px-3",
+    "h-11 w-full cursor-pointer justify-start rounded-lg px-3",
     className,
   );
 
@@ -140,7 +140,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
           </div>
 
           <div className="mt-6 flex-1 min-h-0 overflow-y-auto pr-1">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {NAV_LINKS.map((link) => (
                 <MenuItem
                   key={link.name}
@@ -152,7 +152,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
               ))}
             </div>
             {isLoggedIn && (
-              <div className="mt-6 space-y-1">
+              <div className="mt-6 space-y-1.5">
                 <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
                   <Avatar size="lg" className="bg-primary">
                     {sessionUser?.image && (
@@ -175,14 +175,29 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                     </p>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <MenuItem href="/profile" onClick={() => setIsOpen(false)}>
+                <div className="space-y-1.5">
+                  <MenuItem
+                    href="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="gap-3"
+                  >
+                    <User className="size-4 shrink-0" />
                     Profil
                   </MenuItem>
-                  <MenuItem href="/admin" onClick={() => setIsOpen(false)}>
+                  <MenuItem
+                    href="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="gap-3"
+                  >
+                    <Shield className="size-4 shrink-0" />
                     Halaman Admin
                   </MenuItem>
-                  <MenuItem href="/my-trips" onClick={() => setIsOpen(false)}>
+                  <MenuItem
+                    href="/my-trips"
+                    onClick={() => setIsOpen(false)}
+                    className="gap-3"
+                  >
+                    <ShoppingBag className="size-4 shrink-0" />
                     Perjalanan Saya
                   </MenuItem>
                 </div>
@@ -200,8 +215,9 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                       await signOut();
                       router.refresh();
                     }}
-                    className="text-destructive hover:bg-red-50 hover:text-destructive"
+                    className="gap-3 text-destructive hover:bg-red-50 hover:text-destructive"
                   >
+                    <LogOut className="size-4 shrink-0" />
                     Log Out
                   </MenuItem>
                 </div>
