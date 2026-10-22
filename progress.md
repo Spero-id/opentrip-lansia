@@ -1,4 +1,4 @@
-# Session Progress Log
+﻿# Session Progress Log
 
 ## Current Verified State
 
@@ -3025,3 +3025,69 @@ Karena kolom memakai auto-margin centering, skeleton yang lebih pendek berarti k
 **Verifikasi live (Playwright, mouse.down 300ms, 1440x900):** tombol mata login/register + tombol Masuk/Daftar semuanya **dy=0** (sebelumnya mata 15, submit 1). Skrip ukur sementara sudah dihapus.
 
 **Verifikasi:** `npx tsc --noEmit` exit 0 • `npm run lint` 0 errors/82 warnings (baseline) • `vitest` 51 file/**440** test lolos • `playwright e2e/public/auth.spec.ts` **20/20** lolos • `check:structure` R1 0 (R3 pre-existing 234).
+
+## Session 110 - Navbar: migrasi tombol ke ShadCN Button (feat/form-migration, UNCOMMITTED)
+
+**Permintaan user:** "Coba migrasikan tombol pada Navbar ke ShadCN. Jangan commit."
+
+**Keputusan cakupan (ditanyakan, jawaban: "Hanya yang mirip tombol"):** hamburger toggle, link Daftar/Masuk, tombol X mobile menu. Trigger avatar + isi dropdown + baris menu mobile SENGAJA tidak disentuh (komposit custom / baris menu — padanan ShadCN-nya DropdownMenu, migrasi terpisah). Efek `active:scale-*` hand-written di tempat lain juga di luar cakupan.
+
+**Pola yang dipakai (mengikuti preseden repo):** elemen `<button>` → komponen `<Button>`; elemen `<Link>` → tetap Link + `buttonVariants()` di className (pola yang sama dipakai 11 file error/not-found). Link dipertahankan agar role `link` tidak berubah — `landing.spec.ts` mengassert `getByRole("link", {name: "Masuk"/"Daftar"})`.
+
+**Perubahan (2 file):**
+- `Navbar.tsx`: toggle hamburger → `<Button variant="ghost" size="icon">` (ikon `size-6` agar tetap 24px — `[&_svg]` ShadCN memaksa 16px kalau tanpa kelas size); Daftar → `buttonVariants({variant:"outline"})`; Masuk → `buttonVariants()` (default) + `border-primary/shadow` lama; `cn` lokal (join biasa) diganti `cn` dari `@/lib/utils` (twMerge) agar override warna adaptif scrolled/unscrolled menang atas kelas stok; `font-poppins` CTA dipertahankan.
+- `MobileMenu.tsx`: tombol X → `<Button variant="ghost" size="icon">` (ikon `size-5` = 20px seperti semula).
+
+**Adaptasi scrolled yang dipertahankan:** Daftar mode gelap (border-white/20, teks putih) vs mode terang (border/text primary, bg-background/10 + blur) — hanya warna yang di-override, struktur/size ikut stok (h-10, rounded-md; sebelumnya px-4 py-2 rounded-xl).
+
+**Verifikasi:** `tsc` 0 • `lint` 0/82 • `vitest` 440 • `e2e landing` 9/9 (termasuk klik Masuk/Daftar) • `check:structure` R1 0 (R3 234) • screenshot desktop atas/bawah + mobile buka/tutup dicek manual — Daftar/Masuk tampil benar di kedua state navbar, drawer X berfungsi (menu tertutup via tombol baru). File sementara & screenshot sudah dihapus. **Belum di-commit sesuai permintaan.**
+
+## Session 111 - Auth cleanup fallow #1+#2: ErrorState + AuthShell/hooks (UNCOMMITTED)
+
+**Lanjut dari sesi fallow:** kerjakan item #1 (error.tsx x5) + #2 (duplikasi login/register form). Item #3 (ArrowLeft) sudah commit 3082154.
+
+**#1 - 5 error.tsx -> ErrorState bersama:**
+- Baru `src/components/ui/error-state.tsx` (named export `ErrorState`, props title/href/hrefLabel/description? + error/retry). Markup 1:1 dari file lama (termasuk useEffect console.error + digest). Hanya root `src/app/error.tsx` yang pakai description.
+- `src/app/error.tsx`, `(auth)/(account)/(admin)/(public)/error.tsx` jadi wrapper 5-baris (title/href/label masing-masing dipertahankan: Ke Login / Ke Profil / Ke Dashboard / Ke Beranda x2).
+
+**#2 - login/register form -> 4 modul bersama:**
+- `src/features/auth/components/AuthShell.tsx` (default): 2 div luar + kolom scroll + komentar auto-margin, prop `contentClassName` untuk `order-2 lg:order-2` register (via cn, order CSS sama jadi layout identik).
+- `src/features/auth/components/AuthErrorAlert.tsx` (default): banner merah, null saat message kosong.
+- `src/features/auth/hooks/use-auth-redirect.ts`: useSyncExternalStore redirect (allowAdmin param; login true, register false).
+- `src/features/auth/hooks/use-google-sign-in.ts`: googleLoading + handleGoogleLogin (signIn.social google).
+- Kedua form tidak lagi import useSyncExternalStore/DEFAULT_REDIRECT/readRedirectFromSearch; register tidak lagi import signIn langsung. Perilaku sama persis (DOM/kelas identik).
+
+**Sengaja TIDAK diekstrak:** sisa 1 grup dup fallow (email+password field JSX, 66 token) - itu pemakaian komponen bersama AuthTextField/PasswordField, bukan logika duplikat; mengekstraknya akan mengawinkan tipe zod login/register.
+
+**Verifikasi:** `tsc` 0 errors, `lint` 0 errors/81 warnings (baseline 82, turun 1), `vitest src/features/auth` 50/50, `playwright e2e/public/auth.spec.ts` 20/20 (termasuk tes piksel gap 16px/centering/no-scroll). Fallow auth scope: 4 grup dup -> 1, total_loc 498 -> 424, hotspot 4 -> 3, dead 0, cycles 0. `check-structure` R3 naik ±8 (baseline 220, SUDAH FAIL 234 sebelum sesi ini - pemetaan baseline terpisah). **Belum di-commit (Navbar Session 110 juga masih uncommitted).**
+
+## Session 112 - Auth follow-up + Navbar solid (UNCOMMITTED)
+
+**Auth (lanjutan, belum commit saat ditulis):**
+- Banner error server: `AuthErrorAlert` pakai token (`border-destructive/20 bg-destructive/10 text-destructive`), `rounded-lg` sejajar input, `role="alert"`.
+- Pesan server Inggris -> Indonesia via `translateAuthError` (`auth-errors.ts` + 4 unit test): Invalid password/User not found -> "Email atau password salah", User already exists* -> "Email sudah terdaftar"; tak dikenal diteruskan apa adanya.
+- Placeholder dihapus dari 6 field login/register (redundan mengulang label); `AuthTextField`/`PasswordField` kini kaitkan label via `htmlFor`/`id`; tes unit (40 titik) + e2e (13 titik) beralih ke `getByLabel`. 1 e2e sempat gagal karena locator lama `div.bg-red-50` -> diperbaiki ke `getByRole("alert")`. `vitest` 54/54, `e2e auth` 20/20.
+- Diskusi (belum dikerjakan): OTP email/WA sebagai alternatif password, migrasi Tiptap.
+
+**Navbar (Session 110 + follow-up, belum commit saat ditulis):**
+- Tombol ke ShadCN: hamburger + X mobile -> `Button ghost icon`; Daftar/Masuk tetap Link + `buttonVariants()` (role link dipertahankan untuk `landing.spec.ts`).
+- Daftar/Masuk: override warna/hover dihapus -> stok penuh; hierarki ditukar (Daftar solid primer, Masuk ghost) + posisi ditukar ([Masuk][Daftar]) karena tombol hanya tampil untuk logged-out (akuisisi).
+- Transparan dihapus -> solid permanen (`bg-background shadow-lg border-border`); state `isScrolled`, scroll listener, prop `isScrolled` MobileMenu, dan 3 ternary warna mati dibuang (-14 baris).
+- Logo: `h-24` -> `h-12` -> `h-14`; akar masalahnya padding transparan 48% pada PNG 4500x4500 -> di-trim via sharp menjadi 4088x2319 (245KB, revertible via git); props next/image disesuaikan ke rasio asli. `AuthAside`/Footer/sidebar ikut proporsional otomatis.
+- Verifikasi: `tsc` 0, `lint` 0 error, `e2e landing` 9/9.
+
+## Session 113 - Navbar skeleton dibuat lalu dibatalkan; font-poppins dihapus (UNCOMMITTED)
+
+- Sempat menambahkan skeleton hamburger (isPending gating), lalu keputusan akhir: SELURUH skeleton Navbar dihapus (logo, nav links, area session, hamburger). Navbar selalu render konten nyata; yang tetap dipertahankan hanya bar putih solid `bg-background shadow-lg border-b`. Dampak: `isPending` tidak lagi di-destructure dari useSession, `NAV_SKELETON_WIDTHS` + komentar pendukung dihapus. Trade-off diterima: saat session masih pending, area kanan sesaat menampilkan Masuk/Daftar (state logged-out) sebelum swap ke dropdown user.
+- `font-poppins` (loginButtonClasses + class pada tombol Masuk/Daftar) dihapus setelah dibuktikan kelas mati: tidak ada `--font-poppins` di @theme globals.css dan Poppins tidak pernah dimuat via next/font (hanya Plus Jakarta Sans); Tailwind v4 mengabaikan class tak dikenal, jadi tidak pernah berefek visual.
+- Verifikasi: `npm run lint` 0 error / 78 warning (semuanya pre-existing di file lain; tidak ada warning baru di Navbar).
+
+## Session 114 - Logika logout konsisten: proxy guard + useLogout (UNCOMMITTED)
+
+- Keputusan user: arsitektur C (server-side guard + hook bersama) dengan tujuan `/login?redirect=<current>`; tidak semua client guard dihapus - lihat catatan di bawah.
+- `src/proxy.ts` (Next 16 - middleware sudah deprecated jadi proxy): matcher diperluas dari `/admin/:path*` + `/api/:path*` ke juga `/profile` + `/my-trips` (route group `(account)`, sebelumnya hanya client-guard). Guard tetap cookie-presence `getSessionCookie` (pola hemat yang sudah dipakai /admin; validasi penuh sesi tetap di API/session.ts dan layout). Redirect kini membawa `pathname + search` aktual (khusus `/admin` root hasilnya tetap `redirect=/admin` seperti sebelumnya).
+- Hook baru `src/features/auth/hooks/use-logout.ts` (default export tidak; named `useLogout`): `signOut()` -> dari utils/redirect dipakai `buildAuthHref("/login", pathname+search)` -> `router.replace` (bukan push, agar Back tidak kembali ke halaman logged-out) + `router.refresh()`. Skenario error signOut: user tetap di halaman (akhirnya `setLoading(false)`), tidak ada push paksa.
+- 4 entry point logout kini satu-pintu: Navbar dropdown (`onClick={logout}`, useRouter/signOut import dihapus dari Navbar & MobileMenu), MobileMenu (`setIsOpen(false); await logout()`), AdminShell (`setProfileOpen(false); await logout()`, router tetap dipakai untuk navigasi lain), LogoutButton profil (restapi -> `useLogout` menggantikan handleLogout lokal; markup tidak berubah).
+- Sengaja DIPERTAHANKAN: client guard di `(account)/profile/page.tsx` (useEffect push login) dan `my-trips/page.tsx` guard - melindungi skenario sesi kedaluwarsa saat halaman dibiarkan terbuka (tidak ada navigasi, guard proxy tidak jalan); menyoalnya menyebabkan halaman zombie. Penghapusan bisa jadi follow-up setelah kebijakan sesi jelas.
+- Verifikasi: `npx tsc --noEmit` 0 error; `npm run lint` 0 error / 78 warning (semuanya pre-existing).
+- Follow-up (sesi sama): avatar Navbar disamakan styling dengan Drawer/MobileMenu - trigger dropdown kini memakai komponen bersama Avatar (Base-UI, src/components/ui/avatar) size=lg + bg-primary dengan AvatarImage/AvatarFallback, menggantikan img manual (onError + key). Perbedaan styling yang hilang: font-weight fallback (kini normal, bukan font-semibold), ring border-border (after overlay) ikut muncul, shadow-sm dihapus. Huruf fallback konvensi sama: initial atau "U". Efek samping positif: warning lint no-img-element Navbar hilang - baseline turun 78 ke 77; npx tsc --noEmit tetap 0 error.
