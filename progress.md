@@ -1,4 +1,4 @@
-# Session Progress Log
+﻿# Session Progress Log
 
 ## Current Verified State
 
@@ -3075,3 +3075,19 @@ Karena kolom memakai auto-margin centering, skeleton yang lebih pendek berarti k
 - Transparan dihapus -> solid permanen (`bg-background shadow-lg border-border`); state `isScrolled`, scroll listener, prop `isScrolled` MobileMenu, dan 3 ternary warna mati dibuang (-14 baris).
 - Logo: `h-24` -> `h-12` -> `h-14`; akar masalahnya padding transparan 48% pada PNG 4500x4500 -> di-trim via sharp menjadi 4088x2319 (245KB, revertible via git); props next/image disesuaikan ke rasio asli. `AuthAside`/Footer/sidebar ikut proporsional otomatis.
 - Verifikasi: `tsc` 0, `lint` 0 error, `e2e landing` 9/9.
+
+## Session 113 - Navbar skeleton dibuat lalu dibatalkan; font-poppins dihapus (UNCOMMITTED)
+
+- Sempat menambahkan skeleton hamburger (isPending gating), lalu keputusan akhir: SELURUH skeleton Navbar dihapus (logo, nav links, area session, hamburger). Navbar selalu render konten nyata; yang tetap dipertahankan hanya bar putih solid `bg-background shadow-lg border-b`. Dampak: `isPending` tidak lagi di-destructure dari useSession, `NAV_SKELETON_WIDTHS` + komentar pendukung dihapus. Trade-off diterima: saat session masih pending, area kanan sesaat menampilkan Masuk/Daftar (state logged-out) sebelum swap ke dropdown user.
+- `font-poppins` (loginButtonClasses + class pada tombol Masuk/Daftar) dihapus setelah dibuktikan kelas mati: tidak ada `--font-poppins` di @theme globals.css dan Poppins tidak pernah dimuat via next/font (hanya Plus Jakarta Sans); Tailwind v4 mengabaikan class tak dikenal, jadi tidak pernah berefek visual.
+- Verifikasi: `npm run lint` 0 error / 78 warning (semuanya pre-existing di file lain; tidak ada warning baru di Navbar).
+
+## Session 114 - Logika logout konsisten: proxy guard + useLogout (UNCOMMITTED)
+
+- Keputusan user: arsitektur C (server-side guard + hook bersama) dengan tujuan `/login?redirect=<current>`; tidak semua client guard dihapus - lihat catatan di bawah.
+- `src/proxy.ts` (Next 16 - middleware sudah deprecated jadi proxy): matcher diperluas dari `/admin/:path*` + `/api/:path*` ke juga `/profile` + `/my-trips` (route group `(account)`, sebelumnya hanya client-guard). Guard tetap cookie-presence `getSessionCookie` (pola hemat yang sudah dipakai /admin; validasi penuh sesi tetap di API/session.ts dan layout). Redirect kini membawa `pathname + search` aktual (khusus `/admin` root hasilnya tetap `redirect=/admin` seperti sebelumnya).
+- Hook baru `src/features/auth/hooks/use-logout.ts` (default export tidak; named `useLogout`): `signOut()` -> dari utils/redirect dipakai `buildAuthHref("/login", pathname+search)` -> `router.replace` (bukan push, agar Back tidak kembali ke halaman logged-out) + `router.refresh()`. Skenario error signOut: user tetap di halaman (akhirnya `setLoading(false)`), tidak ada push paksa.
+- 4 entry point logout kini satu-pintu: Navbar dropdown (`onClick={logout}`, useRouter/signOut import dihapus dari Navbar & MobileMenu), MobileMenu (`setIsOpen(false); await logout()`), AdminShell (`setProfileOpen(false); await logout()`, router tetap dipakai untuk navigasi lain), LogoutButton profil (restapi -> `useLogout` menggantikan handleLogout lokal; markup tidak berubah).
+- Sengaja DIPERTAHANKAN: client guard di `(account)/profile/page.tsx` (useEffect push login) dan `my-trips/page.tsx` guard - melindungi skenario sesi kedaluwarsa saat halaman dibiarkan terbuka (tidak ada navigasi, guard proxy tidak jalan); menyoalnya menyebabkan halaman zombie. Penghapusan bisa jadi follow-up setelah kebijakan sesi jelas.
+- Verifikasi: `npx tsc --noEmit` 0 error; `npm run lint` 0 error / 78 warning (semuanya pre-existing).
+- Follow-up (sesi sama): avatar Navbar disamakan styling dengan Drawer/MobileMenu - trigger dropdown kini memakai komponen bersama Avatar (Base-UI, src/components/ui/avatar) size=lg + bg-primary dengan AvatarImage/AvatarFallback, menggantikan img manual (onError + key). Perbedaan styling yang hilang: font-weight fallback (kini normal, bukan font-semibold), ring border-border (after overlay) ikut muncul, shadow-sm dihapus. Huruf fallback konvensi sama: initial atau "U". Efek samping positif: warning lint no-img-element Navbar hilang - baseline turun 78 ke 77; npx tsc --noEmit tetap 0 error.

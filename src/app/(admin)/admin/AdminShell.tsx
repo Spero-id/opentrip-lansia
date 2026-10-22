@@ -8,7 +8,8 @@ import { formatIDR } from "@/utils/format";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Check, X, AlertCircle, ShoppingCart, User, ShoppingBag, LogOut, Shield } from "lucide-react";
 import { useNotifications, getNotificationHref } from "@/hooks/use-notifications";
-import { useSession, signOut } from "@/lib/auth/client";
+import { useSession } from "@/lib/auth/client";
+import { useLogout } from "@/features/auth/hooks/use-logout";
 import { AppSidebar } from "@/components/app-sidebar";
 import { getActiveMenu } from "./components/nav-data";
 import {
@@ -35,6 +36,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const profileRef = useRef<HTMLDivElement>(null);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(15000);
   const { data: session } = useSession();
+  const { logout } = useLogout();
 
   const adminName = session?.user?.name?.trim() || "Admin";
   const adminImage = session?.user?.image || null;
@@ -303,9 +305,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                       type="button"
                       onClick={async () => {
                         setProfileOpen(false);
-                        await signOut();
-                        router.push("/login");
-                        router.refresh();
+                        await logout();
                       }}
                       className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-slate-200 cursor-pointer"
                     >

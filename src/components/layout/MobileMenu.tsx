@@ -2,10 +2,10 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
 import { LogOut, Shield, ShoppingBag, User, X } from "lucide-react";
 import Link from "next/link";
-import { signOut, useSession } from "@/lib/auth/client";
+import { useSession } from "@/lib/auth/client";
+import { useLogout } from "@/features/auth/hooks/use-logout";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "cn";
@@ -73,8 +73,8 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
-  const router = useRouter();
   const { data: session } = useSession();
+  const { logout } = useLogout();
   const sessionUser = session?.user ?? null;
   const sessionRole = (sessionUser as { role?: string } | null)?.role;
   const isLoggedIn = Boolean(sessionUser);
@@ -170,8 +170,8 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                       {sessionRole === "admin"
                         ? "Admin"
                         : sessionRole === "agent"
-                        ? "Agen"
-                        : "Member"}
+                          ? "Agen"
+                          : "Member"}
                     </p>
                   </div>
                 </div>
@@ -212,8 +212,7 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
                   <MenuItem
                     onClick={async () => {
                       setIsOpen(false);
-                      await signOut();
-                      router.refresh();
+                      await logout();
                     }}
                     className="gap-3 text-destructive hover:bg-red-50 hover:text-destructive"
                   >
@@ -227,18 +226,18 @@ export default function MobileMenu({ isOpen, setIsOpen }: MobileMenuProps) {
           {!isLoggedIn && (
             <div className="grid grid-cols-2 gap-2 border-t border-border px-4 pb-2 pt-4">
               <Link
-                href="/register"
-                onClick={() => setIsOpen(false)}
-                className={`${cn(buttonVariants({ variant: "default", size: "lg" }))} w-full`}
-              >
-                Daftar
-              </Link>
-              <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
                 className={`${cn(buttonVariants({ variant: "outline", size: "lg" }))} w-full`}
               >
                 Masuk
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setIsOpen(false)}
+                className={`${cn(buttonVariants({ variant: "default", size: "lg" }))} w-full`}
+              >
+                Daftar
               </Link>
             </div>
           )}

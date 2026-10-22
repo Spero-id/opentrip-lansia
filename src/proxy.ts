@@ -16,18 +16,16 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!pathname.startsWith("/admin")) {
-    return NextResponse.next();
-  }
-
   if (pathname === "/admin/login") {
     return NextResponse.next();
   }
 
+  // Guarded pages (/profile, /my-trips, /admin/*): redirect logged-out users
+  // to /login carrying the exact path so signing back in returns them here.
   const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", "/admin");
+    loginUrl.searchParams.set("redirect", pathname + request.nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -35,5 +33,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/:path*"],
+  matcher: ["/admin/:path*", "/api/:path*", "/profile", "/my-trips"],
 };
