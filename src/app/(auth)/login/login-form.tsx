@@ -88,11 +88,14 @@ export default function LoginForm() {
           label="Email"
           type="email"
           error={errors.email?.message}
+          placeholder="nama@email.com"
           {...register("email", { onChange: () => clearErrors("email") })}
         />
 
         <PasswordField
+          label="Kata Sandi"
           error={errors.password?.message}
+          placeholder="Masukkan kata sandi..."
           {...register("password", { onChange: () => clearErrors("password") })}
         />
 

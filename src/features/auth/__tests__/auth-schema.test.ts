@@ -28,14 +28,15 @@ describe("loginSchema", () => {
   it("menolak password kosong", () => {
     const result = loginSchema.safeParse({ email: "budi@example.com", password: "" });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe("Password wajib diisi");
+    expect(result.error?.issues[0].message).toBe("Kata sandi wajib diisi");
   });
 });
 
 describe("registerSchema", () => {
   it("menerima data registrasi yang valid", () => {
     const result = registerSchema.safeParse({
-      name: "Budi Santoso",
+      firstName: "Budi",
+      lastName: "Santoso",
       email: "budi@example.com",
       password: "rahasia123",
       confirmPassword: "rahasia123",
@@ -43,47 +44,87 @@ describe("registerSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("menolak nama kosong", () => {
+  it("menolak nama belakang kosong", () => {
     const result = registerSchema.safeParse({
-      name: "",
+      firstName: "Budi",
+      lastName: "",
       email: "budi@example.com",
       password: "rahasia123",
       confirmPassword: "rahasia123",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe("Nama wajib diisi");
+    expect(result.error?.issues[0].message).toBe("Nama belakang wajib diisi");
+  });
+
+  it("menolak nama belakang hanya spasi", () => {
+    const result = registerSchema.safeParse({
+      firstName: "Budi",
+      lastName: "   ",
+      email: "budi@example.com",
+      password: "rahasia123",
+      confirmPassword: "rahasia123",
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Nama belakang wajib diisi");
+  });
+
+  it("menolak nama depan hanya spasi", () => {
+    const result = registerSchema.safeParse({
+      firstName: "   ",
+      lastName: "Santoso",
+      email: "budi@example.com",
+      password: "rahasia123",
+      confirmPassword: "rahasia123",
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Nama depan wajib diisi");
+  });
+
+  it("menolak nama depan kosong", () => {
+    const result = registerSchema.safeParse({
+      firstName: "",
+      lastName: "Santoso",
+      email: "budi@example.com",
+      password: "rahasia123",
+      confirmPassword: "rahasia123",
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Nama depan wajib diisi");
   });
 
   it("menolak password kurang dari 8 karakter", () => {
     const result = registerSchema.safeParse({
-      name: "Budi Santoso",
+      firstName: "Budi",
+      lastName: "Santoso",
       email: "budi@example.com",
       password: "pendek",
       confirmPassword: "pendek",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe("Password minimal 8 karakter");
+    expect(result.error?.issues[0].message).toBe("Kata sandi minimal 8 karakter");
   });
 
   it("menolak konfirmasi password kosong", () => {
     const result = registerSchema.safeParse({
-      name: "Budi Santoso",
+      firstName: "Budi",
+      lastName: "Santoso",
       email: "budi@example.com",
       password: "rahasia123",
       confirmPassword: "",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe("Konfirmasi password wajib diisi");
+    expect(result.error?.issues[0].message).toBe("Ulangi kata sandi wajib diisi");
   });
 
   it("menolak konfirmasi password yang tidak sama", () => {
     const result = registerSchema.safeParse({
-      name: "Budi Santoso",
+      firstName: "Budi",
+      lastName: "Santoso",
       email: "budi@example.com",
       password: "rahasia123",
       confirmPassword: "berbeda123",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe("Konfirmasi password tidak sama");
+    expect(result.error?.issues[0].message).toBe("Ulangi kata sandi tidak sama");
   });
 });
