@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface AuthAsideProps {
   image: string;
@@ -23,7 +24,7 @@ export default function AuthAside({
     <div
       className={cn(
         "shrink-0 relative hidden lg:flex flex-col justify-between p-6 lg:p-10 h-56 lg:h-auto bg-cover bg-center",
-        wrapperClassName
+        wrapperClassName,
       )}
       style={{
         backgroundImage: `url('${image}')`,
@@ -32,7 +33,7 @@ export default function AuthAside({
       <div
         className={cn(
           "absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/70",
-          gradientClassName
+          gradientClassName,
         )}
       />
 
@@ -40,10 +41,12 @@ export default function AuthAside({
         href="/"
         className="relative z-10 flex items-center gap-2 self-start text-primary font-bold text-lg"
       >
-        <img
+        <Image
           src="/Jelajah-Memoria-01.png"
           alt="Jelajah Memoria"
-          className="h-14 w-auto"
+          width={4088}
+          height={2319}
+          className="h-12 w-auto"
         />
       </Link>
 

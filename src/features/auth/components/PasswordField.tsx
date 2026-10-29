@@ -13,7 +13,7 @@ interface PasswordFieldProps
 
 export default function PasswordField({
   error,
-  label = "Password",
+  label = "Kata Sandi",
   ...inputProps
 }: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
