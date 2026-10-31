@@ -13,6 +13,7 @@ export default function AuthSkeleton({ fields = 2, rememberRow = false }: AuthSk
   return (
     <div aria-busy="true" aria-label="Memuat" className="contents">
       <AuthShell
+        brand={<div className="mb-6 lg:hidden h-12 w-36 rounded-lg bg-muted" />}
         aside={
           <div className="hidden lg:block bg-muted" />
         }

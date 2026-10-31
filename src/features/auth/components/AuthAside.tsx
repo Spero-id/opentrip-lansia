@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import AuthLogo from "./AuthLogo";
 
 interface AuthAsideProps {
   image: string;
@@ -46,18 +45,7 @@ export default function AuthAside({
         )}
       />
 
-      <Link
-        href={logoHref}
-        className="relative z-10 flex items-center gap-2 self-start text-primary font-bold text-lg"
-      >
-        <Image
-          src={logoSrc}
-          alt={logoAlt}
-          width={4088}
-          height={2319}
-          className="h-12 w-auto"
-        />
-      </Link>
+      <AuthLogo src={logoSrc} alt={logoAlt} href={logoHref} />
 
       <div className="relative z-10">
         <h2 className="text-xl lg:text-3xl font-bold text-white leading-snug mb-1 lg:mb-3">

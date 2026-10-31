@@ -18,6 +18,7 @@ import AuthErrorAlert from "@/features/auth/components/AuthErrorAlert";
 import AuthTextField from "@/features/auth/components/AuthTextField";
 import PasswordField from "@/features/auth/components/PasswordField";
 import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
+import AuthLogo from "@/features/auth/components/AuthLogo";
 import { useAuthRedirect } from "@/features/auth/hooks/use-auth-redirect";
 import { useGoogleSignIn } from "@/features/auth/hooks/use-google-sign-in";
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,7 @@ export default function RegisterForm() {
 
   return (
     <AuthShell
+      brand={<AuthLogo className="mb-6 lg:hidden" />}
       contentClassName="order-2 lg:order-2"
       aside={
         <AuthAside
@@ -88,6 +90,7 @@ export default function RegisterForm() {
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <AuthTextField
           label="Nama Lengkap"
+          autoComplete="name"
           error={errors.name?.message}
           placeholder="Masukkan nama lengkap..."
           {...register("name", { onChange: () => clearErrors("name") })}
@@ -96,6 +99,7 @@ export default function RegisterForm() {
         <AuthTextField
           label="Email"
           type="email"
+          autoComplete="email"
           error={errors.email?.message}
           placeholder="nama@email.com"
           {...register("email", { onChange: () => clearErrors("email") })}
@@ -103,6 +107,7 @@ export default function RegisterForm() {
 
         <PasswordField
           label="Kata Sandi"
+          autoComplete="new-password"
           error={errors.password?.message}
           placeholder="Masukkan kata sandi..."
           {...register("password", { onChange: () => clearErrors("password") })}

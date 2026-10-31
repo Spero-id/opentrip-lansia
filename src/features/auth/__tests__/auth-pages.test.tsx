@@ -100,6 +100,18 @@ describe("LoginForm validasi", () => {
     });
   });
 
+  it("mengaku diri ke pengelola sandi lewat autoComplete", () => {
+    render(<LoginForm />);
+
+    const email = screen.getByLabelText("Email");
+    const password = screen.getByLabelText("Kata Sandi");
+
+    expect(email.getAttribute("autocomplete") ?? email.getAttribute("autoComplete")).toBe("email");
+    expect(
+      password.getAttribute("autocomplete") ?? password.getAttribute("autoComplete")
+    ).toBe("current-password");
+  });
+
   it("mengirim rememberMe=false setelah checkbox Ingat saya di-centang ulang", async () => {
     signInEmailMock.mockResolvedValue({ error: null });
     const user = userEvent.setup();

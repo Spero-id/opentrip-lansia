@@ -50,7 +50,11 @@ function stack(container: HTMLElement): Element[] {
   expect(pulse).toBeTruthy();
   // The 16px inter-block rhythm must match the real column (all gaps 16px).
   expect(pulse?.className).toMatch(/(^|\s)space-y-4(\s|$)/);
-  return Array.from(pulse!.children);
+  // Mobile-only bars (lg:hidden brand anchor) take no desktop height, so the
+  // desktop pixel math must ignore them exactly as the browser does.
+  return Array.from(pulse!.children).filter(
+    (el) => !el.className.split(/\s+/).includes("lg:hidden")
+  );
 }
 
 function contentHeight(blocks: Element[]): number {
@@ -58,6 +62,14 @@ function contentHeight(blocks: Element[]): number {
 }
 
 describe("AuthSkeleton dimensions", () => {
+  it("carries a mobile-only brand bar that the desktop math skips", () => {
+    const { container } = render(<AuthSkeleton />);
+    const brand = container
+      .querySelector('[aria-label="Memuat"]')!
+      .getElementsByClassName("lg:hidden");
+    expect(brand.length).toBeGreaterThan(0);
+  });
+
   it("login skeleton matches the real login form height (452px)", () => {
     const { container } = render(<AuthSkeleton fields={2} rememberRow />);
     expect(contentHeight(stack(container))).toBe(452);
