@@ -263,8 +263,7 @@ test.describe("Auth Pages", () => {
 
     test("should display register form elements", async ({ page }) => {
       await expect(page.getByText("Buat Akun Baru")).toBeVisible();
-      await expect(page.getByLabel("Nama Depan", { exact: true })).toBeVisible();
-      await expect(page.getByLabel("Nama Belakang", { exact: true })).toBeVisible();
+      await expect(page.getByLabel("Nama Lengkap", { exact: true })).toBeVisible();
       await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
       await expect(page.getByLabel("Kata Sandi", { exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Daftar", exact: true })).toBeVisible();

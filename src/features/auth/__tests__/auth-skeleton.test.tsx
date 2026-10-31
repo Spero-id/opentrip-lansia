@@ -3,10 +3,12 @@ import { render } from "@testing-library/react";
 import AuthSkeleton from "../components/AuthSkeleton";
 
 // The skeleton must occupy exactly the same vertical space as the real form
-// (login 460px, register 592px of column content at 1440x900, measured in a
-// live browser), otherwise the auto-margin centering shifts the content when
-// loading finishes. jsdom cannot do layout, so this test replays the pixel
-// math from the height classes: any drifted bar fails with a wrong total.
+// (login 452px, register 584px of column content at 1440x900 - derived from
+// the 460/592 baseline measured in a live browser, minus the 8px title→
+// subtitle gap saved when the forms' mb-4 was tightened to mb-2), otherwise
+// the auto-margin centering shifts the content when loading finishes. jsdom
+// cannot do layout, so this test replays the pixel math from the height
+// classes: any drifted bar fails with a wrong total.
 const BAR_PX: Record<string, number> = {
   "h-px": 1,
   "h-3": 12,
@@ -56,14 +58,14 @@ function contentHeight(blocks: Element[]): number {
 }
 
 describe("AuthSkeleton dimensions", () => {
-  it("login skeleton matches the real login form height (460px)", () => {
+  it("login skeleton matches the real login form height (452px)", () => {
     const { container } = render(<AuthSkeleton fields={2} rememberRow />);
-    expect(contentHeight(stack(container))).toBe(460);
+    expect(contentHeight(stack(container))).toBe(452);
   });
 
-  it("register skeleton matches the real register form height (592px)", () => {
-    const { container } = render(<AuthSkeleton fields={4} />);
-    expect(contentHeight(stack(container))).toBe(592);
+  it("register skeleton matches the real register form height (500px)", () => {
+    const { container } = render(<AuthSkeleton fields={3} />);
+    expect(contentHeight(stack(container))).toBe(500);
   });
 
   it("inserts the remember row for login, between fields and submit", () => {

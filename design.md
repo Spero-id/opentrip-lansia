@@ -30,14 +30,14 @@ Nilai pada bagian ini adalah nilai aktual yang terdapat di `src/app/globals.css`
 - **Base Background**: `#FCFCFC` — token `--background`; kini benar-benar berlaku karena `<body>` tidak lagi memakai kelas `bg-white` (lihat `src/app/layout.tsx`).
 - **Card / Popover**: `#FCFCFC` (foreground kartu `#171717`, popover `#525252`).
 - **Secondary (shadcn)**: `#FDFDFD` — nyaris putih; `bg-secondary` = surface/tombol terang, **bukan** navy.
-- **Muted / Accent**: `#EDEDED`; `--muted-foreground` = `#64748B` (slate-500 — placeholder input terbaca; diubah dari `#202020` via commit `4c641a4`).
+- **Muted / Accent**: `#EDEDED`; `--muted-foreground` = `#475569` (slate-600 — sekali diubah dari `#202020` ke `#64748B` via commit `4c641a4` (agar placeholder terbaca), lalu digelapkan lagi ke `#475569` diminta user). **Placeholder input dipisah**: `placeholder:text-slate-500` (`#64748B`) di `ui/input.tsx`, kontras 4.6:1 — placeholder tetap terbaca (AA) tanpa disangka nilai terisi (nilai isi `#171717` ~15:1).
 - **Border**: `#DFDFDF` · **Input**: `#DFDFDF` (disamakan dengan `--border`; di shadcn `--input` = warna **border**, bukan warna isian) · **Ring (focus)**: `#F49D1A` (oranye — konsisten brand).
 - **Dark Theme (Footer & Banner CTA)**: `#0B0F19` (Obsidian Deep Navy) — kelas hex eksplisit di komponen (mis. `src/components/layout/Footer.tsx`), bukan token CSS.
 
 ### Token Semantik Lengkap (mode terang)
 Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 - `--primary` `#F49D1A` (fg `#FDFDFD`) · `--secondary` `#FDFDFD` · `--muted` / `--accent` `#EDEDED`
-- `--background` `#FCFCFC` · `--foreground` `#171717` · `--muted-foreground` `#64748B`
+- `--background` `#FCFCFC` · `--foreground` `#171717` · `--muted-foreground` `#475569`
 - `--border` `#DFDFDF` · `--input` `#DFDFDF` (di shadcn `--input` = warna **border** input, harus terlihat di atas `#FCFCFC`) · `--ring` `#F49D1A`
 - `--destructive` (error): `#CA3214` (fg `#FFFCFC`)
 - **Chart**: `--chart-1..5` = `#72E3AD`, `#3B82F6`, `#8B5CF6`, `#F59E0B`, `#10B981` (berwarna, bukan grayscale)
@@ -57,7 +57,7 @@ Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 - **Headings / Judul**: `#0F172A` (Slate-900) via kelas `text-slate-900` di halaman — tebal (*bold / extrabold*), elegan
 - **Body Text**: `#475569` (Slate-600) via kelas `text-slate-600` — nyaman dibaca
 - **Muted Text / Meta**: `#94A3B8` (Slate-400) via kelas `text-slate-400` / `text-slate-500`
-- Token semantik (`--foreground #171717`, `--muted-foreground #64748B`) dipakai komponen shadcn (`text-foreground`, `text-muted-foreground`); `<body>` kini memakai `text-foreground` (kelas `bg-white text-slate-900` dihapus dari `layout.tsx`).
+- Token semantik (`--foreground #171717`, `--muted-foreground #475569`) dipakai komponen shadcn (`text-foreground`, `text-muted-foreground`); `<body>` kini memakai `text-foreground` (kelas `bg-white text-slate-900` dihapus dari `layout.tsx`).
 
 ### Status & Indicator Colors
 - **Rating / Star**: `#F59E0B` (Amber-500 ⭐)
@@ -142,17 +142,21 @@ Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 ## 5. Halaman Auth (Login & Register Split Screen)
 
 Sesuai dengan acuan desain gambar 2:
-- **Layout**: Split screen (2 Kolom di Desktop).
-- **Kolom Kiri**: Full height photo underwater/diving dengan overlay gelap transparan, teks logo `OpenTrip`, tagline "Jelajahi Lebih Jauh. Kenangan Lebih Lama." dan deskripsi singkat.
-- **Kolom Kanan**: Form bersih dengan:
+- **Layout**: Split screen (2 Kolom di Desktop); di mobile kolom foto disembunyikan dan form full-scroll (`AuthShell`).
+- **Kolom Kiri**: Full height photo underwater/diving dengan overlay gelap transparan, asset logo Jelajah Memoria (`/Jelajah-Memoria-01.png`, bukan teks `OpenTrip`), tagline "Jelajahi Lebih Jauh. Kenangan Lebih Lama." dan deskripsi singkat (`text-white/70` di atas overlay).
+- **Kolom Kanan — Login**: Form bersih dengan:
   - Judul `Selamat Datang Kembali`.
   - Subjudul `Masuk untuk mulai merencanakan trip berikutnya.`.
   - Input Email & Password (dengan ikon toggle mata).
-  - Checkbox `Ingat saya` & link `Lupa Password?`.
+  - Checkbox `Ingat saya` — berfungsi nyata via Better Auth `rememberMe` (default 30 hari vs 7 hari tanpa). **Tanpa link `Lupa Password?`** — sengaja dihapus; tidak ada flow reset sampai feat-096 selesai.
   - Tombol Oranye Solid `Masuk`.
   - Pembatas `Atau lanjutkan dengan`.
   - Tombol Google `Masuk dengan Google`.
   - Link beralih `Belum punya akun? Daftar di sini`.
+- **Kolom Kanan — Register** (tidak di-detail di mockup; catatan ini mencerminkan implementasi):
+  - Satu field `Nama Lengkap` (penggabungan Nama Depan + Nama Belakang dari desain awal).
+  - `Email` dan `Kata Sandi` (dengan toggle mata, **tanpa field konfirmasi ulang** — toggle show/hide menggantikan retype, NIST 800-63B / NN/g).
+  - Tombol `Daftar`, pembatas, tombol Google, link `Sudah Punya Akun? Masuk di sini`.
 
 ---
 

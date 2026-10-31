@@ -74,7 +74,7 @@ export default function LoginForm() {
         />
       }
     >
-      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
         Selamat Datang Kembali
       </h1>
       <p className="text-muted-foreground text-sm mb-4">
@@ -99,23 +99,15 @@ export default function LoginForm() {
           {...register("password", { onChange: () => clearErrors("password") })}
         />
 
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="remember-me"
-              checked={rememberMe}
-              onCheckedChange={setRememberMe}
-            />
-            <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
-              Ingat saya
-            </Label>
-          </div>
-          <a
-            href="#"
-            className="text-primary font-medium hover:underline"
-          >
-            Lupa Password?
-          </a>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="remember-me"
+            checked={rememberMe}
+            onCheckedChange={setRememberMe}
+          />
+          <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
+            Ingat saya
+          </Label>
         </div>
 
         <Button

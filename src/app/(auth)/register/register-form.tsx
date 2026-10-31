@@ -45,10 +45,7 @@ export default function RegisterForm() {
     setError("");
 
     const { error: signUpError } = await signUp.email({
-      name: [values.firstName, values.lastName]
-        .map((part) => part.trim())
-        .filter(Boolean)
-        .join(" "),
+      name: values.name,
       email: values.email,
       password: values.password,
     });
@@ -79,7 +76,7 @@ export default function RegisterForm() {
         />
       }
     >
-      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
         Buat Akun Baru
       </h1>
       <p className="text-muted-foreground text-sm mb-4">
@@ -89,21 +86,12 @@ export default function RegisterForm() {
       <AuthErrorAlert message={error} />
 
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <AuthTextField
-            label="Nama Depan"
-            error={errors.firstName?.message}
-            placeholder="Masukkan nama depan..."
-            {...register("firstName", { onChange: () => clearErrors("firstName") })}
-          />
-
-          <AuthTextField
-            label="Nama Belakang"
-            error={errors.lastName?.message}
-            placeholder="Masukkan nama belakang..."
-            {...register("lastName", { onChange: () => clearErrors("lastName") })}
-          />
-        </div>
+        <AuthTextField
+          label="Nama Lengkap"
+          error={errors.name?.message}
+          placeholder="Masukkan nama lengkap..."
+          {...register("name", { onChange: () => clearErrors("name") })}
+        />
 
         <AuthTextField
           label="Email"
@@ -118,13 +106,6 @@ export default function RegisterForm() {
           error={errors.password?.message}
           placeholder="Masukkan kata sandi..."
           {...register("password", { onChange: () => clearErrors("password") })}
-        />
-
-        <PasswordField
-          label="Ulangi Kata Sandi"
-          error={errors.confirmPassword?.message}
-          placeholder="Masukkan ulang kata sandi..."
-          {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
         />
 
         <Button
