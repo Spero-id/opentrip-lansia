@@ -73,8 +73,10 @@ describe("AuthSkeleton dimensions", () => {
     const blocks = stack(container);
     expect(blocks).toHaveLength(8);
     const row = blocks[3];
-    expect(row.className).toContain("justify-between");
-    expect(Array.from(row.children)).toHaveLength(2);
+    expect(row.className).toContain("items-center");
+    // The row is now single-sided: only "Ingat saya", no placeholder for the
+    // removed "Lupa Password?" link.
+    expect(Array.from(row.children)).toHaveLength(1);
   });
 
   it("omits the remember row unless asked (register and default shape)", () => {

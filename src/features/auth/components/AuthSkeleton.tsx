@@ -38,9 +38,10 @@ export default function AuthSkeleton({ fields = 2, rememberRow = false }: AuthSk
           ))}
 
           {rememberRow && (
-            <div className="flex items-center justify-between">
+            // Single-sided row: the form now shows only "Ingat saya"
+            // (checkbox + label) since "Lupa Password?" was removed.
+            <div className="flex items-center">
               <div className="h-5 w-24 rounded bg-muted" />
-              <div className="h-5 w-20 rounded bg-muted" />
             </div>
           )}
 
