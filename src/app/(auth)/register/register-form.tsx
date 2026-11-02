@@ -18,6 +18,7 @@ import AuthErrorAlert from "@/features/auth/components/AuthErrorAlert";
 import AuthTextField from "@/features/auth/components/AuthTextField";
 import PasswordField from "@/features/auth/components/PasswordField";
 import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
+import AuthLogo from "@/features/auth/components/AuthLogo";
 import { useAuthRedirect } from "@/features/auth/hooks/use-auth-redirect";
 import { useGoogleSignIn } from "@/features/auth/hooks/use-google-sign-in";
 import { Button } from "@/components/ui/button";
@@ -45,10 +46,7 @@ export default function RegisterForm() {
     setError("");
 
     const { error: signUpError } = await signUp.email({
-      name: [values.firstName, values.lastName]
-        .map((part) => part.trim())
-        .filter(Boolean)
-        .join(" "),
+      name: values.name,
       email: values.email,
       password: values.password,
     });
@@ -64,6 +62,7 @@ export default function RegisterForm() {
 
   return (
     <AuthShell
+      brand={<AuthLogo className="mb-6 lg:hidden" />}
       contentClassName="order-2 lg:order-2"
       aside={
         <AuthAside
@@ -79,35 +78,28 @@ export default function RegisterForm() {
         />
       }
     >
-      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
         Buat Akun Baru
       </h1>
-      <p className="text-muted-foreground text-sm mb-4">
+      <p className="text-muted-foreground text-sm font-medium mb-4">
         Daftar untuk mulai merencanakan trip berikutnya.
       </p>
 
       <AuthErrorAlert message={error} />
 
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <AuthTextField
-            label="Nama Depan"
-            error={errors.firstName?.message}
-            placeholder="Masukkan nama depan..."
-            {...register("firstName", { onChange: () => clearErrors("firstName") })}
-          />
-
-          <AuthTextField
-            label="Nama Belakang"
-            error={errors.lastName?.message}
-            placeholder="Masukkan nama belakang..."
-            {...register("lastName", { onChange: () => clearErrors("lastName") })}
-          />
-        </div>
+        <AuthTextField
+          label="Nama Lengkap"
+          autoComplete="name"
+          error={errors.name?.message}
+          placeholder="Masukkan nama lengkap..."
+          {...register("name", { onChange: () => clearErrors("name") })}
+        />
 
         <AuthTextField
           label="Email"
           type="email"
+          autoComplete="email"
           error={errors.email?.message}
           placeholder="nama@email.com"
           {...register("email", { onChange: () => clearErrors("email") })}
@@ -115,16 +107,10 @@ export default function RegisterForm() {
 
         <PasswordField
           label="Kata Sandi"
+          autoComplete="new-password"
           error={errors.password?.message}
           placeholder="Masukkan kata sandi..."
           {...register("password", { onChange: () => clearErrors("password") })}
-        />
-
-        <PasswordField
-          label="Ulangi Kata Sandi"
-          error={errors.confirmPassword?.message}
-          placeholder="Masukkan ulang kata sandi..."
-          {...register("confirmPassword", { onChange: () => clearErrors("confirmPassword") })}
         />
 
         <Button

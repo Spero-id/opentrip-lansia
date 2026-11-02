@@ -1,14 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import AuthLogo from "./AuthLogo";
 
 interface AuthAsideProps {
   image: string;
   title: ReactNode;
   description: string;
+  // Logo defaults to the Jelajah Memoria asset; logoSrc/logoAlt/logoHref let a
+  // page swap the brand block without restyling the aside. The intrinsic
+  // width/height below must match the swapped asset's aspect ratio.
+  logoSrc?: string;
+  logoAlt?: string;
+  logoHref?: string;
   wrapperClassName?: string;
   gradientClassName?: string;
 }
@@ -17,6 +22,9 @@ export default function AuthAside({
   image,
   title,
   description,
+  logoSrc = "/Jelajah-Memoria-01.png",
+  logoAlt = "Jelajah Memoria",
+  logoHref = "/",
   wrapperClassName,
   gradientClassName,
 }: AuthAsideProps) {
@@ -37,24 +45,13 @@ export default function AuthAside({
         )}
       />
 
-      <Link
-        href="/"
-        className="relative z-10 flex items-center gap-2 self-start text-primary font-bold text-lg"
-      >
-        <Image
-          src="/Jelajah-Memoria-01.png"
-          alt="Jelajah Memoria"
-          width={4088}
-          height={2319}
-          className="h-12 w-auto"
-        />
-      </Link>
+      <AuthLogo src={logoSrc} alt={logoAlt} href={logoHref} />
 
       <div className="relative z-10">
         <h2 className="text-xl lg:text-3xl font-bold text-white leading-snug mb-1 lg:mb-3">
           {title}
         </h2>
-        <p className="hidden lg:block text-white/70 text-sm max-w-sm">
+        <p className="hidden lg:block text-white/80 text-sm max-w-sm">
           {description}
         </p>
       </div>

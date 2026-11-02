@@ -23,7 +23,7 @@ export default function PasswordField({
     <div>
       <label
         htmlFor={fieldId}
-        className="block text-sm font-medium text-foreground mb-2"
+        className="block text-sm font-semibold text-foreground mb-2"
       >
         {label}
       </label>
@@ -46,7 +46,7 @@ export default function PasswordField({
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </Button>
       </div>
-      {error && <p className="mt-1.5 text-sm text-destructive">{error}</p>}
+      {error && <p className="mt-1.5 text-sm font-medium text-destructive">{error}</p>}
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default function SocialLoginButton({
     <>
       <div className={cn("flex items-center gap-3", dividerClassName)}>
         <div className="flex-1 h-px bg-muted" />
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs font-medium text-muted-foreground">
           Atau lanjutkan dengan
         </span>
         <div className="flex-1 h-px bg-muted" />

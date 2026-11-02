@@ -15,6 +15,7 @@ import AuthErrorAlert from "@/features/auth/components/AuthErrorAlert";
 import AuthTextField from "@/features/auth/components/AuthTextField";
 import PasswordField from "@/features/auth/components/PasswordField";
 import SocialLoginButton from "@/features/auth/components/SocialLoginButton";
+import AuthLogo from "@/features/auth/components/AuthLogo";
 import { useAuthRedirect } from "@/features/auth/hooks/use-auth-redirect";
 import { useGoogleSignIn } from "@/features/auth/hooks/use-google-sign-in";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,7 @@ export default function LoginForm() {
 
   return (
     <AuthShell
+      brand={<AuthLogo className="mb-6 lg:hidden" />}
       aside={
         <AuthAside
           image="/login-image-page.jpeg"
@@ -74,10 +76,10 @@ export default function LoginForm() {
         />
       }
     >
-      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-        Selamat Datang Kembali
+      <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
+        Masuk ke Akun
       </h1>
-      <p className="text-muted-foreground text-sm mb-4">
+      <p className="text-muted-foreground text-sm font-medium mb-4">
         Masuk untuk mulai merencanakan trip berikutnya.
       </p>
 
@@ -87,6 +89,7 @@ export default function LoginForm() {
         <AuthTextField
           label="Email"
           type="email"
+          autoComplete="email"
           error={errors.email?.message}
           placeholder="nama@email.com"
           {...register("email", { onChange: () => clearErrors("email") })}
@@ -94,28 +97,21 @@ export default function LoginForm() {
 
         <PasswordField
           label="Kata Sandi"
+          autoComplete="current-password"
           error={errors.password?.message}
           placeholder="Masukkan kata sandi..."
           {...register("password", { onChange: () => clearErrors("password") })}
         />
 
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="remember-me"
-              checked={rememberMe}
-              onCheckedChange={setRememberMe}
-            />
-            <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
-              Ingat saya
-            </Label>
-          </div>
-          <a
-            href="#"
-            className="text-primary font-medium hover:underline"
-          >
-            Lupa Password?
-          </a>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="remember-me"
+            checked={rememberMe}
+            onCheckedChange={setRememberMe}
+          />
+          <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
+            Ingat saya
+          </Label>
         </div>
 
         <Button

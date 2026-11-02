@@ -3,10 +3,14 @@ import { render } from "@testing-library/react";
 import AuthSkeleton from "../components/AuthSkeleton";
 
 // The skeleton must occupy exactly the same vertical space as the real form
-// (login 460px, register 592px of column content at 1440x900, measured in a
-// live browser), otherwise the auto-margin centering shifts the content when
-// loading finishes. jsdom cannot do layout, so this test replays the pixel
-// math from the height classes: any drifted bar fails with a wrong total.
+// (login 452px, register 500px of column content at 1440x900). The live
+// measurement was 460/592; deltas since: mb-2 title gap (-8), dropped
+// confirm-password field (-84), then a font experiment reverted - the 16px
+// field-text bump (+16) was undone in favor of weight emphasis, which
+// changes no bar heights. Otherwise the auto-margin centering shifts the
+// content when loading finishes. jsdom cannot do layout, so this test
+// replays the pixel math from the height classes: any drifted bar fails
+// with a wrong total.
 const BAR_PX: Record<string, number> = {
   "h-px": 1,
   "h-3": 12,
@@ -48,7 +52,11 @@ function stack(container: HTMLElement): Element[] {
   expect(pulse).toBeTruthy();
   // The 16px inter-block rhythm must match the real column (all gaps 16px).
   expect(pulse?.className).toMatch(/(^|\s)space-y-4(\s|$)/);
-  return Array.from(pulse!.children);
+  // Mobile-only bars (lg:hidden brand anchor) take no desktop height, so the
+  // desktop pixel math must ignore them exactly as the browser does.
+  return Array.from(pulse!.children).filter(
+    (el) => !el.className.split(/\s+/).includes("lg:hidden")
+  );
 }
 
 function contentHeight(blocks: Element[]): number {
@@ -56,14 +64,22 @@ function contentHeight(blocks: Element[]): number {
 }
 
 describe("AuthSkeleton dimensions", () => {
-  it("login skeleton matches the real login form height (460px)", () => {
-    const { container } = render(<AuthSkeleton fields={2} rememberRow />);
-    expect(contentHeight(stack(container))).toBe(460);
+  it("carries a mobile-only brand bar that the desktop math skips", () => {
+    const { container } = render(<AuthSkeleton />);
+    const brand = container
+      .querySelector('[aria-label="Memuat"]')!
+      .getElementsByClassName("lg:hidden");
+    expect(brand.length).toBeGreaterThan(0);
   });
 
-  it("register skeleton matches the real register form height (592px)", () => {
-    const { container } = render(<AuthSkeleton fields={4} />);
-    expect(contentHeight(stack(container))).toBe(592);
+  it("login skeleton matches the real login form height (452px)", () => {
+    const { container } = render(<AuthSkeleton fields={2} rememberRow />);
+    expect(contentHeight(stack(container))).toBe(452);
+  });
+
+  it("register skeleton matches the real register form height (500px)", () => {
+    const { container } = render(<AuthSkeleton fields={3} />);
+    expect(contentHeight(stack(container))).toBe(500);
   });
 
   it("inserts the remember row for login, between fields and submit", () => {
@@ -71,8 +87,10 @@ describe("AuthSkeleton dimensions", () => {
     const blocks = stack(container);
     expect(blocks).toHaveLength(8);
     const row = blocks[3];
-    expect(row.className).toContain("justify-between");
-    expect(Array.from(row.children)).toHaveLength(2);
+    expect(row.className).toContain("items-center");
+    // The row is now single-sided: only "Ingat saya", no placeholder for the
+    // removed "Lupa Password?" link.
+    expect(Array.from(row.children)).toHaveLength(1);
   });
 
   it("omits the remember row unless asked (register and default shape)", () => {
