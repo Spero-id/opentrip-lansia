@@ -1,29 +1,17 @@
-"use client";
-
-import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface AuthLogoProps {
-  // Defaults are the Jelajah Memoria brand block. The intrinsic
-  // width/height below must match the swapped asset's aspect ratio.
   src?: string;
   alt?: string;
-  href?: string;
   className?: string;
 }
 
 // Brand block shared by AuthAside (desktop photo column) and the mobile-only
 // anchor that AuthShell renders above the form.
-export default function AuthLogo({ src = "/Jelajah-Memoria-01.png", alt = "Jelajah Memoria", href = "/", className }: AuthLogoProps) {
+export default function AuthLogo({ src = "/Jelajah-Memoria-01.png", alt = "Jelajah Memoria", className }: AuthLogoProps) {
   return (
-    <Link
-      href={href}
-      className={cn(
-        "relative z-10 flex items-center gap-2 self-start text-primary font-bold text-lg",
-        className
-      )}
-    >
+    <div className={cn("relative z-10 flex items-center self-start", className)}>
       <Image
         src={src}
         alt={alt}
@@ -31,6 +19,6 @@ export default function AuthLogo({ src = "/Jelajah-Memoria-01.png", alt = "Jelaj
         height={2319}
         className="h-12 w-auto"
       />
-    </Link>
+    </div>
   );
 }

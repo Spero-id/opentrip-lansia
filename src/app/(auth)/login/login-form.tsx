@@ -64,8 +64,6 @@ export default function LoginForm() {
       aside={
         <AuthAside
           image="/login-image-page.jpeg"
-          wrapperClassName="lg:rounded-none"
-          gradientClassName="rounded-b-3xl lg:rounded-none"
           title={
             <>
               Jelajahi Lebih Jauh. <br className="hidden lg:block" /> Kenangan

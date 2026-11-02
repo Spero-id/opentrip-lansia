@@ -20,8 +20,8 @@ export default function AuthSkeleton({ fields = 2, rememberRow = false }: AuthSk
       >
         {/* Bars mirror the real column content: title, subtitle, fields,
             optional remember row, submit, divider, social, switch link.
-            auth-skeleton.test.tsx replays the pixel math (login 468px,
-            register 516px) - keep bar heights and gaps in sync with the
+            auth-skeleton.test.tsx replays the pixel math (login 452px,
+            register 500px) - keep bar heights and gaps in sync with the
             forms when editing. */}
         <div className="flex flex-col space-y-4 animate-pulse">
           {/* Title/subtitle block matches the forms' tightened mb-2 gap. */}
@@ -39,8 +39,7 @@ export default function AuthSkeleton({ fields = 2, rememberRow = false }: AuthSk
 
           {rememberRow && (
             // Single-sided row: the form now shows only "Ingat saya"
-            // (checkbox + 14px semibold label) since "Lupa Password?" was
-            // removed.
+            // (checkbox + label) since "Lupa Password?" was removed.
             <div className="flex items-center">
               <div className="h-5 w-24 rounded bg-muted" />
             </div>
