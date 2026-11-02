@@ -77,9 +77,9 @@ export default function LoginForm() {
       }
     >
       <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
-        Selamat Datang Kembali
+        Masuk ke Akun
       </h1>
-      <p className="text-muted-foreground text-sm mb-4">
+      <p className="text-muted-foreground text-sm font-medium mb-4">
         Masuk untuk mulai merencanakan trip berikutnya.
       </p>
 

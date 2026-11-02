@@ -3,12 +3,14 @@ import { render } from "@testing-library/react";
 import AuthSkeleton from "../components/AuthSkeleton";
 
 // The skeleton must occupy exactly the same vertical space as the real form
-// (login 452px, register 584px of column content at 1440x900 - derived from
-// the 460/592 baseline measured in a live browser, minus the 8px title→
-// subtitle gap saved when the forms' mb-4 was tightened to mb-2), otherwise
-// the auto-margin centering shifts the content when loading finishes. jsdom
-// cannot do layout, so this test replays the pixel math from the height
-// classes: any drifted bar fails with a wrong total.
+// (login 452px, register 500px of column content at 1440x900). The live
+// measurement was 460/592; deltas since: mb-2 title gap (-8), dropped
+// confirm-password field (-84), then a font experiment reverted - the 16px
+// field-text bump (+16) was undone in favor of weight emphasis, which
+// changes no bar heights. Otherwise the auto-margin centering shifts the
+// content when loading finishes. jsdom cannot do layout, so this test
+// replays the pixel math from the height classes: any drifted bar fails
+// with a wrong total.
 const BAR_PX: Record<string, number> = {
   "h-px": 1,
   "h-3": 12,

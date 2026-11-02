@@ -7,7 +7,7 @@ test.describe("Auth Pages", () => {
     });
 
     test("should display login form elements", async ({ page }) => {
-      await expect(page.getByText("Selamat Datang Kembali")).toBeVisible();
+      await expect(page.getByText("Masuk ke Akun")).toBeVisible();
       await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
       await expect(page.getByLabel("Kata Sandi", { exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Masuk", exact: true })).toBeVisible();

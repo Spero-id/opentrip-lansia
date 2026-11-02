@@ -51,7 +51,7 @@ export default function AuthAside({
         <h2 className="text-xl lg:text-3xl font-bold text-white leading-snug mb-1 lg:mb-3">
           {title}
         </h2>
-        <p className="hidden lg:block text-white/70 text-sm max-w-sm">
+        <p className="hidden lg:block text-white/80 text-sm max-w-sm">
           {description}
         </p>
       </div>

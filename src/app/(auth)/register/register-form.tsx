@@ -81,7 +81,7 @@ export default function RegisterForm() {
       <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
         Buat Akun Baru
       </h1>
-      <p className="text-muted-foreground text-sm mb-4">
+      <p className="text-muted-foreground text-sm font-medium mb-4">
         Daftar untuk mulai merencanakan trip berikutnya.
       </p>
 

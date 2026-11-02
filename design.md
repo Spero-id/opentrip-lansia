@@ -143,9 +143,9 @@ Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 
 Sesuai dengan acuan desain gambar 2:
 - **Layout**: Split screen (2 Kolom di Desktop); di mobile kolom foto disembunyikan dan form full-scroll (`AuthShell`).
-- **Kolom Kiri**: Full height photo underwater/diving dengan overlay gelap transparan, asset logo Jelajah Memoria (`/Jelajah-Memoria-01.png`, bukan teks `OpenTrip`), tagline "Jelajahi Lebih Jauh. Kenangan Lebih Lama." dan deskripsi singkat (`text-white/70` di atas overlay).
+- **Kolom Kiri**: Full height photo underwater/diving dengan overlay gelap transparan, asset logo Jelajah Memoria (`/Jelajah-Memoria-01.png`, bukan teks `OpenTrip`), tagline "Jelajahi Lebih Jauh. Kenangan Lebih Lama." dan deskripsi singkat (`text-white/80` di atas overlay, dibuang dari `/70` demi margin kontras AA yang stabil antar-foto).
 - **Kolom Kanan — Login**: Form bersih dengan:
-  - Judul `Selamat Datang Kembali`.
+  - Judul `Masuk ke Akun` (dulu `Selamat Datang Kembali`, dinetralisir agar konsisten dengan "Buat Akun Baru" di register).
   - Subjudul `Masuk untuk mulai merencanakan trip berikutnya.`.
   - Input Email & Password (dengan ikon toggle mata).
   - Checkbox `Ingat saya` — berfungsi nyata via Better Auth `rememberMe` (default 30 hari vs 7 hari tanpa). **Tanpa link `Lupa Password?`** — sengaja dihapus; tidak ada flow reset sampai feat-096 selesai.
