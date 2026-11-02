@@ -63,11 +63,9 @@ export default function RegisterForm() {
   return (
     <AuthShell
       brand={<AuthLogo className="mb-6 lg:hidden" />}
-      contentClassName="order-2 lg:order-2"
       aside={
         <AuthAside
           image="/register-page-image.jpeg"
-          wrapperClassName="order-1 lg:order-1"
           title={
             <>
               Mulai Petualanganmu.{" "}
@@ -131,7 +129,7 @@ export default function RegisterForm() {
       />
 
       <p className="text-center text-sm text-muted-foreground mt-4">
-        Sudah Punya Akun?{" "}
+        Sudah punya akun?{" "}
         <Link
           href={loginHref}
           className="text-primary font-bold hover:underline"

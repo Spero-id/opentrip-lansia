@@ -156,7 +156,7 @@ Sesuai dengan acuan desain gambar 2:
 - **Kolom Kanan — Register** (tidak di-detail di mockup; catatan ini mencerminkan implementasi):
   - Satu field `Nama Lengkap` (penggabungan Nama Depan + Nama Belakang dari desain awal).
   - `Email` dan `Kata Sandi` (dengan toggle mata, **tanpa field konfirmasi ulang** — toggle show/hide menggantikan retype, NIST 800-63B / NN/g).
-  - Tombol `Daftar`, pembatas, tombol Google, link `Sudah Punya Akun? Masuk di sini`.
+  - Tombol `Daftar`, pembatas, tombol Google, link `Sudah punya akun? Masuk di sini`.
 
 ---
 

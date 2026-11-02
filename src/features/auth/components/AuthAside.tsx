@@ -8,12 +8,11 @@ interface AuthAsideProps {
   image: string;
   title: ReactNode;
   description: string;
-  // Logo defaults to the Jelajah Memoria asset; logoSrc/logoAlt/logoHref let a
-  // page swap the brand block without restyling the aside. The intrinsic
-  // width/height below must match the swapped asset's aspect ratio.
+  // Logo defaults to the Jelajah Memoria asset; logoSrc/logoAlt let a page
+  // swap the brand block without restyling the aside. The intrinsic
+  // width/height in AuthLogo must match the swapped asset's aspect ratio.
   logoSrc?: string;
   logoAlt?: string;
-  logoHref?: string;
   wrapperClassName?: string;
   gradientClassName?: string;
 }
@@ -24,14 +23,13 @@ export default function AuthAside({
   description,
   logoSrc = "/Jelajah-Memoria-01.png",
   logoAlt = "Jelajah Memoria",
-  logoHref = "/",
   wrapperClassName,
   gradientClassName,
 }: AuthAsideProps) {
   return (
     <div
       className={cn(
-        "shrink-0 relative hidden lg:flex flex-col justify-between p-6 lg:p-10 h-56 lg:h-auto bg-cover bg-center",
+        "shrink-0 relative hidden lg:flex flex-col justify-between p-10 bg-cover bg-center",
         wrapperClassName,
       )}
       style={{
@@ -45,7 +43,7 @@ export default function AuthAside({
         )}
       />
 
-      <AuthLogo src={logoSrc} alt={logoAlt} href={logoHref} />
+      <AuthLogo src={logoSrc} alt={logoAlt} />
 
       <div className="relative z-10">
         <h2 className="text-xl lg:text-3xl font-bold text-white leading-snug mb-1 lg:mb-3">
