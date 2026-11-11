@@ -163,7 +163,7 @@ Sesuai dengan acuan desain gambar 2:
 ## 6. Penyesuaian Panel Admin (*Admin Panel Alignment*)
 
 Panel Admin disesuaikan agar konsisten dengan identitas merek baru:
-- **Sidebar Navigation**: Latar belakang biru tua dari selector `.admin-sidebar-dark` di `globals.css` (`--sidebar: oklch(0.24 0.02 262)`, teks putih `#fff`) — bukan `bg-slate-900`. Item aktif memakai aksen oranye `text-[#F49D1A] bg-[#F49D1A]/15` (`src/app/(admin)/admin/components/admin-sidebar.tsx`), bukan `bg-orange-600`.
+- **Sidebar Navigation**: Latar belakang biru tua dari selector `.admin-sidebar-dark` di `globals.css` (`--sidebar: oklch(0.24 0.02 262)`, teks putih `#fff`) — bukan `bg-slate-900`. Item aktif memakai aksen oranye `text-[#F49D1A] bg-[#F49D1A]/15` (`src/components/app-sidebar.tsx`), bukan `bg-orange-600`.
 - **Header Topbar**: Status Admin, bilah pencarian cepat, profil avatar admin.
 - **Dashboard Summary Cards**: Kartu KPI (Total Trip, Pemesanan Bulan Ini, Total Pendapatan, Promo Aktif) dengan ikon dan persentase perubahan.
 - **Tabel Data**: Header tabel yang bersih (`bg-slate-100/80 text-slate-700`), badge status berwarna (Green = Published, Yellow = Draft, Gray = Archived), dan tombol aksi edit/delete yang mudah diakses.
