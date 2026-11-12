@@ -10,7 +10,7 @@ export default function AuthErrorAlert({ message }: AuthErrorAlertProps) {
   return (
     <div
       role="alert"
-      className="mb-4 p-3 rounded-lg border border-destructive/20 bg-destructive/10 text-destructive text-sm font-medium"
+      className="mb-4 p-3 rounded-lg border border-destructive/20 bg-destructive/10 text-destructive text-base font-medium"
     >
       {message}
     </div>

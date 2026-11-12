@@ -79,7 +79,7 @@ export default function RegisterForm() {
       <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
         Buat Akun Baru
       </h1>
-      <p className="text-muted-foreground text-sm font-medium mb-4">
+      <p className="text-muted-foreground text-base font-medium mb-4">
         Daftar untuk mulai merencanakan trip berikutnya.
       </p>
 
@@ -128,7 +128,7 @@ export default function RegisterForm() {
         label="Daftar dengan Google"
       />
 
-      <p className="text-center text-sm text-muted-foreground mt-4">
+      <p className="text-center text-base text-muted-foreground mt-4">
         Sudah punya akun?{" "}
         <Link
           href={loginHref}

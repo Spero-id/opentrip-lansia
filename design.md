@@ -143,6 +143,7 @@ Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 
 Sesuai dengan acuan desain gambar 2:
 - **Layout**: Split screen (2 Kolom di Desktop); di mobile kolom foto disembunyikan dan form full-scroll (`AuthShell`).
+- **Tipografi minimal 16px**: seluruh teks visible di halaman auth tidak boleh lebih kecil dari `text-base` (16px) — subjudul, label field, placeholder/isi input, pesan error, checkbox `Ingat saya`, pembatas `Atau lanjutkan dengan`, link beralih, dan deskripsi aside semuanya `text-base` (sebelumnya campuran `text-sm`/`text-xs`). `Input` dan `Label` shadcn dibekali `text-sm` di base-nya; di sini ditimpa per-pemanggil lewat `cn` (tailwind-merge), **bukan** mengubah base komponen agar halaman lain tidak ikut berubah. Efek samping terdokumentasi: tinggi konten kolom naik (login 452→480px, register 500→528px — di-pin `auth-skeleton.test.tsx`), dan gap judul→subjudul tetap `mb-2` 8px sementara blok lain tetap ritme 16px.
 - **Kolom Kiri**: Full height photo underwater/diving dengan overlay gelap transparan, asset logo Jelajah Memoria (`/Jelajah-Memoria-01.png`, bukan teks `OpenTrip`), tagline "Jelajahi Lebih Jauh. Kenangan Lebih Lama." dan deskripsi singkat (`text-white/80` di atas overlay, dibuang dari `/70` demi margin kontras AA yang stabil antar-foto).
 - **Kolom Kanan — Login**: Form bersih dengan:
   - Judul `Masuk ke Akun` (dulu `Selamat Datang Kembali`, dinetralisir agar konsisten dengan "Buat Akun Baru" di register).

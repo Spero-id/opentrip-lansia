@@ -77,7 +77,7 @@ export default function LoginForm() {
       <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
         Masuk ke Akun
       </h1>
-      <p className="text-muted-foreground text-sm font-medium mb-4">
+      <p className="text-muted-foreground text-base font-medium mb-4">
         Masuk untuk mulai merencanakan trip berikutnya.
       </p>
 
@@ -107,7 +107,7 @@ export default function LoginForm() {
             checked={rememberMe}
             onCheckedChange={setRememberMe}
           />
-          <Label htmlFor="remember-me" className="text-muted-foreground font-normal cursor-pointer">
+          <Label htmlFor="remember-me" className="text-base text-muted-foreground font-normal cursor-pointer">
             Ingat saya
           </Label>
         </div>
@@ -129,7 +129,7 @@ export default function LoginForm() {
         label="Masuk dengan Google"
       />
 
-      <p className="text-center text-sm text-muted-foreground mt-4">
+      <p className="text-center text-base text-muted-foreground mt-4">
         Belum punya akun?{" "}
         <Link
           href={registerHref}

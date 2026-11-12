@@ -143,7 +143,7 @@ test.describe("Auth Pages", () => {
 
       await expectImageColumnStable(page, async () => {
         await page.getByRole("button", { name: "Daftar", exact: true }).click();
-        await expect(page.getByText("Nama depan wajib diisi")).toBeVisible();
+        await expect(page.getByText("Nama lengkap wajib diisi")).toBeVisible();
       });
     });
 
@@ -173,11 +173,17 @@ test.describe("Auth Pages", () => {
         await gotoAuth(page, path);
 
         // Empty array signals the expected DOM shape is missing, which fails below.
+        // Session 100+ wraps all column content in a single auto-margin
+        // wrapper, so the blocks live one level below the scrollable column.
         const gaps = await page.evaluate(() => {
           const aside = document.querySelector<HTMLDivElement>('div[style*="-image"]');
-          const col = aside?.parentElement?.lastElementChild as HTMLElement | null;
-          if (!col || col.children.length < 2) return [];
-          const kids = Array.from(col.children) as HTMLElement[];
+          const blocks = aside?.parentElement?.lastElementChild?.firstElementChild;
+          if (!blocks || blocks.children.length < 2) return [];
+          // The mobile-only brand row is display:none on desktop and would
+          // produce a zero rect; skip it like the browser layout does.
+          const kids = (Array.from(blocks.children) as HTMLElement[]).filter(
+            (el) => getComputedStyle(el).display !== "none"
+          );
           const out: number[] = [];
           for (let i = 1; i < kids.length; i++) {
             out.push(
@@ -189,11 +195,14 @@ test.describe("Auth Pages", () => {
         });
 
         expect(gaps.length).toBeGreaterThan(0);
-        // every block boundary must share a single value...
-        expect(Math.max(...gaps) - Math.min(...gaps)).toBeLessThanOrEqual(1);
-        // ...and that value is the 16px rhythm chosen for the auth column
-        expect(gaps[0]).toBeGreaterThan(15);
-        expect(gaps[0]).toBeLessThan(17);
+        // The title gap is deliberately tightened to mb-2 (8px) since the
+        // font-weight emphasis pass; every later boundary keeps the 16px
+        // rhythm chosen for the auth column.
+        expect(gaps[0]).toBeGreaterThan(6);
+        expect(gaps[0]).toBeLessThan(10);
+        expect(Math.max(...gaps.slice(1)) - Math.min(...gaps.slice(1))).toBeLessThanOrEqual(1);
+        expect(gaps[1]).toBeGreaterThan(15);
+        expect(gaps[1]).toBeLessThan(17);
       });
     }
 

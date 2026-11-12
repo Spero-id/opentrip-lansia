@@ -6,7 +6,7 @@
 |-------|-------|
 | **Repository root** | `/Users/kidin/Sites/opentrip-lansia` |
 | **Standard startup** | `./init.sh` |
-| **Standard verification** | `npm run lint` (16 pre-existing errors), `npm test` (280 pass) |
+| **Standard verification** | `npm run lint` (0 errors, 75 warning `<img>` pre-existing), `npm test` (vitest, semua pass), `npx playwright test e2e/public/auth.spec.ts` (20/20) |
 | **Highest priority unfinished** | API Auth Middleware (CRITICAL — 57 endpoint tanpa proteksi) |
 | **Current blocker** | None |
 
@@ -155,3 +155,11 @@
 - Revert parsial (keputusan user): shadcn, @heroicons/react, @t3-oss/env-core kembali di-install dengan versi identik HEAD (shadcn ^4.16.2 lock pin 4.16.2; heroicons ^2.2.0; env-core ^0.13.11). Yang tetap terhapus: uuidv7, whatwg-fetch. globals.css byte-identik HEAD (import shadcn/tailwind.css dipulihkan). next build SUKSES setelah revert.
 - LESSON LEARNED (shadcn): scan import awal melewatkan CSS — globals.css line 3 memakai @import "shadcn/tailwind.css" (resolve via package exports), hanya ketahuan saat next build gagal. Koreksi fakta: untuk shadcn 4.x (era Base UI/base-nova), paket shadcn MEMANG dirancang sebagai CSS dependency (dokumen resmi: npm install shadcn; changelog Mei 2026 "shadcn eject"). Vendor manual dikerjakan lalu DIREVERT ke pola resmi atas keputusan user: shadcn@^4.16.2 di-install ulang (lock pin 4.16.2, identik HEAD), import globals.css dipulihkan, src/styles/shadcn-base.css dihapus. Alternatif resmi di masa depan kalau mau ramping: `npx shadcn@latest eject`. Pelajaran tetap berlaku: scan dependensi WAJIB menyertakan file .css dan verifikasi next build untuk perubahan dep.
 - Sisa (diputuskan TIDAK dihapus, butuh refactor bukan pembersihan): react-select (2 halaman admin, kandidat Base UI Combobox), hugerte+hugerte-react (editor WYSIWYG, kandidat Tiptap; risiko postinstall install-scripts diblokir → pastikan public/hugerte ada saat deploy). Konsolidasi cn vs clsx/tailwind-merge juga ditunda menunggu keputusan user (Opsi A: 19 file ke @/lib/utils).
+
+### Session 7 (2026-11-12) — Auth Text >=16px (text-base) + E2E Baseline Repair
+- Permintaan user: perbesar semua teks kecil yang terlihat di halaman auth ke minimal 16px (`text-base`). Ini MEMBALIKAN secara sadar keputusan Session 5 (revert eksperimen font 16px) atas permintaan eksplisit user hari ini.
+- Cakupan (hanya auth, bukan global): login/register-form (subjudul, link beralih), AuthTextField & PasswordField (label, error, teks input), SocialLoginButton (pembatas `text-xs`→`text-base`), AuthErrorAlert, AuthAside (deskripsi), Label `Ingat saya`. `ui/Input` & `ui/Label` mempertahankan base `text-sm` — timpa per-pemanggil via `cn` (tailwind-merge) agar halaman lain tidak terdampak.
+- Skeleton: bar `h-5`/`h-4` → `h-6` (subtitle, label field, remember row, pembatas, link beralih); pixel math 452/500 → 480/528; `BAR_PX["h-6"]=24` ditambah di `auth-skeleton.test.tsx`.
+- design.md section 5: aturan tipografi "auth text >=16px" ditambahkan.
+- Reparasi baseline (3 kegagalan e2e terbukti pre-existing di HEAD via git stash): (1) ekspektasi error register "Nama depan wajib diisi" → "Nama lengkap wajib diisi" (basi sejak commit 44d44d3); (2)+(3) kedua test "jarak antar blok form seragam 16px" dirombak — sejak Session 100 semua konten dibungkus satu wrapper auto-margin sehingga `col` cuma 1 anak (gaps selalu kosong), dan gap judul kini mb-2 8px (commit 4863208) — test kini mengukur anak wrapper, melewati brand `display:none`, dan mem-pin gap[0]=8px + sisanya ritme 16px.
+- Verified: vitest auth 55/55; lint 0 error (75 warning `<img>` pre-existing); Playwright e2e/public/auth.spec.ts 20/20 pass (dev server lama di :3000 dipakai).
