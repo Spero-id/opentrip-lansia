@@ -68,7 +68,7 @@ Nilai hasil konversi dari oklch di `globals.css` (dideduasikan dari `:root`):
 
 ## 3. Tipografi (*Typography*)
 
-- **Font Family**: `Plus Jakarta Sans` → `ui-sans-serif` → `sans-serif` → `system-ui` (token `--font-sans` di `:root` & `.dark`). Font dimuat `next/font` di `src/app/layout.tsx` (`--font-plus-jakarta-sans`); **Inter sudah dihapus** dari layout dan token.
+- **Font Family**: `Nunito` (dimuat `next/font/google` di `src/app/layout.tsx`, token `--font-nunito`; variable font wght 200–1000, tak perlu daftar weight) → `ui-sans-serif` → `sans-serif` → `system-ui` (token `--font-sans` di `:root` & `.dark` kini `var(--font-nunito), ...`). **Plus Jakarta Sans & Poppins sudah dihapus** dari layout dan token.
   - Catatan: self-reference `--font-sans: var(--font-sans)` kini **valid** karena `:root` men-definisikan stack-nya — utility `font-sans` / `font-heading` berfungsi (dulu tidak).
   - `body` juga mewarisi `letter-spacing: var(--tracking-normal)` = `0.025em`.
 - **Skala Ukuran Teks**:
