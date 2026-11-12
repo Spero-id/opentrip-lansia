@@ -20,19 +20,20 @@ export default function AuthSkeleton({ fields = 2, rememberRow = false }: AuthSk
       >
         {/* Bars mirror the real column content: title, subtitle, fields,
             optional remember row, submit, divider, social, switch link.
-            auth-skeleton.test.tsx replays the pixel math (login 452px,
-            register 500px) - keep bar heights and gaps in sync with the
-            forms when editing. */}
+            auth-skeleton.test.tsx replays the pixel math (login 480px,
+            register 528px) - keep bar heights and gaps in sync with the
+            forms when editing. h-6 bars match text-base (24px line-height):
+            the auth column renders all small text at >=16px. */}
         <div className="flex flex-col space-y-4 animate-pulse">
           {/* Title/subtitle block matches the forms' tightened mb-2 gap. */}
           <div className="space-y-2">
             <div className="h-8 lg:h-9 w-2/3 rounded-lg bg-muted" />
-            <div className="h-5 w-1/2 rounded bg-muted" />
+            <div className="h-6 w-1/2 rounded bg-muted" />
           </div>
 
           {Array.from({ length: fields }).map((_, index) => (
             <div key={index} className="space-y-2">
-              <div className="h-5 w-24 rounded bg-muted" />
+              <div className="h-6 w-24 rounded bg-muted" />
               <div className="h-10 w-full rounded-lg bg-muted" />
             </div>
           ))}
@@ -41,7 +42,7 @@ export default function AuthSkeleton({ fields = 2, rememberRow = false }: AuthSk
             // Single-sided row: the form now shows only "Ingat saya"
             // (checkbox + label) since "Lupa Password?" was removed.
             <div className="flex items-center">
-              <div className="h-5 w-24 rounded bg-muted" />
+              <div className="h-6 w-24 rounded bg-muted" />
             </div>
           )}
 
@@ -49,13 +50,13 @@ export default function AuthSkeleton({ fields = 2, rememberRow = false }: AuthSk
 
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-muted" />
-            <div className="h-4 w-32 rounded bg-muted" />
+            <div className="h-6 w-32 rounded bg-muted" />
             <div className="h-px flex-1 bg-muted" />
           </div>
 
           <div className="h-10 w-full rounded-md bg-muted" />
 
-          <div className="h-5 w-56 self-center rounded bg-muted" />
+          <div className="h-6 w-56 self-center rounded bg-muted" />
         </div>
       </AuthShell>
     </div>

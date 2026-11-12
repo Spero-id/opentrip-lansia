@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
+// Nunito is a variable font (wght 200-1000), so no explicit weight list is
+// needed - next/font serves the full variable range and every font-weight
+// utility (400-800) resolves from the single variable file.
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
 });
 
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="id" className={`${plusJakartaSans.variable}`}>
+    <html lang="id" className={`${nunito.variable}`}>
       <body className="antialiased">
         {children}
       </body>

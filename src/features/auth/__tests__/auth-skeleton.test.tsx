@@ -3,19 +3,21 @@ import { render } from "@testing-library/react";
 import AuthSkeleton from "../components/AuthSkeleton";
 
 // The skeleton must occupy exactly the same vertical space as the real form
-// (login 452px, register 500px of column content at 1440x900). The live
+// (login 480px, register 528px of column content at 1440x900). The live
 // measurement was 460/592; deltas since: mb-2 title gap (-8), dropped
-// confirm-password field (-84), then a font experiment reverted - the 16px
-// field-text bump (+16) was undone in favor of weight emphasis, which
-// changes no bar heights. Otherwise the auto-margin centering shifts the
-// content when loading finishes. jsdom cannot do layout, so this test
-// replays the pixel math from the height classes: any drifted bar fails
-// with a wrong total.
+// confirm-password field (-84), a font experiment reverted, then the auth
+// small-text bump to >=16px (all former text-sm/xs renders at text-base's
+// 24px line-height): subtitle/labels/remember/divider/switch bars went
+// h-5/h-4 -> h-6 (+28 login, +28 register net of the shared blocks).
+// Otherwise the auto-margin centering shifts the content when loading
+// finishes. jsdom cannot do layout, so this test replays the pixel math
+// from the height classes: any drifted bar fails with a wrong total.
 const BAR_PX: Record<string, number> = {
   "h-px": 1,
   "h-3": 12,
   "h-4": 16,
   "h-5": 20,
+  "h-6": 24,
   "h-8": 32,
   "h-9": 36,
   "h-10": 40,
@@ -72,14 +74,14 @@ describe("AuthSkeleton dimensions", () => {
     expect(brand.length).toBeGreaterThan(0);
   });
 
-  it("login skeleton matches the real login form height (452px)", () => {
+  it("login skeleton matches the real login form height (480px)", () => {
     const { container } = render(<AuthSkeleton fields={2} rememberRow />);
-    expect(contentHeight(stack(container))).toBe(452);
+    expect(contentHeight(stack(container))).toBe(480);
   });
 
-  it("register skeleton matches the real register form height (500px)", () => {
+  it("register skeleton matches the real register form height (528px)", () => {
     const { container } = render(<AuthSkeleton fields={3} />);
-    expect(contentHeight(stack(container))).toBe(500);
+    expect(contentHeight(stack(container))).toBe(528);
   });
 
   it("inserts the remember row for login, between fields and submit", () => {
