@@ -22,7 +22,7 @@ export default function AuthTextField({
     <div>
       <label
         htmlFor={fieldId}
-        className="block text-base font-semibold text-foreground mb-2"
+        className="block text-base font-medium text-foreground mb-2"
       >
         {label}
       </label>
@@ -33,7 +33,7 @@ export default function AuthTextField({
         aria-invalid={error ? true : undefined}
         className="w-full text-base"
       />
-      {error && <p className="mt-1.5 text-base font-medium text-destructive">{error}</p>}
+      {error && <p className="mt-1.5 text-base text-destructive">{error}</p>}
     </div>
   );
 }

@@ -77,7 +77,7 @@ export default function LoginForm() {
       <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
         Masuk ke Akun
       </h1>
-      <p className="text-muted-foreground text-base font-medium mb-4">
+      <p className="text-muted-foreground text-base mb-4">
         Masuk untuk mulai merencanakan trip berikutnya.
       </p>
 
@@ -133,7 +133,7 @@ export default function LoginForm() {
         Belum punya akun?{" "}
         <Link
           href={registerHref}
-          className="text-primary font-bold hover:underline"
+          className="text-primary font-semibold hover:underline"
         >
           Daftar di sini
         </Link>
